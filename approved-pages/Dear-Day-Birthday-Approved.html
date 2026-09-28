@@ -356,10 +356,24 @@ function ddCompactPlan(p){
   return out;
 }
 function ddSaveLocal(p){try{localStorage.setItem('dearDayPlan',JSON.stringify(p))}catch(e){}}
+function ddProjectUrl(file){
+  const clean=String(file||'').replace(/^\/+/, '');
+  const path=location.pathname;
+  const marker='/approved-pages/';
+  const projectBase=path.includes(marker)
+    ? path.slice(0,path.indexOf(marker)+1)
+    : path.slice(0,path.lastIndexOf('/')+1);
+  if(clean.startsWith('approved-pages/')) return projectBase+clean;
+  if(path.includes(marker)) return projectBase+'approved-pages/'+clean;
+  return projectBase+clean;
+}
 function ddGo(file,p){
   ddSaveLocal(p);
   const payload=encodeURIComponent(JSON.stringify(ddCompactPlan(p)));
-  location.href=file+(window.__ddFlowActive?'?flow=1&':'?')+'dd='+payload;
+  const target=ddProjectUrl(file);
+  const sep=target.includes('?')?'&':'?';
+  const flow=window.__ddFlowActive?'flow=1&':'';
+  location.assign(target+sep+flow+'dd='+payload);
 }
 
 const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.getItem('dearDayPlan')||'{}')}catch(e){return {}}})();
@@ -394,13 +408,13 @@ const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.ge
   const date=document.getElementById('ddContextDate');
   if(occ)occ.textContent=meta.label;
   if(area){
-    area.value=incomingPlan.area||'';
+    incomingPlan.area=params.get('area')||incomingPlan.area||''; area.value=incomingPlan.area;
     area.addEventListener('change',()=>{incomingPlan.area=area.value;ddSaveLocal(incomingPlan)});
   }
   if(date){
     const now=new Date();
     date.min=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
-    date.value=incomingPlan.date||'';
+    incomingPlan.date=params.get('date')||incomingPlan.date||''; date.value=incomingPlan.date;
     date.addEventListener('change',()=>{incomingPlan.date=date.value;ddSaveLocal(incomingPlan)});
   }
   ddSaveLocal(incomingPlan);
