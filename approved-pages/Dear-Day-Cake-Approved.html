@@ -278,4 +278,16 @@ persist();cakeNextState();renderCurrent();renderGrid();updateSummary();
     raf=requestAnimationFrame(()=>update(true));
   });
   update(true);
-})();</script></body></html>
+})();</script><script>/* Dear Day footer logo home link */
+(function(){
+  document.querySelectorAll('.footer-logo').forEach(function(logo){
+    logo.style.cursor='pointer';
+    logo.setAttribute('role','link');
+    logo.setAttribute('tabindex','0');
+    logo.setAttribute('aria-label','Dear Day Home');
+    function goHome(){ location.href='/'; }
+    logo.addEventListener('click',goHome);
+    logo.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome();}});
+  });
+})();
+</script></body></html>
