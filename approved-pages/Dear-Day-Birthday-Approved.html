@@ -378,7 +378,7 @@ nextBtn.addEventListener('click',()=>{
   const hasVenue=packageMode||plan.services.some(s=>/أماكن|تجارب/.test(s))||plan.products.some(p=>/مكان|تجربة|Terrace|Restaurant|Garden/i.test(p.name||''));
   if(hasGifts){ddGo('/approved-pages/Dear-Day-Gifts-Approved.html',plan);return}
   if(hasCake){ddGo('/approved-pages/Dear-Day-Cake-Approved.html',plan);return}
-  if(hasVenue){ddGo('/approved-pages//approved-pages/Dear-Day-Venues-Approved.html',plan);return}
+  if(hasVenue){ddGo('/approved-pages/Dear-Day-Venues-Approved.html',plan);return}
   showToast('اختار خدمة واحدة على الأقل علشان نكمل');
 });
 updateUI();
