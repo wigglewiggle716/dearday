@@ -192,7 +192,7 @@ function ddCompactPlan(p){
   });
   return out;
 }
-function ddSaveLocal(p){try{localStorage.setItem('dearDayPlan',JSON.stringify(p))}catch(e){}}
+function ddSaveLocal(p){try{localStorage.setItem('dearDayPlan',JSON.stringify(ddCompactPlan(p)))}catch(e){}}
 function ddGo(file,p){
   ddSaveLocal(p);
   const payload=encodeURIComponent(JSON.stringify(ddCompactPlan(p)));
@@ -233,7 +233,7 @@ const filters={category:'all',recipient:'all',price:'all'};
 const grid=document.getElementById('productGrid'), currentWrap=document.getElementById('currentWrap'), resultCount=document.getElementById('resultCount'), noResults=document.getElementById('noResults'), thumbs=document.getElementById('thumbs'), summaryText=document.getElementById('summaryText'), headerCount=document.getElementById('headerCount'), toast=document.getElementById('toast');
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1600)}
 function money(n){return new Intl.NumberFormat('en-US').format(n)}
-function persist(){plan.giftSelections=[...selected.values()];localStorage.setItem('dearDayPlan',JSON.stringify(plan));}
+function persist(){plan.giftSelections=[...selected.values()];ddSaveLocal(plan);}
 function renderCurrent(){
  const arr=[...selected.values()];
  if(!arr.length){currentWrap.innerHTML='<div class="empty-current">لسه ما اخترتش هدية محددة. استخدم الفلاتر تحت واختر أول هدية.</div>';return;}
