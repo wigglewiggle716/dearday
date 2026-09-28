@@ -323,4 +323,16 @@ persist();giftNextState();renderCurrent();renderGrid();updateSummary();
 })();
 </script>
 <script src="assets/site-nav.js"></script>
-</body></html>
+<script>/* Dear Day footer logo home link */
+(function(){
+  document.querySelectorAll('.footer-logo').forEach(function(logo){
+    logo.style.cursor='pointer';
+    logo.setAttribute('role','link');
+    logo.setAttribute('tabindex','0');
+    logo.setAttribute('aria-label','Dear Day Home');
+    function goHome(){ location.href='/'; }
+    logo.addEventListener('click',goHome);
+    logo.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome();}});
+  });
+})();
+</script></body></html>
