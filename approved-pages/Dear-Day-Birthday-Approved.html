@@ -441,6 +441,11 @@ function updateUI(){
   thumbs.innerHTML='';
   const items=[...selectedServices.values(),...selectedProducts.values()].slice(0,4);
   items.forEach(item=>{const img=document.createElement('img');img.src=item.img;img.alt=item.name;thumbs.appendChild(img)});
+  cards.forEach(card=>card.setAttribute('aria-pressed',card.classList.contains('selected')?'true':'false'));
+  if(packageCard)packageCard.setAttribute('aria-pressed',packageCard.classList.contains('selected')?'true':'false');
+  incomingPlan.services=[...selectedServices.values()].map(x=>x.name);
+  incomingPlan.products=[...selectedProducts.values()];
+  ddSaveLocal(incomingPlan);
 }
 function toggleService(card){
   const name=card.dataset.service, img=card.dataset.img;
@@ -454,7 +459,9 @@ function toggleService(card){
   }
   updateUI();
 }
-[...cards,packageCard].forEach(card=>{
+[...cards,packageCard].filter(Boolean).forEach(card=>{
+  card.setAttribute('role','button');
+  card.setAttribute('aria-pressed','false');
   card.addEventListener('click',()=>toggleService(card));
   card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleService(card)}});
 });
