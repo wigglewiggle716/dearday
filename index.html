@@ -265,4 +265,16 @@ const $=s=>document.querySelector(s);let occasion='';const menu=$('.menu');menu.
  trigger.addEventListener('click',()=>{try{input.showPicker()}catch(e){input.click();input.focus()}});
  input.addEventListener('change',render); render();
 })();
+</script><script>/* Dear Day home footer logo scroll-to-top */
+(function(){
+  const logo=document.querySelector('.footer-logo');
+  if(!logo)return;
+  logo.style.cursor='pointer';
+  logo.setAttribute('role','link');
+  logo.setAttribute('tabindex','0');
+  logo.setAttribute('aria-label','Back to top');
+  function goTop(){window.scrollTo({top:0,behavior:'smooth'});}
+  logo.addEventListener('click',function(e){e.preventDefault();goTop();});
+  logo.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goTop();}});
+})();
 </script></body></html>
