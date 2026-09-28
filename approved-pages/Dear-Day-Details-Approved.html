@@ -122,4 +122,16 @@ for(const [id,target] of [['toEn','Dear-Day-Details-en.html'],['toAr','/approved
  let docked=false;
  function update(){const r=footer.getBoundingClientRect();const threshold=window.innerHeight-20;if(!docked&&r.top<=threshold){docked=true;dockBar();}else if(docked&&r.top>window.innerHeight+90){docked=false;floatBar();}}
  floatBar();update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);
-})();</script></body></html>
+})();</script><script>/* Dear Day footer logo home link */
+(function(){
+  document.querySelectorAll('.footer-logo').forEach(function(logo){
+    logo.style.cursor='pointer';
+    logo.setAttribute('role','link');
+    logo.setAttribute('tabindex','0');
+    logo.setAttribute('aria-label','Dear Day Home');
+    function goHome(){ location.href='/'; }
+    logo.addEventListener('click',goHome);
+    logo.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome();}});
+  });
+})();
+</script></body></html>
