@@ -196,6 +196,26 @@
       brand.addEventListener('click',e=>{e.preventDefault();history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'});});
     }
 
+    if(isHome){
+      const scrollToOccasions=function(e){
+        if(e)e.preventDefault();
+        const heading=[...document.querySelectorAll('h1,h2,h3,h4,[data-section-title]')].find(el=>{
+          const t=normalizeText(el.textContent);
+          return t.includes('اختار مناسبتك')||t.includes('اختار المناسبة');
+        });
+        const target=(heading&&(heading.closest('section,[data-section],main>div')||heading))||document.getElementById('ddOccasionsStart');
+        if(target){
+          if(!target.id)target.id='ddOccasionsStart';
+          history.replaceState(null,'',location.pathname+location.search+'#ddOccasionsStart');
+          target.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      };
+      header.querySelectorAll('.dd-plan-cta,.dd-mobile-plan').forEach(link=>{
+        link.setAttribute('href','#ddOccasionsStart');
+        link.addEventListener('click',scrollToOccasions);
+      });
+    }
+
     if(isHome&&location.hash){
       requestAnimationFrame(()=>{
         const target=document.querySelector(location.hash);
