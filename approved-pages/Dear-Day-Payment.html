@@ -62,8 +62,19 @@ button,input,select,textarea{font:inherit}
 .method:hover{border-color:#d9c3bc}
 .method.selected{border:2px solid var(--wine);background:#fff8f6;padding:14px}
 .method input{position:absolute;opacity:0;pointer-events:none}
-.method-icon{width:46px;height:46px;border-radius:14px;background:#f8e8e3;color:var(--wine);display:grid;place-items:center;font-size:21px}
+.method-icon{width:54px;height:46px;border-radius:14px;background:#fff;color:var(--wine);display:flex;align-items:center;justify-content:center;gap:4px;border:1px solid #eaded9;overflow:hidden}
+.method-icon svg{display:block;max-width:42px;max-height:24px}
+.method-icon.dual svg{max-width:22px}
+.method[hidden]{display:none!important}
 .method strong{display:block;font-size:14px}.method small{display:block;color:var(--muted);font-size:11px;margin-top:4px;line-height:1.5}
+.method-note{display:inline-flex;align-items:center;gap:6px;margin-top:5px;color:#8b7772;font-size:10px}
+.method-note svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8}
+.payment-security{margin:0 22px 22px;border-radius:16px;background:#fffaf8;border:1px solid #eaded9;padding:13px 14px;display:flex;align-items:flex-start;gap:10px;color:#685a56;font-size:11px;line-height:1.7}
+.payment-security .shield{width:28px;height:28px;min-width:28px;border-radius:50%;background:#f5e6e1;display:grid;place-items:center;color:var(--wine)}
+.payment-security .shield svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9}
+.payment-security b{display:block;color:var(--wine);font-size:12px;margin-bottom:2px}
+.method-status{display:none;margin:0 22px 22px;border-radius:14px;padding:12px 14px;background:#fff7df;border:1px solid #ecd999;color:#6e5b22;font-size:11px;line-height:1.7}
+.method-status.show{display:block}
 .method-check{width:22px;height:22px;border-radius:50%;border:1px solid #d9c5bf;display:grid;place-items:center;color:transparent;font-size:12px}
 .method.selected .method-check{background:var(--wine);border-color:var(--wine);color:#fff}
 .gateway-note{margin:0 22px 22px;border-radius:16px;background:#faf4ef;border:1px solid #eedfd8;padding:13px 14px;color:#685a56;font-size:11px;line-height:1.75}
@@ -144,22 +155,50 @@ footer{margin-top:25px}
     </section>
 
     <section class="panel">
-      <div class="panel-head"><h2>طريقة الدفع</h2><p>الاختيار هنا يحدد الـIntegration ID اللي هنرسله لـPaymob فيما بعد.</p></div>
+      <div class="panel-head"><h2>طريقة الدفع</h2><p>اختار الطريقة المناسبة لك. هتظهر هنا فقط الوسائل المفعّلة على حساب Dear Day في Paymob.</p></div>
       <div class="methods" id="methods">
         <label class="method selected" data-method="card">
           <input type="radio" name="paymentMethod" value="card" checked>
-          <span class="method-icon">💳</span>
-          <span><strong>بطاقة بنكية</strong><small>Credit / Debit Card عبر بوابة Paymob الآمنة.</small></span>
+          <span class="method-icon dual" aria-hidden="true">
+            <svg viewBox="0 0 86 54"><circle cx="32" cy="27" r="20" fill="#EB001B"></circle><circle cx="54" cy="27" r="20" fill="#F79E1B"></circle><path d="M43 11.5a20 20 0 0 1 0 31 20 20 0 0 1 0-31z" fill="#FF5F00"></path></svg>
+            <svg viewBox="0 0 64 22"><text x="1" y="17" font-family="Arial,sans-serif" font-size="18" font-style="italic" font-weight="700" fill="#1A1F71">VISA</text></svg>
+          </span>
+          <span><strong>بطاقة بنكية</strong><small>Visa أو Mastercard — هتدخل بيانات البطاقة داخل Paymob.</small><span class="method-note"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.8 2.9 8.3 7 10 4.1-1.7 7-5.2 7-10V6l-7-3Z"/><path d="m9.3 12 1.8 1.8 3.8-4"/></svg>3D Secure عند طلب البنك</span></span>
           <span class="method-check">✓</span>
         </label>
+
         <label class="method" data-method="wallet">
           <input type="radio" name="paymentMethod" value="wallet">
-          <span class="method-icon">📱</span>
-          <span><strong>محفظة إلكترونية</strong><small>Mobile Wallet — يتم تفعيلها عند إضافة Integration ID الخاص بها.</small></span>
+          <span class="method-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><rect x="6" y="11" width="36" height="27" rx="7" fill="none" stroke="#6B3540" stroke-width="2.4"/><path d="M30 19h12v12H30a6 6 0 0 1 0-12Z" fill="#F5E6E1" stroke="#6B3540" stroke-width="2"/><circle cx="34" cy="25" r="1.8" fill="#6B3540"/></svg>
+          </span>
+          <span><strong>محفظة إلكترونية</strong><small>Mobile Wallet عبر Paymob حسب المحافظ المفعّلة على الحساب.</small></span>
+          <span class="method-check">✓</span>
+        </label>
+
+        <label class="method" data-method="apple_pay" hidden>
+          <input type="radio" name="paymentMethod" value="apple_pay">
+          <span class="method-icon" aria-hidden="true">
+            <svg viewBox="0 0 120 36"><text x="4" y="25" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#000">Apple Pay</text></svg>
+          </span>
+          <span><strong>Apple Pay</strong><small>دفع سريع من الأجهزة المتوافقة.</small></span>
+          <span class="method-check">✓</span>
+        </label>
+
+        <label class="method" data-method="google_pay" hidden>
+          <input type="radio" name="paymentMethod" value="google_pay">
+          <span class="method-icon" aria-hidden="true">
+            <svg viewBox="0 0 120 36"><text x="4" y="25" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#202124">G Pay</text></svg>
+          </span>
+          <span><strong>Google Pay</strong><small>دفع سريع من الأجهزة والمتصفحات المتوافقة.</small></span>
           <span class="method-check">✓</span>
         </label>
       </div>
-      <div class="gateway-note"><b>مهم:</b> بيانات البطاقة نفسها لن تُكتب أو تُحفظ في Dear Day. عند الربط الفعلي، الزر بالأسفل سيطلب Payment Intention من السيرفر ثم يفتح Paymob Checkout باستخدام الـclient secret.</div>
+      <div class="method-status" id="methodStatus"></div>
+      <div class="payment-security">
+        <span class="shield" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.8 2.9 8.3 7 10 4.1-1.7 7-5.2 7-10V6l-7-3Z"/><path d="m9.3 12 1.8 1.8 3.8-4"/></svg></span>
+        <div><b>الدفع مؤمّن عبر Paymob</b>Dear Day لا يطلب ولا يخزّن بيانات البطاقة. إدخال بيانات الدفع وإتمام التحقق بيتم داخل بوابة Paymob الآمنة.</div>
+      </div>
     </section>
   </div>
 
@@ -173,7 +212,7 @@ footer{margin-top:25px}
     <div class="sum-row total"><span>الإجمالي</span><b id="grandTotal">EGP 0</b></div>
     <button class="primary" id="payNow">الانتقال إلى الدفع الآمن</button>
     <button class="secondary" id="backReview">الرجوع للمراجعة</button>
-    <div class="paymob-ready"><span>●</span><div>Paymob-ready architecture: Intention → Checkout → Redirect + Webhook verification.</div></div>
+    <div class="paymob-ready"><span>●</span><div>سيتم نقلك إلى Paymob لإتمام الدفع، ولن نعتبر الطلب مدفوعًا إلا بعد تأكيد حالة العملية.</div></div>
   </aside>
 </main>
 
@@ -184,6 +223,7 @@ footer{margin-top:25px}
 (function(){
   const PLAN_KEY='dearDayPlan';
   const PAYMOB_ENDPOINT='/api/paymob/create-intention';
+  const PAYMOB_METHODS_ENDPOINT='/api/paymob/methods';
 
   function readPlan(){try{return JSON.parse(localStorage.getItem(PLAN_KEY)||'{}')}catch(e){return {}}}
   function savePlan(p){try{localStorage.setItem(PLAN_KEY,JSON.stringify(p||{}))}catch(e){}}
@@ -212,12 +252,46 @@ footer{margin-top:25px}
   document.getElementById('billingCountry').value=payer.country||'Egypt';
 
   const savedMethod=previous.method||'card';
-  document.querySelectorAll('.method').forEach(label=>{
-    const selected=label.dataset.method===savedMethod;
-    label.classList.toggle('selected',selected);
-    const radio=label.querySelector('input');
-    if(radio)radio.checked=selected;
-  });
+  function selectMethod(method){
+    const visible=[...document.querySelectorAll('.method:not([hidden])')];
+    const target=visible.find(label=>label.dataset.method===method)||visible[0]||null;
+    document.querySelectorAll('.method').forEach(label=>{
+      const selected=label===target;
+      label.classList.toggle('selected',selected);
+      const radio=label.querySelector('input');
+      if(radio)radio.checked=selected;
+    });
+    return target?.dataset.method||'';
+  }
+  selectMethod(savedMethod);
+
+  async function syncEnabledPaymentMethods(){
+    const status=document.getElementById('methodStatus');
+    try{
+      const response=await fetch(PAYMOB_METHODS_ENDPOINT,{headers:{'Accept':'application/json'}});
+      if(!response.ok)throw new Error('METHOD_CONFIG_UNAVAILABLE');
+      const data=await response.json();
+      const enabled=data&&data.methods?data.methods:{};
+      document.querySelectorAll('.method').forEach(label=>{
+        const key=label.dataset.method;
+        label.hidden=!Boolean(enabled[key]);
+      });
+      const active=selectMethod(savedMethod);
+      const count=[...document.querySelectorAll('.method:not([hidden])')].length;
+      if(!count){
+        status.classList.add('show');
+        status.textContent='وسائل الدفع لسه ما اتفعّلتش على حساب Paymob. أول ما نضيف بيانات الربط في Vercel هتظهر هنا تلقائيًا.';
+        document.getElementById('payNow').disabled=true;
+      }else{
+        status.classList.remove('show');
+        document.getElementById('payNow').disabled=false;
+        if(active)persistPayment('draft');
+      }
+    }catch(e){
+      // Keep the basic UI available in preview environments that do not expose serverless config.
+      selectMethod(savedMethod);
+    }
+  }
 
   function eventAddress(){
     if(details.locationMode==='selected'){
@@ -228,7 +302,7 @@ footer{margin-top:25px}
   }
 
   function selectedMethod(){
-    return document.querySelector('input[name="paymentMethod"]:checked')?.value||'card';
+    return document.querySelector('input[name="paymentMethod"]:checked')?.value||'';
   }
 
   function buildBilling(){
@@ -303,6 +377,7 @@ footer{margin-top:25px}
 
   function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
   function validate(){
+    if(!selectedMethod()){toast('مفيش وسيلة دفع مفعّلة حاليًا.');return false}
     if(!cart.length){toast('السلة فاضية — ارجع وأضف اختيار واحد على الأقل.');return false}
     if(!details.celebrant||!details.eventDate||!details.eventTime){toast('تفاصيل المناسبة ناقصة — ارجع لصفحة التفاصيل.');return false}
     const b=buildBilling();
@@ -353,8 +428,13 @@ footer{margin-top:25px}
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(payload)
       });
-      if(!response.ok)throw new Error('PAYMOB_NOT_CONNECTED');
-      const data=await response.json();
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok){
+        if(data.error==='PAYMENT_METHOD_NOT_ENABLED')toast('وسيلة الدفع دي مش مفعّلة على حساب Paymob حاليًا.');
+        else if(data.error==='PAYMOB_NOT_CONFIGURED')toast('ربط Paymob لسه محتاج إضافة مفاتيح الحساب في إعدادات Vercel.');
+        else toast('تعذر تجهيز عملية الدفع حاليًا. جرّب مرة تانية.');
+        throw new Error(data.error||'PAYMOB_NOT_CONNECTED');
+      }
       if(data.checkout_url){
         persistPayment('redirecting');
         location.href=data.checkout_url;
@@ -363,7 +443,6 @@ footer{margin-top:25px}
       throw new Error('INVALID_PAYMOB_RESPONSE');
     }catch(err){
       persistPayment('ready');
-      toast('صفحة الدفع جاهزة، لكن ربط Paymob بالسيرفر لم يتم تفعيله بعد.');
       btn.disabled=false;btn.textContent=original;
     }
   }
@@ -384,6 +463,7 @@ footer{margin-top:25px}
   render();
   renderReturnStatus();
   persistPayment();
+  syncEnabledPaymentMethods();
 })();
 </script>
 </body>
