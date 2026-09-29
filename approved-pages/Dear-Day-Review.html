@@ -148,8 +148,9 @@ document.getElementById('payBtn').onclick=()=>{
   const hasDetails=!!(details.celebrant&&details.eventDate&&details.eventTime);
   if(!cart.length){showToast('أضف اختياراتك الأول قبل الدفع');return}
   if(!hasDetails){showToast('أكمل تفاصيل المناسبة الأول');return}
-  plan.reviewedAt=new Date().toISOString();savePlan(plan);
-  showToast('جاهز — صفحة الدفع هي الخطوة التالية');
+  plan.reviewedAt=new Date().toISOString();
+  savePlan(plan);
+  location.href='/approved-pages/Dear-Day-Payment.html';
 };
 renderDetails();renderItems();renderSummary();
 </script>
