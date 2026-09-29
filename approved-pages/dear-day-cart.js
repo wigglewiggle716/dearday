@@ -213,10 +213,10 @@
         display:inline-flex;align-items:center;justify-content:center;
         border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 7px rgba(0,0,0,.08)
       }
-      .payments.dd-payment-logos .dd-pay-logo img{
-        display:block;max-width:100%;max-height:22px;width:auto;height:auto;object-fit:contain
+      .payments.dd-payment-logos .dd-pay-logo svg{
+        display:block;max-width:100%;max-height:22px;width:auto;height:22px
       }
-      .payments.dd-payment-logos .dd-pay-logo.dd-wallet img{max-height:20px}
+      .payments.dd-payment-logos .dd-pay-logo.dd-wallet svg{max-height:19px}
       @media(max-width:680px){
         .payments.dd-payment-logos{gap:6px!important}
         .payments.dd-payment-logos .dd-pay-logo{width:48px;height:32px;padding:6px}
@@ -232,19 +232,23 @@
     payments.classList.add('dd-payment-logos');
     payments.innerHTML=`
       <span class="dd-pay-logo" title="Visa" aria-label="Visa">
-        <img src="https://cdn.simpleicons.org/visa/1A1F71" alt="Visa" loading="lazy">
+        <svg viewBox="0 0 576 512" role="img" aria-hidden="true" style="fill:#1A1F71"><path d="M470.1 231.3s7.6 37.2 9.3 45H446c3.3-8.9 16-43.5 16-43.5-.2.3 3.3-9.1 5.3-14.9l2.8 13.4zM576 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48zM152.5 331.2L215.7 176h-42.5l-39.3 106-4.3-21.5-14-71.4c-2.3-9.9-9.4-12.7-18.2-13.1H32.7l-.7 3.1c15.8 4 29.9 9.8 42.2 17.1l35.8 135h42.5zm94.4.2L272.1 176h-40.2l-25.1 155.4h40.1zm139.9-50.8c.2-17.7-10.6-31.2-33.7-42.3-14.1-7.1-22.7-11.9-22.7-19.2.2-6.6 7.3-13.4 23.1-13.4 13.1-.3 22.7 2.8 29.9 5.9l3.6 1.7 5.5-33.6c-7.9-3.1-20.5-6.6-36-6.6-39.7 0-67.6 21.2-67.8 51.4-.3 22.3 20 34.7 35.2 42.2 15.5 7.6 20.8 12.6 20.8 19.3-.2 10.4-12.6 15.2-24.1 15.2-16 0-24.6-2.5-37.7-8.3l-5.3-2.5-5.6 34.9c9.4 4.3 26.8 8.1 44.8 8.3 42.2.1 69.7-20.8 70-53zM528 331.4L495.6 176h-31.1c-9.6 0-16.9 2.8-21 12.9l-59.7 142.5H426s6.9-19.2 8.4-23.3H486c1.2 5.5 4.8 23.3 4.8 23.3H528z"/></svg>
       </span>
       <span class="dd-pay-logo" title="Mastercard" aria-label="Mastercard">
-        <img src="https://cdn.simpleicons.org/mastercard/EB001B" alt="Mastercard" loading="lazy">
+        <svg viewBox="0 0 86 54" role="img" aria-hidden="true">
+          <circle cx="32" cy="27" r="20" fill="#EB001B"></circle>
+          <circle cx="54" cy="27" r="20" fill="#F79E1B"></circle>
+          <path d="M43 11.5a20 20 0 0 1 0 31 20 20 0 0 1 0-31z" fill="#FF5F00"></path>
+        </svg>
       </span>
       <span class="dd-pay-logo" title="Apple Pay" aria-label="Apple Pay">
-        <img src="https://cdn.simpleicons.org/applepay/000000" alt="Apple Pay" loading="lazy">
+        <svg viewBox="0 0 640 512" role="img" aria-hidden="true" style="fill:#000"><path d="M116.9 158.5c-7.5 8.9-19.5 15.9-31.5 14.9-1.5-12 4.4-24.8 11.3-32.6 7.5-9.1 20.6-15.6 31.3-16.1 1.2 12.4-3.7 24.7-11.1 33.8m10.9 17.2c-17.4-1-32.3 9.9-40.5 9.9-8.4 0-21-9.4-34.8-9.1-17.9.3-34.5 10.4-43.6 26.5-18.8 32.3-4.9 80 13.3 106.3 8.9 13 19.5 27.3 33.5 26.8 13.3-.5 18.5-8.6 34.5-8.6 16.1 0 20.8 8.6 34.8 8.4 14.5-.3 23.6-13 32.5-26 10.1-14.8 14.3-29.1 14.5-29.9-.3-.3-28-10.9-28.3-42.9-.3-26.8 21.9-39.5 22.9-40.3-12.5-18.6-32-20.6-38.8-21.1m100.4-36.2v194.9h30.3v-66.6h41.9c38.3 0 65.1-26.3 65.1-64.3s-26.4-64-64.1-64h-73.2zm30.3 25.5h34.9c26.3 0 41.3 14 41.3 38.6s-15 38.8-41.4 38.8h-34.8V165zm162.2 170.9c19 0 36.6-9.6 44.6-24.9h.6v23.4h28v-97c0-28.1-22.5-46.3-57.1-46.3-32.1 0-55.9 18.4-56.8 43.6h27.3c2.3-12 13.4-19.9 28.6-19.9 18.5 0 28.9 8.6 28.9 24.5v10.8l-37.8 2.3c-35.1 2.1-54.1 16.5-54.1 41.5.1 25.2 19.7 42 47.8 42zm8.2-23.1c-16.1 0-26.4-7.8-26.4-19.6 0-12.3 9.9-19.4 28.8-20.5l33.6-2.1v11c0 18.2-15.5 31.2-36 31.2zm102.5 74.6c29.5 0 43.4-11.3 55.5-45.4L640 193h-30.8l-35.6 115.1h-.6L537.4 193h-31.6L557 334.9l-2.8 8.6c-4.6 14.6-12.1 20.3-25.5 20.3-2.4 0-7-.3-8.9-.5v23.4c1.8.4 9.3.7 11.6.7z"/></svg>
       </span>
-      <span class="dd-pay-logo dd-wallet" title="Vodafone Cash" aria-label="Vodafone Cash">
-        <img src="https://cdn.simpleicons.org/vodafone/E60000" alt="Vodafone Cash" loading="lazy">
+      <span class="dd-pay-logo" title="Google Pay" aria-label="Google Pay">
+        <svg viewBox="0 0 640 512" role="img" aria-hidden="true" style="fill:#202124"><path d="M105.72 215v41.25h57.1a49.66 49.66 0 0 1-21.14 32.6c-9.54 6.55-21.72 10.28-36 10.28-27.6 0-50.93-18.91-59.3-44.22a65.61 65.61 0 0 1 0-41l0 0c8.37-25.46 31.7-44.37 59.3-44.37a56.43 56.43 0 0 1 40.51 16.08L176.47 155a101.24 101.24 0 0 0-70.75-27.84 105.55 105.55 0 0 0-94.38 59.11 107.64 107.64 0 0 0 0 96.18v.15a105.41 105.41 0 0 0 94.38 59c28.47 0 52.55-9.53 70-25.91 20-18.61 31.41-46.15 31.41-78.91A133.76 133.76 0 0 0 205.38 215zm389.41-4c-10.13-9.38-23.93-14.14-41.39-14.14-22.46 0-39.34 8.34-50.5 24.86l20.85 13.26q11.45-17 31.26-17a34.05 34.05 0 0 1 22.75 8.79A28.14 28.14 0 0 1 487.79 248v5.51c-9.1-5.07-20.55-7.75-34.64-7.75-16.44 0-29.65 3.88-39.49 11.77s-14.82 18.31-14.82 31.56a39.74 39.74 0 0 0 13.94 31.27c9.25 8.34 21 12.51 34.79 12.51 16.29 0 29.21-7.3 39-21.89h1v17.72h22.61V250c.07-16.55-4.92-29.66-15.05-39zm-19.23 89.3a37.32 37.32 0 0 1-26.57 11.16A28.61 28.61 0 0 1 431 305.21a19.41 19.41 0 0 1-7.77-15.63c0-7 3.22-12.81 9.54-17.42s14.53-7 24.07-7c13.16-.16 23.46 2.84 30.8 8.78 0 10.13-3.96 18.91-11.74 26.36zm-93.65-142A55.71 55.71 0 0 0 341.74 142h-62.67v186.74h23.63V253.1h39c16 0 29.5-5.36 40.51-15.93.88-.89 1.76-1.79 2.65-2.68a54.45 54.45 0 0 0-2.61-76.23zm-16.58 62.23a30.65 30.65 0 0 1-23.34 9.68H302.7V165h39.63a32 32 0 0 1 22.6 9.23 33.18 33.18 0 0 1 .74 46.26zM614.31 201l-36.54 91.7h-.45L539.9 201h-25.69L566 320.55l-29.35 64.32H561L640 201z"/></svg>
       </span>
-      <span class="dd-pay-logo dd-wallet" title="Orange Cash" aria-label="Orange Cash">
-        <img src="https://cdn.simpleicons.org/orange/FF7900" alt="Orange Cash" loading="lazy">
+      <span class="dd-pay-logo dd-wallet" title="المحافظ الإلكترونية عبر Paymob" aria-label="المحافظ الإلكترونية">
+        <svg viewBox="0 0 512 512" role="img" aria-hidden="true" style="fill:#6B3540"><path d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H80c-8.8 0-16-7.2-16-16s7.2-16 16-16h368c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zm352 240a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
       </span>
     `;
   }
