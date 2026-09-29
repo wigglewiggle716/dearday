@@ -134,7 +134,7 @@ footer{margin-top:25px}
 
 <section class="hero"><div class="wrap"><div class="hero-box">
   <div><span class="eyebrow">الدفع</span><h1>إتمام الحجز بأمان</h1><p>راجع الإجمالي، أدخل بيانات التواصل الخاصة بالدافع، ثم انتقل إلى بوابة الدفع الآمنة. لن نخزن بيانات البطاقة داخل Dear Day.</p></div>
-  <div class="secure-chip"><div class="lock">🔒</div><div><b>Secure Checkout</b><small>مجهّز للربط مع Paymob Unified Checkout لاحقًا.</small></div></div>
+  <div class="secure-chip"><div class="lock">🔒</div><div><b>Secure Checkout</b></div></div>
 </div></div></section>
 
 <div class="status-banner" id="returnStatus"></div>
@@ -149,7 +149,7 @@ footer{margin-top:25px}
         <div class="field full"><label for="payerEmail">البريد الإلكتروني *</label><input class="input" id="payerEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
         <label class="check-row"><input type="checkbox" id="sameAddress"> استخدام عنوان المناسبة كعنوان الفاتورة</label>
         <div class="field full"><label for="billingAddress">العنوان / الشارع *</label><input class="input" id="billingAddress" autocomplete="street-address" placeholder="المنطقة، الشارع، رقم المبنى"></div>
-        <div class="field"><label for="billingCity">المدينة *</label><input class="input" id="billingCity" autocomplete="address-level2" value="Cairo"></div>
+        <div class="field"><label for="billingCity">المدينة *</label><select class="input" id="billingCity" autocomplete="address-level2" required><option value="" disabled>اختر المدينة</option><option value="Cairo">القاهرة</option><option value="Giza">الجيزة</option></select></div>
         <div class="field"><label for="billingCountry">الدولة</label><input class="input" id="billingCountry" value="Egypt" readonly></div>
       </div>
     </section>
@@ -248,7 +248,7 @@ footer{margin-top:25px}
   document.getElementById('payerPhone').value=payer.phone||'';
   document.getElementById('payerEmail').value=payer.email||'';
   document.getElementById('billingAddress').value=payer.address||'';
-  document.getElementById('billingCity').value=payer.city||'Cairo';
+  {const c=document.getElementById('billingCity');c.value=['Cairo','Giza'].includes(payer.city)?payer.city:'';}
   document.getElementById('billingCountry').value=payer.country||'Egypt';
 
   const savedMethod=previous.method||'card';
@@ -280,7 +280,7 @@ footer{margin-top:25px}
       const count=[...document.querySelectorAll('.method:not([hidden])')].length;
       if(!count){
         status.classList.add('show');
-        status.textContent='وسائل الدفع لسه ما اتفعّلتش على حساب Paymob. أول ما نضيف بيانات الربط في Vercel هتظهر هنا تلقائيًا.';
+        status.textContent='الدفع الإلكتروني غير متاح حاليًا.';
         document.getElementById('payNow').disabled=true;
       }else{
         status.classList.remove('show');
@@ -311,7 +311,7 @@ footer{margin-top:25px}
       phone:value('payerPhone'),
       email:value('payerEmail'),
       address:value('billingAddress'),
-      city:value('billingCity')||'Cairo',
+      city:value('billingCity'),
       country:value('billingCountry')||'Egypt'
     };
   }
@@ -385,7 +385,7 @@ footer{margin-top:25px}
     if(!b.phone){document.getElementById('payerPhone').focus();toast('اكتب رقم الموبايل.');return false}
     if(!validEmail(b.email)){document.getElementById('payerEmail').focus();toast('اكتب بريد إلكتروني صحيح.');return false}
     if(!b.address){document.getElementById('billingAddress').focus();toast('اكتب عنوان الفاتورة.');return false}
-    if(!b.city){document.getElementById('billingCity').focus();toast('اكتب المدينة.');return false}
+    if(!b.city){document.getElementById('billingCity').focus();toast('اختر المدينة.');return false}
     return true;
   }
 
