@@ -285,7 +285,7 @@ footer{margin-top:44px!important}
         <option value="1000-2500">1,000–2,500</option>
         <option value="2500-5000">2,500–5,000</option>
         <option value="5000-plus">5,000+</option>
-        <option value="unsure">لسه مش محدد</option>
+        <option value="unsure">غير محدد</option>
       </select>
     </label>
   </div>
@@ -422,7 +422,7 @@ const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.ge
   const area=document.getElementById('ddContextArea');
   const date=document.getElementById('ddContextDate');
   const budget=document.getElementById('ddContextBudget');
-  const budgetLabels={'under-1000':'أقل من 1,000','1000-2500':'1,000–2,500','2500-5000':'2,500–5,000','5000-plus':'5,000+','unsure':'لسه مش محدد'};
+  const budgetLabels={'under-1000':'أقل من 1,000','1000-2500':'1,000–2,500','2500-5000':'2,500–5,000','5000-plus':'5,000+','unsure':'غير محدد'};
   if(occ)occ.textContent=meta.label;
   if(area){
     incomingPlan.area=params.get('area')||incomingPlan.area||''; area.value=incomingPlan.area;
@@ -437,12 +437,12 @@ const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.ge
   if(budget){
     incomingPlan.budgetKey=params.get('budget')||incomingPlan.budgetKey||incomingPlan.budget||'unsure';
     incomingPlan.budget=incomingPlan.budgetKey;
-    incomingPlan.budgetLabel=budgetLabels[incomingPlan.budgetKey]||'لسه مش محدد';
+    incomingPlan.budgetLabel=budgetLabels[incomingPlan.budgetKey]||'غير محدد';
     budget.value=incomingPlan.budgetKey;
     budget.addEventListener('change',()=>{
       incomingPlan.budgetKey=budget.value;
       incomingPlan.budget=budget.value;
-      incomingPlan.budgetLabel=budgetLabels[budget.value]||'لسه مش محدد';
+      incomingPlan.budgetLabel=budgetLabels[budget.value]||'غير محدد';
       ddSaveLocal(incomingPlan);
       ddApplyBudgetPreference();
     });
