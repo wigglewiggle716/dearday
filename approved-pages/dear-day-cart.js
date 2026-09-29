@@ -201,6 +201,53 @@
     }
     return header;
   }
+
+  function ensurePaymentLogoStyle(){
+    if(document.getElementById('dd-payment-logo-style'))return;
+    const style=document.createElement('style');
+    style.id='dd-payment-logo-style';
+    style.textContent=`
+      .payments.dd-payment-logos{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+      .payments.dd-payment-logos .dd-pay-logo{
+        width:54px;height:34px;padding:6px 8px;border-radius:8px;background:#fff;
+        display:inline-flex;align-items:center;justify-content:center;
+        border:1px solid rgba(255,255,255,.28);box-shadow:0 2px 7px rgba(0,0,0,.08)
+      }
+      .payments.dd-payment-logos .dd-pay-logo img{
+        display:block;max-width:100%;max-height:22px;width:auto;height:auto;object-fit:contain
+      }
+      .payments.dd-payment-logos .dd-pay-logo.dd-wallet img{max-height:20px}
+      @media(max-width:680px){
+        .payments.dd-payment-logos{gap:6px!important}
+        .payments.dd-payment-logos .dd-pay-logo{width:48px;height:32px;padding:6px}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  function normalizePaymentLogos(){
+    const payments=document.querySelector('.payments');
+    if(!payments||payments.dataset.ddPaymentLogos==='1')return;
+    ensurePaymentLogoStyle();
+    payments.dataset.ddPaymentLogos='1';
+    payments.classList.add('dd-payment-logos');
+    payments.innerHTML=`
+      <span class="dd-pay-logo" title="Visa" aria-label="Visa">
+        <img src="https://cdn.simpleicons.org/visa/1A1F71" alt="Visa" loading="lazy">
+      </span>
+      <span class="dd-pay-logo" title="Mastercard" aria-label="Mastercard">
+        <img src="https://cdn.simpleicons.org/mastercard/EB001B" alt="Mastercard" loading="lazy">
+      </span>
+      <span class="dd-pay-logo" title="Apple Pay" aria-label="Apple Pay">
+        <img src="https://cdn.simpleicons.org/applepay/000000" alt="Apple Pay" loading="lazy">
+      </span>
+      <span class="dd-pay-logo dd-wallet" title="Vodafone Cash" aria-label="Vodafone Cash">
+        <img src="https://cdn.simpleicons.org/vodafone/E60000" alt="Vodafone Cash" loading="lazy">
+      </span>
+      <span class="dd-pay-logo dd-wallet" title="Orange Cash" aria-label="Orange Cash">
+        <img src="https://cdn.simpleicons.org/orange/FF7900" alt="Orange Cash" loading="lazy">
+      </span>
+    `;
+  }
   function ensureFloatingCart(){
     let link=document.getElementById('ddFloatingCart');
     if(link)return link;
@@ -287,6 +334,7 @@
   window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};
   function boot(){
     normalizeGlobalHeader();
+    normalizePaymentLogos();
     removeHeaderCart();
     paint();
     updateFloatingOffset();
