@@ -509,6 +509,7 @@
     mountSignatureReview();
   }
   function ensureFloatingCart(){
+    if(homePath())document.body.classList.add('dd-home-page');
     let link=document.getElementById('ddFloatingCart');
     if(link)return link;
 
@@ -544,6 +545,7 @@
       body.dd-has-bottom-bar #ddFloatingCart{bottom:100px}
       @media(max-width:700px){
         #ddFloatingCart{left:14px;bottom:18px;width:54px;height:54px}
+        body.dd-home-page #ddFloatingCart{left:calc(14px + var(--dd-page-gutter,16px) + env(safe-area-inset-left))}
         body.dd-has-bottom-bar #ddFloatingCart{bottom:92px}
         #ddFloatingCart .dd-float-label{display:none}
       }
