@@ -236,6 +236,18 @@ const previousGiftNames=(plan.products||[]).filter(p=>/هدية|هدايا|بو�
 previousGiftNames.forEach(n=>{const p=PRODUCTS.find(x=>x.name===n); if(p&&!plan.giftSelections.some(g=>g.id===p.id)) plan.giftSelections.push(p);});
 const selected=new Map((plan.giftSelections||[]).map(p=>[p.id,p]));
 const filters={category:'all',recipient:'all',price:'all'};
+function ddBudgetScore(price,key){
+ const p=Number(price)||0;if(!key||key==='unsure')return 0;
+ const ranges={'under-1000':[0,1000,700],'1000-2500':[1000,2500,1750],'2500-5000':[2500,5000,3750],'5000-plus':[5000,Infinity,6000]};
+ const r=ranges[key];if(!r)return 0;const [min,max,target]=r;
+ if(p>=min&&p<=max)return Math.abs(p-target);
+ if(p<min)return 100000+(min-p);
+ return 100000+(p-max);
+}
+function ddBudgetSort(arr){
+ const key=plan.budgetKey||plan.budget||'';if(!key||key==='unsure')return arr;
+ return arr.sort((a,b)=>ddBudgetScore(a.price,key)-ddBudgetScore(b.price,key));
+}
 const grid=document.getElementById('productGrid'), currentWrap=document.getElementById('currentWrap'), resultCount=document.getElementById('resultCount'), noResults=document.getElementById('noResults'), thumbs=document.getElementById('thumbs'), summaryText=document.getElementById('summaryText'), headerCount=document.getElementById('headerCount'), toast=document.getElementById('toast');
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1600)}
 function money(n){return new Intl.NumberFormat('en-US').format(n)}
@@ -255,7 +267,7 @@ function passFilter(p){
 }
 function renderGrid(){
  let arr=PRODUCTS.filter(passFilter); const sort=document.getElementById('sort').value;
- if(sort==='priceAsc')arr.sort((a,b)=>a.price-b.price); if(sort==='priceDesc')arr.sort((a,b)=>b.price-a.price);
+ if(sort==='priceAsc')arr.sort((a,b)=>a.price-b.price); else if(sort==='priceDesc')arr.sort((a,b)=>b.price-a.price); else arr=ddBudgetSort(arr);
  resultCount.textContent=`${arr.length} ${arr.length===1?'هدية':'هدايا'}`; noResults.style.display=arr.length?'none':'block';
  grid.innerHTML=arr.map(p=>`<article class="product ${selected.has(p.id)?'selected':''}" id="prod-${p.id}" tabindex="0" role="button" aria-pressed="${selected.has(p.id)?'true':'false'}" onclick="if(!event.target.closest('button'))toggleGift('${p.id}')" onkeydown="if((event.key==='Enter'||event.key===' ')&&!event.target.closest('button')){event.preventDefault();toggleGift('${p.id}')}"><div class="media"><img src="${p.img}" alt="${p.name}"><button class="fav" onclick="event.stopPropagation();this.textContent=this.textContent==='♡'?'♥':'♡'">♡</button><span class="tag">${p.tag}</span></div><div class="body"><div class="vendor">${p.vendor}</div><div class="title">${p.name}</div><div class="meta">${p.meta}</div><div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="event.stopPropagation();toggleGift('${p.id}')">${selected.has(p.id)?'✓ مختارة':'أضف'}</button></div></div></article>`).join('');
 }
