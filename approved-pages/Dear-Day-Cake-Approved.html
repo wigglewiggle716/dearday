@@ -209,13 +209,25 @@ const previous=(plan.products||[]).filter(p=>/كيك|تورت|حلويات|cake/
 if(previous.length && !plan.cakeSelections.length){plan.cakeSelections.push({...PRODUCTS[1],source:'previous'})}
 const selected=new Map(plan.cakeSelections.map(p=>[p.id,p]));
 const filters={category:'all',people:'all',flavor:'all',design:'all',max:2000,q:''};
+function ddBudgetScore(price,key){
+ const p=Number(price)||0;if(!key||key==='unsure')return 0;
+ const ranges={'under-1000':[0,1000,700],'1000-2500':[1000,2500,1750],'2500-5000':[2500,5000,3750],'5000-plus':[5000,Infinity,6000]};
+ const r=ranges[key];if(!r)return 0;const [min,max,target]=r;
+ if(p>=min&&p<=max)return Math.abs(p-target);
+ if(p<min)return 100000+(min-p);
+ return 100000+(p-max);
+}
+function ddBudgetSort(arr){
+ const key=plan.budgetKey||plan.budget||'';if(!key||key==='unsure')return arr;
+ return arr.sort((a,b)=>ddBudgetScore(a.price,key)-ddBudgetScore(b.price,key));
+}
 const el=id=>document.getElementById(id), grid=el('grid'), currentWrap=el('currentWrap'), toast=el('toast');
 function money(n){return new Intl.NumberFormat('en-US').format(n)}
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1500)}
 function persist(){plan.cakeSelections=[...selected.values()];ddSaveLocal(plan);if(window.DDCart){DDCart.syncType('cake',plan.cakeSelections,plan);DDCart.paint();}}
 function renderCurrent(){const arr=[...selected.values()];if(!arr.length){currentWrap.innerHTML='<div class="empty">لسه ما اخترتش كيك أو حلويات محددة. اختار من الكتالوج تحت.</div>';return}currentWrap.innerHTML=arr.map((p,i)=>`<div class="current-card" style="${i?'margin-top:10px':''}"><img src="${p.img}"><div><small style="color:#96847f">${p.vendor}</small><h3>${p.ar}</h3><p>${p.people} أشخاص • ${p.flavor} • <strong style="color:#7b1027">EGP ${money(p.price)}</strong></p></div><div class="current-actions"><button class="outline" onclick="focusProduct('${p.id}')">تغيير</button><button class="soft" onclick="removeCake('${p.id}')">حذف</button></div></div>`).join('')}
 function pass(p){if(filters.category!=='all'&&p.category!==filters.category)return false;if(filters.people!=='all'&&p.people!==filters.people)return false;if(filters.flavor!=='all'&&p.flavor!==filters.flavor)return false;if(filters.design!=='all'&&p.design!==filters.design)return false;if(p.price>filters.max)return false;if(filters.q&&!`${p.ar} ${p.name} ${p.vendor}`.toLowerCase().includes(filters.q))return false;return true}
-function renderGrid(){let arr=PRODUCTS.filter(pass);const s=el('sort').value;if(s==='asc')arr.sort((a,b)=>a.price-b.price);if(s==='desc')arr.sort((a,b)=>b.price-a.price);el('resultCount').textContent=`${arr.length} منتج`;el('noResults').style.display=arr.length?'none':'block';grid.innerHTML=arr.map(p=>`<article class="product ${selected.has(p.id)?'selected':''}" id="prod-${p.id}"><div class="media"><img src="${p.img}" alt="${p.ar}"><button class="fav" onclick="this.textContent=this.textContent==='♡'?'♥':'♡'">♡</button></div><div class="body"><div class="vendor">${p.vendor}</div><div class="ptitle">${p.ar}</div><div class="meta">${p.people} أشخاص • ${p.flavor}</div><div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="toggleCake('${p.id}')">${selected.has(p.id)?'✓':'+'}</button></div></div></article>`).join('')}
+function renderGrid(){let arr=PRODUCTS.filter(pass);const s=el('sort').value;if(s==='asc')arr.sort((a,b)=>a.price-b.price);else if(s==='desc')arr.sort((a,b)=>b.price-a.price);else arr=ddBudgetSort(arr);el('resultCount').textContent=`${arr.length} منتج`;el('noResults').style.display=arr.length?'none':'block';grid.innerHTML=arr.map(p=>`<article class="product ${selected.has(p.id)?'selected':''}" id="prod-${p.id}"><div class="media"><img src="${p.img}" alt="${p.ar}"><button class="fav" onclick="this.textContent=this.textContent==='♡'?'♥':'♡'">♡</button></div><div class="body"><div class="vendor">${p.vendor}</div><div class="ptitle">${p.ar}</div><div class="meta">${p.people} أشخاص • ${p.flavor}</div><div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="toggleCake('${p.id}')">${selected.has(p.id)?'✓':'+'}</button></div></div></article>`).join('')}
 function updateSummary(){const arr=[...selected.values()],total=arr.reduce((s,p)=>s+p.price,0);el('summaryText').textContent=arr.length?`${arr.length} ${arr.length===1?'اختيار':'اختيارات'}`:'لا يوجد كيك مختار';el('totalPrice').textContent='EGP '+money(total);el('thumbs').innerHTML=arr.slice(0,4).map(p=>`<img src="${p.img}">`).join('');el('nextBtn').disabled=!arr.length;if(el('headerCount'))el('headerCount').textContent=((plan.giftSelections||[]).length+arr.length)}
 window.toggleCake=id=>{const p=PRODUCTS.find(x=>x.id===id);if(selected.has(id)){selected.delete(id);showToast('تمت إزالة الاختيار')}else{selected.set(id,p);showToast('تمت إضافة الاختيار')}persist();renderCurrent();renderGrid();updateSummary()};
 window.removeCake=id=>{selected.delete(id);persist();renderCurrent();renderGrid();updateSummary();showToast('تم الحذف')};
