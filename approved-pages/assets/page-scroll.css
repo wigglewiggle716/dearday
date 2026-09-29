@@ -1,0 +1,15 @@
+/* Keep the document as the single vertical scroll surface. In particular,
+   overflow-x:hidden on body implicitly makes overflow-y:auto, which can
+   create a second scrolling surface around sticky/fixed UI on mobile. */
+html {
+  overflow-x: clip !important;
+  overflow-y: auto !important;
+}
+body {
+  overflow: visible !important;
+}
+@media (hover: none) and (pointer: coarse) {
+  html {
+    overscroll-behavior-y: none;
+  }
+}
