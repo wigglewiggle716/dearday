@@ -57,6 +57,9 @@
   function clear(){ return write([]); }
   function count(){return read().length}
   function total(){return read().reduce((s,x)=>s+price(x.price),0)}
+  function removeHeaderCart(){
+    document.querySelectorAll('.dd-cart-link').forEach(el=>el.remove());
+  }
   function ensureFloatingCart(){
     let link=document.getElementById('ddFloatingCart');
     if(link)return link;
@@ -120,6 +123,7 @@
     document.body.classList.toggle('dd-has-bottom-bar',hasBottom);
   }
   function paint(){
+    removeHeaderCart();
     const n=count();
     document.querySelectorAll('[data-dd-cart-count]').forEach(el=>{el.textContent=n;el.setAttribute('aria-label',n+' عناصر في السلة')});
     const floating=ensureFloatingCart();
@@ -141,6 +145,7 @@
   }
   window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price};
   function boot(){
+    removeHeaderCart();
     paint();
     updateFloatingOffset();
     window.addEventListener('resize',updateFloatingOffset,{passive:true});
