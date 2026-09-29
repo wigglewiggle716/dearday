@@ -435,12 +435,15 @@ function showToast(text){
 }
 function totalCount(){return selectedServices.size + selectedProducts.size}
 function updateUI(){
-  const total=totalCount(); headerCount.textContent=total;
-  summaryText.textContent=total ? `${total} ${total===1?'عنصر مختار':'عناصر مختارة'}` : 'لم تختر أي عناصر بعد';
-  nextBtn.disabled=!total;
-  thumbs.innerHTML='';
-  const items=[...selectedServices.values(),...selectedProducts.values()].slice(0,4);
-  items.forEach(item=>{const img=document.createElement('img');img.src=item.img;img.alt=item.name;thumbs.appendChild(img)});
+  const total=totalCount();
+  if(headerCount)headerCount.textContent=total;
+  if(summaryText)summaryText.textContent=total ? `${total} ${total===1?'عنصر مختار':'عناصر مختارة'}` : 'لم تختر أي عناصر بعد';
+  if(nextBtn)nextBtn.disabled=!total;
+  if(thumbs){
+    thumbs.innerHTML='';
+    const items=[...selectedServices.values(),...selectedProducts.values()].slice(0,4);
+    items.forEach(item=>{if(!item||!item.img)return;const img=document.createElement('img');img.src=item.img;img.alt=item.name||'';thumbs.appendChild(img)});
+  }
   cards.forEach(card=>card.setAttribute('aria-pressed',card.classList.contains('selected')?'true':'false'));
   if(packageCard)packageCard.setAttribute('aria-pressed',packageCard.classList.contains('selected')?'true':'false');
   incomingPlan.services=[...selectedServices.values()].map(x=>x.name);
@@ -475,7 +478,7 @@ document.querySelectorAll('.product').forEach(product=>{
   });
   product.querySelector('.heart').addEventListener('click',e=>{e.currentTarget.textContent=e.currentTarget.textContent==='♡'?'♥':'♡'})
 });
-document.getElementById('headerChoices').addEventListener('click',()=>document.getElementById('stickyBar').scrollIntoView({behavior:'smooth',block:'end'}));
+const headerChoices=document.getElementById('headerChoices');if(headerChoices)headerChoices.addEventListener('click',()=>document.getElementById('stickyBar')?.scrollIntoView({behavior:'smooth',block:'end'}));
 // Restore previously chosen services/products when returning to this step.
 (incomingPlan.services||[]).forEach(name=>{const c=[...cards,packageCard].find(x=>x&&x.dataset.service===name);if(c){c.classList.add('selected');selectedServices.set(name,{name,img:c.dataset.img})}});
 (incomingPlan.products||[]).forEach(p=>{const card=[...document.querySelectorAll('.product')].find(x=>x.dataset.product===p.name);if(card){const body=card.querySelector('.product-body');selectedProducts.set(p.name,{...p,img:card.dataset.img,vendor:p.vendor||body?.querySelector('.vendor')?.textContent||'',price:p.price||body?.querySelector('.price')?.textContent||''});const add=card.querySelector('.add');if(add)add.textContent='✓';}});
