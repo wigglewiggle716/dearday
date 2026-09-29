@@ -291,8 +291,11 @@
         margin:0;color:#6B3540;font-family:Lora,Georgia,'Times New Roman',serif;font-size:23px;line-height:1.35
       }
       .dd-signature-sub{margin:5px 0 0;color:#756a68;font-size:12px;line-height:1.7}
-      .dd-signature-mark{width:86px;min-width:86px;height:46px;opacity:.88}
-      .dd-signature-mark path{fill:none;stroke:#A8583D;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+      .dd-signature-accent{display:flex;align-items:center;gap:8px;margin-top:8px}
+      .dd-signature-heart{width:15px;height:15px;display:block;flex:0 0 auto}
+      .dd-signature-heart path{fill:none;stroke:#A8583D;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+      .dd-signature-underline{width:96px;height:13px;display:block}
+      .dd-signature-underline path{fill:none;stroke:#A8583D;stroke-width:1.8;stroke-linecap:round}
       .dd-signature-input{
         width:100%;min-height:112px;resize:vertical;border:1px solid #e4d3cd;border-radius:16px;
         background:#fff;padding:14px 16px;color:#3b292b;font:15px/1.8 Tahoma,Arial,sans-serif;
@@ -314,13 +317,12 @@
         white-space:pre-wrap;overflow-wrap:anywhere
       }
       .dd-signature-review .dd-signature-line{
-        width:120px;height:18px;margin-top:8px;display:block
+        width:92px;height:12px;margin-top:7px;display:block
       }
-      .dd-signature-review .dd-signature-line path{fill:none;stroke:#A8583D;stroke-width:2;stroke-linecap:round}
+      .dd-signature-review .dd-signature-line path{fill:none;stroke:#A8583D;stroke-width:1.7;stroke-linecap:round}
       @media(max-width:650px){
         .dd-signature-editor{margin:0 10px 14px;padding:18px}
         .dd-signature-head{gap:12px}
-        .dd-signature-mark{width:62px;min-width:62px}
         .dd-signature-title{font-size:20px}
         .dd-signature-review .dd-signature-review-body{padding:20px}
         .dd-signature-review blockquote{font-size:17px}
@@ -328,8 +330,8 @@
     `;
     document.head.appendChild(style);
   }
-  function signatureMarkSvg(){
-    return '<svg class="dd-signature-mark" viewBox="0 0 100 54" aria-hidden="true"><path d="M5 35c12-24 21-25 21-8 0 15-13 21-17 12-4-10 15-20 27-11 11 8 1 20-8 14-7-5 7-18 20-14 12 4 8 17 0 18-9 1-12-12-3-20 11-12 25 9 15 18-8 8-18-6-9-14 10-9 28 7 37 14"/></svg>';
+  function signatureAccentSvg(){
+    return '<span class="dd-signature-accent" aria-hidden="true"><svg class="dd-signature-heart" viewBox="0 0 24 24"><path d="M12 20.2S4.8 15.8 3 10.9C1.7 7.5 3.8 4.7 6.9 4.7c2 0 3.6 1.1 5.1 3.1 1.5-2 3.1-3.1 5.1-3.1 3.1 0 5.2 2.8 3.9 6.2-1.8 4.9-9 9.3-9 9.3Z"/></svg><svg class="dd-signature-underline" viewBox="0 0 100 14"><path d="M2 9.5c17-5.2 31 1.8 46-1.6 16-3.7 30-3 50-5.3"/></svg></span>';
   }
   function saveHeartMessage(value){
     const plan=readPlanData();
@@ -352,9 +354,9 @@
         <div class="dd-signature-copy">
           <span class="dd-signature-kicker">Dear note</span>
           <h3 class="dd-signature-title" id="ddSignatureTitle">اكتب له/لها كلمة من القلب</h3>
+          ${signatureAccentSvg()}
           <p class="dd-signature-sub">رسالة اختيارية نحتفظ بها مع تفاصيل المناسبة، وتقدر تراجعها قبل الدفع.</p>
         </div>
-        ${signatureMarkSvg()}
       </div>
       <label for="ddHeartMessage" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">رسالة من القلب</label>
       <textarea class="dd-signature-input" id="ddHeartMessage" maxlength="220" placeholder="مثال: كل سنة وإنت أجمل جزء في أيامي..."></textarea>
@@ -405,7 +407,7 @@
       <div class="dd-signature-review-body">
         <div class="dd-signature-review-label">Dear note</div>
         <blockquote>${signatureEscape(message)}</blockquote>
-        <svg class="dd-signature-line" viewBox="0 0 120 18" aria-hidden="true"><path d="M2 12c24-9 38 5 58-3 18-7 30-2 58-6"/></svg>
+        <span class="dd-signature-accent" aria-hidden="true"><svg class="dd-signature-heart" viewBox="0 0 24 24"><path d="M12 20.2S4.8 15.8 3 10.9C1.7 7.5 3.8 4.7 6.9 4.7c2 0 3.6 1.1 5.1 3.1 1.5-2 3.1-3.1 5.1-3.1 3.1 0 5.2 2.8 3.9 6.2-1.8 4.9-9 9.3-9 9.3Z"/></svg><svg class="dd-signature-line" viewBox="0 0 100 14"><path d="M2 9.5c17-5.2 31 1.8 46-1.6 16-3.7 30-3 50-5.3"/></svg></span>
       </div>
     `;
     if(panels.length>1)stack.insertBefore(section,panels[1]);else stack.appendChild(section);
