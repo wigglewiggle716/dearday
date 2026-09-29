@@ -203,7 +203,7 @@ PRODUCTS.push(
   {...PRODUCTS[5],id:'dummy-cookies-name',name:'Personalized Cookies Box',ar:'بوكس كوكيز بالاسم',category:'cookies',people:'12',flavor:'chocolate',design:'classic',price:720,vendor:'Cookie Story'}
 );
 
-plan.occasion=plan.occasion||'birthday';plan.cakeSelections=Array.isArray(plan.cakeSelections)?plan.cakeSelections:[];
+if(!plan.occasion&&!plan.directStart)plan.occasion='birthday';plan.cakeSelections=Array.isArray(plan.cakeSelections)?plan.cakeSelections:[];
 plan.cakeSelections=plan.cakeSelections.map(c=>PRODUCTS.find(p=>p.id===c.id)||c).filter(c=>c&&c.id);
 const previous=(plan.products||[]).filter(p=>/كيك|تورت|حلويات|cake/i.test(p.name||''));
 if(previous.length && !plan.cakeSelections.length){plan.cakeSelections.push({...PRODUCTS[1],source:'previous'})}
