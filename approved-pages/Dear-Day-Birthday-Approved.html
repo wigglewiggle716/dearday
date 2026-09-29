@@ -231,7 +231,7 @@ footer{margin-top:44px!important}
 </style>
 <style id="dd-plan-context-style">
 .dd-plan-context{max-width:1200px;margin:22px auto 0;padding:0 28px;direction:rtl}
-.dd-plan-context-card{display:grid;grid-template-columns:minmax(180px,1.1fr) minmax(180px,1fr) minmax(180px,1fr);gap:14px;align-items:end;border:1px solid #dccdc5;background:#fffaf6;border-radius:14px;padding:18px 20px;box-shadow:0 8px 26px rgba(107,53,64,.06)}
+.dd-plan-context-card{display:grid;grid-template-columns:minmax(180px,1.1fr) repeat(3,minmax(170px,1fr));gap:14px;align-items:end;border:1px solid #dccdc5;background:#fffaf6;border-radius:14px;padding:18px 20px;box-shadow:0 8px 26px rgba(107,53,64,.06)}
 .dd-plan-context-title{align-self:center}
 .dd-plan-context-title span{display:block;font-size:13px;opacity:.7;margin-bottom:3px}
 .dd-plan-context-title strong{font-size:19px;color:#6B3540}
@@ -278,6 +278,15 @@ footer{margin-top:44px!important}
     </label>
     <label>تاريخ المناسبة
       <input id="ddContextDate" type="date" lang="ar-EG"/>
+    </label>
+    <label>الميزانية التقريبية
+      <select id="ddContextBudget">
+        <option value="under-1000">أقل من 1,000</option>
+        <option value="1000-2500">1,000–2,500</option>
+        <option value="2500-5000">2,500–5,000</option>
+        <option value="5000-plus">5,000+</option>
+        <option value="unsure">لسه مش محدد</option>
+      </select>
     </label>
   </div>
 </section>
@@ -412,6 +421,8 @@ const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.ge
   const occ=document.getElementById('ddContextOccasion');
   const area=document.getElementById('ddContextArea');
   const date=document.getElementById('ddContextDate');
+  const budget=document.getElementById('ddContextBudget');
+  const budgetLabels={'under-1000':'أقل من 1,000','1000-2500':'1,000–2,500','2500-5000':'2,500–5,000','5000-plus':'5,000+','unsure':'لسه مش محدد'};
   if(occ)occ.textContent=meta.label;
   if(area){
     incomingPlan.area=params.get('area')||incomingPlan.area||''; area.value=incomingPlan.area;
@@ -423,8 +434,51 @@ const incomingPlan=ddReadIncoming()||(()=>{try{return JSON.parse(localStorage.ge
     incomingPlan.date=params.get('date')||incomingPlan.date||''; date.value=incomingPlan.date;
     date.addEventListener('change',()=>{incomingPlan.date=date.value;ddSaveLocal(incomingPlan)});
   }
+  if(budget){
+    incomingPlan.budgetKey=params.get('budget')||incomingPlan.budgetKey||incomingPlan.budget||'unsure';
+    incomingPlan.budget=incomingPlan.budgetKey;
+    incomingPlan.budgetLabel=budgetLabels[incomingPlan.budgetKey]||'لسه مش محدد';
+    budget.value=incomingPlan.budgetKey;
+    budget.addEventListener('change',()=>{
+      incomingPlan.budgetKey=budget.value;
+      incomingPlan.budget=budget.value;
+      incomingPlan.budgetLabel=budgetLabels[budget.value]||'لسه مش محدد';
+      ddSaveLocal(incomingPlan);
+      ddApplyBudgetPreference();
+    });
+  }
   ddSaveLocal(incomingPlan);
 })();
+
+function ddBudgetScore(price,key){
+  const p=Number(price)||0;
+  if(!key||key==='unsure')return 0;
+  const ranges={
+    'under-1000':[0,1000,700],
+    '1000-2500':[1000,2500,1750],
+    '2500-5000':[2500,5000,3750],
+    '5000-plus':[5000,Infinity,6000]
+  };
+  const r=ranges[key]; if(!r)return 0;
+  const [min,max,target]=r;
+  if(p>=min&&p<=max)return Math.abs(p-target);
+  if(p<min)return 100000+(min-p);
+  return 100000+(p-max);
+}
+function ddApplyBudgetPreference(){
+  const key=incomingPlan.budgetKey||incomingPlan.budget||'';
+  const grid=document.querySelector('.suggestions .product-grid');
+  if(!grid||!key||key==='unsure')return;
+  const cards=[...grid.querySelectorAll('.product')];
+  cards.sort((a,b)=>{
+    const pa=Number((a.querySelector('.price')?.textContent||'').replace(/[^0-9.]/g,''))||0;
+    const pb=Number((b.querySelector('.price')?.textContent||'').replace(/[^0-9.]/g,''))||0;
+    return ddBudgetScore(pa,key)-ddBudgetScore(pb,key);
+  }).forEach(card=>grid.appendChild(card));
+  const copy=document.querySelector('.suggestions .section-head p');
+  if(copy)copy.textContent='مرتبة حسب المناسبة والميزانية المختارة'+(incomingPlan.budgetLabel?' ('+incomingPlan.budgetLabel+')':'');
+}
+ddApplyBudgetPreference();
 const selectedServices = new Map();
 const selectedProducts = new Map();
 const cards = [...document.querySelectorAll('.service')];
