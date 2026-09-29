@@ -83,11 +83,13 @@
       .dd-global-header .dd-global-nav>a{position:relative;color:#3B292B!important;font-size:13px!important;font-weight:800!important;padding:12px 1px!important;transition:.18s ease}
       .dd-global-header .dd-global-nav>a:hover,.dd-global-header .dd-global-nav>a.dd-active{color:#A8583D!important}
       .dd-global-header .dd-global-nav>a.dd-active:not(.dd-plan-cta):after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px}
-      .dd-global-header .dd-plan-cta{padding:10px 17px!important;border-radius:999px!important;background:#6B3540!important;color:#fff!important;border:1px solid #6B3540!important}
-      .dd-global-header .dd-plan-cta:hover{background:#A8583D!important;border-color:#A8583D!important;color:#fff!important;transform:translateY(-1px)}
+      .dd-global-header .dd-plan-cta{padding:12px 1px!important;border-radius:0!important;background:transparent!important;color:#A8583D!important;border:0!important}
+      .dd-global-header .dd-plan-cta:after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px}
+      .dd-global-header .dd-plan-cta:hover{background:transparent!important;border-color:transparent!important;color:#A8583D!important;transform:none!important}
       .dd-global-header .dd-global-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;white-space:nowrap!important}
-      .dd-global-header .dd-auth{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.28)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;background:transparent!important}
-      .dd-global-header .dd-auth.dd-signup{background:#fff!important}
+      .dd-global-header .dd-auth{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;background:transparent!important}
+      .dd-global-header .dd-auth:hover{color:#6B3540!important;border-color:#A8583D!important;background:transparent!important}
+      .dd-global-header .dd-auth.dd-signup{background:#6B3540!important;border-color:#6B3540!important;color:#fff!important}
       .dd-global-header .dd-lang{min-width:40px!important;width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.22)!important;display:grid!important;place-items:center!important;font-size:11px!important;font-weight:900!important;color:#6B3540!important;background:#FAF3EA!important}
       .dd-global-header .dd-mobile-plan{display:none!important}
       @media(max-width:1120px){
