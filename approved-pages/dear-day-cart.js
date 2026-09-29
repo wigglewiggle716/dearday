@@ -80,11 +80,12 @@
       .dd-global-header .dd-global-brand img{width:168px!important;height:62px!important;object-fit:contain!important;display:block!important;mix-blend-mode:multiply!important}
       .dd-global-header .dd-global-brand-text{font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:700;color:#6B3540}
       .dd-global-header .dd-global-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:28px!important;white-space:nowrap!important}
-      .dd-global-header .dd-global-nav>a{position:relative;color:#3B292B!important;font-size:13px!important;font-weight:800!important;padding:12px 1px!important;transition:.18s ease}
+      .dd-global-header .dd-global-nav>a{position:relative;color:#3B292B!important;font-size:13px!important;font-weight:800!important;padding:12px 1px!important;transition:.18s ease;border:0!important;box-shadow:none!important;text-decoration:none!important;background-image:none!important}
+      .dd-global-header .dd-global-nav>a:before{content:none!important;display:none!important}
+      .dd-global-header .dd-global-nav>a:after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px;transform:scaleX(0);opacity:0;transition:transform .18s ease,opacity .18s ease}
       .dd-global-header .dd-global-nav>a:hover,.dd-global-header .dd-global-nav>a.dd-active{color:#A8583D!important}
-      .dd-global-header .dd-global-nav>a.dd-active:not(.dd-plan-cta):after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px}
+      .dd-global-header .dd-global-nav>a:hover:after,.dd-global-header .dd-global-nav>a.dd-active:after{transform:scaleX(1);opacity:1}
       .dd-global-header .dd-plan-cta{padding:12px 1px!important;border-radius:0!important;background:transparent!important;color:#A8583D!important;border:0!important}
-      .dd-global-header .dd-plan-cta:after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px}
       .dd-global-header .dd-plan-cta:hover{background:transparent!important;border-color:transparent!important;color:#A8583D!important;transform:none!important}
       .dd-global-header .dd-global-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;white-space:nowrap!important}
       .dd-global-header .dd-auth{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;background:transparent!important}
