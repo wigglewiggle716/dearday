@@ -545,7 +545,7 @@
       body.dd-has-bottom-bar #ddFloatingCart{bottom:100px}
       @media(max-width:700px){
         #ddFloatingCart{left:14px;bottom:18px;width:54px;height:54px}
-        body.dd-home-page #ddFloatingCart{left:calc(14px + var(--dd-page-gutter,16px) + env(safe-area-inset-left))}
+        body.dd-home-page #ddFloatingCart{left:max(20px,env(safe-area-inset-left))!important;right:auto!important}
         body.dd-has-bottom-bar #ddFloatingCart{bottom:92px}
         #ddFloatingCart .dd-float-label{display:none}
       }
