@@ -806,8 +806,14 @@ updateUI();
   }
 
   if(budgetEl)budgetEl.addEventListener('change',()=>{
-    incomingPlan.recommendedPackage=null;
-    incomingPlan.packageSelections=[];
+    if(incomingPlan.recommendedPackage){
+      incomingPlan.recommendedPackage=null;
+      incomingPlan.packageSelections=[];
+      incomingPlan.giftSelections=[];
+      incomingPlan.cakeSelections=[];
+      incomingPlan.venueSelections=[];
+      ddSaveLocal(incomingPlan);
+    }
     render();
   });
 
