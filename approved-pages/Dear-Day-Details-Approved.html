@@ -183,32 +183,65 @@ function collect(){
   };
 }
 
-const nextBtn=byId('next');
-if(nextBtn)nextBtn.addEventListener('click',e=>{
-  e.preventDefault();
-  e.stopPropagation();
-  const d=collect();
-  if(!cartItems().length){showToast('السلة فاضية. أضف اختيار واحد على الأقل.');return}
+function persistEventDetails(){
+  plan.eventDetails=collect();
+  syncPlanFromCart();
+  savePlan(plan);
+  return plan.eventDetails;
+}
+
+function handleNextClick(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  const d=persistEventDetails();
+  if(!cartItems().length){showToast('السلة فاضية. أضف اختيار واحد على الأقل.');return false}
   if(!d.celebrant||!d.eventDate||!d.eventTime){
     showToast('من فضلك أكمل الاسم والتاريخ والوقت.');
     const target=byId(!d.celebrant?'celebrant':!d.eventDate?'eventDate':'eventTime');
     if(target){target.focus();target.scrollIntoView({behavior:'smooth',block:'center'})}
-    return;
+    return false;
   }
-  plan.eventDetails=d;
-  syncPlanFromCart();
-  savePlan(plan);
   window.location.assign('/approved-pages/Dear-Day-Review.html');
-},{passive:false});
+  return false;
+}
 
-const backBtn=byId('back');
-if(backBtn)backBtn.onclick=e=>{
-  e.preventDefault();
-  plan.eventDetails=collect();
-  syncPlanFromCart();
-  savePlan(plan);
-  location.href='/approved-pages/Dear-Day-Cart.html';
-};
+function bindDetailsActions(){
+  const nextBtn=byId('next');
+  if(nextBtn&&!nextBtn.dataset.ddBound){
+    nextBtn.dataset.ddBound='1';
+    nextBtn.addEventListener('click',handleNextClick,{passive:false});
+  }
+
+  const backBtn=byId('back');
+  if(backBtn&&!backBtn.dataset.ddBound){
+    backBtn.dataset.ddBound='1';
+    backBtn.addEventListener('click',e=>{
+      e.preventDefault();
+      persistEventDetails();
+      location.href='/approved-pages/Dear-Day-Cart.html';
+    });
+  }
+
+  ['celebrant','eventDate','eventTime','notes','address'].forEach(id=>{
+    const el=byId(id);
+    if(el&&!el.dataset.ddPersistBound){
+      el.dataset.ddPersistBound='1';
+      el.addEventListener('input',persistEventDetails);
+      el.addEventListener('change',persistEventDetails);
+    }
+  });
+  document.querySelectorAll('input[name="loc"]').forEach(el=>{
+    if(!el.dataset.ddPersistBound){
+      el.dataset.ddPersistBound='1';
+      el.addEventListener('change',persistEventDetails);
+    }
+  });
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bindDetailsActions,{once:true});
+}else{
+  bindDetailsActions();
+}
 
 for(const [id,target] of [['toEn','Dear-Day-Details-en.html'],['toAr','/approved-pages/Dear-Day-Details-Approved.html']]){
   const a=byId(id);
