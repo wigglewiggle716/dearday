@@ -156,11 +156,13 @@
     const isHome=homePath();
     const path=String(location.pathname||'');
     const occasionActive=/Dear-Day-(Occasions|Birthday)-Approved\.html/i.test(path);
+    const partnersActive=/Dear-Day-Partners\.html/i.test(path);
     const homeActive=isHome?' dd-active':'';
     const occActive=occasionActive?' dd-active':'';
+    const partnerActive=partnersActive?' dd-active':'';
 
     const howHref=homeHref('ddHowItWorks','/');
-    const partnersHref=homeHref('ddPartners','/');
+    const partnersHref='/approved-pages/Dear-Day-Partners.html';
     const planHref=isHome&&document.getElementById('ddOccasionsStart')?'#ddOccasionsStart':'/approved-pages/Dear-Day-Occasions-Approved.html';
 
     header.className='dd-global-header';
@@ -173,7 +175,7 @@
         <a class="${homeActive.trim()}" href="/">الرئيسية</a>
         <a class="${occActive.trim()}" href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a>
         <a href="${howHref}">كيف تعمل</a>
-        <a href="${partnersHref}">للشركاء</a>
+        <a class="${partnerActive.trim()}" href="${partnersHref}">للشركاء</a>
         <a class="dd-plan-cta" href="${planHref}">رتّب مناسبتي</a>
       </nav>
       <div class="dd-global-actions">
