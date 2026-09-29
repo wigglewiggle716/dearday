@@ -252,6 +252,174 @@
       </span>
     `;
   }
+
+  function readPlanData(){
+    try{
+      const p=JSON.parse(localStorage.getItem('dearDayPlan')||'{}');
+      return p&&typeof p==='object'&&!Array.isArray(p)?p:{};
+    }catch(e){return {}}
+  }
+  function writePlanData(plan){
+    try{localStorage.setItem('dearDayPlan',JSON.stringify(plan||{}))}catch(e){}
+  }
+  function signatureEscape(value){
+    return String(value??'').replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function ensureSignatureStyle(){
+    if(document.getElementById('dd-signature-style'))return;
+    const style=document.createElement('style');
+    style.id='dd-signature-style';
+    style.textContent=`
+      .dd-signature-editor{
+        margin:0 18px 20px;padding:22px;border-top:1px solid #f1e8e4;
+        background:linear-gradient(135deg,#fffdfb 0%,#fbf0ec 100%);border-radius:0 0 20px 20px;
+        position:relative;overflow:hidden
+      }
+      .dd-signature-editor:before{
+        content:"";position:absolute;inset-inline-end:-65px;top:-65px;width:170px;height:170px;
+        border:1px solid rgba(168,88,61,.16);border-radius:50%;pointer-events:none
+      }
+      .dd-signature-head{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:14px}
+      .dd-signature-copy{min-width:0}
+      .dd-signature-kicker{
+        display:block;color:#A8583D;font-family:'Alex Brush','Brush Script MT','Segoe Script',cursive;
+        direction:ltr;text-align:right;font-size:27px;line-height:1;margin-bottom:5px
+      }
+      .dd-signature-title{
+        margin:0;color:#6B3540;font-family:Lora,Georgia,'Times New Roman',serif;font-size:23px;line-height:1.35
+      }
+      .dd-signature-sub{margin:5px 0 0;color:#756a68;font-size:12px;line-height:1.7}
+      .dd-signature-mark{width:86px;min-width:86px;height:46px;opacity:.88}
+      .dd-signature-mark path{fill:none;stroke:#A8583D;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+      .dd-signature-input{
+        width:100%;min-height:112px;resize:vertical;border:1px solid #e4d3cd;border-radius:16px;
+        background:#fff;padding:14px 16px;color:#3b292b;font:15px/1.8 Tahoma,Arial,sans-serif;
+        outline:none;transition:border-color .18s ease,box-shadow .18s ease
+      }
+      .dd-signature-input::placeholder{color:#ad9b96}
+      .dd-signature-input:focus{border-color:#A8583D;box-shadow:0 0 0 3px rgba(168,88,61,.09)}
+      .dd-signature-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:8px;font-size:11px;color:#978783}
+      .dd-signature-saved{color:#6B3540;font-weight:700}
+      .dd-signature-review{position:relative;overflow:hidden}
+      .dd-signature-review .dd-signature-review-body{padding:24px 26px 26px;background:linear-gradient(135deg,#fffdfb,#fbf0ec)}
+      .dd-signature-review .dd-signature-review-label{
+        color:#A8583D;font-family:'Alex Brush','Brush Script MT','Segoe Script',cursive;
+        direction:ltr;text-align:right;font-size:29px;line-height:1;margin-bottom:8px
+      }
+      .dd-signature-review blockquote{
+        margin:0;padding:5px 0 5px 18px;border:0;color:#4a3436;
+        font-family:Lora,Georgia,'Times New Roman',serif;font-size:19px;line-height:1.9;
+        white-space:pre-wrap;overflow-wrap:anywhere
+      }
+      .dd-signature-review .dd-signature-line{
+        width:120px;height:18px;margin-top:8px;display:block
+      }
+      .dd-signature-review .dd-signature-line path{fill:none;stroke:#A8583D;stroke-width:2;stroke-linecap:round}
+      @media(max-width:650px){
+        .dd-signature-editor{margin:0 10px 14px;padding:18px}
+        .dd-signature-head{gap:12px}
+        .dd-signature-mark{width:62px;min-width:62px}
+        .dd-signature-title{font-size:20px}
+        .dd-signature-review .dd-signature-review-body{padding:20px}
+        .dd-signature-review blockquote{font-size:17px}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  function signatureMarkSvg(){
+    return '<svg class="dd-signature-mark" viewBox="0 0 100 54" aria-hidden="true"><path d="M5 35c12-24 21-25 21-8 0 15-13 21-17 12-4-10 15-20 27-11 11 8 1 20-8 14-7-5 7-18 20-14 12 4 8 17 0 18-9 1-12-12-3-20 11-12 25 9 15 18-8 8-18-6-9-14 10-9 28 7 37 14"/></svg>';
+  }
+  function saveHeartMessage(value){
+    const plan=readPlanData();
+    plan.heartMessage=String(value||'').slice(0,220);
+    plan.heartMessageUpdatedAt=Date.now();
+    writePlanData(plan);
+    window.dispatchEvent(new CustomEvent('ddheartmessagechange',{detail:{message:plan.heartMessage}}));
+  }
+  function mountSignatureEditor(){
+    if(!/Dear-Day-Cart\.html/i.test(String(location.pathname||'')))return;
+    if(document.getElementById('ddHeartMessage'))return;
+    const items=document.getElementById('cartItems');
+    if(!items)return;
+    const plan=readPlanData();
+    const wrap=document.createElement('section');
+    wrap.className='dd-signature-editor';
+    wrap.setAttribute('aria-labelledby','ddSignatureTitle');
+    wrap.innerHTML=`
+      <div class="dd-signature-head">
+        <div class="dd-signature-copy">
+          <span class="dd-signature-kicker">Dear note</span>
+          <h3 class="dd-signature-title" id="ddSignatureTitle">اكتب له/لها كلمة من القلب</h3>
+          <p class="dd-signature-sub">رسالة اختيارية نحتفظ بها مع تفاصيل المناسبة، وتقدر تراجعها قبل الدفع.</p>
+        </div>
+        ${signatureMarkSvg()}
+      </div>
+      <label for="ddHeartMessage" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">رسالة من القلب</label>
+      <textarea class="dd-signature-input" id="ddHeartMessage" maxlength="220" placeholder="مثال: كل سنة وإنت أجمل جزء في أيامي..."></textarea>
+      <div class="dd-signature-foot">
+        <span class="dd-signature-saved" id="ddHeartSaved">اختياري · يتحفظ تلقائيًا</span>
+        <span id="ddHeartCount">0 / 220</span>
+      </div>
+    `;
+    items.insertAdjacentElement('afterend',wrap);
+    const input=wrap.querySelector('#ddHeartMessage');
+    const count=wrap.querySelector('#ddHeartCount');
+    const saved=wrap.querySelector('#ddHeartSaved');
+    input.value=String(plan.heartMessage||'').slice(0,220);
+    count.textContent=input.value.length+' / 220';
+    let timer;
+    input.addEventListener('input',function(){
+      count.textContent=input.value.length+' / 220';
+      saved.textContent='جاري الحفظ...';
+      clearTimeout(timer);
+      timer=setTimeout(function(){
+        saveHeartMessage(input.value);
+        saved.textContent=input.value.trim()?'تم حفظ الرسالة ✓':'اختياري · يتحفظ تلقائيًا';
+      },220);
+    });
+    input.addEventListener('blur',function(){
+      clearTimeout(timer);
+      saveHeartMessage(input.value);
+      saved.textContent=input.value.trim()?'تم حفظ الرسالة ✓':'اختياري · يتحفظ تلقائيًا';
+    });
+  }
+  function mountSignatureReview(){
+    if(!/Dear-Day-Review\.html/i.test(String(location.pathname||'')))return;
+    if(document.getElementById('ddSignatureReview'))return;
+    const plan=readPlanData();
+    const message=String(plan.heartMessage||'').trim();
+    if(!message)return;
+    const stack=document.querySelector('.review-layout .stack');
+    if(!stack)return;
+    const panels=stack.querySelectorAll(':scope > .panel');
+    const section=document.createElement('section');
+    section.className='panel dd-signature-review';
+    section.id='ddSignatureReview';
+    section.innerHTML=`
+      <div class="panel-head">
+        <h2>كلمة من القلب</h2>
+        <button class="edit" type="button" id="ddEditHeartMessage">تعديل الرسالة</button>
+      </div>
+      <div class="dd-signature-review-body">
+        <div class="dd-signature-review-label">Dear note</div>
+        <blockquote>${signatureEscape(message)}</blockquote>
+        <svg class="dd-signature-line" viewBox="0 0 120 18" aria-hidden="true"><path d="M2 12c24-9 38 5 58-3 18-7 30-2 58-6"/></svg>
+      </div>
+    `;
+    if(panels.length>1)stack.insertBefore(section,panels[1]);else stack.appendChild(section);
+    section.querySelector('#ddEditHeartMessage').addEventListener('click',function(){
+      location.href='/approved-pages/Dear-Day-Cart.html#ddSignatureCard';
+    });
+  }
+  function initSignatureExperience(){
+    ensureSignatureStyle();
+    mountSignatureEditor();
+    const editor=document.querySelector('.dd-signature-editor');
+    if(editor&&!editor.id)editor.id='ddSignatureCard';
+    mountSignatureReview();
+  }
   function ensureFloatingCart(){
     let link=document.getElementById('ddFloatingCart');
     if(link)return link;
@@ -339,6 +507,7 @@
   function boot(){
     normalizeGlobalHeader();
     normalizePaymentLogos();
+    initSignatureExperience();
     removeHeaderCart();
     paint();
     updateFloatingOffset();
