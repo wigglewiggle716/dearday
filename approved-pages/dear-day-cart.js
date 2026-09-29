@@ -60,6 +60,145 @@
   function removeHeaderCart(){
     document.querySelectorAll('.dd-cart-link').forEach(el=>el.remove());
   }
+
+  function ensureGlobalHeaderStyle(){
+    if(document.getElementById('dd-global-header-style'))return;
+    const style=document.createElement('style');
+    style.id='dd-global-header-style';
+    style.textContent=`
+      .dd-global-header{
+        box-sizing:border-box!important;min-height:88px!important;height:auto!important;
+        display:grid!important;grid-template-columns:minmax(190px,auto) 1fr minmax(300px,auto)!important;
+        align-items:center!important;gap:26px!important;padding:10px clamp(24px,5vw,82px)!important;
+        background:rgba(250,243,234,.97)!important;border-bottom:1px solid rgba(107,53,64,.14)!important;
+        position:sticky!important;top:0!important;z-index:999!important;backdrop-filter:blur(14px)!important;
+        width:100%!important;font-family:Tahoma,Arial,sans-serif!important
+      }
+      .dd-global-header *{box-sizing:border-box}
+      .dd-global-header a{text-decoration:none!important}
+      .dd-global-header .dd-global-brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-width:0!important}
+      .dd-global-header .dd-global-brand img{width:168px!important;height:62px!important;object-fit:contain!important;display:block!important;mix-blend-mode:multiply!important}
+      .dd-global-header .dd-global-brand-text{font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:700;color:#6B3540}
+      .dd-global-header .dd-global-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:28px!important;white-space:nowrap!important}
+      .dd-global-header .dd-global-nav>a{position:relative;color:#3B292B!important;font-size:13px!important;font-weight:800!important;padding:12px 1px!important;transition:.18s ease}
+      .dd-global-header .dd-global-nav>a:hover,.dd-global-header .dd-global-nav>a.dd-active{color:#A8583D!important}
+      .dd-global-header .dd-global-nav>a.dd-active:not(.dd-plan-cta):after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:#A8583D;border-radius:2px}
+      .dd-global-header .dd-plan-cta{padding:10px 17px!important;border-radius:999px!important;background:#6B3540!important;color:#fff!important;border:1px solid #6B3540!important}
+      .dd-global-header .dd-plan-cta:hover{background:#A8583D!important;border-color:#A8583D!important;color:#fff!important;transform:translateY(-1px)}
+      .dd-global-header .dd-global-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;white-space:nowrap!important}
+      .dd-global-header .dd-auth{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.28)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;background:transparent!important}
+      .dd-global-header .dd-auth.dd-signup{background:#fff!important}
+      .dd-global-header .dd-lang{min-width:40px!important;width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.22)!important;display:grid!important;place-items:center!important;font-size:11px!important;font-weight:900!important;color:#6B3540!important;background:#FAF3EA!important}
+      .dd-global-header .dd-mobile-plan{display:none!important}
+      @media(max-width:1120px){
+        .dd-global-header{grid-template-columns:auto 1fr auto!important;padding-inline:20px!important;gap:16px!important}
+        .dd-global-header .dd-global-brand img{width:148px!important}
+        .dd-global-header .dd-global-nav{gap:17px!important}
+        .dd-global-header .dd-global-nav>a{font-size:12px!important}
+        .dd-global-header .dd-auth{padding-inline:10px!important}
+      }
+      @media(max-width:860px){
+        .dd-global-header{min-height:72px!important;grid-template-columns:auto 1fr!important;padding:8px 14px!important}
+        .dd-global-header .dd-global-brand img{width:128px!important;height:52px!important}
+        .dd-global-header .dd-global-nav{display:none!important}
+        .dd-global-header .dd-global-actions{justify-content:flex-end!important}
+        .dd-global-header .dd-auth{display:none!important}
+        .dd-global-header .dd-mobile-plan{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:8px 12px!important;border-radius:999px!important;background:#6B3540!important;color:#fff!important;font-size:11px!important;font-weight:900!important}
+        .dd-global-header .dd-lang{width:36px!important;height:36px!important;min-width:36px!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  function homePath(){
+    const p=String(location.pathname||'/').replace(/\/+$/,'')||'/';
+    return p==='/'||/\/index\.html$/i.test(p);
+  }
+  function normalizeText(v){
+    return String(v||'').replace(/\s+/g,' ').trim();
+  }
+  function assignHomeAnchor(id,terms){
+    if(!homePath())return false;
+    if(document.getElementById(id))return true;
+    const nodes=[...document.querySelectorAll('section,[data-section],main>div,footer h2,footer h3,footer h4,footer a')];
+    const found=nodes.find(el=>{
+      const t=normalizeText(el.textContent);
+      return terms.some(term=>t.includes(term));
+    });
+    if(!found)return false;
+    const target=found.matches('h2,h3,h4,a')?(found.closest('section,div,footer')||found):found;
+    if(!target.id)target.id=id;
+    return true;
+  }
+  function homeHref(id,fallback){
+    return homePath()&&document.getElementById(id)?'#'+id:'/#'+id;
+  }
+  function normalizeGlobalHeader(){
+    const header=document.querySelector('header');
+    if(!header||header.dataset.ddGlobalNav==='1')return header;
+    ensureGlobalHeaderStyle();
+
+    assignHomeAnchor('ddOccasionsStart',['اختار مناسبتك','اختار المناسبة','رتّب مناسبتك','رتب مناسبتك']);
+    assignHomeAnchor('ddHowItWorks',['كيف نعمل','كيف تعمل']);
+    assignHomeAnchor('ddPartners',['للشركاء','الشركاء']);
+
+    const oldLogo=header.querySelector('img');
+    const logoSrc=oldLogo?oldLogo.getAttribute('src'):'';
+    const oldLogin=[...header.querySelectorAll('a')].find(a=>normalizeText(a.textContent).includes('تسجيل الدخول'));
+    const oldSignup=[...header.querySelectorAll('a')].find(a=>normalizeText(a.textContent).includes('إنشاء حساب'));
+    const oldLang=header.querySelector('.lang-link,[aria-label="English"]');
+
+    const loginHref=oldLogin?.getAttribute('href')||'#';
+    const signupHref=oldSignup?.getAttribute('href')||'#';
+    const langHref=(oldLang?.getAttribute('href')&&oldLang.getAttribute('href')!=='#')?oldLang.getAttribute('href'):'#';
+
+    const isHome=homePath();
+    const path=String(location.pathname||'');
+    const occasionActive=/Dear-Day-(Occasions|Birthday)-Approved\.html/i.test(path);
+    const homeActive=isHome?' dd-active':'';
+    const occActive=occasionActive?' dd-active':'';
+
+    const howHref=homeHref('ddHowItWorks','/');
+    const partnersHref=homeHref('ddPartners','/');
+    const planHref=isHome&&document.getElementById('ddOccasionsStart')?'#ddOccasionsStart':'/approved-pages/Dear-Day-Occasions-Approved.html';
+
+    header.className='dd-global-header';
+    header.dataset.ddGlobalNav='1';
+    header.innerHTML=`
+      <a class="dd-global-brand" href="/" aria-label="Dear Day — الرئيسية">
+        ${logoSrc?'<img src="'+logoSrc+'" alt="Dear Day">':'<span class="dd-global-brand-text">Dear Day</span>'}
+      </a>
+      <nav class="dd-global-nav" aria-label="التنقل الرئيسي">
+        <a class="${homeActive.trim()}" href="/">الرئيسية</a>
+        <a class="${occActive.trim()}" href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a>
+        <a href="${howHref}">كيف تعمل</a>
+        <a href="${partnersHref}">للشركاء</a>
+        <a class="dd-plan-cta" href="${planHref}">رتّب مناسبتي</a>
+      </nav>
+      <div class="dd-global-actions">
+        <a class="dd-mobile-plan" href="${planHref}">رتّب مناسبتي</a>
+        <a class="dd-auth" href="${loginHref}">تسجيل الدخول</a>
+        <a class="dd-auth dd-signup" href="${signupHref}">إنشاء حساب</a>
+        <a class="dd-lang" href="${langHref}" aria-label="English">EN</a>
+      </div>
+    `;
+
+    if(loginHref==='#')header.querySelector('.dd-auth:not(.dd-signup)')?.addEventListener('click',e=>e.preventDefault());
+    if(signupHref==='#')header.querySelector('.dd-signup')?.addEventListener('click',e=>e.preventDefault());
+    if(langHref==='#')header.querySelector('.dd-lang')?.addEventListener('click',e=>e.preventDefault());
+
+    const brand=header.querySelector('.dd-global-brand');
+    if(isHome&&brand){
+      brand.addEventListener('click',e=>{e.preventDefault();history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'});});
+    }
+
+    if(isHome&&location.hash){
+      requestAnimationFrame(()=>{
+        const target=document.querySelector(location.hash);
+        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    }
+    return header;
+  }
   function ensureFloatingCart(){
     let link=document.getElementById('ddFloatingCart');
     if(link)return link;
@@ -143,8 +282,9 @@
     });
     return write(a);
   }
-  window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price};
+  window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};
   function boot(){
+    normalizeGlobalHeader();
     removeHeaderCart();
     paint();
     updateFloatingOffset();
