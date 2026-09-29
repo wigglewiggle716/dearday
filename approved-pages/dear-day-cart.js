@@ -225,6 +225,69 @@
     return header;
   }
 
+  function ensureMobileDateStyle(){
+    if(document.getElementById('dd-mobile-date-style'))return;
+    const style=document.createElement('style');
+    style.id='dd-mobile-date-style';
+    style.textContent=`
+      input[type="date"]{
+        touch-action:manipulation!important;
+        -webkit-appearance:auto!important;
+        appearance:auto!important;
+      }
+      @media(max-width:860px){
+        input[type="date"]{
+          min-height:48px!important;
+          width:100%!important;
+          cursor:pointer!important;
+          position:relative!important;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator{
+          display:block!important;
+          opacity:1!important;
+          cursor:pointer!important;
+          min-width:30px!important;
+          min-height:30px!important;
+          padding:6px!important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  function bindMobileDatePickers(){
+    ensureMobileDateStyle();
+    const isTouch=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
+    document.querySelectorAll('input[type="date"]').forEach(input=>{
+      if(input.dataset.ddDatePickerBound==='1')return;
+      input.dataset.ddDatePickerBound='1';
+
+      const openPicker=()=>{
+        try{
+          input.focus({preventScroll:true});
+        }catch(e){
+          try{input.focus()}catch(_){}
+        }
+        if(typeof input.showPicker==='function'){
+          try{input.showPicker()}catch(e){}
+        }
+      };
+
+      input.addEventListener('click',()=>{
+        if(isTouch)openPicker();
+      },{passive:true});
+
+      const hitArea=input.closest('.control')||input.closest('label');
+      if(hitArea&&!hitArea.dataset.ddDateHitAreaBound){
+        hitArea.dataset.ddDateHitAreaBound='1';
+        hitArea.addEventListener('click',e=>{
+          if(e.target===input)return;
+          if(e.target.closest('select,textarea,button,a'))return;
+          openPicker();
+        });
+      }
+    });
+  }
+
   function ensurePaymentLogoStyle(){
     if(document.getElementById('dd-payment-logo-style'))return;
     const style=document.createElement('style');
@@ -531,6 +594,7 @@
   window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};
   function boot(){
     normalizeGlobalHeader();
+    bindMobileDatePickers();
     normalizePaymentLogos();
     initSignatureExperience();
     removeHeaderCart();
