@@ -203,59 +203,7 @@ el('nextBtn').onclick=()=>{persist();if(cakeNextState()){ddGo('/approved-pages/D
 persist();cakeNextState();renderCurrent();renderGrid();updateSummary();
 </script><script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="Dear-Day-About.html">من نحن</a><a href="Dear-Day-How-It-Works.html">كيف نعمل</a><a href="Dear-Day-Partners.html">للشركاء</a><a href="Dear-Day-Stories.html">قصص حقيقية</a></div><div><h4>خدمة العملاء</h4><a href="Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="Dear-Day-Bookings.html">حجوزاتي</a><a href="Dear-Day-Refund.html">الإلغاء والاسترداد</a><a href="Dear-Day-Profile.html">حسابي</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day · نسخة تجريبية للموقع</div></div></div></footer>
 <script src="assets/site-nav.js"></script>
-<script id="dd-sticky-footer-guard-v5">(function(){
-  const bar=document.getElementById('sticky');
-  const footer=document.querySelector('footer');
-  if(!bar||!footer) return;
-
-  let mode='fixed';
-  let raf=0;
-
-  function gap(){ return window.innerWidth<=980 ? 10 : 16; }
-
-  function setFixed(){
-    if(mode==='fixed') return;
-    mode='fixed';
-    bar.style.position='fixed';
-    bar.style.top='auto';
-    bar.style.bottom=gap()+'px';
-    bar.style.left='50%';
-    bar.style.transform='translateX(-50%)';
-  }
-
-  function setAnchored(){
-    mode='anchored';
-    const g=gap();
-    const footerTop=footer.getBoundingClientRect().top + window.scrollY;
-    const top=Math.max(0, footerTop - bar.offsetHeight - g);
-    bar.style.position='absolute';
-    bar.style.top=top+'px';
-    bar.style.bottom='auto';
-    bar.style.left='50%';
-    bar.style.transform='translateX(-50%)';
-  }
-
-  function update(force){
-    raf=0;
-    const footerRect=footer.getBoundingClientRect();
-    const footerHasEnteredViewport=footerRect.top <= window.innerHeight;
-
-    if(footerHasEnteredViewport){
-      if(mode!=='anchored' || force) setAnchored();
-    }else{
-      setFixed();
-      bar.style.bottom=gap()+'px';
-    }
-  }
-
-  function request(){ if(!raf) raf=requestAnimationFrame(()=>update(false)); }
-  window.addEventListener('scroll',request,{passive:true});
-  window.addEventListener('resize',()=>{
-    if(raf) cancelAnimationFrame(raf);
-    raf=requestAnimationFrame(()=>update(true));
-  });
-  update(true);
-})();</script><script>/* Dear Day footer logo home link */
+<script src="assets/selection-dock.js"></script><script>/* Dear Day footer logo home link */
 (function(){
   document.querySelectorAll('.footer-logo').forEach(function(logo){
     logo.style.cursor='pointer';
