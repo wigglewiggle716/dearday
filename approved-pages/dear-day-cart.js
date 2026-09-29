@@ -1,5 +1,15 @@
 (function(){
   const KEY='dearDayCart';
+  function ensureBrandFonts(){
+    if(document.querySelector('link[href*="fonts.googleapis.com/css2?family=Alex+Brush"]')) return;
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family=Alex+Brush&family=Lora:wght@400;500;600;700&display=swap';
+    link.setAttribute('data-dd-brand-fonts','');
+    document.head.appendChild(link);
+  }
+  ensureBrandFonts();
+
   function price(v){
     if(typeof v==='number') return Number.isFinite(v)?v:0;
     const n=Number(String(v||'').replace(/[^0-9.]/g,''));
@@ -520,7 +530,7 @@
         position:fixed;left:24px;bottom:24px;z-index:9998;
         width:58px;height:58px;border-radius:50%;
         display:flex;align-items:center;justify-content:center;
-        background:#7b1027;color:#fff;text-decoration:none;
+        background:#6B3540;color:#fff;text-decoration:none;
         box-shadow:0 12px 30px rgba(79,18,34,.28);
         border:2px solid rgba(255,255,255,.92);
         transition:transform .2s ease,opacity .2s ease,visibility .2s ease,box-shadow .2s ease;
@@ -531,13 +541,13 @@
       #ddFloatingCart svg{width:25px;height:25px;display:block;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
       #ddFloatingCart .dd-float-count{
         position:absolute;top:-6px;right:-5px;min-width:23px;height:23px;padding:0 6px;
-        border-radius:999px;background:#f6d86b;color:#5d0c1d;
+        border-radius:999px;background:#f6d86b;color:#6B3540;
         display:grid;place-items:center;font:700 11px/1 Arial,sans-serif;
         border:2px solid #fff;
       }
       #ddFloatingCart .dd-float-label{
-        position:absolute;left:68px;white-space:nowrap;background:#fff;color:#7b1027;
-        border:1px solid rgba(123,16,39,.16);border-radius:999px;padding:7px 10px;
+        position:absolute;left:68px;white-space:nowrap;background:#fff;color:#6B3540;
+        border:1px solid rgba(107,53,64,.16);border-radius:999px;padding:7px 10px;
         font:700 11px/1.2 Tahoma,Arial,sans-serif;box-shadow:0 8px 22px rgba(70,35,40,.10);
         opacity:0;pointer-events:none;transform:translateX(-4px);transition:.18s ease;
       }
