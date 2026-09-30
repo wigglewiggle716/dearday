@@ -540,7 +540,7 @@
         box-shadow:0 12px 30px rgba(79,18,34,.28);
         border:2px solid rgba(255,255,255,.92);
         transition:transform .2s ease,opacity .2s ease,visibility .2s ease,box-shadow .2s ease;
-        opacity:0;visibility:hidden;transform:translateY(8px) scale(.96);
+        opacity:1;visibility:visible;transform:translateY(0) scale(1);
       }
       #ddFloatingCart.dd-cart-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
       #ddFloatingCart:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 15px 34px rgba(79,18,34,.34)}
