@@ -13,7 +13,69 @@ jobs:
       - uses: actions/checkout@v4
       - name: Apply requested content cleanup
         run: |
-          echo 'CmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aAppbXBvcnQgcmUKCmNoYW5nZWQ9W10KCmRlZiB3cml0ZV9pZl9jaGFuZ2VkKHAsIG9sZCwgbmV3KToKICAgIGlmIG5ldyAhPSBvbGQ6CiAgICAgICAgcC53cml0ZV90ZXh0KG5ldyw gZW5jb2Rpbmc9J3V0Zi04JykKICAgICAgICBjaGFuZ2VkLmFwcGVuZChzdHIocCkpCgojIDEpIFJlbW92ZSAi2YbYs9iu2Kkg2KrYrNix2YrYqNmK2Kkg2YTZhNmF2YjZgti5IiBmcm9tIGV2ZXJ5IEhUTUwgZm9vdGVyLgpodG1sX2ZpbGVzID0gW1BhdGgoJ2luZGV4Lmh0bWwnKSwgUGF0aCgnRGVhci1EYXktQXV0aC5odG1sJyldICsgbGlzdChQYXRoKCdhcHByb3ZlZC1wYWdlcycpLmdsb2IoJyouaHRtbCcpKQpmb3IgcCBpbiBodG1sX2ZpbGVzOgogICAgaWYgbm90IHAuZXhpc3RzKCk6CiAgICAgICAgY29udGludWUKICAgIHM9cC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKICAgIG5zPXJlLnN1YihyJ1xzKsK3P1xzKtmG2LPYrtiqINiq2KzYsdmK2KjZitipINmE2YTZhdmI2YLYuScsICcnLCBzKQogICAgd3JpdGVfaWZfY2hhbmdlZChwLHMsbnMpCgojIDIpIFBhcnRuZXJzOiByZW1vdmUgc2Vjb25kYXJ5ICLYtNmI2YEg2LTYqNmD2Kkg2KfZhNi02LHZg9in2KEiIENUQSBvbmx5LgpwPVBhdGgoJ2FwcHJvdmVkLXBhZ2VzL0RlYXItRGF5LVBhcnRuZXJzLmh0bWwnKQpzPXAucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCm5zPXMucmVwbGFjZSgnPGEgY2xhc3M9InNlY29uZGFyeSIgaHJlZj0iI3BhcnRuZXJOZXR3b3JrIj7YtNmI2YEg2LTYqNmD2Kkg2KfZhNi02LHZg9in2KE8L2E+JywnJywxKQp3cml0ZV9pZl9jaGFuZ2VkKHAscyxucykKCiMgMykgSG9tZTogcmVtb3ZlIHRoZSBoZWxwZXIgc2VudGVuY2UgdW5kZXIgb2NjYXNpb24vZGF0ZS9idWRnZXQgZm9ybS4KcD1QYXRoKCdpbmRleC5odG1sJykKcz1wLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQpucz1zLnJlcGxhY2UoJ9in2K7Yqtin2LEg2KfZhNmF2YbYp9iz2KjYqSDZiNin2YTYqtin2LHZitiuINmI2KfZhNmF2YrYstmG2YrYqSDYudmE2LTYp9mGINmG2LnYsdi2INmE2YMg2KfZhNin2K7YqtiK2KfYsdin2Kog2KfZhNmF2YbYp9iz2KjYqS4nLCcnLDEpCndyaXRlX2lmX2NoYW5nZWQocCxzLG5zKQoKIyA0KSBPY2Nhc2lvbnM6IHJlbW92ZSB0aGUgZmlyc3QgdmlzaWJsZSBleWVicm93ICLYp9iu2KrYp9ixINmF2YbYp9iz2KjYqSIsIGtlZXAgdGhlIGFjdHVhbCBzZWN0aW9uIGhlYWRpbmcgYmVsb3cuCnA9UGF0aCgnYXBwcm92ZWQtcGFnZXMvRGVhci1EYXktT2NjYXNpb25zLUFwcHJvdmVkLmh0bWwnKQpzPXAucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCm5zPXMucmVwbGFjZSgnPGRpdiBjbGFzcz0iZXllYnJvdyI+2KfYrtiq2KfYsSDZhNmF2YbYp9iz2KjYqTwvZGl2PicsJywxKQp3cml0ZV9pZl9jaGFuZ2VkKHAscyxucykKCiMgNSkgR2lmdHM6IHJlbW92ZSBiaXJ0aGRheS9jdXN0b21pemF0aW9uIGJyZWFkY3J1bWIuCnA9UGF0aCgnYXBwcm92ZWQtcGFnZXMvRGVhci1EYXktR2lmdHMtQXBwcm92ZWQuaHRtbCcpCnM9cC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKbnM9cy5yZXBsYWNlKCc8ZGl2IGNsYXNzPSJjb250YWluZXIgY3J1bWJzIj48YSBocmVmPSIvYXBwcm92ZWQtcGFnZXMvRGVhci1EYXktQmlydGhkYXktQXBwcm92ZWQuaHRtbCI+2LnZitivINin2YTZhdmK2YTYp9ivPC9hPiDihpAgPHNwYW4+2KrYrti12YrYtSDYp9mE2YfYr9in2YrYpzwvc3Bhbj48L2Rpdj4nLCcnLDEpCgojIE1ha2UgZGlyZWN0IHZpc2l0cyBzdGFydCBjbGVhbi4gUmVzdG9yZSBzYXZlZCBwbGFuIG9ubHkgaW5zaWRlIGFuIGFjdGl2ZSBvY2Nhc2lvbiBmbG93LgpvbGQgPSAiIiJjb25zdCBkZFN0YW5kYWxvbmU9bmV3IFVSTFNlYXJjaFBhcmFtcyhsb2NhdGlvbi5zZWFyY2gpLmdldCgnc3RhbmRhbG9uZScpPT09JzEnOwpsZXQgcGxhbj1kZFN0YW5kYWxvbmU/bnVsbDpkZFJlYWRJbmNvbWluZygpOwppZighcGxhbiYmIWRkU3RhbmRhbG9uZSl7dHJ5eyBwbGFuPUpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oJ2RlYXJEYXlQbGFuJyl8fCdudWxsJykgfWNhdGNoKGUpe319CmlmKCFwbGFuKSBwbGFuPXtvY2Nhc2lvbjonYmlydGhkYXknLHNlcnZpY2VzOlsn2YfYr9in2YrYpyddLHByb2R1Y3RzOlt7bmFtZTon2LXZhtiv2YjZgiDZh9iv2KfZitinINmF2K7Ytdi1JyxpbWc6Jy9hcHByb3ZlZC1wYWdlcy9hc3NldHMvbWVkaWEvY3VzdG9tLWdpZnQtYm94LmpwZycsdmVuZG9yOidUaGUgR2lmdCBTdHVkaW8nLHByaWNlOidFR1AgMSwyMDAnfV0sZ2lmdFNlbGVjdGlvbnM6W119OyIiIgpuZXcgPSAiIiJjb25zdCBkZFBhcmFtcz1uZXcgVVJMU2VhcmNoUGFyYW1zKGxvY2F0aW9uLnNlYXJjaCk7CmNvbnN0IGRkU3RhbmRhbG9uZT1kZFBhcmFtcy5nZXQoJ3N0YW5kYWxvbmUnKT09PScxJzsKY29uc3QgZGRGbG93PWRkUGFyYW1zLmdldCgnZmxvdycpPT09JzEnOwpsZXQgcGxhbj1kZFJlYWRJbmNvbWluZygpOwppZighcGxhbiYmZGRGbG93JiYhZGRTdGFuZGFsb25lKXt0cnl7IHBsYW49SlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnZGVhckRheVBsYW4nKXx8J251bGwnKSB9Y2F0Y2goZSl7fX0KaWYoIXBsYW4pIHBsYW49e29jY2FzaW9uOm51bGwsc2VydmljZXM6WydZitiv2KfZitinJ10scHJvZHVjdHM6W10sZ2lmdFNlbGVjdGlvbnM6W119OyIiIgppZiBvbGQgbm90IGluIG5zOgogICAgcmFpc2UgU3lzdGVtRXhpdCgnR2lmdCBwbGFuIGluaXRpYWxpemF0aW9uIGJsb2NrIG5vdCBmb3VuZDsgYWJvcnRpbmcgdG8gYXZvaWQgdW5zYWZlIGVkaXQnKQpucz1ucy5yZXBsYWNlKG9sZCxuZXcsMSkKCiMgQ2xlYW4gY29weSBzbyBzdGFuZGFsb25lIHVzZXJzIGFyZSBub3QgdG9sZCBhbiBvbGQgc2VsZWN0aW9uIGV4aXN0cy4KbnM9bnMucmVwbGFjZSgn2KfYrtiq2YrYp9ix2YMg2KfZhNiz2KfYqNmCINmF2K3ZgdmI2LguINin2LPYqtiu2K/ZhSDYp9mE2YHZhNin2KrYsSDZhNmIINi52KfZitiuINiq2LrZiti+2LHZhyDYp9iMINij2LbZgSDZh9iv2YrYqSDYq9in2YbZitipINiq2YPZhdmEINin2YTZitmI2YUg4oCUIOihp9mGINi52LHYsdin2K/YpyDYqNmF2YbYqSDYp9mE2LXZgdiu2LkuJywn2KfYs9iq2K7Yr9mFINin2YTZgdmE2KfYqtixINmI2KfYrtiq2KfYsSDYp9mE2YfYr9mK2Kkg2KfZhNmF2YbYp9iz2KjYqSzZiNiq2YLYr9ixINiq2LbZitixINij2YPYq9ixINmF2YYg2KfYrtiq2YrYp9ixINmE2Ygg2K3Yp9io2KguJyw xKQpucz1ucy5yZXBsYWNlKCdYo9mKINmH2K/ZitipINin2K7Yqtix2KrZh9inINmB2Yog2KfZhNiu2LfZiNipINin2YTYs9in2KjZgtipINiq2LjZh9ixINmH2YbYpyDYqtiu2YTZgtin2KbZitinLic sJ9in2YTZh9iv2KfZitinINin2YTZhNmKINiq2K7Yqtin2LHZh9inINiq2LjZh9ixINmH2YbYpyDYudmE2LTYp9mGINiq2LHYp9is2LnZh9inINij2Ygg2KrYutmK2LHYp9mH2Kcg2KjYs9mH2YjZhNipLicsMSkKd3JpdGVfaWZfY2hhbmdlZChwLHMsbnMpCgpwcmludCgiVVBEQVRFRF9GSUxFUyIpCmZvciB4IGluIGNoYW5nZWQ6CiAgICBwcmludCh4KQo=' | base64 -d | python3
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed=[]
+
+          def save(p, old, new):
+              if new != old:
+                  p.write_text(new, encoding='utf-8')
+                  changed.append(str(p))
+
+          # Remove trial-copy from all HTML footers.
+          files=[Path('index.html'), Path('Dear-Day-Auth.html')] + list(Path('approved-pages').glob('*.html'))
+          for p in files:
+              if not p.exists():
+                  continue
+              s=p.read_text(encoding='utf-8')
+              ns=re.sub(r'\s*·?\s*نسخة تجريبية للموقع', '', s)
+              save(p,s,ns)
+
+          # Partners CTA.
+          p=Path('approved-pages/Dear-Day-Partners.html')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('<a class="secondary" href="#partnerNetwork">شوف شبكة الشركاء</a>','',1)
+          save(p,s,ns)
+
+          # Home helper sentence.
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('اختار المناسبة والتاريخ والميزانية علشان نعرض لك الاختيارات المناسبة.','',1)
+          save(p,s,ns)
+
+          # Occasions first eyebrow only.
+          p=Path('approved-pages/Dear-Day-Occasions-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('<div class="eyebrow">اختار مناسبتك</div>','',1)
+          save(p,s,ns)
+
+          # Gifts breadcrumb + stale state behavior.
+          p=Path('approved-pages/Dear-Day-Gifts-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('<div class="container crumbs"><a href="/approved-pages/Dear-Day-Birthday-Approved.html">عيد الميلاد</a> ← <span>تخصيص الهدايا</span></div>','',1)
+
+          old="""const ddStandalone=new URLSearchParams(location.search).get('standalone')==='1';
+          let plan=ddStandalone?null:ddReadIncoming();
+          if(!plan&&!ddStandalone){try{ plan=JSON.parse(localStorage.getItem('dearDayPlan')||'null') }catch(e){}}
+          if(!plan) plan={occasion:'birthday',services:['هدايا'],products:[{name:'صندوق هدايا مخصص',img:'/approved-pages/assets/media/custom-gift-box.jpg',vendor:'The Gift Studio',price:'EGP 1,200'}],giftSelections:[]};"""
+          new="""const ddParams=new URLSearchParams(location.search);
+          const ddStandalone=ddParams.get('standalone')==='1';
+          const ddFlow=ddParams.get('flow')==='1';
+          let plan=ddReadIncoming();
+          if(!plan&&ddFlow&&!ddStandalone){try{ plan=JSON.parse(localStorage.getItem('dearDayPlan')||'null') }catch(e){}}
+          if(!plan) plan={occasion:null,services:['هدايا'],products:[],giftSelections:[]};"""
+          if old not in ns:
+              raise SystemExit('Gift plan initialization block not found; aborting')
+          ns=ns.replace(old,new,1)
+          ns=ns.replace('اختيارك السابق محفوظ. استخدم الفلاتر لو عايز تغيّره، أو أضف هدية ثانية تكمل اليوم — من غير ما تبدأ من الصفر.','استخدم الفلاتر واختار الهدية المناسبة، وتقدر تضيف أكتر من اختيار لو حابب.',1)
+          ns=ns.replace('أي هدية اخترتها في الخطوة السابقة هتظهر هنا تلقائيًا.','الهدايا اللي تختارها هتظهر هنا علشان تراجعها أو تغيّرها بسهولة.',1)
+          save(p,s,ns)
+
+          print('UPDATED_FILES')
+          print('\n'.join(changed))
+          PY
       - name: Commit changes
         run: |
           if git diff --quiet; then exit 0; fi
