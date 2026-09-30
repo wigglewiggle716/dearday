@@ -72,7 +72,7 @@
     box.addEventListener('change',()=>{label.classList.toggle('dd-consent-error',!box.checked);if(box.checked){const warning=document.getElementById('reviewWarning');if(warning&&warning.textContent.includes('وافق على الشروط'))warning.style.display='none';}});
   }
 
-  function buildMenu(header,nav,actions,prefix){
+  function buildMenu(header,nav,actions){
     if(!header||!nav||!actions)return;
     if(header.dataset.ddMobileMenuReady==='1'&&header.querySelector('.dd-mobile-menu-toggle')&&header.querySelector('.dd-mobile-menu'))return;
     header.dataset.ddMobileMenuReady='1';
@@ -92,12 +92,10 @@
   }
 
   function mountMobileMenus(){
-    document.querySelectorAll('.home-header').forEach(header=>buildMenu(header,header.querySelector('.home-nav'),header.querySelector('.auth-actions'),'home'));
-    document.querySelectorAll('.auth-header').forEach(header=>buildMenu(header,header.querySelector('.auth-nav'),header.querySelector('.auth-actions'),'auth'));
     document.querySelectorAll('header').forEach(header=>{
-      const nav=header.querySelector('.dd-global-nav,nav');
+      const nav=header.querySelector('.dd-global-nav,.home-nav,.auth-nav,nav');
       const actions=header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions');
-      if(nav&&actions)buildMenu(header,nav,actions,'generic');
+      if(nav&&actions)buildMenu(header,nav,actions);
     });
   }
 
@@ -115,11 +113,11 @@
       .dd-booking-consent{display:flex!important;align-items:flex-start!important;gap:9px!important;margin:16px 0 4px!important;padding:12px 13px!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:14px!important;background:#fffaf7!important;color:#756966!important;font-size:11px!important;line-height:1.65!important;cursor:pointer!important}
       .dd-booking-consent input{appearance:none!important;width:17px!important;height:17px!important;min-width:17px!important;margin:1px 0 0!important;border:1px solid rgba(107,53,64,.38)!important;border-radius:5px!important;background:#fff!important;display:grid!important;place-items:center!important}
       .dd-booking-consent input:checked{background:#6B3540!important;border-color:#6B3540!important}.dd-booking-consent input:checked:after{content:'✓'!important;color:#fff!important;font-size:11px!important;line-height:1!important}.dd-booking-consent a{color:#6B3540!important;font-weight:800!important;text-decoration:underline!important;text-underline-offset:2px!important}.dd-booking-consent.dd-consent-error{border-color:#A8583D!important;background:#fff3ed!important}
-      .dd-mobile-menu-toggle{display:none;border:1px solid rgba(107,53,64,.24);background:#fffaf7;width:40px;height:40px;border-radius:12px;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#6B3540;flex:0 0 auto}
-      .dd-mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
-      .dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(2){opacity:0}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-      .dd-mobile-menu{display:none;position:absolute;top:calc(100% + 1px);left:14px;right:14px;z-index:2147482000;background:#FFFDFC;border:1px solid rgba(107,53,64,.14);border-radius:18px;box-shadow:0 18px 42px rgba(78,32,39,.12);padding:10px}
-      .dd-mobile-menu-links{display:flex;flex-direction:column;gap:2px}.dd-mobile-menu-links a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important;color:#6B3540!important;background:transparent!important;border:0!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important;text-decoration:none!important}.dd-mobile-menu-links a:hover{background:#F6E7E1!important}
+      .dd-mobile-menu-toggle{display:none!important;border:1px solid rgba(107,53,64,.24)!important;background:#fffaf7!important;width:40px!important;height:40px!important;border-radius:12px!important;padding:0!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:4px!important;color:#6B3540!important;flex:0 0 auto!important}
+      .dd-mobile-menu-toggle span{display:block!important;width:18px!important;height:2px!important;border-radius:2px!important;background:currentColor!important;transition:transform .18s ease,opacity .18s ease!important}
+      .dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)!important}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(2){opacity:0!important}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)!important}
+      .dd-mobile-menu{display:none!important;position:absolute!important;top:calc(100% + 1px)!important;left:14px!important;right:14px!important;z-index:2147482000!important;background:#FFFDFC!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:18px!important;box-shadow:0 18px 42px rgba(78,32,39,.12)!important;padding:10px!important}
+      .dd-mobile-menu-links{display:flex!important;flex-direction:column!important;gap:2px!important}.dd-mobile-menu-links a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important;color:#6B3540!important;background:transparent!important;border:0!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important;text-decoration:none!important}.dd-mobile-menu-links a:hover{background:#F6E7E1!important}
       .dd-occ-footer{background:#5D0C1D!important}.dd-legal-links a{color:inherit!important;text-decoration:none!important}.dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
       @media(max-width:${MOBILE_BREAKPOINT}px){
         header[data-dd-mobile-menu-ready="1"]{position:sticky!important;top:0!important;z-index:2147481000!important;overflow:visible!important;min-height:72px!important;height:auto!important;padding:8px 14px!important;width:100%!important;max-width:100%!important;gap:10px!important}
@@ -143,11 +141,22 @@
   function mountBackToTop(){if(!document.body)return;let btn=document.getElementById('ddBackToTop');if(!btn){btn=document.createElement('button');btn.id='ddBackToTop';btn.type='button';btn.setAttribute('aria-label',isEnglishPage()?'Back to top':'العودة لأعلى الصفحة');btn.textContent='↑';btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.appendChild(btn);}updateBackToTop();}
   function mount(){ensureStyle();patchPage();if(!document.body)return;let link=document.getElementById('ddFloatingCart');if(!link){link=document.createElement('a');link.id='ddFloatingCart';link.href=cartUrl();link.setAttribute('aria-label','My Cart');link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="19" cy="20" r="1"></circle><path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"></path></svg><span class="dd-float-count" data-dd-cart-count>0</span><span class="dd-float-label">My Cart</span>';document.body.appendChild(link);}mountBackToTop();updateCart();}
 
-  ensureStyle();patchPage();if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount,{once:true});
-  setTimeout(()=>{patchPage();mountBackToTop();updateBackToTop();},0);setTimeout(()=>patchPage(),120);setTimeout(()=>patchPage(),500);setTimeout(patchReviewConsent,60);
-  window.addEventListener('scroll',updateBackToTop,{passive:true});window.addEventListener('resize',updateBackToTop,{passive:true});window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});window.addEventListener('ddcartchange',()=>{mount();updateCart();});
+  function watchHeader(){
+    if(!document.documentElement||document.documentElement.dataset.ddHeaderObserver==='1')return;
+    document.documentElement.dataset.ddHeaderObserver='1';
+    let queued=false;
+    const observer=new MutationObserver(()=>{
+      if(queued)return;queued=true;
+      requestAnimationFrame(()=>{queued=false;mountMobileMenus();});
+    });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+  }
 
-  const core='/approved-pages/dear-day-cart-core.js?v=20260930-5';
+  ensureStyle();patchPage();watchHeader();if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount,{once:true});
+  setTimeout(()=>{patchPage();mountBackToTop();updateBackToTop();},0);setTimeout(()=>patchPage(),120);setTimeout(()=>patchPage(),500);setTimeout(()=>patchPage(),1200);setTimeout(patchReviewConsent,60);
+  window.addEventListener('scroll',updateBackToTop,{passive:true});window.addEventListener('resize',()=>{updateBackToTop();mountMobileMenus();},{passive:true});window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});window.addEventListener('ddcartchange',()=>{mount();updateCart();});
+
+  const core='/approved-pages/dear-day-cart-core.js?v=20261001-1';
   if(document.readyState==='loading')document.write('<script src="'+core+'"><\/script>');
   else{const script=document.createElement('script');script.src=core;script.async=false;script.onload=patchPage;(document.head||document.documentElement).appendChild(script);}
 })();
