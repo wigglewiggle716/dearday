@@ -9,6 +9,16 @@
     }catch(e){return 0}
   }
 
+  function patchEnglishAuthLinks(){
+    const isEnglish=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
+    if(!isEnglish)return;
+    document.querySelectorAll('a').forEach(a=>{
+      const text=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      if(text==='log in'||text==='login'||text==='sign in')a.href='/Dear-Day-Auth-en.html#login';
+      if(text==='create account'||text==='create an account'||text==='sign up')a.href='/Dear-Day-Auth-en.html#signup';
+    });
+  }
+
   function ensureStyle(){
     if(document.getElementById('dd-cart-bootstrap-style'))return;
     const style=document.createElement('style');
@@ -52,6 +62,7 @@
 
   function mount(){
     ensureStyle();
+    patchEnglishAuthLinks();
     if(!document.body)return null;
     let link=document.getElementById('ddFloatingCart');
     if(!link){
@@ -71,6 +82,7 @@
   }
 
   ensureStyle();
+  patchEnglishAuthLinks();
   if(document.body)mount();
   else document.addEventListener('DOMContentLoaded',mount,{once:true});
   window.addEventListener('storage',function(e){if(!e.key||e.key===KEY){mount();update();}});
