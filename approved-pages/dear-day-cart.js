@@ -393,7 +393,7 @@
       .dd-signature-underline{width:96px;height:13px;display:block}
       .dd-signature-underline path{fill:none;stroke:#A8583D;stroke-width:1.8;stroke-linecap:round}
       .dd-signature-input{
-        width:100%;min-height:112px;resize:vertical;border:1px solid #e4d3cd;border-radius:16px;
+        width:100%;min-height:112px;resize:none;overflow:hidden;border:1px solid #e4d3cd;border-radius:16px;
         background:#fff;padding:14px 16px;color:#3b292b;font:15px/1.8 Tahoma,Arial,sans-serif;
         outline:none;transition:border-color .18s ease,box-shadow .18s ease
       }
@@ -466,9 +466,15 @@
     const count=wrap.querySelector('#ddHeartCount');
     const saved=wrap.querySelector('#ddHeartSaved');
     input.value=String(plan.heartMessage||'').slice(0,220);
+    const autoGrow=function(){
+      input.style.height='auto';
+      input.style.height=input.scrollHeight+'px';
+    };
+    autoGrow();
     count.textContent=input.value.length+' / 220';
     let timer;
     input.addEventListener('input',function(){
+      autoGrow();
       count.textContent=input.value.length+' / 220';
       saved.textContent='جاري الحفظ...';
       clearTimeout(timer);
