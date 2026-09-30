@@ -1,0 +1,36 @@
+name: Fix English Header Navigation
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/fix-english-header-nav.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Match English header to Arabic structure
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p = Path('index-en.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<nav aria-label="Main navigation" class="home-nav"><a class="active" href="index-en.html">Home</a><a href="#gifts">Gifts & Experiences</a><a href="#occasions">Plan My Occasion</a></nav>'
+          new = '<nav aria-label="Main navigation" class="home-nav"><a class="active" href="index-en.html">Home</a><a href="/approved-pages/Dear-Day-Occasions-Approved.html">Occasions</a><a href="#occasions">How It Works</a><a href="/approved-pages/Dear-Day-Partners.html">For Partners</a><a href="#occasions">Plan My Occasion</a></nav>'
+          if old not in s:
+              raise SystemExit('English header navigation marker not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add index-en.html
+          git commit -m "Restore For Partners in English header" || exit 0
+          git push
