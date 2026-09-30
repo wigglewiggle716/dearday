@@ -1,0 +1,42 @@
+name: Update FAQ WhatsApp CTA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-faq-whatsapp-cta.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update FAQ CTA blocks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          changes={
+            'approved-pages/Dear-Day-FAQ.html':(
+              '<div class="faq-help"><div><h2>لسه عندك سؤال؟</h2><p>ابدأ ترتيب مناسبتك، ولو احتجت مساعدة في أي خطوة هنكون معاك.</p></div><a class="help-btn" href="/approved-pages/Dear-Day-Occasions-Approved.html">رتّب مناسبتي</a></div>',
+              '<div class="faq-help"><div><h2>لسه عندك سؤال؟</h2><p>لو إجابة سؤالك مش موجودة هنا، ابعت لنا على WhatsApp وفريق Dear Day هيساعدك.</p></div><a class="help-btn" href="https://wa.me/201000000000" target="_blank" rel="noopener" aria-label="تواصل مع Dear Day عبر WhatsApp">تواصل عبر WhatsApp</a></div>'
+            ),
+            'approved-pages/Dear-Day-FAQ-en.html':(
+              '<div class="faq-help"><div><h2>Still have a question?</h2><p>Start planning your occasion, and if you need help along the way, we are here for you.</p></div><a class="help-btn" href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Plan My Occasion</a></div>',
+              '<div class="faq-help"><div><h2>Still have a question?</h2><p>If you could not find the answer you need, message us on WhatsApp and the Dear Day team will be happy to help.</p></div><a class="help-btn" href="https://wa.me/201000000000" target="_blank" rel="noopener" aria-label="Chat with Dear Day on WhatsApp">Chat on WhatsApp</a></div>'
+            )
+          }
+          for name,(old,new) in changes.items():
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              if old not in s:
+                  raise SystemExit(f'CTA marker not found in {name}')
+              p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add approved-pages/Dear-Day-FAQ.html approved-pages/Dear-Day-FAQ-en.html
+          git commit -m "Route FAQ help CTA to WhatsApp"
+          git push
