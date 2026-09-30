@@ -114,6 +114,7 @@ function byId(id){return document.getElementById(id)}
 function val(id){const el=byId(id);return el?String(el.value||'').trim():''}
 
 const plan=readPlan();
+if(window.DDCart)DDCart.importPlan(plan);
 const prev=plan.eventDetails||{};
 
 function cartItems(){
