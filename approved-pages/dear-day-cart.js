@@ -73,8 +73,10 @@
   }
 
   function buildMenu(header,nav,actions,prefix){
-    if(!header||!nav||!actions||header.dataset.ddMobileMenuReady==='1')return;
+    if(!header||!nav||!actions)return;
+    if(header.dataset.ddMobileMenuReady==='1'&&header.querySelector('.dd-mobile-menu-toggle')&&header.querySelector('.dd-mobile-menu'))return;
     header.dataset.ddMobileMenuReady='1';
+    header.querySelectorAll('.dd-mobile-menu-toggle,.dd-mobile-menu').forEach(el=>el.remove());
     const btn=document.createElement('button');btn.type='button';btn.className='dd-mobile-menu-toggle';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');btn.innerHTML='<span></span><span></span><span></span>';actions.appendChild(btn);
     const panel=document.createElement('div');panel.className='dd-mobile-menu';
     const links=document.createElement('div');links.className='dd-mobile-menu-links';
@@ -93,7 +95,6 @@
     document.querySelectorAll('.home-header').forEach(header=>buildMenu(header,header.querySelector('.home-nav'),header.querySelector('.auth-actions'),'home'));
     document.querySelectorAll('.auth-header').forEach(header=>buildMenu(header,header.querySelector('.auth-nav'),header.querySelector('.auth-actions'),'auth'));
     document.querySelectorAll('header').forEach(header=>{
-      if(header.dataset.ddMobileMenuReady==='1')return;
       const nav=header.querySelector('.dd-global-nav,nav');
       const actions=header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions');
       if(nav&&actions)buildMenu(header,nav,actions,'generic');
@@ -143,7 +144,7 @@
   function mount(){ensureStyle();patchPage();if(!document.body)return;let link=document.getElementById('ddFloatingCart');if(!link){link=document.createElement('a');link.id='ddFloatingCart';link.href=cartUrl();link.setAttribute('aria-label','My Cart');link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="19" cy="20" r="1"></circle><path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"></path></svg><span class="dd-float-count" data-dd-cart-count>0</span><span class="dd-float-label">My Cart</span>';document.body.appendChild(link);}mountBackToTop();updateCart();}
 
   ensureStyle();patchPage();if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount,{once:true});
-  setTimeout(()=>{patchPage();mountBackToTop();updateBackToTop();},0);setTimeout(patchReviewConsent,60);
+  setTimeout(()=>{patchPage();mountBackToTop();updateBackToTop();},0);setTimeout(()=>patchPage(),120);setTimeout(()=>patchPage(),500);setTimeout(patchReviewConsent,60);
   window.addEventListener('scroll',updateBackToTop,{passive:true});window.addEventListener('resize',updateBackToTop,{passive:true});window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
   const core='/approved-pages/dear-day-cart-core.js?v=20260930-5';
