@@ -1,0 +1,135 @@
+name: Build English About
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/build-english-about.yml
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build English About page and wire language switch
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          ar_path = Path('approved-pages/Dear-Day-About.html')
+          ar = ar_path.read_text(encoding='utf-8')
+
+          # Arabic page: add hreflang + working EN target.
+          canonical = '<link rel="canonical" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About.html">'
+          if 'hreflang="en"' not in ar:
+              ar = ar.replace(canonical, canonical + '\n<link rel="alternate" hreflang="ar" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About.html">\n<link rel="alternate" hreflang="en" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html">', 1)
+          old_actions = '<div class="auth-actions"><a href="/Dear-Day-Auth.html#login">تسجيل الدخول</a><a href="/Dear-Day-Auth.html#signup">إنشاء حساب</a></div>'
+          new_actions = '<div class="auth-actions"><a href="/Dear-Day-Auth.html#login">تسجيل الدخول</a><a href="/Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="/approved-pages/Dear-Day-About-en.html">EN</a></div>'
+          if old_actions in ar:
+              ar = ar.replace(old_actions, new_actions, 1)
+          ar_path.write_text(ar, encoding='utf-8')
+
+          # English page starts from the approved Arabic page so design stays identical.
+          en = ar
+          replacements = {
+            '<html lang="ar" dir="rtl">':'<html lang="en" dir="ltr">',
+            '<title>من نحن | Dear Day</title>':'<title>About Us | Dear Day</title>',
+            '<meta name="description" content="تعرّف على Dear Day، مهمتنا ورؤيتنا والقيم التي توجهنا في تنسيق المناسبات المهمة بعناية وفي مكان واحد.">':'<meta name="description" content="Meet Dear Day — our story, mission, vision, and the values behind a more thoughtful way to plan meaningful occasions.">',
+            'https://deardayy.vercel.app/approved-pages/Dear-Day-About.html">\n<link rel="alternate" hreflang="ar"':'https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html">\n<link rel="alternate" hreflang="ar"',
+            '<h1>الأيام المهمة تستحق اهتمامًا حقيقيًا.</h1>':'<h1>The days that matter deserve real care.</h1>',
+            '<p>Dear Day بدأت من فكرة بسيطة: بدل ما تدور على كل تفصيلة لوحدها، نخلي اليوم كله يتخطط في مكان واحد — بشكل هادئ، واضح، ومصمم حوالين الشخص والمناسبة نفسها.</p>':'<p>Dear Day started with a simple idea: planning a meaningful day should not mean chasing every detail separately. We bring the whole occasion into one clear, calm experience shaped around the person and the moment.</p>',
+            'aria-label="تفاصيل من تجربة Dear Day"':'aria-label="Details from the Dear Day experience"',
+            'alt="تنسيق متكامل لمناسبة من Dear Day"':'alt="A complete occasion setup by Dear Day"',
+            'alt="باقة ورد مختارة بعناية"':'alt="A thoughtfully selected flower bouquet"',
+            '<div class="section-title"><span class="eyebrow">Who we are</span><h2>مش مجرد مكان تشتري منه هدية.</h2></div>':'<div class="section-title"><span class="eyebrow">Who we are</span><h2>More than a place to buy a gift.</h2></div>',
+            '<p><strong>Dear Day هي منصة لتخطيط وتنسيق المناسبات المهمة من البداية للنهاية.</strong> بنجمع عناصر اليوم اللي عادةً بتحتاج بحث وحجوزات منفصلة — المكان أو التجربة، الهدية، الكيك والحلويات، والورد — في تجربة واحدة تقدر تبنيها على ذوقك وميزانيتك.</p>':'<p><strong>Dear Day is a platform for planning meaningful occasions from start to finish.</strong> We bring together the details that usually require separate searches and bookings — the venue or experience, gift, cake and sweets, and flowers — in one experience you can shape around your style and budget.</p>',
+            '<p>الفكرة مش إننا نزود اختيارات أكتر؛ الفكرة إننا نقلل التشتت. نختار بعناية، نوضح التفاصيل، ونخلي كل عنصر في اليوم مكمل للعنصر اللي قبله.</p>':'<p>Our goal is not to overwhelm you with more options. It is to make the right options easier to find. We curate carefully, make the details clear, and help every part of the day feel connected.</p>',
+            '<p>بدأنا من القاهرة والجيزة، لكن Dear Day اتبنت من البداية كعلامة تقدر تكبر مع كل أنواع الأيام اللي تستحق اهتمام: عيد ميلاد، ذكرى، خطوبة، طلب زواج، أو حتى يوم بسيط عايز تخليه أميز.</p>':'<p>We started in Cairo and Giza, but Dear Day was built to grow with every kind of day worth celebrating — a birthday, anniversary, engagement, proposal, or simply a day you want to make feel more special.</p>',
+            'alt="تجربة عشاء منسقة ضمن Dear Day"':'alt="A curated dinner experience on Dear Day"',
+            '<div class="caption">من تفاصيل منفصلة إلى يوم واحد متناسق.</div>':'<div class="caption">From separate details to one beautifully connected day.</div>',
+            'aria-label="مهمة ورؤية Dear Day"':'aria-label="Dear Day mission and vision"',
+            '<h2>مهمتنا</h2>':'<h2>Our mission</h2>',
+            '<p>نخلي ترتيب الأيام المهمة أبسط، أهدأ، وأكثر معنى؛ من خلال جمع التفاصيل في خطة واحدة منسقة حسب المناسبة والميزانية، باختيارات موثوقة وتجربة واضحة من أول الفكرة لحد اليوم نفسه.</p>':'<p>To make meaningful occasions easier, calmer, and more personal by bringing every detail into one coordinated plan — shaped around the occasion and budget, with trusted choices and a clear experience from the first idea to the day itself.</p>',
+            '<h2>رؤيتنا</h2>':'<h2>Our vision</h2>',
+            '<p>أن تصبح Dear Day الوجهة الأولى في مصر لتخطيط وتنسيق المناسبات المهمة، من خلال تجربة متكاملة تجمع أفضل الاختيارات والخدمات في مكان واحد سهل، شخصي، وقابل للتخصيص.</p>':'<p>To become a leading destination in Egypt for planning meaningful occasions, with one seamless experience that brings trusted services and thoughtful choices together in a way that feels simple, personal, and easy to tailor.</p>',
+            '<div class="values-head"><span class="eyebrow">Our values</span><h2>القيم اللي بتوجّه كل تفصيلة</h2><p>هوية Dear Day مبنية على تجربة هادئة وإنسانية: اهتمام حقيقي، دفء بدون مبالغة، رقي بدون تعقيد، وتفاصيل تحس إنها معمولة لشخص بعينه.</p></div>':'<div class="values-head"><span class="eyebrow">Our values</span><h2>The values behind every detail</h2><p>Dear Day is built around a calm, human experience: genuine thoughtfulness, warmth without excess, refinement without complication, and details that feel personal rather than generic.</p></div>',
+            '<small>Thoughtful</small><h3>الاهتمام</h3><p>كل اختيار له سبب. بنفكر في الشخص والمناسبة قبل ما نفكر في المنتج، ونخلي التفاصيل الصغيرة جزء من المعنى.</p>':'<small>Thoughtful</small><h3>Thoughtfulness</h3><p>Every choice should have a reason. We start with the person and the occasion, not the product, and make the small details part of the meaning.</p>',
+            '<small>Warm</small><h3>الدفء</h3><p>نخلي التجربة قريبة ومرحبة، من غير لغة أو صور مبالغ فيها. إحساس بسيط وصادق يليق بالأيام المهمة.</p>':'<small>Warm</small><h3>Warmth</h3><p>We keep the experience welcoming and genuine, without overdone language or imagery. Simple, sincere, and right for the moments that matter.</p>',
+            '<small>Refined</small><h3>الرقي</h3><p>الرقي عندنا مش زحمة ولا فخامة مصطنعة. هو اختيار أحسن، وضوح أكتر، وتجربة مرتبة ومريحة بصريًا وعمليًا.</p>':'<small>Refined</small><h3>Refinement</h3><p>For us, refinement is not about excess. It means better choices, more clarity, and an experience that feels considered both visually and practically.</p>',
+            '<small>Human</small><h3>الإنسانية</h3><p>وراء كل حجز شخص بيحاول يقول حاجة لحد مهم بالنسبة له. بنصمم التجربة حوالين الناس، مش حوالين المعاملة نفسها.</p>':'<small>Human</small><h3>Humanity</h3><p>Behind every booking is a person trying to make someone important feel something. We design the experience around people, not the transaction.</p>',
+            '<h2>عندك يوم مهم قريب؟</h2>':'<h2>Have an important day coming up?</h2>',
+            '<p>ابدأ بالمناسبة والميزانية، وخلي Dear Day تجمع لك باقي التفاصيل.</p>':'<p>Start with the occasion and your budget, and let Dear Day bring the rest of the details together.</p>',
+            '>رتّب مناسبتي</a>':'>Plan My Occasion</a>',
+            '<p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p>':'<p class="footer-note">Thoughtfully planned occasions, coordinated in one place — from the first idea to the final detail.</p>',
+            '<h4>خدمات Dear Day</h4>':'<h4>Dear Day Services</h4>',
+            '>المناسبات</a>':'>Occasions</a>',
+            '>الهدايا</a>':'>Gifts</a>',
+            '>الكيك والحلويات</a>':'>Cakes & Sweets</a>',
+            '>الأماكن والتجارب</a>':'>Venues & Experiences</a>',
+            '<h4>عن Dear Day</h4>':'<h4>About Dear Day</h4>',
+            '>من نحن</a>':'>About Us</a>',
+            '>كيف نعمل</a>':'>How It Works</a>',
+            '>للشركاء</a>':'>For Partners</a>',
+            '<h4>خدمة العملاء</h4>':'<h4>Customer Care</h4>',
+            '>الأسئلة المتكررة</a>':'>FAQs</a>',
+            '>تواصل معنا</a>':'>Contact Us</a>',
+            'سياسة الخصوصية · الشروط والأحكام':'Privacy Policy · Terms & Conditions',
+          }
+          for old,new in replacements.items():
+              en = en.replace(old,new)
+
+          # Canonical and hreflang cleanup for English version.
+          en = en.replace('<link rel="canonical" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About.html">','<link rel="canonical" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html">',1)
+          en = en.replace('<link rel="alternate" hreflang="en" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html">','<link rel="alternate" hreflang="en" href="https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html">',1)
+
+          # Replace header with the same full English structure used on the English homepage.
+          start = en.index('<header class="home-header">')
+          end = en.index('</header>', start) + len('</header>')
+          en_header = '''<header class="home-header" data-dd-global-nav="1">
+  <a class="brand" href="/index-en.html" aria-label="Dear Day — Home"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
+  <nav class="home-nav" aria-label="Main navigation"><a href="/index-en.html">Home</a><a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Occasions</a><a href="/index-en.html#occasions">How It Works</a><a href="/approved-pages/Dear-Day-Partners.html">For Partners</a><a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Plan My Occasion</a></nav>
+  <div class="auth-actions"><a href="/Dear-Day-Auth.html#login">Log In</a><a href="/Dear-Day-Auth.html#signup">Create Account</a><a aria-label="العربية" class="lang-link" href="/approved-pages/Dear-Day-About.html">AR</a></div>
+</header>'''
+          en = en[:start] + en_header + en[end:]
+
+          # Point About link in English footer to English About page.
+          en = en.replace('href="/approved-pages/Dear-Day-About.html">About Us</a>','href="/approved-pages/Dear-Day-About-en.html">About Us</a>')
+          en = en.replace('aria-label="Dear Day — الرئيسية"','aria-label="Dear Day — Home"')
+
+          # LTR layout and English typography while preserving the approved design.
+          ltr = '''\n<style id="dd-about-en-overrides">
+html,body{direction:ltr!important}body{text-align:left!important;font-family:Arial,Helvetica,sans-serif!important}
+.home-header,.home-nav,.auth-actions,.hero-grid,.who-grid,.purpose-grid,.values-grid,.cta-box,.dd-occ-footer,.footer-top,.footer-bottom{direction:ltr!important}
+.about-hero h1,.section-title h2,.purpose-card h2,.values-head h2,.cta-copy h2{font-family:Lora,Georgia,'Times New Roman',serif!important}
+.section-title,.who-copy,.purpose-card,.cta-copy,.footer-top,.footer-bottom{text-align:left!important}
+.hero-collage .main-photo{inset:24px 0 52px 64px!important}
+.hero-collage .small-photo{left:auto!important;right:0!important}
+.hero-collage .brand-note{right:auto!important;left:0!important}
+@media(max-width:650px){.hero-collage .main-photo{inset:12px 0 40px 38px!important}.hero-collage .brand-note{left:0!important;right:auto!important}}
+</style>\n'''
+          en = en.replace('</head>', ltr + '</head>', 1)
+          Path('approved-pages/Dear-Day-About-en.html').write_text(en, encoding='utf-8')
+
+          # English homepage should now open English About.
+          home = Path('index-en.html')
+          hs = home.read_text(encoding='utf-8')
+          hs = hs.replace('href="/approved-pages/Dear-Day-About.html">About Us</a>','href="/approved-pages/Dear-Day-About-en.html">About Us</a>')
+          home.write_text(hs, encoding='utf-8')
+
+          # Sitemap entry.
+          sm = Path('sitemap.xml')
+          ss = sm.read_text(encoding='utf-8')
+          entry = '  <url><loc>https://deardayy.vercel.app/approved-pages/Dear-Day-About-en.html</loc></url>\n'
+          if 'Dear-Day-About-en.html' not in ss:
+              ss = ss.replace('  <url><loc>https://deardayy.vercel.app/approved-pages/Dear-Day-About.html</loc></url>\n', '  <url><loc>https://deardayy.vercel.app/approved-pages/Dear-Day-About.html</loc></url>\n' + entry)
+          sm.write_text(ss, encoding='utf-8')
+          PY
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add approved-pages/Dear-Day-About.html approved-pages/Dear-Day-About-en.html index-en.html sitemap.xml
+          git commit -m 'Publish English About page and language links'
+          git push
