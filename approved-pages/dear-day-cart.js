@@ -42,9 +42,20 @@
     }
   }
 
+  function patchLegalFooterLinks(){
+    if(isEnglishPage())return;
+    document.querySelectorAll('.footer-bottom div').forEach(el=>{
+      const text=String(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(text!=='سياسة الخصوصية · الشروط والأحكام')return;
+      el.classList.add('dd-legal-links');
+      el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="#">الشروط والأحكام</a>';
+    });
+  }
+
   function patchBilingualLinks(){
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
+    patchLegalFooterLinks();
   }
 
   function ensureStyle(){
@@ -69,6 +80,8 @@
         place-items:center!important;font:700 11px/1 Arial,sans-serif!important;border:2px solid #fff!important;
       }
       #ddFloatingCart .dd-float-label{display:none!important}
+      .dd-legal-links a{color:inherit!important;text-decoration:none!important}
+      .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
       @media(max-width:700px){#ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}}
     `;
     (document.head||document.documentElement).appendChild(style);
