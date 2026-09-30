@@ -9,14 +9,42 @@
     }catch(e){return 0}
   }
 
+  function isEnglishPage(){
+    return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
+  }
+
   function patchEnglishAuthLinks(){
-    const isEnglish=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
-    if(!isEnglish)return;
+    if(!isEnglishPage())return;
     document.querySelectorAll('a').forEach(a=>{
       const text=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       if(text==='log in'||text==='login'||text==='sign in')a.href='/Dear-Day-Auth-en.html#login';
       if(text==='create account'||text==='create an account'||text==='sign up')a.href='/Dear-Day-Auth-en.html#signup';
     });
+  }
+
+  function patchGiftLanguageLinks(){
+    const path=String(location.pathname||'');
+    const isArabicGifts=/\/approved-pages\/Dear-Day-Gifts-Approved\.html$/i.test(path);
+    if(isArabicGifts){
+      document.querySelectorAll('a.lang-link,a.dd-language-switch').forEach(a=>{
+        a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';
+        a.removeAttribute('onclick');
+        a.setAttribute('aria-label','English');
+        if(String(a.textContent||'').trim()==='')a.textContent='EN';
+      });
+    }
+    if(isEnglishPage()){
+      document.querySelectorAll('a[href]').forEach(a=>{
+        const raw=a.getAttribute('href')||'';
+        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html')a.setAttribute('href','/approved-pages/Dear-Day-Gifts-Approved-en.html');
+        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')a.setAttribute('href','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1');
+      });
+    }
+  }
+
+  function patchBilingualLinks(){
+    patchEnglishAuthLinks();
+    patchGiftLanguageLinks();
   }
 
   function ensureStyle(){
@@ -62,7 +90,7 @@
 
   function mount(){
     ensureStyle();
-    patchEnglishAuthLinks();
+    patchBilingualLinks();
     if(!document.body)return null;
     let link=document.getElementById('ddFloatingCart');
     if(!link){
@@ -82,9 +110,10 @@
   }
 
   ensureStyle();
-  patchEnglishAuthLinks();
+  patchBilingualLinks();
   if(document.body)mount();
-  else document.addEventListener('DOMContentLoaded',mount,{once:true});
+  else document.addEventListener('DOMContentLoaded',()=>{mount();patchBilingualLinks()},{once:true});
+  setTimeout(patchBilingualLinks,0);
   window.addEventListener('storage',function(e){if(!e.key||e.key===KEY){mount();update();}});
   window.addEventListener('ddcartchange',function(){mount();update();});
 
@@ -95,6 +124,7 @@
     const script=document.createElement('script');
     script.src=core;
     script.async=false;
+    script.onload=patchBilingualLinks;
     (document.head||document.documentElement).appendChild(script);
   }
 })();
