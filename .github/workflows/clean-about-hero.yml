@@ -1,0 +1,33 @@
+name: Simplify About hero
+on:
+  push:
+    paths:
+      - '.github/workflows/clean-about-hero.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove hero stats strip
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('approved-pages/Dear-Day-About.html')
+          s=p.read_text()
+          css=".story-line{margin-top:27px;padding-top:22px;border-top:1px solid var(--line);display:flex;gap:28px;flex-wrap:wrap}.story-line div{display:grid;gap:2px}.story-line strong{font-family:Lora,Georgia,serif;color:var(--wine);font-size:22px}.story-line span{color:var(--muted);font-size:11px}"
+          s=s.replace(css,"")
+          s=s.replace('.footer-bottom{flex-direction:column}.story-line{gap:18px}}','.footer-bottom{flex-direction:column}}')
+          html='''      <div class="story-line">\n        <div><strong>1</strong><span>خطة واحدة</span></div>\n        <div><strong>كل التفاصيل</strong><span>مكان · تجربة · هدية · كيك · ورد</span></div>\n        <div><strong>حسبك</strong><span>المناسبة · المنطقة · الميزانية</span></div>\n      </div>\n'''
+          s=s.replace(html,'')
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          rm .github/workflows/clean-about-hero.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add approved-pages/Dear-Day-About.html .github/workflows/clean-about-hero.yml
+          git commit -m "Simplify About Us hero"
+          git push
