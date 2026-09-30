@@ -54,25 +54,18 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px}.footer-top{display:
 <div class="field"><label for="phone">رقم الموبايل / واتساب *</label><input id="phone" name="phone" inputmode="tel" placeholder="01xxxxxxxxx" required></div>
 <div class="field"><label for="country">الدولة *</label><select id="country" name="country" required><option value="Egypt" selected>مصر</option></select></div>
 <div class="field"><label for="city">المدينة / المحافظة *</label><select id="city" name="city" required><option value="">اختار المدينة</option><option>القاهرة</option><option>الجيزة</option><option>أخرى</option></select></div>
-<div class="field"><label for="businessType">نوع النشاط *</label><select id="businessType" name="businessType" required><option value="">اختار نوع النشاط</option><option>Gift Shop</option><option>Flowers & Plants</option><option>Jewelry</option><option>Cakes / Bakery / Sweets</option><option>Restaurant</option><option>Venue</option><option>Experience</option><option>Decor / Coordination</option><option>Beauty / Cosmetics</option><option>Perfumes</option><option>Fashion / Accessories</option><option>Home Accessories</option><option>Other</option></select></div>
 <div class="field"><label for="yearsInBusiness">عدد سنوات النشاط</label><input id="yearsInBusiness" name="yearsInBusiness" type="number" min="0" step="1" placeholder="مثال: 3"></div>
 </div></section>
-<section class="form-section"><div class="form-section-head"><small>Products & categories</small><h3>المنتجات والخدمات</h3></div><div class="form-grid"><div class="category-block"><div class="field-title">الفئات التي تقدمها *</div><div class="checkbox-grid" id="categoryGroup">
+<section class="form-section"><div class="form-section-head"><small>Business activity</small><h3>مجالات النشاط</h3></div><div class="form-grid"><div class="category-block"><div class="field-title">اختار كل المجالات اللي نشاطك بيقدمها *</div><div class="checkbox-grid" id="categoryGroup">
+<label class="check-option"><input type="checkbox" name="categories" value="Gifts & Hampers">هدايا وبوكسات</label>
 <label class="check-option"><input type="checkbox" name="categories" value="Flowers & Plants">ورد ونباتات</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Chocolates">شوكولاتة</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Cakes & Bakery">كيك ومخبوزات</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Sweets">حلويات</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Candles">شموع</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Perfumes">عطور</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Beauty & Cosmetics">Beauty & Cosmetics</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Home Accessories">Home Accessories</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Fashion & Accessories">Fashion & Accessories</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Gift Sets & Hampers">Gift Sets & Hampers</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Venues & Restaurants">أماكن ومطاعم</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Experiences">تجارب</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Decor & Coordination">ديكور وتنسيق</label>
-<label class="check-option"><input type="checkbox" name="categories" value="Jewelry">مجوهرات وإكسسوارات</label>
-</div><div class="category-error" id="categoryError">اختار فئة واحدة على الأقل.</div><div class="field other-category"><label for="otherCategory">فئة أخرى</label><input id="otherCategory" name="otherCategory" placeholder="اكتب الفئة لو مش موجودة فوق"></div></div>
+<label class="check-option"><input type="checkbox" name="categories" value="Cakes & Desserts">كيك وحلويات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Jewelry & Accessories">مجوهرات وإكسسوارات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Restaurants">مطاعم</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Venues">أماكن وقاعات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Experiences">تجارب وأنشطة</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Decor & Coordination">ديكور وتنسيق مناسبات</label>
+</div><div class="category-error" id="categoryError">اختار مجال واحد على الأقل.</div><div class="field other-category"><label for="otherCategory">مجال آخر</label><input id="otherCategory" name="otherCategory" placeholder="اكتب المجال لو مش موجود فوق"></div></div>
 <div class="field full"><label for="companyDescription">وصف الشركة / النشاط *</label><textarea id="companyDescription" name="companyDescription" placeholder="عرّفنا بالبراند، أهم المنتجات أو الخدمات، نطاق الأسعار، وأي معلومات مهمة." required></textarea></div></div></section>
 <section class="form-section"><div class="form-section-head"><small>Online presence</small><h3>التواجد الرقمي</h3></div><div class="form-grid"><div class="field"><label for="website">الموقع الإلكتروني</label><input id="website" name="website" type="url" placeholder="https://..."></div><div class="field"><label for="socialMedia">Instagram / Social Media</label><input id="socialMedia" name="socialMedia" placeholder="@brand أو رابط الحساب"></div></div></section>
 <section class="form-section"><div class="form-section-head"><small>Partnership details</small><h3>تفاصيل الشراكة</h3></div><div class="form-grid"><div class="field full"><label for="partnershipModel">نموذج الشراكة المفضل *</label><select id="partnershipModel" name="partnershipModel" required><option value="">اختار نموذج الشراكة</option><option>عمولة على كل طلب / حجز</option><option>Listing وظهور داخل المنصة</option><option>باقات وتجميعات مشتركة</option><option>حجوزات أماكن أو تجارب</option><option>مفتوح لمناقشة أنسب نموذج</option></select></div><div class="field full"><label for="currentPartnerships">شراكات حالية</label><textarea id="currentPartnerships" name="currentPartnerships" placeholder="اكتب أسماء المنصات أو البراندات اللي بتتعاون معاها حاليًا، لو موجودة."></textarea></div></div></section>
