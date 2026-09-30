@@ -1,4 +1,4 @@
-name: Cleanup filters venues partners stories
+name: Cleanup partner hero
 on:
   push:
     branches: [main]
@@ -11,75 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply requested cleanup
+      - name: Center partner hero
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
-
-          changed=[]
-          def save(path, old, new):
-              if new != old:
-                  path.write_text(new, encoding='utf-8')
-                  changed.append(str(path))
-
-          # Gifts: make the no-filter recipient option unambiguous.
-          p=Path('approved-pages/Dear-Day-Gifts-Approved.html')
-          s=p.read_text(encoding='utf-8')
-          ns,repl_count=re.subn(r'(data-filter="recipient">.*?<button class="chip active" data-value="all">)الكل(</button>)',r'\1أي شخص\2',s,count=1,flags=re.S)
-          if repl_count != 1:
-              raise SystemExit('Recipient no-filter option not found exactly once')
-          save(p,s,ns)
-
-          # Venues: remove helper copy under current selection and result count line.
-          p=Path('approved-pages/Dear-Day-Venues-Approved.html')
-          s=p.read_text(encoding='utf-8')
-          ns=s.replace('<p>المكان أو التجربة اللي اخترتها للمناسبة.</p>','',1)
-          ns=ns.replace('<p id="resultCount"></p>','',1)
-          ns=re.sub(r"el\('resultCount'\)\.textContent=`\$\{arr\.length\} اقتراح`;",'',ns,count=1)
-          save(p,s,ns)
-
-          # Partners: remove the side information panel and center the application form.
           p=Path('approved-pages/Dear-Day-Partners.html')
           s=p.read_text(encoding='utf-8')
-          ns=re.sub(r'<aside class="apply-copy">.*?</aside>\s*','',s,count=1,flags=re.S)
-          ns=ns.replace('.apply{padding:54px 0 88px}.apply-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:28px;align-items:start}',
-                        '.apply{padding:54px 0 88px}.apply-grid{display:block;max-width:920px;margin:0 auto}',1)
-          save(p,s,ns)
-
-          # Remove Real Stories link from every footer/page.
-          html_files=[Path('index.html'),Path('Dear-Day-Auth.html')]+list(Path('approved-pages').glob('*.html'))
-          story_page_paths=[]
-          for hp in html_files:
-              if not hp.exists():
-                  continue
-              s=hp.read_text(encoding='utf-8')
-              title_match=re.search(r'<title>(.*?)</title>',s,re.S|re.I)
-              if title_match and 'قصص حقيقية' in title_match.group(1):
-                  story_page_paths.append(hp)
-                  continue
-              ns=re.sub(r'\s*<a\b[^>]*>\s*قصص حقيقية\s*</a>','',s)
-              save(hp,s,ns)
-
-          for sp in story_page_paths:
-              sp.unlink()
-              changed.append(str(sp)+' [deleted]')
-
-          # Remove sitemap URLs for a deleted stories page if one existed.
-          sm=Path('sitemap.xml')
-          if sm.exists():
-              s=sm.read_text(encoding='utf-8')
-              ns=re.sub(r'\s*<url><loc>[^<]*(?:Stories|stories|Story|story)[^<]*</loc></url>','',s)
-              save(sm,s,ns)
-
-          print('UPDATED_FILES')
-          print('\n'.join(changed))
+          ns=re.sub(r'\s*<aside class="hero-card">.*?</aside>','',s,count=1,flags=re.S)
+          ns=ns.replace('.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:center}',
+                        '.hero-grid{display:block;max-width:860px;margin:0 auto;text-align:center}',1)
+          ns=ns.replace('.hero p{margin:0;color:var(--muted);font-size:16px;max-width:720px}',
+                        '.hero p{margin:0 auto;color:var(--muted);font-size:16px;max-width:720px}',1)
+          ns=ns.replace('.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}',
+                        '.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px;justify-content:center}',1)
+          if ns==s:
+              raise SystemExit('Partner hero cleanup made no changes')
+          p.write_text(ns,encoding='utf-8')
           PY
       - name: Commit changes
         run: |
-          if git diff --quiet; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git commit -m 'Clean filters venues partners and stories'
+          git add approved-pages/Dear-Day-Partners.html
+          git commit -m 'Center partner page hero and form'
           git push
