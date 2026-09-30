@@ -8,6 +8,17 @@ html {
 body {
   overflow: visible !important;
 }
+
+/* Keep the floating My Cart control available across the whole site.
+   dear-day-cart.js still updates its count and destination; this prevents
+   the control from disappearing during navigation or brief cart-state syncs. */
+#ddFloatingCart {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  pointer-events: auto !important;
+}
+
 @media (hover: none) and (pointer: coarse) {
   html {
     overscroll-behavior-y: none;
