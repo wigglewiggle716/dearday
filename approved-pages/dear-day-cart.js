@@ -600,12 +600,13 @@
   }
   function importPlan(plan){
     if(!plan||typeof plan!=='object')return read();
-    let a=read();
     const types=[['gift','giftSelections'],['cake','cakeSelections'],['venue','venueSelections']];
+    const hasSelectionState=types.some(([,key])=>Array.isArray(plan[key]))||Array.isArray(plan.products);
+    if(!hasSelectionState)return read();
+    let a=[];
     types.forEach(([type,key])=>{
-      if(Array.isArray(plan[key])&&plan[key].length){
-        a=a.filter(x=>x.type!==type).concat(plan[key].filter(Boolean).map(x=>normalize(type,x,plan)));
-      }
+      const items=Array.isArray(plan[key])?plan[key]:[];
+      a=a.concat(items.filter(Boolean).map(x=>normalize(type,x,plan)));
     });
     const extras=Array.isArray(plan.products)?plan.products:[];
     extras.forEach(item=>{
@@ -624,6 +625,7 @@
     bindMobileDatePickers();
     normalizePaymentLogos();
     initSignatureExperience();
+    importPlan(readPlanData());
     removeHeaderCart();
     paint();
     updateFloatingOffset();

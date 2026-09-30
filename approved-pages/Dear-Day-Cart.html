@@ -49,8 +49,12 @@ let plan=readPlan();
 if(window.DDCart)DDCart.importPlan(plan);
 function syncPlanRemoval(item){
   const map={gift:'giftSelections',cake:'cakeSelections',venue:'venueSelections'};
-  const k=map[item.type]; if(!k)return;
-  plan[k]=(Array.isArray(plan[k])?plan[k]:[]).filter(x=>String(x.id||x.name||x.ar)!==String(item.id));
+  const k=map[item.type];
+  const same=x=>String((x&&(x.id||x.name||x.ar))||'')===String(item.id||item.name||item.ar||'')||String((x&&(x.name||x.ar))||'')===String(item.name||item.ar||'');
+  if(k)plan[k]=(Array.isArray(plan[k])?plan[k]:[]).filter(x=>!same(x));
+  plan.products=(Array.isArray(plan.products)?plan.products:[]).filter(x=>!same(x));
+  plan.packageSelections=(Array.isArray(plan.packageSelections)?plan.packageSelections:[]).filter(x=>!same(x));
+  if(plan.recommendedPackage&&Array.isArray(plan.recommendedPackage.items)&&plan.recommendedPackage.items.some(same))plan.recommendedPackage=null;
   savePlan(plan);
 }
 function renderContext(){
@@ -80,7 +84,15 @@ document.getElementById('cartItems').addEventListener('click',e=>{
 });
 document.getElementById('clearCart').onclick=()=>{
   if(!window.DDCart)return;
-  plan.giftSelections=[];plan.cakeSelections=[];plan.venueSelections=[];savePlan(plan);DDCart.clear();render();
+  plan.giftSelections=[];
+  plan.cakeSelections=[];
+  plan.venueSelections=[];
+  plan.products=[];
+  plan.packageSelections=[];
+  plan.recommendedPackage=null;
+  savePlan(plan);
+  DDCart.clear();
+  render();
 };
 document.getElementById('continueBtn').onclick=()=>{
   const key=plan.occasionKey||'birthday';
