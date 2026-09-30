@@ -1,0 +1,45 @@
+name: Fix partner categories
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-partner-categories.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Simplify partner activity fields
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('approved-pages/Dear-Day-Partners.html')
+          s=p.read_text(encoding='utf-8')
+          business='''<div class="field"><label for="businessType">نوع النشاط *</label><select id="businessType" name="businessType" required><option value="">اختار نوع النشاط</option><option>Gift Shop</option><option>Flowers & Plants</option><option>Jewelry</option><option>Cakes / Bakery / Sweets</option><option>Restaurant</option><option>Venue</option><option>Experience</option><option>Decor / Coordination</option><option>Beauty / Cosmetics</option><option>Perfumes</option><option>Fashion / Accessories</option><option>Home Accessories</option><option>Other</option></select></div>\n'''
+          s=s.replace(business,'')
+          start=s.index('<section class="form-section"><div class="form-section-head"><small>Products & categories</small>')
+          end=s.index('<section class="form-section"><div class="form-section-head"><small>Online presence</small>', start)
+          replacement='''<section class="form-section"><div class="form-section-head"><small>Business activity</small><h3>مجالات النشاط</h3></div><div class="form-grid"><div class="category-block"><div class="field-title">اختار كل المجالات اللي نشاطك بيقدمها *</div><div class="checkbox-grid" id="categoryGroup">
+<label class="check-option"><input type="checkbox" name="categories" value="Gifts & Hampers">هدايا وبوكسات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Flowers & Plants">ورد ونباتات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Cakes & Desserts">كيك وحلويات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Jewelry & Accessories">مجوهرات وإكسسوارات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Restaurants">مطاعم</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Venues">أماكن وقاعات</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Experiences">تجارب وأنشطة</label>
+<label class="check-option"><input type="checkbox" name="categories" value="Decor & Coordination">ديكور وتنسيق مناسبات</label>
+</div><div class="category-error" id="categoryError">اختار مجال واحد على الأقل.</div><div class="field other-category"><label for="otherCategory">مجال آخر</label><input id="otherCategory" name="otherCategory" placeholder="اكتب المجال لو مش موجود فوق"></div></div>
+<div class="field full"><label for="companyDescription">وصف الشركة / النشاط *</label><textarea id="companyDescription" name="companyDescription" placeholder="عرّفنا بالبراند، أهم المنتجات أو الخدمات، نطاق الأسعار، وأي معلومات مهمة." required></textarea></div></div></section>
+'''
+          s=s[:start]+replacement+s[end:]
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add approved-pages/Dear-Day-Partners.html
+          git commit -m 'Simplify partner activity categories'
+          git push
