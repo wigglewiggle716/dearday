@@ -1,0 +1,53 @@
+name: Link English Contact
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/link-english-contact.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Link Contact language versions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          contact=Path('approved-pages/Dear-Day-Contact.html')
+          s=contact.read_text(encoding='utf-8')
+          canonical='<link rel="canonical" href="https://deardayy.vercel.app/approved-pages/Dear-Day-Contact.html">'
+          alternates='\n<link rel="alternate" hreflang="ar" href="https://deardayy.vercel.app/approved-pages/Dear-Day-Contact.html">\n<link rel="alternate" hreflang="en" href="https://deardayy.vercel.app/approved-pages/Dear-Day-Contact-en.html">'
+          if 'hreflang="en"' not in s:
+              s=s.replace(canonical,canonical+alternates,1)
+          old='<div class="auth-actions"><a href="/Dear-Day-Auth.html#login">تسجيل الدخول</a><a href="/Dear-Day-Auth.html#signup">إنشاء حساب</a></div>'
+          new='<div class="auth-actions"><a href="/Dear-Day-Auth.html#login">تسجيل الدخول</a><a href="/Dear-Day-Auth.html#signup">إنشاء حساب</a><a class="lang-link" href="/approved-pages/Dear-Day-Contact-en.html" aria-label="English">EN</a></div>'
+          if old in s:
+              s=s.replace(old,new,1)
+          if '.lang-link{' not in s:
+              s=s.replace('.auth-actions{display:flex;gap:10px}', '.auth-actions{display:flex;gap:10px;align-items:center}.lang-link{min-width:40px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(107,53,64,.22);display:grid;place-items:center;font-size:11px;font-weight:900;color:var(--wine);background:var(--ivory)}',1)
+          contact.write_text(s,encoding='utf-8')
+
+          for name in ['index-en.html','approved-pages/Dear-Day-About-en.html','approved-pages/Dear-Day-Partners-en.html','approved-pages/Dear-Day-FAQ-en.html']:
+              p=Path(name)
+              if not p.exists(): continue
+              x=p.read_text(encoding='utf-8')
+              x=x.replace('/approved-pages/Dear-Day-Contact.html','/approved-pages/Dear-Day-Contact-en.html')
+              p.write_text(x,encoding='utf-8')
+
+          sitemap=Path('sitemap.xml')
+          x=sitemap.read_text(encoding='utf-8')
+          url='https://deardayy.vercel.app/approved-pages/Dear-Day-Contact-en.html'
+          if url not in x:
+              x=x.replace('</urlset>',f'  <url><loc>{url}</loc></url>\n</urlset>')
+              sitemap.write_text(x,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add approved-pages/Dear-Day-Contact.html index-en.html approved-pages/Dear-Day-About-en.html approved-pages/Dear-Day-Partners-en.html approved-pages/Dear-Day-FAQ-en.html sitemap.xml
+          git commit -m "Link English Contact page across site" || exit 0
+          git push
