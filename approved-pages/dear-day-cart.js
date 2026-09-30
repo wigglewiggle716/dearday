@@ -66,11 +66,45 @@
     });
   }
 
+  function patchReviewConsent(){
+    if(isEnglishPage())return;
+    if(!/\/approved-pages\/Dear-Day-Review\.html$/i.test(String(location.pathname||'')))return;
+    const payBtn=document.getElementById('payBtn');
+    if(!payBtn||document.getElementById('ddBookingConsent'))return;
+    const label=document.createElement('label');
+    label.id='ddBookingConsent';
+    label.className='dd-booking-consent';
+    label.innerHTML='<input id="ddBookingConsentCheck" type="checkbox"><span>بالمتابعة للدفع، أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> الخاصة بالحجز.</span>';
+    payBtn.parentNode.insertBefore(label,payBtn);
+    const box=label.querySelector('input');
+    const original=payBtn.onclick;
+    payBtn.onclick=function(e){
+      if(!box.checked){
+        e.preventDefault();
+        label.classList.add('dd-consent-error');
+        box.focus();
+        const warning=document.getElementById('reviewWarning');
+        if(warning){warning.style.display='block';warning.textContent='وافق على الشروط وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';}
+        return;
+      }
+      label.classList.remove('dd-consent-error');
+      if(typeof original==='function')return original.call(this,e);
+    };
+    box.addEventListener('change',()=>{
+      label.classList.toggle('dd-consent-error',!box.checked);
+      if(box.checked){
+        const warning=document.getElementById('reviewWarning');
+        if(warning&&warning.textContent.includes('وافق على الشروط'))warning.style.display='none';
+      }
+    });
+  }
+
   function patchBilingualLinks(){
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
     patchLegalFooterLinks();
     patchRefundPolicyLink();
+    patchReviewConsent();
   }
 
   function ensureStyle(){
@@ -105,6 +139,10 @@
       }
       #ddBackToTop.dd-top-visible{opacity:1!important;visibility:visible!important;transform:translateY(0)!important;pointer-events:auto!important}
       #ddBackToTop:focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}
+      .dd-booking-consent{display:flex!important;align-items:flex-start!important;gap:9px!important;margin:16px 0 4px!important;padding:12px 13px!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:14px!important;background:#fffaf7!important;color:#756966!important;font-size:11px!important;line-height:1.65!important;cursor:pointer!important}
+      .dd-booking-consent input{appearance:none!important;width:17px!important;height:17px!important;min-width:17px!important;margin:1px 0 0!important;border:1px solid rgba(107,53,64,.38)!important;border-radius:5px!important;background:#fff!important;display:grid!important;place-items:center!important}
+      .dd-booking-consent input:checked{background:#6B3540!important;border-color:#6B3540!important}.dd-booking-consent input:checked:after{content:'✓'!important;color:#fff!important;font-size:11px!important;line-height:1!important}
+      .dd-booking-consent a{color:#6B3540!important;font-weight:800!important;text-decoration:underline!important;text-underline-offset:2px!important}.dd-booking-consent.dd-consent-error{border-color:#A8583D!important;background:#fff3ed!important}
       .dd-occ-footer{background:#5D0C1D!important}
       .dd-legal-links a{color:inherit!important;text-decoration:none!important}
       .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
@@ -183,6 +221,7 @@
   if(document.body)mount();
   else document.addEventListener('DOMContentLoaded',()=>{mount();patchBilingualLinks()},{once:true});
   setTimeout(()=>{patchBilingualLinks();mountBackToTop();updateBackToTop()},0);
+  setTimeout(patchReviewConsent,60);
   window.addEventListener('scroll',updateBackToTop,{passive:true});
   window.addEventListener('resize',updateBackToTop,{passive:true});
   window.addEventListener('storage',function(e){if(!e.key||e.key===KEY){mount();update();}});
