@@ -1,0 +1,34 @@
+name: Load Lora on English home
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/load-lora-home-en.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add Lora font import to English home
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index-en.html')
+          s=p.read_text(encoding='utf-8')
+          marker='<meta name="robots" content="index, follow"/>'
+          inject=marker+'\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">'
+          if 'family=Lora' not in s:
+              if marker not in s:
+                  raise SystemExit('robots meta marker not found')
+              s=s.replace(marker,inject,1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add index-en.html
+          git commit -m "Load Lora on English home" || exit 0
+          git push
