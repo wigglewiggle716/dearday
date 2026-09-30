@@ -26,10 +26,9 @@ jobs:
           # Gifts: make the no-filter recipient option unambiguous.
           p=Path('approved-pages/Dear-Day-Gifts-Approved.html')
           s=p.read_text(encoding='utf-8')
-          pattern=r'(<div class="filter-group"><h4>لمن الهدية\?</h4><div class="chips" data-filter="recipient"><button class="chip active" data-value="all">)الكل(</button>)'
-          ns,repl_count=re.subn(pattern, r'\1أي شخص\2', s, count=1)
+          ns,repl_count=re.subn(r'(data-filter="recipient">.*?<button class="chip active" data-value="all">)الكل(</button>)',r'\1أي شخص\2',s,count=1,flags=re.S)
           if repl_count != 1:
-              raise SystemExit('Recipient filter block not found exactly once')
+              raise SystemExit('Recipient no-filter option not found exactly once')
           save(p,s,ns)
 
           # Venues: remove helper copy under current selection and result count line.
@@ -55,7 +54,6 @@ jobs:
               if not hp.exists():
                   continue
               s=hp.read_text(encoding='utf-8')
-              # If an actual standalone Real Stories page exists, mark it for deletion.
               title_match=re.search(r'<title>(.*?)</title>',s,re.S|re.I)
               if title_match and 'قصص حقيقية' in title_match.group(1):
                   story_page_paths.append(hp)
