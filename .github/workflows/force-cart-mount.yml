@@ -55,3 +55,4 @@ jobs:
           git add approved-pages/dear-day-cart.js
           git commit -m "Mount floating cart before page boot logic" || exit 0
           git push
+# trigger
