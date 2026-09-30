@@ -1,16 +1,17 @@
 (function(){
   const KEY='dearDayCart';
-  const CART_URL='/approved-pages/Dear-Day-Cart.html';
 
+  function isEnglishPage(){
+    return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
+  }
+  function cartUrl(){
+    return isEnglishPage()?'/approved-pages/Dear-Day-Cart-en.html':'/approved-pages/Dear-Day-Cart.html';
+  }
   function cartCount(){
     try{
       const items=JSON.parse(localStorage.getItem(KEY)||'[]');
       return Array.isArray(items)?items.length:0;
     }catch(e){return 0}
-  }
-
-  function isEnglishPage(){
-    return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
 
   function patchEnglishAuthLinks(){
@@ -91,6 +92,7 @@
   function update(){
     const link=document.getElementById('ddFloatingCart');
     if(!link)return;
+    link.href=cartUrl();
     link.classList.add('dd-cart-visible');
     link.setAttribute('aria-hidden','false');
     link.tabIndex=0;
@@ -111,7 +113,7 @@
       link=document.createElement('a');
       link.id='ddFloatingCart';
       link.className='dd-cart-visible';
-      link.href=CART_URL;
+      link.href=cartUrl();
       link.setAttribute('aria-label','My Cart');
       link.innerHTML=`
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="19" cy="20" r="1"></circle><path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"></path></svg>
