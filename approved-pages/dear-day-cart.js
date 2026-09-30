@@ -99,12 +99,58 @@
     });
   }
 
+  function isAuthPage(){
+    return /\/Dear-Day-Auth(?:-en)?\.html$/i.test(String(location.pathname||''));
+  }
+
+  function mountAuthMenu(){
+    if(!isAuthPage())return;
+    const header=document.querySelector('.auth-header');
+    const nav=header?.querySelector('.auth-nav');
+    const actions=header?.querySelector('.auth-actions');
+    if(!header||!nav||!actions)return;
+    let btn=header.querySelector('.dd-auth-menu-toggle');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.type='button';
+      btn.className='dd-auth-menu-toggle';
+      btn.setAttribute('aria-expanded','false');
+      btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');
+      btn.innerHTML='<span></span><span></span><span></span>';
+      actions.appendChild(btn);
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const open=!header.classList.contains('dd-auth-menu-open');
+        header.classList.toggle('dd-auth-menu-open',open);
+        btn.setAttribute('aria-expanded',String(open));
+        btn.setAttribute('aria-label',open?(isEnglishPage()?'Close navigation menu':'إغلاق قائمة التنقل'):(isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل'));
+      });
+      nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+        header.classList.remove('dd-auth-menu-open');
+        btn.setAttribute('aria-expanded','false');
+      }));
+      document.addEventListener('click',e=>{
+        if(!header.contains(e.target)){
+          header.classList.remove('dd-auth-menu-open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      });
+      window.addEventListener('resize',()=>{
+        if(window.innerWidth>1120){
+          header.classList.remove('dd-auth-menu-open');
+          btn.setAttribute('aria-expanded','false');
+        }
+      },{passive:true});
+    }
+  }
+
   function patchBilingualLinks(){
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
     patchLegalFooterLinks();
     patchRefundPolicyLink();
     patchReviewConsent();
+    mountAuthMenu();
   }
 
   function ensureStyle(){
@@ -143,9 +189,26 @@
       .dd-booking-consent input{appearance:none!important;width:17px!important;height:17px!important;min-width:17px!important;margin:1px 0 0!important;border:1px solid rgba(107,53,64,.38)!important;border-radius:5px!important;background:#fff!important;display:grid!important;place-items:center!important}
       .dd-booking-consent input:checked{background:#6B3540!important;border-color:#6B3540!important}.dd-booking-consent input:checked:after{content:'✓'!important;color:#fff!important;font-size:11px!important;line-height:1!important}
       .dd-booking-consent a{color:#6B3540!important;font-weight:800!important;text-decoration:underline!important;text-underline-offset:2px!important}.dd-booking-consent.dd-consent-error{border-color:#A8583D!important;background:#fff3ed!important}
+      .dd-auth-menu-toggle{display:none;border:1px solid rgba(107,53,64,.24);background:#fffaf7;width:40px;height:40px;border-radius:12px;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#6B3540}
+      .dd-auth-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
+      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(2){opacity:0}
+      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
       .dd-occ-footer{background:#5D0C1D!important}
       .dd-legal-links a{color:inherit!important;text-decoration:none!important}
       .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
+      @media(max-width:1120px){
+        .auth-header{grid-template-columns:auto 1fr!important;min-height:72px!important;padding:8px 14px!important;position:sticky!important}
+        .auth-header .auth-brand img{width:128px!important;height:52px!important}
+        .auth-header .auth-actions{justify-content:flex-end!important;gap:8px!important}
+        .auth-header .header-auth{display:none!important}
+        .auth-header .dd-auth-menu-toggle{display:flex!important}
+        .auth-header .auth-nav{display:none!important;position:absolute!important;top:calc(100% + 1px)!important;left:14px!important;right:14px!important;z-index:80!important;background:#FFFDFC!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:18px!important;box-shadow:0 18px 42px rgba(78,32,39,.12)!important;padding:10px!important;white-space:normal!important;gap:2px!important}
+        .auth-header.dd-auth-menu-open .auth-nav{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+        .auth-header .auth-nav a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important}
+        .auth-header .auth-nav a:hover{background:#F6E7E1!important}
+        .auth-header .auth-nav a:after{display:none!important}
+      }
       @media(max-width:700px){
         #ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}
         #ddBackToTop{right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;font-size:24px!important}
@@ -220,7 +283,7 @@
   patchBilingualLinks();
   if(document.body)mount();
   else document.addEventListener('DOMContentLoaded',()=>{mount();patchBilingualLinks()},{once:true});
-  setTimeout(()=>{patchBilingualLinks();mountBackToTop();updateBackToTop()},0);
+  setTimeout(()=>{patchBilingualLinks();mountBackToTop();updateBackToTop();mountAuthMenu()},0);
   setTimeout(patchReviewConsent,60);
   window.addEventListener('scroll',updateBackToTop,{passive:true});
   window.addEventListener('resize',updateBackToTop,{passive:true});
