@@ -4,7 +4,7 @@
   function ensureStyle(){
     if(document.getElementById('dd-native-mobile-nav-style'))return;
     const s=document.createElement('style');s.id='dd-native-mobile-nav-style';s.textContent=`
-      .dd-mobile-menu-toggle,.dd-mobile-menu{display:none!important}
+      header[data-dd-mobile-menu-ready="1"] .dd-mobile-menu-toggle,header[data-dd-mobile-menu-ready="1"] .dd-mobile-menu,.dd-mobile-menu-toggle,.dd-mobile-menu{display:none!important}
       .dd-native-menu-btn{display:none!important;width:42px;height:42px;border:1px solid rgba(107,53,64,.25);border-radius:12px;background:#FFFDFC;color:#6B3540;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex:0 0 auto}
       .dd-native-menu-btn span{display:block;width:19px;height:2px;border-radius:2px;background:currentColor;transition:.18s ease}
       .dd-native-menu-open .dd-native-menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -52,8 +52,13 @@
     const direct=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');if(direct&&direct.tagName==='A')direct.href=home;
     const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');const link=img?.closest('a');if(link)link.href=home;
   }
+  function removeLegacy(header){
+    header.querySelectorAll('.dd-mobile-menu-toggle,.dd-mobile-menu').forEach(el=>el.remove());
+    header.classList.remove('dd-mobile-menu-open');
+    header.removeAttribute('data-dd-mobile-menu-ready');
+  }
   function mount(header){
-    if(!header)return;patchBrand(header);
+    if(!header)return;removeLegacy(header);patchBrand(header);
     const actions=getActions(header);if(!actions)return;
     header.classList.add('dd-native-mobile-ready');
     if(header.querySelector('.dd-native-menu-btn')&&header.querySelector('.dd-native-mobile-panel'))return;
