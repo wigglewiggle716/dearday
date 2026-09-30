@@ -25,11 +25,12 @@ jobs:
           js.write_text(s,encoding='utf-8')
 
           for p in Path('.').rglob('*.html'):
-              x=p.read_text(encoding='utf-8')
+              original=p.read_text(encoding='utf-8')
+              x=original
               x=x.replace('src="/approved-pages/dear-day-cart.js"','src="/approved-pages/dear-day-cart.js?v=20260930-3"')
               x=x.replace('src="dear-day-cart.js"','src="dear-day-cart.js?v=20260930-3"')
               x=x.replace('src="/approved-pages/dear-day-cart.js?v=20260930-2"','src="/approved-pages/dear-day-cart.js?v=20260930-3"')
-              if x!=p.read_text(encoding='utf-8'):
+              if x!=original:
                   p.write_text(x,encoding='utf-8')
           PY
       - name: Commit
@@ -39,3 +40,4 @@ jobs:
           git add approved-pages/dear-day-cart.js '*.html' approved-pages/*.html
           git commit -m "Fix floating cart visibility and bust cache" || exit 0
           git push
+# trigger
