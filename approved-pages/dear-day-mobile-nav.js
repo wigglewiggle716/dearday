@@ -1,33 +1,9 @@
 (function(){
   const BP=1120;
   function isEn(){return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr'}
-  function text(v){return String(v||'').replace(/\s+/g,' ').trim()}
-  function normalizeHref(label,href){
-    const en=isEn();
-    const t=text(label).toLowerCase();
-    if(en){
-      if(t==='home'||t==='الرئيسية')return '/index-en.html';
-      if(t.includes('occasion')||t==='المناسبات'||t==='my occasions')return '/approved-pages/Dear-Day-Occasions-Approved-en.html';
-      if(t.includes('partner')||t==='للشركاء')return '/approved-pages/Dear-Day-Partners-en.html';
-      if(t==='log in'||t==='login'||t==='sign in'||t==='تسجيل الدخول')return '/Dear-Day-Auth-en.html#login';
-      if(t==='create account'||t==='create an account'||t==='sign up'||t==='إنشاء حساب')return '/Dear-Day-Auth-en.html#signup';
-      if(href==='/approved-pages/Dear-Day-Gifts-Approved.html'||href==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Gifts-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
-      if(href==='/approved-pages/Dear-Day-Cake-Approved.html'||href==='/approved-pages/Dear-Day-Cake-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Cake-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
-      if(href==='/approved-pages/Dear-Day-Venues-Approved.html'||href==='/approved-pages/Dear-Day-Venues-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Venues-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
-      return href;
-    }
-    if(t==='home'||t==='الرئيسية')return '/';
-    if(t.includes('occasion')||t==='المناسبات'||t==='my occasions')return '/approved-pages/Dear-Day-Occasions-Approved.html';
-    if(t.includes('partner')||t==='للشركاء')return '/approved-pages/Dear-Day-Partners.html';
-    if(t==='log in'||t==='login'||t==='sign in'||t==='تسجيل الدخول')return '/Dear-Day-Auth.html#login';
-    if(t==='create account'||t==='create an account'||t==='sign up'||t==='إنشاء حساب')return '/Dear-Day-Auth.html#signup';
-    return href;
-  }
   function ensureStyle(){
     if(document.getElementById('dd-native-mobile-nav-style'))return;
-    const s=document.createElement('style');
-    s.id='dd-native-mobile-nav-style';
-    s.textContent=`
+    const s=document.createElement('style');s.id='dd-native-mobile-nav-style';s.textContent=`
       .dd-native-menu-btn{display:none!important;width:42px;height:42px;border:1px solid rgba(107,53,64,.25);border-radius:12px;background:#FFFDFC;color:#6B3540;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex:0 0 auto}
       .dd-native-menu-btn span{display:block;width:19px;height:2px;border-radius:2px;background:currentColor;transition:.18s ease}
       .dd-native-menu-open .dd-native-menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -46,56 +22,56 @@
         header.dd-native-mobile-ready.dd-native-menu-open .dd-native-mobile-panel{display:block!important}
         header.dd-native-mobile-ready .brand img,header.dd-native-mobile-ready .auth-brand img,header.dd-native-mobile-ready .dd-global-brand img,header.dd-native-mobile-ready .wordmark{width:116px!important;height:48px!important;max-width:116px!important;object-fit:contain!important}
       }
-    `;
-    document.head.appendChild(s);
+    `;document.head.appendChild(s);
+  }
+  function menuItems(){
+    return isEn()?[
+      ['Home','/index-en.html'],
+      ['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],
+      ['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],
+      ['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],
+      ['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],
+      ['For Partners','/approved-pages/Dear-Day-Partners-en.html'],
+      ['Log In','/Dear-Day-Auth-en.html#login'],
+      ['Create Account','/Dear-Day-Auth-en.html#signup']
+    ]:[
+      ['الرئيسية','/'],
+      ['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],
+      ['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],
+      ['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],
+      ['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],
+      ['للشركاء','/approved-pages/Dear-Day-Partners.html'],
+      ['تسجيل الدخول','/Dear-Day-Auth.html#login'],
+      ['إنشاء حساب','/Dear-Day-Auth.html#signup']
+    ];
   }
   function getParts(header){
-    const nav=header.querySelector('.dd-global-nav,.home-nav,.auth-nav,nav');
     const actions=header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions');
-    return {nav,actions};
+    return {actions};
   }
-  function addFallbackAuth(links,seen){
-    const en=isEn();
-    const defs=en?
-      [['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']]:
-      [['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']];
-    defs.forEach(([label,href])=>{
-      const exists=[...seen].some(k=>k.includes(href)||k.toLowerCase().includes(label.toLowerCase()));
-      if(exists)return;
-      const a=document.createElement('a');a.href=href;a.textContent=label;links.appendChild(a);seen.add(href+'|'+label);
-    });
+  function patchBrand(header){
+    const home=isEn()?'/index-en.html':'/';
+    const brand=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');
+    if(brand&&brand.tagName==='A')brand.setAttribute('href',home);
+    const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');
+    const imgLink=img?.closest('a');if(imgLink)imgLink.setAttribute('href',home);
   }
   function mount(header){
-    if(!header)return;
-    const {nav,actions}=getParts(header);
-    if(!nav||!actions)return;
-    if(header.querySelector('.dd-native-menu-btn')&&header.querySelector('.dd-native-mobile-panel'))return;
+    if(!header)return;patchBrand(header);
+    const {actions}=getParts(header);if(!actions)return;
     header.querySelectorAll('.dd-native-menu-btn,.dd-native-mobile-panel').forEach(el=>el.remove());
     header.classList.add('dd-native-mobile-ready');
-    const btn=document.createElement('button');
-    btn.type='button';btn.className='dd-native-menu-btn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEn()?'Open menu':'فتح القائمة');btn.innerHTML='<span></span><span></span><span></span>';
-    actions.appendChild(btn);
+    const btn=document.createElement('button');btn.type='button';btn.className='dd-native-menu-btn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEn()?'Open menu':'فتح القائمة');btn.innerHTML='<span></span><span></span><span></span>';actions.appendChild(btn);
     const panel=document.createElement('div');panel.className='dd-native-mobile-panel';
-    const seen=new Set();
-    [...nav.querySelectorAll('a'),...actions.querySelectorAll('a')].forEach(a=>{
-      if(a.classList.contains('dd-lang')||a.classList.contains('lang-link')||a.classList.contains('dd-language-switch')||a.classList.contains('lang'))return;
-      const label=text(a.textContent),rawHref=a.getAttribute('href')||'#';
-      if(!label)return;
-      const href=normalizeHref(label,rawHref);
-      const key=href+'|'+label;if(seen.has(key))return;seen.add(key);
-      const clone=a.cloneNode(true);clone.setAttribute('href',href);panel.appendChild(clone);
-    });
-    addFallbackAuth(panel,seen);
+    menuItems().forEach(([label,href])=>{const a=document.createElement('a');a.href=href;a.textContent=label;panel.appendChild(a)});
     header.appendChild(panel);
     function close(){header.classList.remove('dd-native-menu-open');btn.setAttribute('aria-expanded','false')}
     btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-native-menu-open');header.classList.toggle('dd-native-menu-open',open);btn.setAttribute('aria-expanded',String(open))});
     panel.addEventListener('click',e=>{if(e.target.closest('a'))close()});
-    document.addEventListener('click',e=>{if(!header.contains(e.target))close()});
+    if(!header.dataset.ddNativeOutsideBound){header.dataset.ddNativeOutsideBound='1';document.addEventListener('click',e=>{if(!header.contains(e.target))close()})}
   }
   function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
-  let queued=false;
-  const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});
-  observer.observe(document.documentElement,{subtree:true,childList:true});
+  let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
   setTimeout(scan,100);setTimeout(scan,500);setTimeout(scan,1200);
 })();
