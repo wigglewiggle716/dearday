@@ -593,9 +593,14 @@
     const n=count();
     document.querySelectorAll('[data-dd-cart-count]').forEach(el=>{el.textContent=n;el.setAttribute('aria-label',n+' عناصر في السلة')});
     const floating=ensureFloatingCart();
-    floating.classList.toggle('dd-cart-visible',n>0);
-    floating.setAttribute('aria-hidden',n>0?'false':'true');
-    floating.tabIndex=n>0?0:-1;
+    floating.classList.add('dd-cart-visible');
+    floating.setAttribute('aria-hidden','false');
+    floating.tabIndex=0;
+    const floatCount=floating.querySelector('.dd-float-count');
+    if(floatCount){
+      floatCount.textContent=n;
+      floatCount.style.display=n>0?'grid':'none';
+    }
     updateFloatingOffset();
   }
   function inferPlanProductType(item){
