@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAF3EA">
+<title>تسجيل الدخول | Dear Day</title>
+<meta name="description" content="سجّل دخولك إلى حساب Dear Day للوصول إلى اختياراتك وحجوزاتك وتفاصيل مناسباتك.">
+<link rel="canonical" href="https://deardayy.vercel.app/Dear-Day-Auth.html">
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:600;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-600.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+:root{--ivory:#FAF3EA;--paper:#FFFDFC;--wine:#6B3540;--terra:#A8583D;--ink:#352D2E;--muted:#756A68;--line:rgba(107,53,64,.17);--soft:#F5E4DE;--shadow:0 26px 80px rgba(78,32,39,.11)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ivory);color:var(--ink);font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif;line-height:1.7;overflow-x:hidden}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+:where(a,button,input,[tabindex]):focus-visible{outline:3px solid var(--terra);outline-offset:3px}
+.auth-header{min-height:88px;display:grid;grid-template-columns:minmax(190px,auto) 1fr minmax(300px,auto);align-items:center;gap:26px;padding:10px clamp(24px,5vw,82px);background:rgba(250,243,234,.97);border-bottom:1px solid rgba(107,53,64,.14);position:sticky;top:0;z-index:50;backdrop-filter:blur(14px)}
+.auth-brand{display:flex;align-items:center}.auth-brand img{width:168px;height:62px;object-fit:contain;mix-blend-mode:multiply}.auth-nav{display:flex;align-items:center;justify-content:center;gap:28px;white-space:nowrap}.auth-nav a{position:relative;color:#3B292B;font-size:13px;font-weight:800;padding:12px 1px}.auth-nav a:after{content:"";position:absolute;inset-inline:0;bottom:3px;height:2px;background:var(--terra);border-radius:2px;transform:scaleX(0);opacity:0;transition:.18s}.auth-nav a:hover{color:var(--terra)}.auth-nav a:hover:after{transform:scaleX(1);opacity:1}.auth-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap}.header-auth{min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid rgba(107,53,64,.32);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--wine)}.header-auth.active,.header-auth.signup{background:var(--wine);border-color:var(--wine);color:white}.lang{min-width:40px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(107,53,64,.22);display:grid;place-items:center;font:900 11px/1 Arial,sans-serif;color:var(--wine)}
+.auth-main{min-height:calc(100svh - 88px);position:relative;display:grid;place-items:center;padding:70px 22px 86px;overflow:hidden}.auth-main:before,.auth-main:after{content:"";position:absolute;border:1px solid rgba(168,88,61,.24);border-radius:50%;pointer-events:none}.auth-main:before{width:360px;height:360px;right:-190px;top:90px}.auth-main:after{width:270px;height:270px;left:-135px;bottom:65px}.brand-stroke{position:absolute;width:220px;height:110px;border:2px solid rgba(107,53,64,.14);border-color:rgba(107,53,64,.14) transparent transparent transparent;border-radius:50%;transform:rotate(-16deg);pointer-events:none;top:19%;left:8%}
+.auth-shell{width:min(470px,100%);position:relative;z-index:2}.auth-card{background:rgba(255,253,252,.88);border:1px solid var(--line);border-radius:30px;padding:38px 38px 32px;box-shadow:var(--shadow);backdrop-filter:blur(8px)}.card-logo{display:block;width:188px;max-height:78px;object-fit:contain;margin:0 auto 14px;mix-blend-mode:multiply}.auth-card h1{margin:2px 0 7px;text-align:center;color:var(--wine);font-size:30px;line-height:1.35}.auth-card .intro{margin:0 auto 28px;text-align:center;color:var(--muted);font-size:13px;max-width:340px}.auth-form{display:grid;gap:16px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:800;color:#574A47}.control{position:relative}.field input{width:100%;height:52px;border:1px solid #E4D7D2;border-radius:15px;background:#fff;padding:0 15px;color:var(--ink);outline:none;transition:.18s}.field input:focus{border-color:var(--terra);box-shadow:0 0 0 4px rgba(168,88,61,.08)}.field input::placeholder{color:#AA9D98}.password-input{padding-inline-end:48px!important}.password-toggle{position:absolute;inset-inline-end:7px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:transparent;border-radius:10px;color:var(--wine);display:grid;place-items:center}.password-toggle svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}.row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:-2px}.remember{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);cursor:pointer}.remember input{appearance:none;width:17px;height:17px;border:1px solid rgba(107,53,64,.34);border-radius:5px;background:white;display:grid;place-items:center;margin:0}.remember input:checked{background:var(--wine);border-color:var(--wine)}.remember input:checked:after{content:"✓";color:white;font-size:11px;line-height:1}.forgot{font-size:11px;font-weight:800;color:var(--terra)}.forgot:hover{text-decoration:underline}.primary{width:100%;min-height:52px;border:1px solid var(--wine);border-radius:15px;background:var(--wine);color:white;font-weight:800;transition:.18s}.primary:hover{background:#572B34;border-color:#572B34;transform:translateY(-1px)}.form-status{min-height:0;margin:0;text-align:center;font-size:11px;color:var(--terra)}
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0 17px;color:#9B8A86;font-size:11px}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}.socials{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.social-btn{height:48px;border:1px solid var(--line);border-radius:14px;background:white;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:.18s}.social-btn:hover{border-color:rgba(168,88,61,.55);transform:translateY(-1px);box-shadow:0 8px 18px rgba(78,32,39,.06)}.social-btn svg{width:21px;height:21px}.switch-copy{margin:23px 0 0;text-align:center;font-size:12px;color:var(--muted)}.switch-copy a{font-weight:900;color:var(--wine)}.switch-copy a:hover{color:var(--terra)}
+.auth-panel[hidden]{display:none!important}.signup-form{gap:13px}.signup-form .field input{height:49px}.signup-form .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.forgot-icon{width:54px;height:54px;margin:0 auto 16px;border-radius:18px;background:var(--soft);display:grid;place-items:center;color:var(--wine)}.forgot-icon svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8}.back-link{margin-top:20px;text-align:center;font-size:12px}.back-link a{font-weight:900;color:var(--wine)}
+.dd-footer{background:var(--wine);color:#F8E8EB;padding:52px 0 24px}.footer-top{display:grid;grid-template-columns:1.2fr repeat(3,1fr);gap:40px}.footer-logo img{width:170px;filter:brightness(0) invert(1)}.footer-top h4{margin:0 0 16px;color:white}.footer-top a{display:block;color:#EFD9DE;margin:10px 0;font-size:14px}.footer-note{color:#EFD9DE;line-height:1.8;font-size:14px;max-width:330px}.footer-bottom{border-top:1px solid rgba(255,255,255,.25);margin-top:34px;padding-top:20px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#DCC2C8;font-size:13px}.payments{display:flex;gap:8px;flex-wrap:wrap}.pay{background:white;color:var(--wine);padding:7px 11px;border-radius:7px;font-weight:800;font-size:11px}
+@media(max-width:860px){.auth-header{min-height:72px;grid-template-columns:auto 1fr;padding:8px 14px}.auth-brand img{width:128px;height:52px}.auth-nav{display:none}.auth-actions{justify-content:flex-end}.header-auth{display:none}.lang{width:36px;height:36px;min-width:36px}.auth-main{min-height:calc(100svh - 72px);padding:45px 16px 64px}.auth-card{padding:31px 24px 27px;border-radius:24px}.auth-main:before{width:250px;height:250px;right:-150px}.auth-main:after{width:210px;height:210px;left:-130px}.brand-stroke{display:none}.footer-top{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.wrap{width:min(100% - 28px,1180px)}.auth-card h1{font-size:27px}.card-logo{width:165px}.signup-form .two-col{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr}.footer-bottom{font-size:11px}.auth-shell{width:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+<link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1">
+</head>
+<body>
+<header class="auth-header">
+  <a class="auth-brand" href="/" aria-label="Dear Day — الرئيسية"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
+  <nav class="auth-nav" aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a>
+    <a href="/#ddHowItWorks">كيف تعمل</a>
+    <a href="/approved-pages/Dear-Day-Partners.html">للشركاء</a>
+    <a href="/approved-pages/Dear-Day-Occasions-Approved.html" style="color:#A8583D">رتّب مناسبتي</a>
+  </nav>
+  <div class="auth-actions">
+    <a class="header-auth" id="headerLogin" href="#login">تسجيل الدخول</a>
+    <a class="header-auth signup" id="headerSignup" href="#signup">إنشاء حساب</a>
+    <a class="lang" href="/index-en.html" aria-label="English">EN</a>
+  </div>
+</header>
+
+<main class="auth-main">
+  <span class="brand-stroke" aria-hidden="true"></span>
+  <div class="auth-shell">
+    <section class="auth-card auth-panel" id="loginPanel" aria-labelledby="loginTitle">
+      <img class="card-logo" src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day">
+      <h1 id="loginTitle">أهلاً برجوعك</h1>
+      <p class="intro">سجّل دخولك علشان تكمّل ترتيب يومك وتراجع اختياراتك وحجوزاتك.</p>
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginEmail">البريد الإلكتروني</label>
+          <div class="control"><input id="loginEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required></div>
+        </div>
+        <div class="field">
+          <label for="loginPassword">كلمة المرور</label>
+          <div class="control">
+            <input class="password-input" id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور" minlength="6" required>
+            <button class="password-toggle" type="button" data-target="loginPassword" aria-label="إظهار كلمة المرور">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <label class="remember"><input type="checkbox" name="remember"> <span>تذكرني</span></label>
+          <a class="forgot" href="#forgot">نسيت كلمة السر؟</a>
+        </div>
+        <button class="primary" type="submit">تسجيل الدخول</button>
+        <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+      </form>
+      <div class="divider"><span>أو سجل دخولك بواسطة</span></div>
+      <div class="socials" aria-label="تسجيل الدخول باستخدام حساب خارجي">
+        <button class="social-btn" type="button" data-provider="Facebook" aria-label="تسجيل الدخول بواسطة Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.4V10H7.5v3h2.8v8h3.4Z"></path></svg>
+        </button>
+        <button class="social-btn" type="button" data-provider="Google" aria-label="تسجيل الدخول بواسطة Google">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z"></path><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3.1v2.6A10 10 0 0 0 12 22Z"></path><path fill="#FBBC05" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3.1A10 10 0 0 0 2 12c0 1.6.4 3.1 1.1 4.5l3.3-2.6Z"></path><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3.1 7.5l3.3 2.6C7.2 7.7 9.4 5.9 12 5.9Z"></path></svg>
+        </button>
+        <button class="social-btn" type="button" data-provider="Apple" aria-label="تسجيل الدخول بواسطة Apple">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.1 12.7c0-2.7 2.2-4 2.3-4.1a5 5 0 0 0-3.9-2.1c-1.6-.2-3.2 1-4 1s-2.1-1-3.4-1c-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.8 1.3 10.3.9 1.2 1.9 2.6 3.3 2.5 1.3-.1 1.8-.8 3.4-.8 1.6 0 2.1.8 3.4.8 1.4 0 2.3-1.3 3.2-2.5 1-1.4 1.4-2.9 1.4-3-.1 0-2.8-1.1-2.8-3.6ZM14.4 4.8A4.7 4.7 0 0 0 15.5 1a4.8 4.8 0 0 0-3.2 1.6 4.5 4.5 0 0 0-1.1 3.6 4 4 0 0 0 3.2-1.4Z"></path></svg>
+        </button>
+      </div>
+      <p class="switch-copy">ليس لديك حساب؟ <a href="#signup">إنشاء حساب جديد</a></p>
+    </section>
+
+    <section class="auth-card auth-panel" id="signupPanel" aria-labelledby="signupTitle" hidden>
+      <img class="card-logo" src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day">
+      <h1 id="signupTitle">أنشئ حسابك</h1>
+      <p class="intro">خلي تفاصيل مناسباتك واختياراتك محفوظة في مكان واحد.</p>
+      <form class="auth-form signup-form" id="signupForm" novalidate>
+        <div class="two-col">
+          <div class="field"><label for="firstName">الاسم الأول</label><input id="firstName" name="firstName" autocomplete="given-name" placeholder="الاسم الأول" required></div>
+          <div class="field"><label for="lastName">اسم العائلة</label><input id="lastName" name="lastName" autocomplete="family-name" placeholder="اسم العائلة" required></div>
+        </div>
+        <div class="field"><label for="signupEmail">البريد الإلكتروني</label><input id="signupEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required></div>
+        <div class="field"><label for="signupPhone">رقم الموبايل</label><input id="signupPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx" required></div>
+        <div class="field"><label for="signupPassword">كلمة المرور</label><div class="control"><input class="password-input" id="signupPassword" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="6 أحرف على الأقل" required><button class="password-toggle" type="button" data-target="signupPassword" aria-label="إظهار كلمة المرور"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></button></div></div>
+        <button class="primary" type="submit">إنشاء الحساب</button>
+        <p class="form-status" id="signupStatus" role="status" aria-live="polite"></p>
+      </form>
+      <p class="switch-copy">لديك حساب بالفعل؟ <a href="#login">تسجيل الدخول</a></p>
+    </section>
+
+    <section class="auth-card auth-panel" id="forgotPanel" aria-labelledby="forgotTitle" hidden>
+      <div class="forgot-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"></rect><path d="m4.5 7 7.5 6 7.5-6"></path></svg></div>
+      <h1 id="forgotTitle">استعادة كلمة المرور</h1>
+      <p class="intro">اكتب بريدك الإلكتروني وسنستخدمه لإرسال رابط استعادة كلمة المرور.</p>
+      <form class="auth-form" id="forgotForm" novalidate>
+        <div class="field"><label for="forgotEmail">البريد الإلكتروني</label><input id="forgotEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required></div>
+        <button class="primary" type="submit">إرسال رابط الاستعادة</button>
+        <p class="form-status" id="forgotStatus" role="status" aria-live="polite"></p>
+      </form>
+      <p class="back-link"><a href="#login">العودة لتسجيل الدخول</a></p>
+    </section>
+  </div>
+</main>
+
+<footer class="dd-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-logo"><a href="/" aria-label="Dear Day — الرئيسية"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div>
+      <div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div>
+      <div><h4>عن Dear Day</h4><a href="#">من نحن</a><a href="/#ddHowItWorks">كيف نعمل</a><a href="/approved-pages/Dear-Day-Partners.html">للشركاء</a><a href="#">قصص حقيقية</a></div>
+      <div><h4>خدمة العملاء</h4><a href="#">الأسئلة المتكررة</a><a href="#">حجوزاتي</a><a href="#">الإلغاء والاسترداد</a><a href="#login">حسابي</a></div>
+    </div>
+    <div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day · نسخة تجريبية للموقع</div></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const panels={login:document.getElementById('loginPanel'),signup:document.getElementById('signupPanel'),forgot:document.getElementById('forgotPanel')};
+  const headerLogin=document.getElementById('headerLogin');
+  const headerSignup=document.getElementById('headerSignup');
+  function route(){
+    const key=(location.hash||'#login').slice(1);
+    const active=panels[key]?key:'login';
+    Object.entries(panels).forEach(([name,panel])=>panel.hidden=name!==active);
+    headerLogin.classList.toggle('active',active==='login');
+    headerSignup.classList.toggle('active',active==='signup');
+    document.title=(active==='signup'?'إنشاء حساب':active==='forgot'?'استعادة كلمة المرور':'تسجيل الدخول')+' | Dear Day';
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+  window.addEventListener('hashchange',route);route();
+
+  document.querySelectorAll('.password-toggle').forEach(btn=>btn.addEventListener('click',()=>{
+    const input=document.getElementById(btn.dataset.target);if(!input)return;
+    const show=input.type==='password';input.type=show?'text':'password';
+    btn.setAttribute('aria-label',show?'إخفاء كلمة المرور':'إظهار كلمة المرور');
+  }));
+
+  function bindForm(formId,statusId){
+    const form=document.getElementById(formId),status=document.getElementById(statusId);if(!form||!status)return;
+    form.addEventListener('submit',e=>{
+      e.preventDefault();status.textContent='';
+      if(!form.checkValidity()){form.reportValidity();return;}
+      status.textContent='الواجهة جاهزة — سيتم ربط الحسابات بشكل آمن عند توصيل خدمة تسجيل الدخول.';
+    });
+  }
+  bindForm('loginForm','loginStatus');bindForm('signupForm','signupStatus');bindForm('forgotForm','forgotStatus');
+  document.querySelectorAll('.social-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    const status=document.getElementById('loginStatus');
+    status.textContent='سيتم تفعيل تسجيل الدخول بواسطة '+btn.dataset.provider+' عند ربط خدمة الحسابات.';
+  }));
+})();
+</script>
+</body>
+</html>
