@@ -1,5 +1,6 @@
 (function(){
   const KEY='dearDayCart';
+  const MOBILE_BREAKPOINT=1120;
 
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
@@ -8,10 +9,7 @@
     return isEnglishPage()?'/approved-pages/Dear-Day-Cart-en.html':'/approved-pages/Dear-Day-Cart.html';
   }
   function cartCount(){
-    try{
-      const items=JSON.parse(localStorage.getItem(KEY)||'[]');
-      return Array.isArray(items)?items.length:0;
-    }catch(e){return 0}
+    try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.length:0}catch(e){return 0}
   }
 
   function patchEnglishAuthLinks(){
@@ -25,20 +23,16 @@
 
   function patchGiftLanguageLinks(){
     const path=String(location.pathname||'');
-    const isArabicGifts=/\/approved-pages\/Dear-Day-Gifts-Approved\.html$/i.test(path);
-    if(isArabicGifts){
+    if(/\/approved-pages\/Dear-Day-Gifts-Approved\.html$/i.test(path)){
       document.querySelectorAll('a.lang-link,a.dd-language-switch').forEach(a=>{
-        a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';
-        a.removeAttribute('onclick');
-        a.setAttribute('aria-label','English');
-        if(String(a.textContent||'').trim()==='')a.textContent='EN';
+        a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';a.removeAttribute('onclick');a.setAttribute('aria-label','English');if(!String(a.textContent||'').trim())a.textContent='EN';
       });
     }
     if(isEnglishPage()){
       document.querySelectorAll('a[href]').forEach(a=>{
         const raw=a.getAttribute('href')||'';
-        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html')a.setAttribute('href','/approved-pages/Dear-Day-Gifts-Approved-en.html');
-        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')a.setAttribute('href','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1');
+        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html')a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';
+        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1';
       });
     }
   }
@@ -47,9 +41,10 @@
     if(isEnglishPage())return;
     document.querySelectorAll('.footer-bottom div').forEach(el=>{
       const text=String(el.textContent||'').replace(/\s+/g,' ').trim();
-      if(text!=='سياسة الخصوصية · الشروط والأحكام')return;
-      el.classList.add('dd-legal-links');
-      el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
+      if(text==='سياسة الخصوصية · الشروط والأحكام'){
+        el.classList.add('dd-legal-links');
+        el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
+      }
     });
   }
 
@@ -57,298 +52,101 @@
     if(isEnglishPage())return;
     document.querySelectorAll('.footer-top>div').forEach(col=>{
       const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim();
-      if(heading!=='خدمة العملاء')return;
-      if(col.querySelector('a[href="/approved-pages/Dear-Day-Refunds.html"]'))return;
-      const link=document.createElement('a');
-      link.href='/approved-pages/Dear-Day-Refunds.html';
-      link.textContent='سياسة الإلغاء والاسترداد';
-      col.appendChild(link);
+      if(heading!=='خدمة العملاء'||col.querySelector('a[href="/approved-pages/Dear-Day-Refunds.html"]'))return;
+      const link=document.createElement('a');link.href='/approved-pages/Dear-Day-Refunds.html';link.textContent='سياسة الإلغاء والاسترداد';col.appendChild(link);
     });
   }
 
   function patchReviewConsent(){
-    if(isEnglishPage())return;
-    if(!/\/approved-pages\/Dear-Day-Review\.html$/i.test(String(location.pathname||'')))return;
+    if(isEnglishPage()||!/\/approved-pages\/Dear-Day-Review\.html$/i.test(String(location.pathname||'')))return;
     const payBtn=document.getElementById('payBtn');
     if(!payBtn||document.getElementById('ddBookingConsent'))return;
-    const label=document.createElement('label');
-    label.id='ddBookingConsent';
-    label.className='dd-booking-consent';
+    const label=document.createElement('label');label.id='ddBookingConsent';label.className='dd-booking-consent';
     label.innerHTML='<input id="ddBookingConsentCheck" type="checkbox"><span>بالمتابعة للدفع، أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> الخاصة بالحجز.</span>';
     payBtn.parentNode.insertBefore(label,payBtn);
-    const box=label.querySelector('input');
-    const original=payBtn.onclick;
+    const box=label.querySelector('input'),original=payBtn.onclick;
     payBtn.onclick=function(e){
-      if(!box.checked){
-        e.preventDefault();
-        label.classList.add('dd-consent-error');
-        box.focus();
-        const warning=document.getElementById('reviewWarning');
-        if(warning){warning.style.display='block';warning.textContent='وافق على الشروط وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';}
-        return;
-      }
-      label.classList.remove('dd-consent-error');
-      if(typeof original==='function')return original.call(this,e);
+      if(!box.checked){e.preventDefault();label.classList.add('dd-consent-error');box.focus();const warning=document.getElementById('reviewWarning');if(warning){warning.style.display='block';warning.textContent='وافق على الشروط وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';}return;}
+      label.classList.remove('dd-consent-error');if(typeof original==='function')return original.call(this,e);
     };
-    box.addEventListener('change',()=>{
-      label.classList.toggle('dd-consent-error',!box.checked);
-      if(box.checked){
-        const warning=document.getElementById('reviewWarning');
-        if(warning&&warning.textContent.includes('وافق على الشروط'))warning.style.display='none';
-      }
-    });
+    box.addEventListener('change',()=>{label.classList.toggle('dd-consent-error',!box.checked);if(box.checked){const warning=document.getElementById('reviewWarning');if(warning&&warning.textContent.includes('وافق على الشروط'))warning.style.display='none';}});
   }
 
-  function isAuthPage(){
-    return /\/Dear-Day-Auth(?:-en)?\.html$/i.test(String(location.pathname||''));
-  }
-
-  function mountAuthMenu(){
-    if(!isAuthPage())return;
-    const header=document.querySelector('.auth-header');
-    const nav=header?.querySelector('.auth-nav');
-    const actions=header?.querySelector('.auth-actions');
-    if(!header||!nav||!actions)return;
-    let btn=header.querySelector('.dd-auth-menu-toggle');
-    if(!btn){
-      btn=document.createElement('button');
-      btn.type='button';
-      btn.className='dd-auth-menu-toggle';
-      btn.setAttribute('aria-expanded','false');
-      btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');
-      btn.innerHTML='<span></span><span></span><span></span>';
-      actions.appendChild(btn);
-      btn.addEventListener('click',e=>{
-        e.stopPropagation();
-        const open=!header.classList.contains('dd-auth-menu-open');
-        header.classList.toggle('dd-auth-menu-open',open);
-        btn.setAttribute('aria-expanded',String(open));
-        btn.setAttribute('aria-label',open?(isEnglishPage()?'Close navigation menu':'إغلاق قائمة التنقل'):(isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل'));
-      });
-      nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-        header.classList.remove('dd-auth-menu-open');
-        btn.setAttribute('aria-expanded','false');
-      }));
-      document.addEventListener('click',e=>{
-        if(!header.contains(e.target)){
-          header.classList.remove('dd-auth-menu-open');
-          btn.setAttribute('aria-expanded','false');
-        }
-      });
-      window.addEventListener('resize',()=>{
-        if(window.innerWidth>1120){
-          header.classList.remove('dd-auth-menu-open');
-          btn.setAttribute('aria-expanded','false');
-        }
-      },{passive:true});
-    }
-  }
-
-  function mountHomeMenu(){
-    const header=document.querySelector('.home-header');
-    if(!header)return;
-    const nav=header.querySelector('.home-nav');
-    const actions=header.querySelector('.auth-actions');
-    if(!nav||!actions)return;
-    let btn=header.querySelector('.dd-home-menu-toggle');
-    if(btn)return;
-    btn=document.createElement('button');
-    btn.type='button';
-    btn.className='dd-home-menu-toggle';
-    btn.setAttribute('aria-expanded','false');
-    btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');
-    btn.innerHTML='<span></span><span></span><span></span>';
-    actions.appendChild(btn);
-
-    const panel=document.createElement('div');
-    panel.className='dd-home-mobile-menu';
-    const wrap=document.createElement('div');
-    wrap.className='dd-home-mobile-links';
-    [...nav.querySelectorAll('a'),...actions.querySelectorAll('.auth-link')].forEach(a=>wrap.appendChild(a.cloneNode(true)));
-    panel.appendChild(wrap);
-    header.appendChild(panel);
-
-    function close(){
-      header.classList.remove('dd-home-menu-open');
-      btn.setAttribute('aria-expanded','false');
-      btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');
-    }
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      const open=!header.classList.contains('dd-home-menu-open');
-      header.classList.toggle('dd-home-menu-open',open);
-      btn.setAttribute('aria-expanded',String(open));
-      btn.setAttribute('aria-label',open?(isEnglishPage()?'Close navigation menu':'إغلاق قائمة التنقل'):(isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل'));
-    });
+  function buildMenu(header,nav,actions,prefix){
+    if(!header||!nav||!actions||header.dataset.ddMobileMenuReady==='1')return;
+    header.dataset.ddMobileMenuReady='1';
+    const btn=document.createElement('button');btn.type='button';btn.className='dd-mobile-menu-toggle';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');btn.innerHTML='<span></span><span></span><span></span>';actions.appendChild(btn);
+    const panel=document.createElement('div');panel.className='dd-mobile-menu';
+    const links=document.createElement('div');links.className='dd-mobile-menu-links';
+    const candidates=[...nav.querySelectorAll('a'),...actions.querySelectorAll('a')].filter(a=>!a.classList.contains('lang-link')&&!a.classList.contains('dd-language-switch')&&!a.classList.contains('lang'));
+    const seen=new Set();
+    candidates.forEach(a=>{const key=(a.getAttribute('href')||'')+'|'+String(a.textContent||'').trim();if(seen.has(key))return;seen.add(key);links.appendChild(a.cloneNode(true));});
+    panel.appendChild(links);header.appendChild(panel);
+    function close(){header.classList.remove('dd-mobile-menu-open');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل');}
+    btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-mobile-menu-open');header.classList.toggle('dd-mobile-menu-open',open);btn.setAttribute('aria-expanded',String(open));btn.setAttribute('aria-label',open?(isEnglishPage()?'Close navigation menu':'إغلاق قائمة التنقل'):(isEnglishPage()?'Open navigation menu':'فتح قائمة التنقل'));});
     panel.addEventListener('click',e=>{if(e.target.closest('a'))close()});
     document.addEventListener('click',e=>{if(!header.contains(e.target))close()});
-    window.addEventListener('resize',()=>{if(window.innerWidth>1120)close()},{passive:true});
+    window.addEventListener('resize',()=>{if(window.innerWidth>MOBILE_BREAKPOINT)close()},{passive:true});
   }
 
-  function patchBilingualLinks(){
-    patchEnglishAuthLinks();
-    patchGiftLanguageLinks();
-    patchLegalFooterLinks();
-    patchRefundPolicyLink();
-    patchReviewConsent();
-    mountAuthMenu();
-    mountHomeMenu();
+  function mountMobileMenus(){
+    document.querySelectorAll('.home-header').forEach(header=>buildMenu(header,header.querySelector('.home-nav'),header.querySelector('.auth-actions'),'home'));
+    document.querySelectorAll('.auth-header').forEach(header=>buildMenu(header,header.querySelector('.auth-nav'),header.querySelector('.auth-actions'),'auth'));
+    document.querySelectorAll('header').forEach(header=>{
+      if(header.dataset.ddMobileMenuReady==='1')return;
+      const nav=header.querySelector('nav');
+      const actions=header.querySelector('.auth-actions,.header-actions,.actions');
+      if(nav&&actions)buildMenu(header,nav,actions,'generic');
+    });
   }
+
+  function patchPage(){patchEnglishAuthLinks();patchGiftLanguageLinks();patchLegalFooterLinks();patchRefundPolicyLink();patchReviewConsent();mountMobileMenus();}
 
   function ensureStyle(){
     if(document.getElementById('dd-cart-bootstrap-style'))return;
-    const style=document.createElement('style');
-    style.id='dd-cart-bootstrap-style';
-    style.textContent=`
-      #ddFloatingCart{
-        position:fixed!important;left:24px!important;right:auto!important;bottom:24px!important;z-index:2147483000!important;
-        width:58px!important;height:58px!important;border-radius:50%!important;
-        display:flex!important;align-items:center!important;justify-content:center!important;
-        background:#6B3540!important;color:#fff!important;text-decoration:none!important;
-        box-shadow:0 12px 30px rgba(79,18,34,.28)!important;
-        border:2px solid rgba(255,255,255,.92)!important;
-        opacity:1!important;visibility:visible!important;transform:none!important;
-        pointer-events:auto!important;
-      }
+    const style=document.createElement('style');style.id='dd-cart-bootstrap-style';style.textContent=`
+      #ddFloatingCart{position:fixed!important;left:24px!important;right:auto!important;bottom:24px!important;z-index:2147483000!important;width:58px!important;height:58px!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#6B3540!important;color:#fff!important;text-decoration:none!important;box-shadow:0 12px 30px rgba(79,18,34,.28)!important;border:2px solid rgba(255,255,255,.92)!important;opacity:1!important;visibility:visible!important;transform:none!important;pointer-events:auto!important}
       #ddFloatingCart svg{width:25px!important;height:25px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important}
-      #ddFloatingCart .dd-float-count{
-        position:absolute!important;top:-6px!important;right:-5px!important;min-width:23px!important;height:23px!important;padding:0 6px!important;
-        border-radius:999px!important;background:#f6d86b!important;color:#6B3540!important;
-        place-items:center!important;font:700 11px/1 Arial,sans-serif!important;border:2px solid #fff!important;
-      }
+      #ddFloatingCart .dd-float-count{position:absolute!important;top:-6px!important;right:-5px!important;min-width:23px!important;height:23px!important;padding:0 6px!important;border-radius:999px!important;background:#f6d86b!important;color:#6B3540!important;place-items:center!important;font:700 11px/1 Arial,sans-serif!important;border:2px solid #fff!important}
       #ddFloatingCart .dd-float-label{display:none!important}
-      #ddBackToTop{
-        position:fixed!important;right:24px!important;left:auto!important;bottom:24px!important;z-index:2147483000!important;
-        width:58px!important;height:58px!important;border-radius:50%!important;border:2px solid rgba(255,255,255,.92)!important;
-        display:grid!important;place-items:center!important;background:#6B3540!important;color:#fff!important;
-        box-shadow:0 12px 30px rgba(79,18,34,.24)!important;cursor:pointer!important;
-        opacity:0!important;visibility:hidden!important;transform:translateY(10px)!important;pointer-events:none!important;
-        transition:opacity .18s ease,transform .18s ease,visibility .18s ease!important;font:700 27px/1 Arial,sans-serif!important;
-      }
+      #ddBackToTop{position:fixed!important;right:24px!important;left:auto!important;bottom:24px!important;z-index:2147483000!important;width:58px!important;height:58px!important;border-radius:50%!important;border:2px solid rgba(255,255,255,.92)!important;display:grid!important;place-items:center!important;background:#6B3540!important;color:#fff!important;box-shadow:0 12px 30px rgba(79,18,34,.24)!important;cursor:pointer!important;opacity:0!important;visibility:hidden!important;transform:translateY(10px)!important;pointer-events:none!important;transition:opacity .18s ease,transform .18s ease,visibility .18s ease!important;font:700 27px/1 Arial,sans-serif!important}
       #ddBackToTop.dd-top-visible{opacity:1!important;visibility:visible!important;transform:translateY(0)!important;pointer-events:auto!important}
-      #ddBackToTop:focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}
       .dd-booking-consent{display:flex!important;align-items:flex-start!important;gap:9px!important;margin:16px 0 4px!important;padding:12px 13px!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:14px!important;background:#fffaf7!important;color:#756966!important;font-size:11px!important;line-height:1.65!important;cursor:pointer!important}
       .dd-booking-consent input{appearance:none!important;width:17px!important;height:17px!important;min-width:17px!important;margin:1px 0 0!important;border:1px solid rgba(107,53,64,.38)!important;border-radius:5px!important;background:#fff!important;display:grid!important;place-items:center!important}
-      .dd-booking-consent input:checked{background:#6B3540!important;border-color:#6B3540!important}.dd-booking-consent input:checked:after{content:'✓'!important;color:#fff!important;font-size:11px!important;line-height:1!important}
-      .dd-booking-consent a{color:#6B3540!important;font-weight:800!important;text-decoration:underline!important;text-underline-offset:2px!important}.dd-booking-consent.dd-consent-error{border-color:#A8583D!important;background:#fff3ed!important}
-      .dd-auth-menu-toggle,.dd-home-menu-toggle{display:none;border:1px solid rgba(107,53,64,.24);background:#fffaf7;width:40px;height:40px;border-radius:12px;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#6B3540}
-      .dd-auth-menu-toggle span,.dd-home-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
-      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(1),.dd-home-menu-open .dd-home-menu-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(2),.dd-home-menu-open .dd-home-menu-toggle span:nth-child(2){opacity:0}
-      .dd-auth-menu-open .dd-auth-menu-toggle span:nth-child(3),.dd-home-menu-open .dd-home-menu-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-      .dd-home-mobile-menu{display:none;position:absolute;top:calc(100% + 1px);left:14px;right:14px;z-index:90;background:#FFFDFC;border:1px solid rgba(107,53,64,.14);border-radius:18px;box-shadow:0 18px 42px rgba(78,32,39,.12);padding:10px}
-      .dd-home-mobile-links{display:flex;flex-direction:column;gap:2px}
-      .dd-home-mobile-links a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important;color:#6B3540!important;background:transparent!important;border:0!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important}
-      .dd-home-mobile-links a:hover{background:#F6E7E1!important}
-      .dd-occ-footer{background:#5D0C1D!important}
-      .dd-legal-links a{color:inherit!important;text-decoration:none!important}
-      .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
-      @media(max-width:1120px){
-        .auth-header,.home-header{grid-template-columns:auto 1fr!important;min-height:72px!important;height:auto!important;padding:8px 14px!important;position:sticky!important;top:0!important;width:100%!important;max-width:100%!important;overflow:visible!important;gap:10px!important}
-        .auth-header .auth-brand img,.home-header .wordmark{width:128px!important;height:52px!important;max-width:128px!important;object-fit:contain!important}
-        .auth-header .auth-actions,.home-header .auth-actions{justify-content:flex-end!important;gap:8px!important;min-width:0!important}
-        .auth-header .header-auth,.home-header .auth-link{display:none!important}
-        .auth-header .dd-auth-menu-toggle,.home-header .dd-home-menu-toggle{display:flex!important}
-        .home-header .home-nav{display:none!important}
-        .home-header .lang-link,.auth-header .lang{display:grid!important;place-items:center!important;width:38px!important;height:38px!important;min-width:38px!important;padding:0!important;border-radius:50%!important}
-        .home-header.dd-home-menu-open .dd-home-mobile-menu{display:block!important}
-        .auth-header .auth-nav{display:none!important;position:absolute!important;top:calc(100% + 1px)!important;left:14px!important;right:14px!important;z-index:80!important;background:#FFFDFC!important;border:1px solid rgba(107,53,64,.14)!important;border-radius:18px!important;box-shadow:0 18px 42px rgba(78,32,39,.12)!important;padding:10px!important;white-space:normal!important;gap:2px!important}
-        .auth-header.dd-auth-menu-open .auth-nav{display:flex!important;flex-direction:column!important;align-items:stretch!important}
-        .auth-header .auth-nav a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important}
-        .auth-header .auth-nav a:hover{background:#F6E7E1!important}
-        .auth-header .auth-nav a:after{display:none!important}
+      .dd-booking-consent input:checked{background:#6B3540!important;border-color:#6B3540!important}.dd-booking-consent input:checked:after{content:'✓'!important;color:#fff!important;font-size:11px!important;line-height:1!important}.dd-booking-consent a{color:#6B3540!important;font-weight:800!important;text-decoration:underline!important;text-underline-offset:2px!important}.dd-booking-consent.dd-consent-error{border-color:#A8583D!important;background:#fff3ed!important}
+      .dd-mobile-menu-toggle{display:none;border:1px solid rgba(107,53,64,.24);background:#fffaf7;width:40px;height:40px;border-radius:12px;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#6B3540;flex:0 0 auto}
+      .dd-mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
+      .dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(2){opacity:0}.dd-mobile-menu-open .dd-mobile-menu-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+      .dd-mobile-menu{display:none;position:absolute;top:calc(100% + 1px);left:14px;right:14px;z-index:2147482000;background:#FFFDFC;border:1px solid rgba(107,53,64,.14);border-radius:18px;box-shadow:0 18px 42px rgba(78,32,39,.12);padding:10px}
+      .dd-mobile-menu-links{display:flex;flex-direction:column;gap:2px}.dd-mobile-menu-links a{display:block!important;width:100%!important;padding:12px 14px!important;border-radius:11px!important;text-align:start!important;color:#6B3540!important;background:transparent!important;border:0!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important;text-decoration:none!important}.dd-mobile-menu-links a:hover{background:#F6E7E1!important}
+      .dd-occ-footer{background:#5D0C1D!important}.dd-legal-links a{color:inherit!important;text-decoration:none!important}.dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
+      @media(max-width:${MOBILE_BREAKPOINT}px){
+        header[data-dd-mobile-menu-ready="1"]{position:sticky!important;top:0!important;z-index:2147481000!important;overflow:visible!important;min-height:72px!important;height:auto!important;padding:8px 14px!important;width:100%!important;max-width:100%!important;gap:10px!important}
+        header[data-dd-mobile-menu-ready="1"] .home-nav,header[data-dd-mobile-menu-ready="1"] .auth-nav,header[data-dd-mobile-menu-ready="1"]>nav{display:none!important}
+        header[data-dd-mobile-menu-ready="1"] .auth-actions{margin-inline-start:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;min-width:0!important}
+        header[data-dd-mobile-menu-ready="1"] .auth-actions>a:not(.lang-link):not(.dd-language-switch):not(.lang),header[data-dd-mobile-menu-ready="1"] .header-auth{display:none!important}
+        header[data-dd-mobile-menu-ready="1"] .lang-link,header[data-dd-mobile-menu-ready="1"] .lang,header[data-dd-mobile-menu-ready="1"] .dd-language-switch{display:grid!important;place-items:center!important;width:38px!important;height:38px!important;min-width:38px!important;padding:0!important;border-radius:50%!important}
+        header[data-dd-mobile-menu-ready="1"] .dd-mobile-menu-toggle{display:flex!important}
+        header[data-dd-mobile-menu-ready="1"].dd-mobile-menu-open .dd-mobile-menu{display:block!important}
+        header[data-dd-mobile-menu-ready="1"] .brand img,header[data-dd-mobile-menu-ready="1"] .auth-brand img,header[data-dd-mobile-menu-ready="1"] .wordmark{width:116px!important;height:48px!important;max-width:116px!important;object-fit:contain!important}
         body{overflow-x:hidden!important}
       }
-      @media(max-width:700px){
-        #ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}
-        #ddBackToTop{right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;font-size:24px!important}
-        .home-header .wordmark,.auth-header .auth-brand img{width:116px!important;height:48px!important;max-width:116px!important}
-      }
-    `;
-    (document.head||document.documentElement).appendChild(style);
+      @media(max-width:700px){#ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}#ddBackToTop{right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;font-size:24px!important}}
+    `;(document.head||document.documentElement).appendChild(style);
   }
 
-  function update(){
-    const link=document.getElementById('ddFloatingCart');
-    if(!link)return;
-    link.href=cartUrl();
-    link.classList.add('dd-cart-visible');
-    link.setAttribute('aria-hidden','false');
-    link.tabIndex=0;
-    const n=cartCount();
-    const count=link.querySelector('.dd-float-count');
-    if(count){
-      count.textContent=n;
-      count.style.setProperty('display',n>0?'grid':'none','important');
-    }
+  function updateCart(){
+    const link=document.getElementById('ddFloatingCart');if(!link)return;link.href=cartUrl();link.classList.add('dd-cart-visible');link.setAttribute('aria-hidden','false');link.tabIndex=0;const n=cartCount(),count=link.querySelector('.dd-float-count');if(count){count.textContent=n;count.style.setProperty('display',n>0?'grid':'none','important');}
   }
+  function updateBackToTop(){const btn=document.getElementById('ddBackToTop');if(!btn)return;const doc=document.documentElement,maxScroll=Math.max(0,(doc.scrollHeight||0)-window.innerHeight);btn.classList.toggle('dd-top-visible',maxScroll>300&&window.scrollY>=maxScroll*.5);}
+  function mountBackToTop(){if(!document.body)return;let btn=document.getElementById('ddBackToTop');if(!btn){btn=document.createElement('button');btn.id='ddBackToTop';btn.type='button';btn.setAttribute('aria-label',isEnglishPage()?'Back to top':'العودة لأعلى الصفحة');btn.textContent='↑';btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.appendChild(btn);}updateBackToTop();}
+  function mount(){ensureStyle();patchPage();if(!document.body)return;let link=document.getElementById('ddFloatingCart');if(!link){link=document.createElement('a');link.id='ddFloatingCart';link.href=cartUrl();link.setAttribute('aria-label','My Cart');link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="19" cy="20" r="1"></circle><path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"></path></svg><span class="dd-float-count" data-dd-cart-count>0</span><span class="dd-float-label">My Cart</span>';document.body.appendChild(link);}mountBackToTop();updateCart();}
 
-  function updateBackToTop(){
-    const btn=document.getElementById('ddBackToTop');
-    if(!btn)return;
-    const doc=document.documentElement;
-    const maxScroll=Math.max(0,(doc.scrollHeight||0)-window.innerHeight);
-    const threshold=maxScroll*.5;
-    btn.classList.toggle('dd-top-visible',maxScroll>300&&window.scrollY>=threshold);
-  }
-
-  function mountBackToTop(){
-    if(!document.body)return null;
-    let btn=document.getElementById('ddBackToTop');
-    if(!btn){
-      btn=document.createElement('button');
-      btn.id='ddBackToTop';
-      btn.type='button';
-      btn.setAttribute('aria-label',isEnglishPage()?'Back to top':'العودة لأعلى الصفحة');
-      btn.textContent='↑';
-      btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-      document.body.appendChild(btn);
-    }
-    updateBackToTop();
-    return btn;
-  }
-
-  function mount(){
-    ensureStyle();
-    patchBilingualLinks();
-    if(!document.body)return null;
-    let link=document.getElementById('ddFloatingCart');
-    if(!link){
-      link=document.createElement('a');
-      link.id='ddFloatingCart';
-      link.className='dd-cart-visible';
-      link.href=cartUrl();
-      link.setAttribute('aria-label','My Cart');
-      link.innerHTML=`
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="19" cy="20" r="1"></circle><path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"></path></svg>
-        <span class="dd-float-count" data-dd-cart-count>0</span>
-        <span class="dd-float-label">My Cart</span>`;
-      document.body.appendChild(link);
-    }
-    mountBackToTop();
-    update();
-    return link;
-  }
-
-  ensureStyle();
-  patchBilingualLinks();
-  if(document.body)mount();
-  else document.addEventListener('DOMContentLoaded',()=>{mount();patchBilingualLinks()},{once:true});
-  setTimeout(()=>{patchBilingualLinks();mountBackToTop();updateBackToTop();mountAuthMenu();mountHomeMenu()},0);
-  setTimeout(patchReviewConsent,60);
-  window.addEventListener('scroll',updateBackToTop,{passive:true});
-  window.addEventListener('resize',updateBackToTop,{passive:true});
-  window.addEventListener('storage',function(e){if(!e.key||e.key===KEY){mount();update();}});
-  window.addEventListener('ddcartchange',function(){mount();update();});
+  ensureStyle();patchPage();if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount,{once:true});
+  setTimeout(()=>{patchPage();mountBackToTop();updateBackToTop();},0);setTimeout(patchReviewConsent,60);
+  window.addEventListener('scroll',updateBackToTop,{passive:true});window.addEventListener('resize',updateBackToTop,{passive:true});window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
   const core='/approved-pages/dear-day-cart-core.js?v=20260930-5';
-  if(document.readyState==='loading'){
-    document.write('<script src="'+core+'"></script>');
-  }else{
-    const script=document.createElement('script');
-    script.src=core;
-    script.async=false;
-    script.onload=patchBilingualLinks;
-    (document.head||document.documentElement).appendChild(script);
-  }
+  if(document.readyState==='loading')document.write('<script src="'+core+'"><\/script>');
+  else{const script=document.createElement('script');script.src=core;script.async=false;script.onload=patchPage;(document.head||document.documentElement).appendChild(script);}
 })();
