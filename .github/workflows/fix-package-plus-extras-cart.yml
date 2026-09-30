@@ -1,0 +1,72 @@
+name: Fix package plus extras cart
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-package-plus-extras-cart.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preserve package extras in cart
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          # Keep individually selected suggestion products when a recommended package is chosen.
+          p=Path('approved-pages/Dear-Day-Birthday-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          old="    selectedProducts.clear();\n    selectedServices.clear();"
+          new="    selectedServices.clear();"
+          if old not in s:
+              raise SystemExit('birthday package clear marker not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+
+          # Import individually selected birthday suggestions into the cart alongside package components.
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          pattern=r"  function importPlan\(plan\)\{.*?\n  \}\n  window\.DDCart="
+          replacement="""  function inferPlanProductType(item){
+    const text=String((item&&(item.name||item.ar||item.title))||'');
+    if(/كيك|تورت|حلويات|cake|cupcake|dessert|cookie/i.test(text))return 'cake';
+    if(/مكان|تجربة|عشاء|مطعم|روف|قاعة|venue|experience|dinner|restaurant|terrace|garden/i.test(text))return 'venue';
+    return 'gift';
+  }
+  function importPlan(plan){
+    if(!plan||typeof plan!=='object')return read();
+    let a=read();
+    const types=[['gift','giftSelections'],['cake','cakeSelections'],['venue','venueSelections']];
+    types.forEach(([type,key])=>{
+      if(Array.isArray(plan[key])&&plan[key].length){
+        a=a.filter(x=>x.type!==type).concat(plan[key].filter(Boolean).map(x=>normalize(type,x,plan)));
+      }
+    });
+    const extras=Array.isArray(plan.products)?plan.products:[];
+    extras.forEach(item=>{
+      if(!item)return;
+      const type=inferPlanProductType(item);
+      const n=normalize(type,item,plan);
+      const nName=String(n.name||n.ar||'').trim().toLowerCase();
+      const exists=a.some(x=>x.key===n.key||(x.type===n.type&&String(x.name||x.ar||'').trim().toLowerCase()===nName));
+      if(!exists)a.push(n);
+    });
+    return write(a);
+  }
+  window.DDCart="""
+          s2,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit(f'importPlan replacement count={n}')
+          p.write_text(s2,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add approved-pages/Dear-Day-Birthday-Approved.html approved-pages/dear-day-cart.js
+          git commit -m "Keep package extras in cart" || exit 0
+          git push
