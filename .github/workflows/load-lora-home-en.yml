@@ -19,7 +19,7 @@ jobs:
           s=p.read_text(encoding='utf-8')
           marker='<meta name="robots" content="index, follow"/>'
           inject=marker+'\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">'
-          if 'family=Lora' not in s:
+          if 'fonts.googleapis.com/css2?family=Lora' not in s:
               if marker not in s:
                   raise SystemExit('robots meta marker not found')
               s=s.replace(marker,inject,1)
