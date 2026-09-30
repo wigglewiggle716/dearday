@@ -5,6 +5,16 @@
     if(document.getElementById('dd-native-mobile-nav-style'))return;
     const s=document.createElement('style');s.id='dd-native-mobile-nav-style';s.textContent=`
       header .dd-mobile-menu-toggle,header .dd-mobile-menu,header .menu,header .menu-btn,header .burger,header .hamburger,header [class*="burger"],header [class*="hamburger"]{display:none!important}
+      @media(max-width:${BP}px){
+        header .dd-global-actions button.dd-native-menu-btn ~ button,
+        header .auth-actions button.dd-native-menu-btn ~ button,
+        header .header-actions button.dd-native-menu-btn ~ button,
+        header .actions button.dd-native-menu-btn ~ button{display:none!important}
+        header .dd-global-actions button + button,
+        header .auth-actions button + button,
+        header .header-actions button + button,
+        header .actions button + button{display:none!important}
+      }
       .dd-native-menu-btn{display:none!important;width:42px;height:42px;border:1px solid rgba(107,53,64,.25);border-radius:12px;background:#FFFDFC;color:#6B3540;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex:0 0 auto}
       .dd-native-menu-btn span{display:block;width:19px;height:2px;border-radius:2px;background:currentColor;transition:.18s ease}
       .dd-native-menu-open .dd-native-menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -27,23 +37,9 @@
   }
   function menuItems(){
     return isEn()?[
-      ['Home','/index-en.html'],
-      ['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],
-      ['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],
-      ['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],
-      ['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],
-      ['For Partners','/approved-pages/Dear-Day-Partners-en.html'],
-      ['Log In','/Dear-Day-Auth-en.html#login'],
-      ['Create Account','/Dear-Day-Auth-en.html#signup']
+      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
     ]:[
-      ['الرئيسية','/'],
-      ['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],
-      ['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],
-      ['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],
-      ['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],
-      ['للشركاء','/approved-pages/Dear-Day-Partners.html'],
-      ['تسجيل الدخول','/Dear-Day-Auth.html#login'],
-      ['إنشاء حساب','/Dear-Day-Auth.html#signup']
+      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
     ];
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
@@ -56,9 +52,7 @@
     if(!(el instanceof Element)||el.classList.contains('dd-native-menu-btn'))return false;
     if(el.matches('.dd-mobile-menu-toggle,.menu,.menu-btn,.burger,.hamburger,[class*="burger"],[class*="hamburger"]'))return true;
     if(el.tagName==='BUTTON'){
-      const aria=String(el.getAttribute('aria-label')||'').toLowerCase();
-      const title=String(el.getAttribute('title')||'').toLowerCase();
-      const txt=String(el.textContent||'').trim();
+      const aria=String(el.getAttribute('aria-label')||'').toLowerCase();const title=String(el.getAttribute('title')||'').toLowerCase();const txt=String(el.textContent||'').trim();
       return aria.includes('menu')||aria.includes('navigation')||aria.includes('قائمة')||title.includes('menu')||title.includes('navigation')||txt==='☰'||txt==='≡';
     }
     return false;
@@ -66,28 +60,18 @@
   function removeLegacy(header){
     header.querySelectorAll('.dd-mobile-menu-toggle,.dd-mobile-menu,.menu,.menu-btn,.burger,.hamburger,[class*="burger"],[class*="hamburger"]').forEach(el=>{if(!el.classList.contains('dd-native-menu-btn'))el.remove()});
     header.querySelectorAll('button').forEach(btn=>{if(isLegacyMenuButton(btn))btn.remove()});
-    header.classList.remove('dd-mobile-menu-open');
-    header.removeAttribute('data-dd-mobile-menu-ready');
+    const actions=getActions(header);if(actions){const menuButtons=[...actions.querySelectorAll('button')].filter(btn=>btn.classList.contains('dd-native-menu-btn')||isLegacyMenuButton(btn));menuButtons.slice(1).forEach(btn=>btn.remove())}
+    header.classList.remove('dd-mobile-menu-open');header.removeAttribute('data-dd-mobile-menu-ready');
   }
   function mount(header){
     if(!header)return;removeLegacy(header);patchBrand(header);
     const actions=getActions(header);if(!actions)return;
     header.classList.add('dd-native-mobile-ready');
-    let btn=header.querySelector('.dd-native-menu-btn');
-    let panel=header.querySelector('.dd-native-mobile-panel');
-    if(!btn){
-      btn=document.createElement('button');btn.type='button';btn.className='dd-native-menu-btn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEn()?'Open menu':'فتح القائمة');btn.innerHTML='<span></span><span></span><span></span>';actions.appendChild(btn);
-    }
-    if(!panel){
-      panel=document.createElement('div');panel.className='dd-native-mobile-panel';menuItems().forEach(([label,href])=>{const a=document.createElement('a');a.href=href;a.textContent=label;panel.appendChild(a)});header.appendChild(panel);
-    }
-    if(btn.dataset.ddBound!=='1'){
-      btn.dataset.ddBound='1';
-      btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-native-menu-open');header.classList.toggle('dd-native-menu-open',open);btn.setAttribute('aria-expanded',String(open))});
-    }
-    if(panel.dataset.ddBound!=='1'){
-      panel.dataset.ddBound='1';panel.addEventListener('click',e=>{if(e.target.closest('a')){header.classList.remove('dd-native-menu-open');btn.setAttribute('aria-expanded','false')}});
-    }
+    let btn=header.querySelector('.dd-native-menu-btn');let panel=header.querySelector('.dd-native-mobile-panel');
+    if(!btn){btn=document.createElement('button');btn.type='button';btn.className='dd-native-menu-btn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEn()?'Open menu':'فتح القائمة');btn.innerHTML='<span></span><span></span><span></span>';actions.insertBefore(btn,actions.firstChild)}
+    if(!panel){panel=document.createElement('div');panel.className='dd-native-mobile-panel';menuItems().forEach(([label,href])=>{const a=document.createElement('a');a.href=href;a.textContent=label;panel.appendChild(a)});header.appendChild(panel)}
+    if(btn.dataset.ddBound!=='1'){btn.dataset.ddBound='1';btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-native-menu-open');header.classList.toggle('dd-native-menu-open',open);btn.setAttribute('aria-expanded',String(open))})}
+    if(panel.dataset.ddBound!=='1'){panel.dataset.ddBound='1';panel.addEventListener('click',e=>{if(e.target.closest('a')){header.classList.remove('dd-native-menu-open');btn.setAttribute('aria-expanded','false')}})}
   }
   function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
