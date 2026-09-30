@@ -122,9 +122,9 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 <div class="dd-flow-step"><div class="dd-flow-icon">♡</div><div>مراجعة وحجز</div></div>
 </div></section>
 <script id="dd-flow-state">(function(){const p=new URLSearchParams(location.search);const on=p.get('flow')==='1';window.__ddFlowActive=on;const s=document.querySelector('[data-dd-flow-stepper]');if(s)s.hidden=!on;})();</script>
-<div class="container crumbs"><a href="/approved-pages/Dear-Day-Birthday-Approved.html">عيد الميلاد</a> ← <span>تخصيص الهدايا</span></div>
-<section class="hero"><div class="container"><div class="hero-box"><div><h1>اختار الهدية اللي تشبهه فعلًا</h1><p>اختيارك السابق محفوظ. استخدم الفلاتر لو عايز تغيّره، أو أضف هدية ثانية تكمل اليوم — من غير ما تبدأ من الصفر.</p></div><div class="step"><small>الخطوة الحالية</small><strong>تخصيص الهدايا</strong><div class="progress"><i class="on"></i><i></i><i></i><i></i></div></div></div></div></section>
-<section class="current"><div class="container"><div class="section-head"><div><h2>اختيارك الحالي</h2><p>أي هدية اخترتها في الخطوة السابقة هتظهر هنا تلقائيًا.</p></div></div><div id="currentWrap"></div></div></section>
+
+<section class="hero"><div class="container"><div class="hero-box"><div><h1>اختار الهدية اللي تشبهه فعلًا</h1><p>استخدم الفلاتر واختار الهدية المناسبة، وتقدر تضيف أكتر من اختيار لو حابب.</p></div><div class="step"><small>الخطوة الحالية</small><strong>تخصيص الهدايا</strong><div class="progress"><i class="on"></i><i></i><i></i><i></i></div></div></div></div></section>
+<section class="current"><div class="container"><div class="section-head"><div><h2>اختيارك الحالي</h2><p>الهدايا اللي تختارها هتظهر هنا علشان تراجعها أو تغيّرها بسهولة.</p></div></div><div id="currentWrap"></div></div></section>
 <section class="catalog"><div class="container"><div class="section-head"><div><h2>اكتشف هدايا أخرى</h2><p>فلتر حسب النوع والسعر ولمن الهدية، واختار اللي يناسب المناسبة.</p></div></div>
 <div class="layout">
 <aside class="filters">
@@ -178,10 +178,12 @@ const PRODUCTS = [
 {id:'personal',name:'هدية Personalized بالاسم',vendor:'Made For You',price:950,category:'personalized',recipient:'both',img:'/approved-pages/assets/media/personalized-gift.svg',tag:'Personalized',meta:'اسم + تاريخ + رسالة'},
 {id:'ring',name:'خاتم فضة بحجر بسيط',vendor:'Luna Silver',price:2900,category:'silver',recipient:'her',img:'/approved-pages/assets/media/gift-ring.svg',tag:'Premium',meta:'فضة 925 • مقاسات متعددة'}
 ];
-const ddStandalone=new URLSearchParams(location.search).get('standalone')==='1';
-let plan=ddStandalone?null:ddReadIncoming();
-if(!plan&&!ddStandalone){try{ plan=JSON.parse(localStorage.getItem('dearDayPlan')||'null') }catch(e){}}
-if(!plan) plan={occasion:'birthday',services:['هدايا'],products:[{name:'صندوق هدايا مخصص',img:'/approved-pages/assets/media/custom-gift-box.jpg',vendor:'The Gift Studio',price:'EGP 1,200'}],giftSelections:[]};
+const ddParams=new URLSearchParams(location.search);
+const ddStandalone=ddParams.get('standalone')==='1';
+const ddFlow=ddParams.get('flow')==='1';
+let plan=ddReadIncoming();
+if(!plan&&ddFlow&&!ddStandalone){try{ plan=JSON.parse(localStorage.getItem('dearDayPlan')||'null') }catch(e){}}
+if(!plan) plan={occasion:null,services:['هدايا'],products:[],giftSelections:[]};
 
 /* Dear Day dummy catalog data — preview only */
 PRODUCTS.push(
@@ -247,7 +249,7 @@ function giftNextState(){const services=plan.services||[];const packageMode=serv
 giftNextBtn.onclick=()=>{persist();if(!selected.size){showToast('اختار هدية واحدة على الأقل علشان نكمل');document.getElementById('productGrid')?.scrollIntoView({behavior:'smooth',block:'start'});return}const {needCake,needVenue}=giftNextState();if(needCake){ddGo('/approved-pages/Dear-Day-Cake-Approved.html',plan);return}if(needVenue){ddGo('/approved-pages/Dear-Day-Venues-Approved.html',plan);return}ddGo('/approved-pages/Dear-Day-Details-Approved.html',plan);};
 persist();giftNextState();renderCurrent();renderGrid();updateSummary();
 </script>
-<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="Dear-Day-About.html">من نحن</a><a href="Dear-Day-How-It-Works.html">كيف نعمل</a><a href="Dear-Day-Partners.html">للشركاء</a><a href="Dear-Day-Stories.html">قصص حقيقية</a></div><div><h4>خدمة العملاء</h4><a href="Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="/approved-pages/Dear-Day-Contact.html">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day · نسخة تجريبية للموقع</div></div></div></footer>
+<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="Dear-Day-About.html">من نحن</a><a href="Dear-Day-How-It-Works.html">كيف نعمل</a><a href="Dear-Day-Partners.html">للشركاء</a><a href="Dear-Day-Stories.html">قصص حقيقية</a></div><div><h4>خدمة العملاء</h4><a href="Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="/approved-pages/Dear-Day-Contact.html">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
 <script src="assets/selection-dock.js"></script>
 <script src="assets/site-nav.js"></script>
 <script>/* Dear Day footer logo home link */
