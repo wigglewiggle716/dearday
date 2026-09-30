@@ -53,10 +53,24 @@
     });
   }
 
+  function patchRefundPolicyLink(){
+    if(isEnglishPage())return;
+    document.querySelectorAll('.footer-top>div').forEach(col=>{
+      const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim();
+      if(heading!=='خدمة العملاء')return;
+      if(col.querySelector('a[href="/approved-pages/Dear-Day-Refunds.html"]'))return;
+      const link=document.createElement('a');
+      link.href='/approved-pages/Dear-Day-Refunds.html';
+      link.textContent='سياسة الإلغاء والاسترداد';
+      col.appendChild(link);
+    });
+  }
+
   function patchBilingualLinks(){
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
     patchLegalFooterLinks();
+    patchRefundPolicyLink();
   }
 
   function ensureStyle(){
