@@ -2,6 +2,27 @@
   const BP=1120;
   function isEn(){return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr'}
   function text(v){return String(v||'').replace(/\s+/g,' ').trim()}
+  function normalizeHref(label,href){
+    const en=isEn();
+    const t=text(label).toLowerCase();
+    if(en){
+      if(t==='home'||t==='الرئيسية')return '/index-en.html';
+      if(t.includes('occasion')||t==='المناسبات'||t==='my occasions')return '/approved-pages/Dear-Day-Occasions-Approved-en.html';
+      if(t.includes('partner')||t==='للشركاء')return '/approved-pages/Dear-Day-Partners-en.html';
+      if(t==='log in'||t==='login'||t==='sign in'||t==='تسجيل الدخول')return '/Dear-Day-Auth-en.html#login';
+      if(t==='create account'||t==='create an account'||t==='sign up'||t==='إنشاء حساب')return '/Dear-Day-Auth-en.html#signup';
+      if(href==='/approved-pages/Dear-Day-Gifts-Approved.html'||href==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Gifts-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
+      if(href==='/approved-pages/Dear-Day-Cake-Approved.html'||href==='/approved-pages/Dear-Day-Cake-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Cake-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
+      if(href==='/approved-pages/Dear-Day-Venues-Approved.html'||href==='/approved-pages/Dear-Day-Venues-Approved.html?standalone=1')return '/approved-pages/Dear-Day-Venues-Approved-en.html'+(href.includes('?')?'?standalone=1':'');
+      return href;
+    }
+    if(t==='home'||t==='الرئيسية')return '/';
+    if(t.includes('occasion')||t==='المناسبات'||t==='my occasions')return '/approved-pages/Dear-Day-Occasions-Approved.html';
+    if(t.includes('partner')||t==='للشركاء')return '/approved-pages/Dear-Day-Partners.html';
+    if(t==='log in'||t==='login'||t==='sign in'||t==='تسجيل الدخول')return '/Dear-Day-Auth.html#login';
+    if(t==='create account'||t==='create an account'||t==='sign up'||t==='إنشاء حساب')return '/Dear-Day-Auth.html#signup';
+    return href;
+  }
   function ensureStyle(){
     if(document.getElementById('dd-native-mobile-nav-style'))return;
     const s=document.createElement('style');
@@ -58,10 +79,11 @@
     const seen=new Set();
     [...nav.querySelectorAll('a'),...actions.querySelectorAll('a')].forEach(a=>{
       if(a.classList.contains('dd-lang')||a.classList.contains('lang-link')||a.classList.contains('dd-language-switch')||a.classList.contains('lang'))return;
-      const label=text(a.textContent),href=a.getAttribute('href')||'#';
+      const label=text(a.textContent),rawHref=a.getAttribute('href')||'#';
       if(!label)return;
+      const href=normalizeHref(label,rawHref);
       const key=href+'|'+label;if(seen.has(key))return;seen.add(key);
-      panel.appendChild(a.cloneNode(true));
+      const clone=a.cloneNode(true);clone.setAttribute('href',href);panel.appendChild(clone);
     });
     addFallbackAuth(panel,seen);
     header.appendChild(panel);
