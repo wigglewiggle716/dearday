@@ -224,7 +224,7 @@ function renderCurrent(){
 }
 function passFilter(p){
  if(filters.category!=='all'&&p.category!==filters.category)return false;
- if(filters.recipient!=='all'&&p.recipient!==filters.recipient&&p.recipient!=='both')return false;
+ if(filters.recipient!=='all'&&p.recipient!==filters.recipient)return false;
  if(filters.price==='low'&&p.price>=1000)return false;
  if(filters.price==='mid'&&(p.price<1000||p.price>2500))return false;
  if(filters.price==='high'&&p.price<=2500)return false;
