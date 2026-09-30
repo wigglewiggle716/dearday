@@ -1,0 +1,36 @@
+name: Fix gift recipient filter
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/fix-gift-recipient-filter.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix recipient filter logic
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('approved-pages/Dear-Day-Gifts-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          old="if(filters.recipient!=='all'&&p.recipient!==filters.recipient&&p.recipient!=='both')return false;"
+          new="if(filters.recipient!=='all'&&p.recipient!==filters.recipient)return false;"
+          if old not in s:
+              raise SystemExit('recipient filter marker not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add approved-pages/Dear-Day-Gifts-Approved.html
+          git commit -m "Fix gift recipient filter separation"
+          git push
