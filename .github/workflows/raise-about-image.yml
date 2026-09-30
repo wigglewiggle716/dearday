@@ -1,4 +1,4 @@
-name: Raise About image
+name: Force cart mount
 on:
   push:
     paths:
@@ -10,22 +10,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Raise Who We Are image on desktop
+      - name: Mount floating cart before other page logic
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('approved-pages/Dear-Day-About.html')
-          s=p.read_text()
-          marker='.purpose{background:var(--ivory);padding:96px 0}'
-          rule='@media(min-width:981px){.who-visual{transform:translateY(-92px);margin-bottom:-92px}}\n'
-          if rule not in s:
-              s=s.replace(marker, rule+marker)
-          p.write_text(s)
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          old="""  function boot(){
+    normalizeGlobalHeader();
+    bindMobileDatePickers();
+    normalizePaymentLogos();
+    initSignatureExperience();
+    importPlan(readPlanData());
+    removeHeaderCart();
+    paint();"""
+          new="""  function boot(){
+    const floating=ensureFloatingCart();
+    floating.classList.add('dd-cart-visible');
+    floating.setAttribute('aria-hidden','false');
+    floating.tabIndex=0;
+    const earlyCount=floating.querySelector('.dd-float-count');
+    if(earlyCount){
+      const n=count();
+      earlyCount.textContent=n;
+      earlyCount.style.display=n>0?'grid':'none';
+    }
+    try{normalizeGlobalHeader()}catch(e){console.error('Dear Day header init:',e)}
+    try{bindMobileDatePickers()}catch(e){console.error('Dear Day date init:',e)}
+    try{normalizePaymentLogos()}catch(e){console.error('Dear Day payment init:',e)}
+    try{initSignatureExperience()}catch(e){console.error('Dear Day signature init:',e)}
+    try{importPlan(readPlanData())}catch(e){console.error('Dear Day cart sync:',e)}
+    removeHeaderCart();
+    paint();"""
+          if old not in s:
+              raise SystemExit('boot marker not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
           PY
       - name: Commit change
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add approved-pages/Dear-Day-About.html
-          git commit -m 'Raise About image to align with copy' || exit 0
+          git add approved-pages/dear-day-cart.js
+          git commit -m 'Mount floating cart before page boot logic' || exit 0
           git push
