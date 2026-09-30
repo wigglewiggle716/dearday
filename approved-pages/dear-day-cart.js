@@ -2,6 +2,16 @@
   const KEY='dearDayCart';
   const MOBILE_BREAKPOINT=1120;
 
+  function ensureNativeMobileNav(){
+    if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261001-2';
+    s.defer=true;
+    s.setAttribute('data-dd-native-mobile-nav','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureNativeMobileNav();
+
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
