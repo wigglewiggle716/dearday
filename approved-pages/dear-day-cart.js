@@ -95,10 +95,23 @@
         place-items:center!important;font:700 11px/1 Arial,sans-serif!important;border:2px solid #fff!important;
       }
       #ddFloatingCart .dd-float-label{display:none!important}
+      #ddBackToTop{
+        position:fixed!important;right:24px!important;left:auto!important;bottom:24px!important;z-index:2147483000!important;
+        width:58px!important;height:58px!important;border-radius:50%!important;border:2px solid rgba(255,255,255,.92)!important;
+        display:grid!important;place-items:center!important;background:#6B3540!important;color:#fff!important;
+        box-shadow:0 12px 30px rgba(79,18,34,.24)!important;cursor:pointer!important;
+        opacity:0!important;visibility:hidden!important;transform:translateY(10px)!important;pointer-events:none!important;
+        transition:opacity .18s ease,transform .18s ease,visibility .18s ease!important;font:700 27px/1 Arial,sans-serif!important;
+      }
+      #ddBackToTop.dd-top-visible{opacity:1!important;visibility:visible!important;transform:translateY(0)!important;pointer-events:auto!important}
+      #ddBackToTop:focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}
       .dd-occ-footer{background:#5D0C1D!important}
       .dd-legal-links a{color:inherit!important;text-decoration:none!important}
       .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
-      @media(max-width:700px){#ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}}
+      @media(max-width:700px){
+        #ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}
+        #ddBackToTop{right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;font-size:24px!important}
+      }
     `;
     (document.head||document.documentElement).appendChild(style);
   }
@@ -118,6 +131,31 @@
     }
   }
 
+  function updateBackToTop(){
+    const btn=document.getElementById('ddBackToTop');
+    if(!btn)return;
+    const doc=document.documentElement;
+    const maxScroll=Math.max(0,(doc.scrollHeight||0)-window.innerHeight);
+    const threshold=maxScroll*.5;
+    btn.classList.toggle('dd-top-visible',maxScroll>300&&window.scrollY>=threshold);
+  }
+
+  function mountBackToTop(){
+    if(!document.body)return null;
+    let btn=document.getElementById('ddBackToTop');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='ddBackToTop';
+      btn.type='button';
+      btn.setAttribute('aria-label',isEnglishPage()?'Back to top':'العودة لأعلى الصفحة');
+      btn.textContent='↑';
+      btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+      document.body.appendChild(btn);
+    }
+    updateBackToTop();
+    return btn;
+  }
+
   function mount(){
     ensureStyle();
     patchBilingualLinks();
@@ -135,6 +173,7 @@
         <span class="dd-float-label">My Cart</span>`;
       document.body.appendChild(link);
     }
+    mountBackToTop();
     update();
     return link;
   }
@@ -143,7 +182,9 @@
   patchBilingualLinks();
   if(document.body)mount();
   else document.addEventListener('DOMContentLoaded',()=>{mount();patchBilingualLinks()},{once:true});
-  setTimeout(patchBilingualLinks,0);
+  setTimeout(()=>{patchBilingualLinks();mountBackToTop();updateBackToTop()},0);
+  window.addEventListener('scroll',updateBackToTop,{passive:true});
+  window.addEventListener('resize',updateBackToTop,{passive:true});
   window.addEventListener('storage',function(e){if(!e.key||e.key===KEY){mount();update();}});
   window.addEventListener('ddcartchange',function(){mount();update();});
 
