@@ -78,7 +78,7 @@
 
   const core='/approved-pages/dear-day-cart-core.js?v=20260930-5';
   if(document.readyState==='loading'){
-    document.write('<script src="'+core+'"><\\/script>');
+    document.write('<script src="'+core+'"></script>');
   }else{
     const script=document.createElement('script');
     script.src=core;
