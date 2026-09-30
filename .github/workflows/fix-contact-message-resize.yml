@@ -29,7 +29,6 @@ jobs:
                   inject='<script>\n(function(){const message=document.getElementById(\'message\');if(message){const autoGrow=function(){message.style.height=\'auto\';message.style.height=message.scrollHeight+\'px\';};message.addEventListener(\'input\',autoGrow);autoGrow();}})();\n(function(){const form=document.getElementById(\'contactForm\');'
                   s=s.replace(marker,inject,1)
               else:
-                  # Fallback for slightly different minified spacing
                   marker2='<script>\n(function(){'
                   if marker2 not in s:
                       raise SystemExit(f'Script marker not found in {name}')
@@ -44,3 +43,4 @@ jobs:
           git add approved-pages/Dear-Day-Contact.html approved-pages/Dear-Day-Contact-en.html
           git commit -m "Disable contact message manual resize" || exit 0
           git push
+# trigger update
