@@ -1,9 +1,10 @@
-name: Fix English home header
+name: Fix English Home
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
-      - '.github/workflows/fix-english-home-header.yml'
+      - .github/workflows/fix-english-home-header.yml
 permissions:
   contents: write
 jobs:
@@ -11,38 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch English header handling and headline
+      - name: Patch English homepage
+        shell: bash
         run: |
-          python3 - <<'PY'
+          python3 <<'PY'
           from pathlib import Path
-
-          js=Path('approved-pages/dear-day-cart.js')
-          s=js.read_text(encoding='utf-8')
-          old="""    const header=document.querySelector('header');
-    if(!header||header.dataset.ddGlobalNav==='1')return header;
-    ensureGlobalHeaderStyle();"""
-          new="""    const header=document.querySelector('header');
-    if(!header||header.dataset.ddGlobalNav==='1')return header;
-    if((document.documentElement.lang||'').toLowerCase().startsWith('en'))return header;
-    ensureGlobalHeaderStyle();"""
-          if old not in s:
-              raise SystemExit('global header marker not found')
-          s=s.replace(old,new,1)
-          js.write_text(s,encoding='utf-8')
-
-          home=Path('index-en.html')
-          h=home.read_text(encoding='utf-8')
-          old_head='Your occasion, every detail,<br/>all in one place'
-          new_head='Your occasion. Every detail.<br/>All in one place.'
-          if old_head not in h:
-              raise SystemExit('English headline not found')
-          h=h.replace(old_head,new_head,1)
-          home.write_text(h,encoding='utf-8')
+          p = Path('index-en.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<header class="home-header">','<header class="home-header" data-dd-global-nav="1">',1)
+          s = s.replace('Your occasion, every detail,<br/>all in one place','Your occasion. Every detail.<br/>All in one place.',1)
+          p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit changes
+      - name: Commit
+        shell: bash
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add approved-pages/dear-day-cart.js index-en.html
-          git commit -m 'Keep English header and refine homepage headline'
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add index-en.html
+          git commit -m "Fix English header and headline" || exit 0
           git push
