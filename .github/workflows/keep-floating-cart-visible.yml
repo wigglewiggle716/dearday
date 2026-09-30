@@ -1,0 +1,45 @@
+name: Keep Floating Cart Visible
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/keep-floating-cart-visible.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep floating cart visible on every page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          old="""    const floating=ensureFloatingCart();
+    floating.classList.toggle('dd-cart-visible',n>0);
+    floating.setAttribute('aria-hidden',n>0?'false':'true');
+    floating.tabIndex=n>0?0:-1;
+    updateFloatingOffset();"""
+          new="""    const floating=ensureFloatingCart();
+    floating.classList.add('dd-cart-visible');
+    floating.setAttribute('aria-hidden','false');
+    floating.tabIndex=0;
+    const floatCount=floating.querySelector('.dd-float-count');
+    if(floatCount){
+      floatCount.textContent=n;
+      floatCount.style.display=n>0?'grid':'none';
+    }
+    updateFloatingOffset();"""
+          if old not in s:
+              raise SystemExit('Floating cart paint marker not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add approved-pages/dear-day-cart.js
+          git commit -m "Keep floating cart visible across pages" || exit 0
+          git push
