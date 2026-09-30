@@ -1,0 +1,87 @@
+name: Cleanup filters venues partners stories
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cleanup-filters-venues-partners-stories.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply requested cleanup
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed=[]
+          def save(path, old, new):
+              if new != old:
+                  path.write_text(new, encoding='utf-8')
+                  changed.append(str(path))
+
+          # Gifts: make the no-filter recipient option unambiguous.
+          p=Path('approved-pages/Dear-Day-Gifts-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          pattern=r'(<div class="filter-group"><h4>لمن الهدية\?</h4><div class="chips" data-filter="recipient"><button class="chip active" data-value="all">)الكل(</button>)'
+          ns,repl_count=re.subn(pattern, r'\1أي شخص\2', s, count=1)
+          if repl_count != 1:
+              raise SystemExit('Recipient filter block not found exactly once')
+          save(p,s,ns)
+
+          # Venues: remove helper copy under current selection and result count line.
+          p=Path('approved-pages/Dear-Day-Venues-Approved.html')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('<p>المكان أو التجربة اللي اخترتها للمناسبة.</p>','',1)
+          ns=ns.replace('<p id="resultCount"></p>','',1)
+          ns=re.sub(r"el\('resultCount'\)\.textContent=`\$\{arr\.length\} اقتراح`;",'',ns,count=1)
+          save(p,s,ns)
+
+          # Partners: remove the side information panel and center the application form.
+          p=Path('approved-pages/Dear-Day-Partners.html')
+          s=p.read_text(encoding='utf-8')
+          ns=re.sub(r'<aside class="apply-copy">.*?</aside>\s*','',s,count=1,flags=re.S)
+          ns=ns.replace('.apply{padding:54px 0 88px}.apply-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:28px;align-items:start}',
+                        '.apply{padding:54px 0 88px}.apply-grid{display:block;max-width:920px;margin:0 auto}',1)
+          save(p,s,ns)
+
+          # Remove Real Stories link from every footer/page.
+          html_files=[Path('index.html'),Path('Dear-Day-Auth.html')]+list(Path('approved-pages').glob('*.html'))
+          story_page_paths=[]
+          for hp in html_files:
+              if not hp.exists():
+                  continue
+              s=hp.read_text(encoding='utf-8')
+              # If an actual standalone Real Stories page exists, mark it for deletion.
+              title_match=re.search(r'<title>(.*?)</title>',s,re.S|re.I)
+              if title_match and 'قصص حقيقية' in title_match.group(1):
+                  story_page_paths.append(hp)
+                  continue
+              ns=re.sub(r'\s*<a\b[^>]*>\s*قصص حقيقية\s*</a>','',s)
+              save(hp,s,ns)
+
+          for sp in story_page_paths:
+              sp.unlink()
+              changed.append(str(sp)+' [deleted]')
+
+          # Remove sitemap URLs for a deleted stories page if one existed.
+          sm=Path('sitemap.xml')
+          if sm.exists():
+              s=sm.read_text(encoding='utf-8')
+              ns=re.sub(r'\s*<url><loc>[^<]*(?:Stories|stories|Story|story)[^<]*</loc></url>','',s)
+              save(sm,s,ns)
+
+          print('UPDATED_FILES')
+          print('\n'.join(changed))
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Clean filters venues partners and stories'
+          git push
