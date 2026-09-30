@@ -4,6 +4,7 @@
   function ensureStyle(){
     if(document.getElementById('dd-native-mobile-nav-style'))return;
     const s=document.createElement('style');s.id='dd-native-mobile-nav-style';s.textContent=`
+      .dd-mobile-menu-toggle,.dd-mobile-menu{display:none!important}
       .dd-native-menu-btn{display:none!important;width:42px;height:42px;border:1px solid rgba(107,53,64,.25);border-radius:12px;background:#FFFDFC;color:#6B3540;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex:0 0 auto}
       .dd-native-menu-btn span{display:block;width:19px;height:2px;border-radius:2px;background:currentColor;transition:.18s ease}
       .dd-native-menu-open .dd-native-menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -45,30 +46,23 @@
       ['إنشاء حساب','/Dear-Day-Auth.html#signup']
     ];
   }
-  function getParts(header){
-    const actions=header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions');
-    return {actions};
-  }
+  function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
   function patchBrand(header){
     const home=isEn()?'/index-en.html':'/';
-    const brand=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');
-    if(brand&&brand.tagName==='A')brand.setAttribute('href',home);
-    const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');
-    const imgLink=img?.closest('a');if(imgLink)imgLink.setAttribute('href',home);
+    const direct=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');if(direct&&direct.tagName==='A')direct.href=home;
+    const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');const link=img?.closest('a');if(link)link.href=home;
   }
   function mount(header){
     if(!header)return;patchBrand(header);
-    const {actions}=getParts(header);if(!actions)return;
-    header.querySelectorAll('.dd-native-menu-btn,.dd-native-mobile-panel').forEach(el=>el.remove());
+    const actions=getActions(header);if(!actions)return;
     header.classList.add('dd-native-mobile-ready');
+    if(header.querySelector('.dd-native-menu-btn')&&header.querySelector('.dd-native-mobile-panel'))return;
     const btn=document.createElement('button');btn.type='button';btn.className='dd-native-menu-btn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label',isEn()?'Open menu':'فتح القائمة');btn.innerHTML='<span></span><span></span><span></span>';actions.appendChild(btn);
-    const panel=document.createElement('div');panel.className='dd-native-mobile-panel';
-    menuItems().forEach(([label,href])=>{const a=document.createElement('a');a.href=href;a.textContent=label;panel.appendChild(a)});
-    header.appendChild(panel);
+    const panel=document.createElement('div');panel.className='dd-native-mobile-panel';menuItems().forEach(([label,href])=>{const a=document.createElement('a');a.href=href;a.textContent=label;panel.appendChild(a)});header.appendChild(panel);
     function close(){header.classList.remove('dd-native-menu-open');btn.setAttribute('aria-expanded','false')}
     btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-native-menu-open');header.classList.toggle('dd-native-menu-open',open);btn.setAttribute('aria-expanded',String(open))});
     panel.addEventListener('click',e=>{if(e.target.closest('a'))close()});
-    if(!header.dataset.ddNativeOutsideBound){header.dataset.ddNativeOutsideBound='1';document.addEventListener('click',e=>{if(!header.contains(e.target))close()})}
+    document.addEventListener('click',e=>{if(!header.contains(e.target))close()});
   }
   function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
