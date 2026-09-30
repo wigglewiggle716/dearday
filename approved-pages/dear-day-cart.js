@@ -48,7 +48,7 @@
       const text=String(el.textContent||'').replace(/\s+/g,' ').trim();
       if(text!=='سياسة الخصوصية · الشروط والأحكام')return;
       el.classList.add('dd-legal-links');
-      el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="#">الشروط والأحكام</a>';
+      el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
     });
   }
 
