@@ -80,6 +80,7 @@
         place-items:center!important;font:700 11px/1 Arial,sans-serif!important;border:2px solid #fff!important;
       }
       #ddFloatingCart .dd-float-label{display:none!important}
+      .dd-occ-footer{background:#5D0C1D!important}
       .dd-legal-links a{color:inherit!important;text-decoration:none!important}
       .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
       @media(max-width:700px){#ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}}
