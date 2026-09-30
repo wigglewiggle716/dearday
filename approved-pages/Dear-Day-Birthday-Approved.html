@@ -669,7 +669,6 @@ updateUI();
     incomingPlan.cakeSelections=pkg.items.filter(x=>x.type==='cake').map(x=>({id:x.id,name:x.name,price:x.price}));
     incomingPlan.venueSelections=pkg.items.filter(x=>x.type==='venue').map(x=>({id:x.id,name:x.name,price:x.price}));
 
-    selectedProducts.clear();
     selectedServices.clear();
     cards.forEach(c=>c.classList.remove('selected'));
     if(packageCard)packageCard.classList.remove('selected');

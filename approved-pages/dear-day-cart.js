@@ -592,6 +592,12 @@
     floating.tabIndex=n>0?0:-1;
     updateFloatingOffset();
   }
+  function inferPlanProductType(item){
+    const text=String((item&&(item.name||item.ar||item.title))||'');
+    if(/كيك|تورت|حلويات|cake|cupcake|dessert|cookie/i.test(text))return 'cake';
+    if(/مكان|تجربة|عشاء|مطعم|روف|قاعة|venue|experience|dinner|restaurant|terrace|garden/i.test(text))return 'venue';
+    return 'gift';
+  }
   function importPlan(plan){
     if(!plan||typeof plan!=='object')return read();
     let a=read();
@@ -600,6 +606,15 @@
       if(Array.isArray(plan[key])&&plan[key].length){
         a=a.filter(x=>x.type!==type).concat(plan[key].filter(Boolean).map(x=>normalize(type,x,plan)));
       }
+    });
+    const extras=Array.isArray(plan.products)?plan.products:[];
+    extras.forEach(item=>{
+      if(!item)return;
+      const type=inferPlanProductType(item);
+      const n=normalize(type,item,plan);
+      const nName=String(n.name||n.ar||'').trim().toLowerCase();
+      const exists=a.some(x=>x.key===n.key||(x.type===n.type&&String(x.name||x.ar||'').trim().toLowerCase()===nName));
+      if(!exists)a.push(n);
     });
     return write(a);
   }
