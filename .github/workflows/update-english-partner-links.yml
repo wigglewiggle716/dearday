@@ -1,0 +1,30 @@
+name: Update English partner links
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-english-partner-links.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update English pages
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['index-en.html','approved-pages/Dear-Day-About-en.html']:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('/approved-pages/Dear-Day-Partners.html">For Partners','/approved-pages/Dear-Day-Partners-en.html">For Partners')
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add index-en.html approved-pages/Dear-Day-About-en.html
+          git commit -m "Keep For Partners links in English" || exit 0
+          git push
