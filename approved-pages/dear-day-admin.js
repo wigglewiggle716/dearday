@@ -14,7 +14,11 @@
   function roleLabel(r){return ({super_admin:'Super Admin',admin:'Admin'})[r]||r||'—'}
   function statusLabel(s){return ({draft:'مسودة',pending_payment:'بانتظار الدفع',paid:'مدفوع',confirmed:'مؤكد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي',refunded:'مسترد'})[s]||s||'—'}
   function statusClass(s){if(['paid','confirmed','completed'].includes(s))return'good';if(['draft','pending_payment','in_progress'].includes(s))return'warn';if(['cancelled','refunded'].includes(s))return'bad';return''}
-  function enableAdminNav(){document.querySelectorAll('.nav button.soon').forEach(btn=>{let href='';if(btn.textContent.includes('المنتجات'))href='/Dear-Day-Admin-Products.html';if(btn.textContent.includes('العملاء'))href='/Dear-Day-Admin-Customers.html';if(!href)return;const a=document.createElement('a');a.href=href;a.textContent=btn.textContent;btn.replaceWith(a)})}
+  function enableAdminNav(){
+    const nav=document.querySelector('.nav');if(!nav)return;
+    document.querySelectorAll('.nav button.soon').forEach(btn=>{let href='';if(btn.textContent.includes('المنتجات'))href='/Dear-Day-Admin-Products.html';if(btn.textContent.includes('العملاء'))href='/Dear-Day-Admin-Customers.html';if(!href)return;const a=document.createElement('a');a.href=href;a.textContent=btn.textContent;btn.replaceWith(a)});
+    if(!nav.querySelector('a[href="/Dear-Day-Admin-Availability.html"]')){const approvals=nav.querySelector('a[href="/Dear-Day-Admin-Approvals.html"]');if(approvals){const a=document.createElement('a');a.href='/Dear-Day-Admin-Availability.html';a.textContent='التوفر والحجوزات';approvals.insertAdjacentElement('afterend',a)}}
+  }
 
   async function count(table,build){let q=supabase.from(table).select('*',{count:'exact',head:true});if(build)q=build(q);const {count,error}=await q;if(error)throw error;return count||0}
 
