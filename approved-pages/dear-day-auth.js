@@ -117,6 +117,12 @@
 
   function showRecoveryForm(supabase){
     const form=document.getElementById('forgotForm');if(!form||form.dataset.recoveryMode==='1')return;
+    document.getElementById('loginPanel')?.setAttribute('hidden','');
+    document.getElementById('signupPanel')?.setAttribute('hidden','');
+    document.getElementById('forgotPanel')?.removeAttribute('hidden');
+    document.getElementById('headerLogin')?.classList.remove('active');
+    document.getElementById('headerSignup')?.classList.remove('active');
+    const title=document.getElementById('forgotTitle');if(title)title.textContent=msg('اختيار كلمة مرور جديدة','Choose a new password');
     form.dataset.recoveryMode='1';
     form.innerHTML=`<div class="field"><label for="ddNewPassword">${msg('كلمة المرور الجديدة','New password')}</label><div class="control"><input id="ddNewPassword" name="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="${msg('8 أحرف على الأقل','At least 8 characters')}"></div></div><div class="field"><label for="ddConfirmPassword">${msg('تأكيد كلمة المرور','Confirm password')}</label><div class="control"><input id="ddConfirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></div></div><button class="primary" type="submit">${msg('حفظ كلمة المرور الجديدة','Save new password')}</button><p class="form-status" id="forgotStatus" role="status" aria-live="polite"></p>`;
     form.addEventListener('submit',async e=>{
@@ -125,7 +131,11 @@
       const p=document.getElementById('ddNewPassword').value,c=document.getElementById('ddConfirmPassword').value;
       if(p!==c){setStatus('forgotStatus',msg('كلمتا المرور غير متطابقتين.','Passwords do not match.'),true);return;}
       setBusy(form,true);
-      try{const {error}=await supabase.auth.updateUser({password:p});if(error)throw error;setStatus('forgotStatus',msg('تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن.','Password updated. You can now log in.'));setTimeout(()=>{location.hash='login'},700)}catch(err){setStatus('forgotStatus',translateError(err),true)}finally{setBusy(form,false)}
+      try{
+        const {error}=await supabase.auth.updateUser({password:p});if(error)throw error;
+        setStatus('forgotStatus',msg('تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن.','Password updated. You can now log in.'));
+        setTimeout(()=>{history.replaceState(null,'',authPath()+'#login');location.reload()},900);
+      }catch(err){setStatus('forgotStatus',translateError(err),true)}finally{setBusy(form,false)}
     },true);
   }
 
