@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAF3EA">
+<title>أكمل بياناتك | Dear Day</title>
+<meta name="robots" content="noindex,follow">
+<style>
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+:root{--ivory:#FAF3EA;--paper:#FFFDFC;--wine:#6B3540;--terra:#A8583D;--ink:#352D2E;--muted:#756A68;--line:rgba(107,53,64,.17);--shadow:0 24px 70px rgba(78,32,39,.12)}*{box-sizing:border-box}body{margin:0;background:var(--ivory);color:var(--ink);font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif;min-height:100svh}.page{min-height:100svh;display:grid;place-items:center;padding:38px 18px}.card{width:min(620px,100%);background:rgba(255,253,252,.94);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:34px}.logo{display:block;width:180px;margin:0 auto 12px}.eyebrow{text-align:center;color:var(--terra);font-size:12px;font-weight:700;margin:0 0 4px}.card h1{text-align:center;color:var(--wine);font-size:30px;margin:0 0 8px}.intro{text-align:center;color:var(--muted);font-size:13px;max-width:450px;margin:0 auto 28px}.form{display:grid;gap:15px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:700;color:#574A47}.req{color:var(--terra)}input{width:100%;height:50px;border:1px solid #E4D7D2;border-radius:14px;background:#fff;padding:0 14px;color:var(--ink);font:inherit;outline:none}input:focus{border-color:var(--terra);box-shadow:0 0 0 4px rgba(168,88,61,.08)}input[readonly]{background:#F7F1ED;color:#766B68}.hint{font-size:10px;color:#968985}.primary{width:100%;min-height:52px;border:0;border-radius:15px;background:var(--wine);color:#fff;font:700 14px 'Noto Sans Arabic',Tahoma,Arial,sans-serif;cursor:pointer;margin-top:4px}.primary:disabled{opacity:.65;cursor:wait}.status{min-height:18px;margin:0;text-align:center;font-size:12px}.optional{font-size:10px;color:#998A86;font-weight:400}@media(max-width:620px){.card{padding:28px 20px;border-radius:23px}.card h1{font-size:26px}.two{grid-template-columns:1fr}.logo{width:160px}}
+</style>
+</head>
+<body>
+<main class="page">
+<section class="card" aria-labelledby="profileTitle">
+<img class="logo" src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day">
+<p class="eyebrow">خطوة أخيرة</p>
+<h1 id="profileTitle">أكمل بياناتك</h1>
+<p class="intro">ساعدنا نجهّز حسابك بشكل أفضل. البيانات الأساسية مطلوبة، والباقي اختياري ويمكن تعديله لاحقًا.</p>
+<form class="form" id="completeProfileForm" novalidate>
+<div class="two">
+<div class="field"><label for="profileFirstName">الاسم الأول <span class="req">*</span></label><input id="profileFirstName" autocomplete="given-name" required></div>
+<div class="field"><label for="profileLastName">اسم العائلة <span class="req">*</span></label><input id="profileLastName" autocomplete="family-name" required></div>
+</div>
+<div class="field"><label for="profileEmail">البريد الإلكتروني <span class="req">*</span></label><input id="profileEmail" type="email" autocomplete="email" readonly required><span class="hint">تم جلبه من وسيلة تسجيل الدخول.</span></div>
+<div class="field"><label for="profilePhone">رقم الموبايل <span class="req">*</span></label><input id="profilePhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx" required></div>
+<div class="two">
+<div class="field"><label for="profileBirthDate">تاريخ الميلاد <span class="optional">اختياري</span></label><input id="profileBirthDate" type="date" autocomplete="bday"></div>
+<div class="field"><label for="profileArea">المنطقة <span class="optional">اختياري</span></label><input id="profileArea" autocomplete="address-level2" placeholder="مثال: الهرم، المعادي، الشيخ زايد"></div>
+</div>
+<button class="primary" type="submit">حفظ ومتابعة</button>
+<p class="status" id="profileStatus" role="status" aria-live="polite"></p>
+</form>
+</section>
+</main>
+<script src="/approved-pages/dear-day-complete-profile.js?v=20261002-1"></script>
+</body>
+</html>
