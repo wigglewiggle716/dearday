@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6B3540">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة الإدارة | Dear Day</title>
+<style>
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+:root{--wine:#6B3540;--wine-dark:#522731;--ivory:#FAF3EA;--paper:#FFFDFC;--ink:#352D2E;--muted:#786C69;--terra:#A8583D;--line:rgba(107,53,64,.14);--good:#376a4a;--warn:#9b6b2f;--bad:#9a4545}*{box-sizing:border-box}body{margin:0;background:#f7f2ed;color:var(--ink);font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif}.layout{min-height:100vh;display:grid;grid-template-columns:260px 1fr}.sidebar{background:var(--wine);color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;padding:0 10px 22px;border-bottom:1px solid rgba(255,255,255,.15)}.brand strong{font-size:23px}.brand span{font-size:11px;opacity:.72}.nav{display:grid;gap:7px;margin-top:24px}.nav a,.nav button{width:100%;border:0;text-align:right;background:transparent;color:#fff;padding:12px 14px;border-radius:13px;font:700 13px/1.2 inherit;cursor:pointer;text-decoration:none;opacity:.82}.nav .active{background:rgba(255,255,255,.14);opacity:1}.nav .soon{opacity:.45;cursor:default}.sidebar-foot{position:absolute;bottom:22px;right:18px;left:18px;border-top:1px solid rgba(255,255,255,.15);padding-top:14px}.sidebar-foot p{font-size:11px;opacity:.72;margin:0 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logout{width:100%;border:1px solid rgba(255,255,255,.3);background:transparent;color:white;border-radius:12px;padding:10px;font:700 12px inherit;cursor:pointer}.main{padding:30px}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:26px}.topbar h1{margin:0;color:var(--wine);font-size:30px}.topbar p{margin:5px 0 0;color:var(--muted);font-size:13px}.role{background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;color:var(--wine);font-size:12px;font-weight:700}.cards{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:12px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 10px 26px rgba(70,37,40,.04)}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;color:var(--wine);font-size:27px;margin-top:5px}.panel{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 12px 30px rgba(70,37,40,.04)}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}.panel-head h2{margin:0;color:var(--wine);font-size:18px}.panel-head span{font-size:11px;color:var(--muted)}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th,td{text-align:right;padding:13px 18px;border-bottom:1px solid #f0e8e3;font-size:12px}th{color:#6b5d5a;background:#fdfaf8;font-weight:700}td{color:#423839}.badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#f1e8e5;color:var(--wine);font-weight:700;font-size:10px}.badge.good{background:#e9f3ec;color:var(--good)}.badge.warn{background:#f8f0df;color:var(--warn)}.badge.bad{background:#f8e7e7;color:var(--bad)}.empty{padding:36px;text-align:center;color:var(--muted);font-size:13px}.loading{position:fixed;inset:0;background:var(--ivory);display:grid;place-items:center;z-index:10;color:var(--wine);font-weight:700}.error{padding:12px 14px;border-radius:14px;background:#f8e7e7;color:var(--bad);font-size:12px;margin-bottom:16px;display:none}@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:760px){.layout{display:block}.sidebar{position:relative;height:auto;padding:16px}.brand{padding-bottom:14px}.nav{grid-template-columns:repeat(4,1fr);overflow:auto;margin-top:14px}.nav a,.nav button{white-space:nowrap;text-align:center;padding:10px}.nav .soon{display:none}.sidebar-foot{position:static;margin-top:14px}.main{padding:20px 14px}.topbar{align-items:center}.topbar h1{font-size:25px}.cards{grid-template-columns:repeat(2,1fr)}.stat strong{font-size:23px}}
+</style>
+</head>
+<body>
+<div id="loading" class="loading">جاري تحميل لوحة الإدارة…</div>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><div><strong>Dear Day</strong><span>Admin Panel</span></div></div>
+    <nav class="nav">
+      <a class="active" href="/Dear-Day-Admin.html">نظرة عامة</a>
+      <button class="soon" type="button">الطلبات</button>
+      <button class="soon" type="button">الشركاء</button>
+      <button class="soon" type="button">المنتجات والخدمات</button>
+      <button class="soon" type="button">الموافقات</button>
+      <button class="soon" type="button">العملاء</button>
+      <button class="soon" type="button">الموظفون والصلاحيات</button>
+      <button class="soon" type="button">المالية والتسويات</button>
+    </nav>
+    <div class="sidebar-foot"><p id="adminEmail">—</p><button id="logoutBtn" class="logout" type="button">تسجيل الخروج</button></div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div><h1>لوحة الإدارة</h1><p>نظرة سريعة على تشغيل Dear Day.</p></div><div id="roleBadge" class="role">—</div></div>
+    <div id="errorBox" class="error"></div>
+    <section class="cards">
+      <article class="stat"><span>كل الطلبات</span><strong id="statOrders">—</strong></article>
+      <article class="stat"><span>طلبات مفتوحة</span><strong id="statOpenOrders">—</strong></article>
+      <article class="stat"><span>العملاء</span><strong id="statCustomers">—</strong></article>
+      <article class="stat"><span>الشركاء</span><strong id="statPartners">—</strong></article>
+      <article class="stat"><span>المنتجات والخدمات</span><strong id="statListings">—</strong></article>
+      <article class="stat"><span>بانتظار الموافقة</span><strong id="statPending">—</strong></article>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>أحدث الطلبات</h2><span>آخر 10 طلبات</span></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>رقم الطلب</th><th>الحالة</th><th>المناسبة</th><th>تاريخ المناسبة</th><th>المنطقة</th><th>الإجمالي</th><th>تاريخ الإنشاء</th></tr></thead><tbody id="ordersBody"></tbody></table>
+        <div id="ordersEmpty" class="empty" hidden>لا توجد طلبات حتى الآن.</div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/approved-pages/dear-day-admin.js?v=20261002-1"></script>
+</body>
+</html>
