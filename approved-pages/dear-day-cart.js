@@ -11,6 +11,16 @@
   }
   ensureNativeMobileNav();
 
+  function ensureCustomerAvailability(){
+    if(document.querySelector('script[data-dd-customer-availability]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-customer-availability.js?v=20261002-1';
+    s.defer=true;
+    s.setAttribute('data-dd-customer-availability','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureCustomerAvailability();
+
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
