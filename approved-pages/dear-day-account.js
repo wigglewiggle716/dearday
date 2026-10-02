@@ -1,0 +1,32 @@
+(function(){
+  const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
+  const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
+  const en=()=>String(document.documentElement.lang||'').toLowerCase().startsWith('en');
+  const t=(ar,enText)=>en()?enText:ar;
+  const authPath=()=>en()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
+  const home=()=>en()?'/index-en.html':'/';
+  let supabase,user,pendingAction='';
+
+  function status(id,msg,error=false){const el=document.getElementById(id);if(!el)return;el.textContent=msg||'';el.style.color=error?'#A8583D':'#6B3540'}
+  function loadConfig(){if(window.DEAR_DAY_SUPABASE)return Promise.resolve(window.DEAR_DAY_SUPABASE);return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=()=>resolve(window.DEAR_DAY_SUPABASE);s.onerror=reject;document.head.appendChild(s)})}
+  function meta(){return user?.user_metadata||{}}
+  function fill(){const m=meta();document.getElementById('firstName').value=m.first_name||'';document.getElementById('lastName').value=m.last_name||'';document.getElementById('email').value=user?.email||'';document.getElementById('phone').value=m.phone||'';document.getElementById('birthDate').value=m.birth_date||'';document.getElementById('area').value=m.area||''}
+
+  async function saveProfile(e){e.preventDefault();status('profileStatus','');const first=document.getElementById('firstName').value.trim(),last=document.getElementById('lastName').value.trim(),birth=document.getElementById('birthDate').value,area=document.getElementById('area').value.trim();if(!first||!last){status('profileStatus',t('الاسم الأول واسم العائلة مطلوبان.','First and last name are required.'),true);return}const {data,error}=await supabase.auth.updateUser({data:{...meta(),first_name:first,last_name:last,full_name:[first,last].join(' '),birth_date:birth,area,profile_complete:true}});if(error){status('profileStatus',error.message,true);return}user=data.user;status('profileStatus',t('تم حفظ البيانات بنجاح.','Details saved successfully.'))}
+
+  async function requestReauth(action){pendingAction=action;status('securityStatus','');const box=document.getElementById('verifyBox'),input=document.getElementById('verifyInput'),text=document.getElementById('verifyText');box.classList.add('show');input.value='';input.type='text';input.placeholder=t('كود التحقق','Verification code');const {error}=await supabase.auth.reauthenticate();if(error){status('securityStatus',error.message,true);return}text.textContent=t('أرسلنا كود تحقق لوسيلة التحقق المسجلة. أدخل الكود للمتابعة.','We sent a verification code to your registered verification method. Enter it to continue.')}
+
+  function askEmailChange(){pendingAction='email-direct';const box=document.getElementById('verifyBox'),input=document.getElementById('verifyInput'),text=document.getElementById('verifyText');box.classList.add('show');input.value='';input.type='email';input.placeholder=t('البريد الإلكتروني الجديد','New email address');text.textContent=t('أدخل البريد الجديد. سيتم إرسال رسالة تأكيد قبل اعتماد التغيير.','Enter the new email. A confirmation message will be sent before the change is applied.')}
+
+  async function continueSecurity(){const input=document.getElementById('verifyInput'),value=input.value.trim();status('securityStatus','');if(!value){status('securityStatus',t('أدخل القيمة المطلوبة أولًا.','Enter the required value first.'),true);return}
+    if(pendingAction==='email-direct'){const {error}=await supabase.auth.updateUser({email:value});if(error){status('securityStatus',error.message,true);return}status('securityStatus',t('تم إرسال رسالة تأكيد للبريد الجديد.','Confirmation sent to the new email address.'));return}
+    const nonce=value;
+    if(pendingAction==='password'){input.value='';input.type='password';input.placeholder=t('كلمة المرور الجديدة','New password');pendingAction='password-new';document.getElementById('verifyText').textContent=t('تم التحقق. أدخل كلمة المرور الجديدة.','Verified. Enter your new password.');input.dataset.nonce=nonce;return}
+    if(pendingAction==='password-new'){if(value.length<8){status('securityStatus',t('كلمة المرور يجب أن تكون 8 أحرف على الأقل.','Password must be at least 8 characters.'),true);return}const {error}=await supabase.auth.updateUser({password:value,nonce:input.dataset.nonce});if(error){status('securityStatus',error.message,true);return}status('securityStatus',t('تم تغيير كلمة المرور بنجاح.','Password changed successfully.'));return}
+    if(pendingAction==='phone'){input.value='';input.type='tel';input.placeholder=t('رقم الموبايل الجديد','New mobile number');pendingAction='phone-new';document.getElementById('verifyText').textContent=t('تم التحقق. أدخل رقم الموبايل الجديد.','Verified. Enter your new mobile number.');input.dataset.nonce=nonce;return}
+    if(pendingAction==='phone-new'){const m={...meta(),phone:value};const {data,error}=await supabase.auth.updateUser({data:m,nonce:input.dataset.nonce});if(error){status('securityStatus',error.message,true);return}user=data.user;document.getElementById('phone').value=value;status('securityStatus',t('تم تغيير رقم الموبايل بعد تأكيد الهوية.','Mobile number changed after identity verification.'));return}
+  }
+
+  async function boot(){const cfg=await loadConfig();const mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data}=await supabase.auth.getUser();user=data?.user;if(!user){location.replace(authPath()+'#login');return}fill();document.getElementById('profileForm')?.addEventListener('submit',saveProfile);document.querySelector('[data-action="password"]')?.addEventListener('click',()=>requestReauth('password'));document.querySelector('[data-action="phone"]')?.addEventListener('click',()=>requestReauth('phone'));document.querySelector('[data-action="email"]')?.addEventListener('click',askEmailChange);document.getElementById('verifyAction')?.addEventListener('click',continueSecurity)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>boot().catch(()=>location.replace(home())),{once:true});else boot().catch(()=>location.replace(home()));
+})();
