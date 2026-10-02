@@ -69,29 +69,62 @@
   }
 
   function patchReviewConsent(){
-    if(isEnglishPage()||!/\/approved-pages\/Dear-Day-Review\.html$/i.test(String(location.pathname||'')))return;
+    const path=String(location.pathname||'');
+    const isArReview=/\/approved-pages\/Dear-Day-Review\.html$/i.test(path);
+    const isEnReview=/\/approved-pages\/Dear-Day-Review-en\.html$/i.test(path);
+    if(!isArReview&&!isEnReview)return;
     const payBtn=document.getElementById('payBtn');
     if(!payBtn||document.getElementById('ddBookingConsent'))return;
+
+    const english=isEnReview||isEnglishPage();
     const label=document.createElement('label');
     label.id='ddBookingConsent';
     label.className='dd-booking-consent';
-    label.innerHTML='<input id="ddBookingConsentCheck" type="checkbox"><span>بالمتابعة للدفع، أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> الخاصة بالحجز.</span>';
+    label.innerHTML=english
+      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
+      : '<input id="ddBookingConsentCheck" type="checkbox" required><span>أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> قبل المتابعة للدفع.</span>';
     payBtn.parentNode.insertBefore(label,payBtn);
-    const box=label.querySelector('input'),original=payBtn.onclick;
+
+    const box=label.querySelector('input');
+    const original=payBtn.onclick;
+    payBtn.disabled=true;
+    payBtn.setAttribute('aria-disabled','true');
+
+    function syncConsent(){
+      const ok=box.checked;
+      payBtn.disabled=!ok;
+      payBtn.setAttribute('aria-disabled',ok?'false':'true');
+      label.classList.toggle('dd-consent-error',!ok&&label.dataset.touched==='1');
+      const warning=document.getElementById('reviewWarning');
+      if(ok&&warning){
+        const consentText=english?'agree to the terms':'وافق على الشروط';
+        if(String(warning.textContent||'').toLowerCase().includes(consentText.toLowerCase()))warning.style.display='none';
+      }
+    }
+
     payBtn.onclick=function(e){
       if(!box.checked){
-        e.preventDefault();label.classList.add('dd-consent-error');box.focus();
+        if(e)e.preventDefault();
+        label.dataset.touched='1';
+        label.classList.add('dd-consent-error');
+        box.focus();
         const warning=document.getElementById('reviewWarning');
-        if(warning){warning.style.display='block';warning.textContent='وافق على الشروط وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';}
-        return;
+        if(warning){
+          warning.style.display='block';
+          warning.textContent=english
+            ? 'Please agree to the Terms & Conditions and Cancellation & Refund Policy before continuing to payment.'
+            : 'وافق على الشروط والأحكام وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';
+        }
+        return false;
       }
-      label.classList.remove('dd-consent-error');
       if(typeof original==='function')return original.call(this,e);
     };
+
     box.addEventListener('change',()=>{
-      label.classList.toggle('dd-consent-error',!box.checked);
-      if(box.checked){const warning=document.getElementById('reviewWarning');if(warning&&warning.textContent.includes('وافق على الشروط'))warning.style.display='none';}
+      label.dataset.touched='1';
+      syncConsent();
     });
+    syncConsent();
   }
 
   function patchPage(){
