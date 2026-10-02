@@ -1,10 +1,20 @@
 (function(){
   const BP=1120;
+  function ensureAuthState(){
+    if(document.querySelector('script[data-dd-auth-state]'))return;
+    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth-state.js?v=20261002-1';s.async=true;s.dataset.ddAuthState='1';(document.head||document.documentElement).appendChild(s);
+  }
+  function ensureAuthEnhancements(){
+    if(document.querySelector('script[data-dd-auth-enhancements]'))return;
+    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth-enhancements.js?v=20261002-1';s.async=true;s.dataset.ddAuthEnhancements='1';(document.head||document.documentElement).appendChild(s);
+  }
   function ensureAuth(){
     if(!/\/Dear-Day-Auth(?:-en)?\.html$/i.test(String(location.pathname||'')))return;
-    if(document.querySelector('script[data-dd-auth-real]'))return;
-    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth.js?v=20261002-1';s.async=true;s.dataset.ddAuthReal='1';(document.head||document.documentElement).appendChild(s);
+    const existing=document.querySelector('script[data-dd-auth-real]');
+    if(existing){ensureAuthEnhancements();return;}
+    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth.js?v=20261002-2';s.async=true;s.dataset.ddAuthReal='1';s.onload=ensureAuthEnhancements;(document.head||document.documentElement).appendChild(s);
   }
+  ensureAuthState();
   ensureAuth();
   function isEn(){return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr'}
   function ensureStyle(){
