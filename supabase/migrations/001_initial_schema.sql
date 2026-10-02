@@ -197,6 +197,8 @@ begin
 end;
 $$;
 
+revoke all on function public.handle_new_user() from public;
+
 create trigger on_auth_user_created
 after insert on auth.users
 for each row execute function public.handle_new_user();
@@ -234,38 +236,47 @@ as $$
   ), false);
 $$;
 
-create policy "profiles_self_read" on public.profiles for select using (id = auth.uid() or public.is_staff());
-create policy "profiles_self_update" on public.profiles for update using (id = auth.uid()) with check (id = auth.uid());
+revoke all on function public.current_role() from public;
+revoke all on function public.is_staff() from public;
+grant execute on function public.current_role() to authenticated;
+grant execute on function public.is_staff() to authenticated;
 
-create policy "categories_public_read" on public.categories for select using (is_active = true or public.is_staff());
-create policy "partners_public_read" on public.partners for select using (status = 'active' or public.is_staff());
+create policy "profiles_self_read" on public.profiles for select to authenticated using ((select auth.uid()) = id or public.is_staff());
+create policy "profiles_self_update" on public.profiles for update to authenticated using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
-create policy "listings_public_read" on public.listings for select using (
+create policy "categories_public_read" on public.categories for select to anon, authenticated using (is_active = true or public.is_staff());
+create policy "partners_public_read" on public.partners for select to anon, authenticated using (status = 'active' or public.is_staff());
+
+create policy "listings_public_read" on public.listings for select to anon, authenticated using (
   (is_available = true and published_version_id is not null) or public.is_staff()
 );
-create policy "listing_versions_public_read" on public.listing_versions for select using (
+create policy "listing_versions_public_read" on public.listing_versions for select to anon, authenticated using (
   status = 'published' or public.is_staff()
 );
 
-create policy "orders_customer_read" on public.orders for select using (customer_id = auth.uid() or public.is_staff());
-create policy "orders_customer_insert" on public.orders for insert with check (customer_id = auth.uid());
-create policy "order_items_customer_read" on public.order_items for select using (
-  exists(select 1 from public.orders o where o.id = order_id and (o.customer_id = auth.uid() or public.is_staff()))
+create policy "orders_customer_read" on public.orders for select to authenticated using (customer_id = (select auth.uid()) or public.is_staff());
+create policy "orders_customer_insert" on public.orders for insert to authenticated with check (customer_id = (select auth.uid()));
+create policy "order_items_customer_read" on public.order_items for select to authenticated using (
+  exists(select 1 from public.orders o where o.id = order_id and (o.customer_id = (select auth.uid()) or public.is_staff()))
 );
 
-create policy "partner_users_self_read" on public.partner_users for select using (user_id = auth.uid() or public.is_staff());
-create policy "partner_orders_partner_read" on public.partner_orders for select using (
+create policy "partner_users_self_read" on public.partner_users for select to authenticated using (user_id = (select auth.uid()) or public.is_staff());
+create policy "partner_orders_partner_read" on public.partner_orders for select to authenticated using (
   public.is_staff() or exists(
     select 1 from public.partner_users pu
-    where pu.partner_id = partner_orders.partner_id and pu.user_id = auth.uid() and pu.is_active = true
+    where pu.partner_id = partner_orders.partner_id and pu.user_id = (select auth.uid()) and pu.is_active = true
   )
 );
 
-create policy "staff_all_partners" on public.partners for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_categories" on public.categories for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_listings" on public.listings for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_listing_versions" on public.listing_versions for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_orders" on public.orders for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_order_items" on public.order_items for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_partner_orders" on public.partner_orders for all using (public.is_staff()) with check (public.is_staff());
-create policy "staff_all_audit_logs" on public.audit_logs for select using (public.is_staff());
+create policy "staff_all_partners" on public.partners for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_categories" on public.categories for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_listings" on public.listings for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_listing_versions" on public.listing_versions for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_orders" on public.orders for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_order_items" on public.order_items for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_partner_orders" on public.partner_orders for all to authenticated using (public.is_staff()) with check (public.is_staff());
+create policy "staff_all_audit_logs" on public.audit_logs for select to authenticated using (public.is_staff());
+
+-- Customers can update only non-privileged profile fields through the Data API.
+revoke update on public.profiles from authenticated;
+grant update (full_name, phone) on public.profiles to authenticated;
