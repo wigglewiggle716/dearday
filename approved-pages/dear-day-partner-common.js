@@ -2,14 +2,16 @@
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   const $=id=>document.getElementById(id);
-  const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
   const money=(v,c='EGP')=>new Intl.NumberFormat('ar-EG',{style:'currency',currency:c||'EGP',maximumFractionDigits:2}).format(Number(v||0));
   const date=v=>{if(!v)return'—';try{return new Intl.DateTimeFormat('ar-EG',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(v))}catch{return v}};
   const day=v=>{if(!v)return'—';try{return new Intl.DateTimeFormat('ar-EG',{year:'numeric',month:'short',day:'numeric'}).format(new Date(v))}catch{return v}};
   function loadConfig(){if(window.DEAR_DAY_SUPABASE)return Promise.resolve(window.DEAR_DAY_SUPABASE);return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=()=>resolve(window.DEAR_DAY_SUPABASE);s.onerror=reject;document.head.appendChild(s)})}
+  function ensureNotificationBadge(){if(document.querySelector('script[data-dd-notification-badge]'))return;const s=document.createElement('script');s.src='/approved-pages/dear-day-notification-badge.js?v=20261002-1';s.defer=true;s.dataset.ddNotificationBadge='1';document.head.appendChild(s)}
   function show(id,msg,type){const e=$(id);if(!e)return;e.textContent=msg||'';e.className=type==='success'?'success':'error';e.style.display=msg?'block':'none';if(msg)setTimeout(()=>{if(e.textContent===msg)e.style.display='none'},4500)}
   async function client(){const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);return mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}
   async function guard(){
+    ensureNotificationBadge();
     const supabase=await client();
     const {data:{user},error}=await supabase.auth.getUser();
     if(error||!user){location.replace('/Dear-Day-Partner-Login.html');return null}
