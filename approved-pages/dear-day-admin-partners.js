@@ -18,6 +18,7 @@
   function openModal(id){const el=$(id);el.classList.add('show');el.setAttribute('aria-hidden','false')}
   function closeModal(id){const el=$(id);el.classList.remove('show');el.setAttribute('aria-hidden','true')}
   function slugify(v){return String(v||'').trim().toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/g,'-').replace(/^-+|-+$/g,'')}
+  function enableCatalogNav(){document.querySelectorAll('.nav button.soon').forEach(btn=>{if(btn.textContent.includes('المنتجات')){const a=document.createElement('a');a.href='/Dear-Day-Admin-Products.html';a.textContent=btn.textContent;btn.replaceWith(a)}})}
 
   async function audit(action,entityId,beforeData,afterData){
     const {error}=await supabase.from('audit_logs').insert({actor_id:user.id,action,entity_type:'partner',entity_id:String(entityId||''),before_data:beforeData||null,after_data:afterData||null});
@@ -122,6 +123,7 @@
 
   async function boot(){
     try{
+      enableCatalogNav();
       const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       const {data:{user:u},error:uErr}=await supabase.auth.getUser();if(uErr||!u){location.replace('/Dear-Day-Auth.html#login');return}user=u;
       const {data:p,error:pErr}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pErr||!p||!p.is_active||!ALLOWED_ROLES.has(p.role)){location.replace('/Dear-Day-Account.html');return}profile=p;
