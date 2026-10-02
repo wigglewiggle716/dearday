@@ -4,7 +4,7 @@
   function ensureNativeMobileNav(){
     if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261002-1';
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261002-2';
     s.defer=true;
     s.setAttribute('data-dd-native-mobile-nav','');
     (document.head||document.documentElement).appendChild(s);
