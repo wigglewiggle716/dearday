@@ -21,6 +21,16 @@
   }
   ensureCustomerAvailability();
 
+  function ensureCustomerRefundPolicy(){
+    if(document.querySelector('script[data-dd-customer-refund]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-customer-refund.js?v=20261002-1';
+    s.defer=true;
+    s.setAttribute('data-dd-customer-refund','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureCustomerRefundPolicy();
+
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
