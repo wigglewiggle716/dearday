@@ -21,6 +21,15 @@ function originFromRequest(req){
   const host=String(req.headers['x-forwarded-host']||req.headers.host||'').split(',')[0].trim();
   return host?`${proto}://${host}`:'';
 }
+function intentionExpiration(extras){
+  const raw=extras&&typeof extras==='object'?extras.booking_hold_expires_at:null;
+  if(!raw)return {expiration:3600,expired:false};
+  const expiresAt=Date.parse(String(raw));
+  if(!Number.isFinite(expiresAt))return {expiration:3600,expired:false};
+  const remaining=Math.floor((expiresAt-Date.now())/1000);
+  if(remaining<=90)return {expiration:0,expired:true};
+  return {expiration:Math.max(60,Math.min(3600,remaining-30)),expired:false};
+}
 
 export default async function handler(req,res){
   if(req.method!=='POST'){
@@ -44,6 +53,12 @@ export default async function handler(req,res){
   const amount=cents(body.amount);
   if(!amount){
     return res.status(400).json({error:'INVALID_AMOUNT'});
+  }
+
+  const extras=body.extras&&typeof body.extras==='object'?body.extras:{};
+  const expiry=intentionExpiration(extras);
+  if(expiry.expired){
+    return res.status(409).json({error:'BOOKING_HOLD_EXPIRED'});
   }
 
   const incomingItems=Array.isArray(body.items)?body.items:[];
@@ -89,9 +104,9 @@ export default async function handler(req,res){
     payment_methods:[Number(integrationId)||integrationId],
     items:normalizedItems,
     billing_data,
-    extras:body.extras&&typeof body.extras==='object'?body.extras:{},
+    extras,
     special_reference:cleanText(body.special_reference||`DD-${Date.now()}`,100),
-    expiration:3600
+    expiration:expiry.expiration
   };
   if(redirectionUrl)payload.redirection_url=redirectionUrl;
   if(notificationUrl)payload.notification_url=notificationUrl;
@@ -120,7 +135,8 @@ export default async function handler(req,res){
       checkout_url,
       intention_id:data.id||null,
       intention_order_id:data.intention_order_id||null,
-      client_secret:data.client_secret
+      client_secret:data.client_secret,
+      expiration:expiry.expiration
     });
   }catch(error){
     return res.status(502).json({error:'PAYMOB_UNAVAILABLE'});
