@@ -64,7 +64,7 @@
         const {data,error}=await supabase.auth.signUp({
           email,password,
           options:{
-            data:{full_name:[first,last].filter(Boolean).join(' '),phone},
+            data:{first_name:first,last_name:last,full_name:[first,last].filter(Boolean).join(' '),phone,profile_complete:true},
             emailRedirectTo:location.origin+authPath()+'#login'
           }
         });
@@ -92,12 +92,14 @@
       e.preventDefault();e.stopImmediatePropagation();
       const provider=String(btn.dataset.provider||'').toLowerCase();
       if(!['google','facebook','apple'].includes(provider))return;
-      setStatus('loginStatus',msg('جاري فتح تسجيل الدخول…','Opening sign in…'));
+      const statusId=btn.closest('#signupPanel')?'signupStatus':'loginStatus';
+      setStatus(statusId,msg('جاري فتح تسجيل الدخول…','Opening sign in…'));
       try{
         localStorage.setItem('ddAuthRemember','1');
+        localStorage.setItem('ddPostAuthNext',safeNext());
         const {error}=await supabase.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+authPath()}});
         if(error)throw error;
-      }catch(err){setStatus('loginStatus',translateError(err),true)}
+      }catch(err){setStatus(statusId,translateError(err),true)}
     },true));
 
     const {data:{session}}=await supabase.auth.getSession();
