@@ -2,7 +2,7 @@
   const BP=1120;
   function ensureAuthState(){
     if(document.querySelector('script[data-dd-auth-state]'))return;
-    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth-state.js?v=20261002-1';s.async=true;s.dataset.ddAuthState='1';(document.head||document.documentElement).appendChild(s);
+    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth-state.js?v=20261002-2';s.async=true;s.dataset.ddAuthState='1';(document.head||document.documentElement).appendChild(s);
   }
   function ensureAuthEnhancements(){
     if(document.querySelector('script[data-dd-auth-enhancements]'))return;
