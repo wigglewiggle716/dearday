@@ -1,5 +1,11 @@
 (function(){
   const BP=1120;
+  function ensureAuth(){
+    if(!/\/Dear-Day-Auth(?:-en)?\.html$/i.test(String(location.pathname||'')))return;
+    if(document.querySelector('script[data-dd-auth-real]'))return;
+    const s=document.createElement('script');s.src='/approved-pages/dear-day-auth.js?v=20261002-1';s.async=true;s.dataset.ddAuthReal='1';(document.head||document.documentElement).appendChild(s);
+  }
+  ensureAuth();
   function isEn(){return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr'}
   function ensureStyle(){
     if(document.getElementById('dd-native-mobile-nav-style'))return;
