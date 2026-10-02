@@ -73,7 +73,33 @@
     if(btn.dataset.ddBound!=='1'){btn.dataset.ddBound='1';btn.addEventListener('click',e=>{e.stopPropagation();const open=!header.classList.contains('dd-native-menu-open');header.classList.toggle('dd-native-menu-open',open);btn.setAttribute('aria-expanded',String(open))})}
     if(panel.dataset.ddBound!=='1'){panel.dataset.ddBound='1';panel.addEventListener('click',e=>{if(e.target.closest('a')){header.classList.remove('dd-native-menu-open');btn.setAttribute('aria-expanded','false')}})}
   }
-  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount)}
+  function patchEnglishHomeOccasionFlow(){
+    if(!isEn()||!/\/index-en\.html$/i.test(String(location.pathname||'')))return;
+    const form=document.querySelector('#occasions .filters');
+    if(!form||form.dataset.ddEnglishFlow==='1')return;
+    form.dataset.ddEnglishFlow='1';
+    form.addEventListener('submit',function(e){
+      const selected=document.querySelector('#occasions [data-occasion][aria-pressed="true"]');
+      if(!selected)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      const raw=selected.dataset.occasion||'';
+      const map={'عيد ميلاد':'birthday','ذكرى سنوية':'anniversary','خطوبة':'engagement','طلب زواج':'proposal'};
+      const key=map[raw]||'birthday';
+      const area=document.getElementById('area')?.value||'';
+      const date=document.getElementById('date')?.value||'';
+      const budgetKey=document.getElementById('budget')?.value||'';
+      const feedback=document.getElementById('feedback');
+      if(!date){if(feedback)feedback.textContent='Choose the occasion date first.';return}
+      if(!budgetKey){if(feedback)feedback.textContent='Choose an approximate budget or select “Not sure yet”.';return}
+      const labels={birthday:'Birthday',anniversary:'Anniversary',engagement:'Engagement',proposal:'Marriage Proposal'};
+      const budgetLabels={'under-1000':'Under EGP 1,000','1000-2500':'EGP 1,000–2,500','2500-5000':'EGP 2,500–5,000','5000-plus':'EGP 5,000+','unsure':'Not sure yet'};
+      const plan={occasion:key,occasionKey:key,occasionLabel:labels[key],occasionLabelEn:labels[key],area,date,budgetKey,budget:budgetKey,budgetLabel:budgetLabels[budgetKey]||'',services:[],servicesEn:[],products:[]};
+      try{localStorage.setItem('dearDayPlan',JSON.stringify(plan))}catch(err){}
+      const params=new URLSearchParams({occasion:key,flow:'1',area,date,budget:budgetKey,dd:JSON.stringify(plan)});
+      location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
+    },true);
+  }
+  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
