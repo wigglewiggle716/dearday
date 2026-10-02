@@ -74,7 +74,7 @@
     const isEnReview=/\/approved-pages\/Dear-Day-Review-en\.html$/i.test(path);
     if(!isArReview&&!isEnReview)return;
     const payBtn=document.getElementById('payBtn');
-    if(!payBtn||document.getElementById('ddBookingConsent'))return;
+    if(!payBtn||document.getElementById('ddBookingConsent')||document.getElementById('bookingConsent')||document.getElementById('bookingConsentCheck'))return;
 
     const english=isEnReview||isEnglishPage();
     const label=document.createElement('label');
