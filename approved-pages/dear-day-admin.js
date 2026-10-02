@@ -14,6 +14,7 @@
   function roleLabel(r){return ({super_admin:'Super Admin',admin:'Admin'})[r]||r||'—'}
   function statusLabel(s){return ({draft:'مسودة',pending_payment:'بانتظار الدفع',paid:'مدفوع',confirmed:'مؤكد',in_progress:'قيد التنفيذ',completed:'مكتمل',cancelled:'ملغي',refunded:'مسترد'})[s]||s||'—'}
   function statusClass(s){if(['paid','confirmed','completed'].includes(s))return'good';if(['draft','pending_payment','in_progress'].includes(s))return'warn';if(['cancelled','refunded'].includes(s))return'bad';return''}
+  function enableCatalogNav(){document.querySelectorAll('.nav button.soon').forEach(btn=>{if(btn.textContent.includes('المنتجات')){const a=document.createElement('a');a.href='/Dear-Day-Admin-Products.html';a.textContent=btn.textContent;btn.replaceWith(a)}})}
 
   async function count(table,build){let q=supabase.from(table).select('*',{count:'exact',head:true});if(build)q=build(q);const {count,error}=await q;if(error)throw error;return count||0}
 
@@ -51,6 +52,7 @@
 
   async function boot(){
     try{
+      enableCatalogNav();
       const cfg=await loadConfig();
       const mod=await import(SUPABASE_ESM);
       supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
