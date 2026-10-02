@@ -2,6 +2,14 @@
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   const path=String(location.pathname||'');
+
+  function loadOnce(src,attr){
+    if(document.querySelector(`script[${attr}]`))return;
+    const s=document.createElement('script');s.src=src;s.defer=true;s.setAttribute(attr,'');(document.head||document.documentElement).appendChild(s);
+  }
+  if(path==='/'||/\/index\.html$/i.test(path))loadOnce('/approved-pages/dear-day-home-categories.js?v=20261003-1','data-dd-home-categories');
+  if(/\/approved-pages\/Dear-Day-(?:Gifts|Cake|Flowers)-Approved(?:-en)?\.html$/i.test(path))loadOnce('/approved-pages/dear-day-live-catalog.js?v=20261003-1','data-dd-live-catalog');
+
   if(!/\/approved-pages\/Dear-Day-Review(?:-en)?\.html$/i.test(path))return;
   const english=()=>String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
   const t=(ar,en)=>english()?en:ar;
