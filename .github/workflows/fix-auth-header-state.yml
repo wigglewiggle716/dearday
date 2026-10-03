@@ -1,0 +1,114 @@
+name: Fix unified auth header state
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-auth-header-state.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch auth/header runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          auth = Path('approved-pages/dear-day-auth-state.js')
+          s = auth.read_text()
+
+          # Ensure account popover can escape all legacy header/action CSS.
+          s = s.replace(
+              '.dd-account-wrap{position:relative;display:inline-flex;align-items:center;z-index:2147482500}',
+              '.dd-account-wrap{position:relative;display:inline-flex;align-items:center;z-index:2147482500;overflow:visible!important}'
+          )
+          s = s.replace(
+              '.dd-account-menu{display:none;position:absolute;',
+              '.dd-account-menu{display:none!important;position:absolute;'
+          )
+          s = s.replace(
+              '.dd-account-wrap.open .dd-account-menu{display:block}',
+              '.dd-account-wrap.open .dd-account-menu{display:block!important}'
+          )
+
+          # Logged-in state must remove both canonical and legacy/home guest links.
+          s = s.replace(
+              "actions.querySelectorAll('a.dd-auth,a.header-auth,.dd-user-chip,.dd-logout').forEach(el=>el.remove());const d=displayData(user);",
+              "actions.querySelectorAll('a.dd-auth,a.header-auth,a.auth-link,.dd-user-chip,.dd-logout').forEach(el=>el.remove());actions.querySelectorAll('a[href*=\"Dear-Day-Auth\"]').forEach(a=>{const h=String(a.getAttribute('href')||'').toLowerCase();if(h.includes('#login')||h.includes('#signup'))a.remove()});const d=displayData(user);"
+          )
+
+          # Force popover display in JS as well, protecting against old page-level CSS.
+          old = "const toggle=()=>{const open=!wrap.classList.contains('open');document.querySelectorAll('.dd-account-wrap.open').forEach(x=>{if(x!==wrap)x.classList.remove('open')});wrap.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open))};trigger.addEventListener('click',e=>{e.stopPropagation();toggle()});"
+          new = "const toggle=()=>{const open=!wrap.classList.contains('open');document.querySelectorAll('.dd-account-wrap.open').forEach(x=>{if(x!==wrap){x.classList.remove('open');const m=x.querySelector('.dd-account-menu');if(m)m.style.setProperty('display','none','important')}});wrap.classList.toggle('open',open);const menu=wrap.querySelector('.dd-account-menu');if(menu)menu.style.setProperty('display',open?'block':'none','important');trigger.setAttribute('aria-expanded',String(open))};trigger.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggle()});"
+          if old not in s:
+              raise SystemExit('account toggle target not found')
+          s = s.replace(old, new)
+
+          # Close helper must also clear the forced inline display.
+          old_close = "w.classList.remove('open');w.querySelector('.dd-account-trigger')?.setAttribute('aria-expanded','false')"
+          new_close = "w.classList.remove('open');const m=w.querySelector('.dd-account-menu');if(m)m.style.setProperty('display','none','important');w.querySelector('.dd-account-trigger')?.setAttribute('aria-expanded','false')"
+          s = s.replace(old_close, new_close)
+
+          # Remove the pre-auth session hint only after the real auth state has been painted.
+          old_paint = "const paint=()=>{mountAccountMenu(currentUser,signOut);scrubBurgerAuthLinks(currentUser)};"
+          new_paint = "const paint=()=>{mountAccountMenu(currentUser,signOut);scrubBurgerAuthLinks(currentUser);document.documentElement.classList.remove('dd-auth-session-hint')};"
+          if old_paint not in s:
+              raise SystemExit('paint target not found')
+          s = s.replace(old_paint, new_paint)
+          auth.write_text(s)
+
+          # Mobile-nav owns loading auth-state, so bump it.
+          nav = Path('approved-pages/dear-day-mobile-nav.js')
+          n = nav.read_text()
+          n = re.sub(r'/approved-pages/dear-day-auth-state\.js\?v=[^\'\"]+', '/approved-pages/dear-day-auth-state.js?v=20261003-4', n)
+          nav.write_text(n)
+
+          # Bootstrap: if a Supabase session is already stored, hide guest links synchronously
+          # until auth-state validates it. This removes the refresh flash for logged-in users.
+          cart = Path('approved-pages/dear-day-cart.js')
+          c = cart.read_text()
+          marker = "(function(){\n  const KEY='dearDayCart';"
+          bootstrap = """(function(){
+  function ddHasStoredSession(){
+    try{
+      for(const store of [localStorage,sessionStorage]){
+        for(let i=0;i<store.length;i++){
+          const k=String(store.key(i)||'');
+          if(!/^sb-.*-auth-token$/i.test(k))continue;
+          const raw=String(store.getItem(k)||'');
+          if(raw.includes('access_token')&&raw.includes('user'))return true;
+        }
+      }
+    }catch(e){}
+    return false;
+  }
+  if(ddHasStoredSession()){
+    document.documentElement.classList.add('dd-auth-session-hint');
+    const st=document.createElement('style');st.id='dd-auth-session-hint-style';
+    st.textContent='.dd-auth-session-hint header a.dd-auth,.dd-auth-session-hint header a.header-auth,.dd-auth-session-hint header a.auth-link,.dd-auth-session-hint header a[href*=\"Dear-Day-Auth\"]{visibility:hidden!important;pointer-events:none!important}';
+    (document.head||document.documentElement).appendChild(st);
+  }
+  const KEY='dearDayCart';"""
+          if marker not in c:
+              raise SystemExit('cart bootstrap marker not found')
+          c = c.replace(marker, bootstrap, 1)
+          c = re.sub(r'/approved-pages/dear-day-mobile-nav\.js\?v=[^\'\"]+', '/approved-pages/dear-day-mobile-nav.js?v=20261003-4', c)
+          cart.write_text(c)
+
+          # Force a fresh bootstrap on both home languages where the issue was reported.
+          for file in [Path('index.html'), Path('index-en.html')]:
+              h = file.read_text()
+              h = re.sub(r'/approved-pages/dear-day-cart\.js\?v=[^\'\"<]+', '/approved-pages/dear-day-cart.js?v=20261003-4', h)
+              file.write_text(h)
+          PY
+          git rm .github/workflows/fix-auth-header-state.yml
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Fix unified logged-in header state and account menu'
+          git push
