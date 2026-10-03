@@ -18,7 +18,8 @@ jobs:
           cart=Path('approved-pages/dear-day-cart.js')
           s=cart.read_text(encoding='utf-8')
           new_fn = "  function patchRefundPolicyLink(){\n    const english=isEnglishPage();\n    document.querySelectorAll('.footer-top>div').forEach(col=>{\n      const heading=String(col.querySelector('h4')?.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase();\n      const isSupport=english ? (heading==='customer service'||heading.includes('customer service')) : heading==='خدمة العملاء';\n      if(!isSupport)return;\n      const href=english?'/approved-pages/Dear-Day-Refunds-en.html':'/approved-pages/Dear-Day-Refunds.html';\n      if(col.querySelector(`a[href=\\\"${href}\\\"]`))return;\n      const link=document.createElement('a');\n      link.href=href;\n      link.textContent=english?'Cancellation & Refund Policy':'سياسة الإلغاء والاسترداد';\n      col.appendChild(link);\n    });\n  }\n\n  function patchReviewConsent"
-          s,n=re.subn(r'  function patchRefundPolicyLink\(\)\{.*?\n  \}\n\n  function patchReviewConsent',new_fn,s,flags=re.S)
+          pattern=r'  function patchRefundPolicyLink\(\)\{.*?\n  \}\n\n  function patchReviewConsent'
+          s,n=re.subn(pattern,lambda m:new_fn,s,flags=re.S)
           if n!=1:
               raise SystemExit(f'Expected one patchRefundPolicyLink function, found {n}')
           s=s.replace('and <a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a>', 'and <a href="/approved-pages/Dear-Day-Refunds-en.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a>')
