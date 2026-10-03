@@ -3,6 +3,16 @@
   const upgraded=new WeakMap();
   const managed=new Set();
 
+  function ensureFilterStyles(){
+    if(document.querySelector('link[data-dd-filter-controls]'))return;
+    const l=document.createElement('link');
+    l.rel='stylesheet';
+    l.href='/approved-pages/assets/dear-day-filter-controls.css?v=20261003-1';
+    l.setAttribute('data-dd-filter-controls','');
+    (document.head||document.documentElement).appendChild(l);
+  }
+  ensureFilterStyles();
+
   function closeAll(except){
     document.querySelectorAll('.dd-select-shell.dd-select-open').forEach(shell=>{if(shell!==except){shell.classList.remove('dd-select-open');shell.querySelector('.dd-select-trigger')?.setAttribute('aria-expanded','false')}});
   }
