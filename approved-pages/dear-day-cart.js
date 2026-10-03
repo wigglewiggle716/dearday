@@ -103,13 +103,16 @@
   }
 
   function patchRefundPolicyLink(){
-    if(isEnglishPage())return;
+    const english=isEnglishPage();
     document.querySelectorAll('.footer-top>div').forEach(col=>{
-      const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim();
-      if(heading!=='خدمة العملاء'||col.querySelector('a[href="/approved-pages/Dear-Day-Refunds.html"]'))return;
+      const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      const isSupport=english ? (heading==='customer service'||heading.includes('customer service')) : heading==='خدمة العملاء';
+      if(!isSupport)return;
+      const href=english?'/approved-pages/Dear-Day-Refunds-en.html':'/approved-pages/Dear-Day-Refunds.html';
+      if(col.querySelector(`a[href=\"${href}\"]`))return;
       const link=document.createElement('a');
-      link.href='/approved-pages/Dear-Day-Refunds.html';
-      link.textContent='سياسة الإلغاء والاسترداد';
+      link.href=href;
+      link.textContent=english?'Cancellation & Refund Policy':'سياسة الإلغاء والاسترداد';
       col.appendChild(link);
     });
   }
@@ -127,7 +130,7 @@
     label.id='ddBookingConsent';
     label.className='dd-booking-consent';
     label.innerHTML=english
-      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
+      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds-en.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
       : '<input id="ddBookingConsentCheck" type="checkbox" required><span>أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> قبل المتابعة للدفع.</span>';
     payBtn.parentNode.insertBefore(label,payBtn);
 
