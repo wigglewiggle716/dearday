@@ -135,6 +135,21 @@
     });
   }
 
+  function patchSocialFooter(){
+    const english=isEnglishPage();
+    document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
+      if(footer.querySelector('.dd-social-footer'))return;
+      const host=footer.querySelector('.footer-top')||footer.querySelector('.wrap')||footer;
+      if(!host)return;
+      const social=document.createElement('div');
+      social.className='dd-social-footer';
+      const icons=[['facebook','Facebook','f'],['instagram','Instagram','◎'],['x','X','𝕏'],['youtube','YouTube','▶'],['snapchat','Snapchat','◉'],['linkedin','LinkedIn','in']];
+      social.innerHTML=`<h4>${english?'Social Media':'وسائل التواصل الاجتماعي'}</h4><div class="dd-social-icons" aria-label="${english?'Dear Day social media':'وسائل التواصل الاجتماعي الخاصة بـ Dear Day'}">${icons.map(([key,label,glyph])=>`<a href="#" data-dd-social="${key}" aria-label="${label}" title="${label}"><span aria-hidden="true">${glyph}</span></a>`).join('')}</div>`;
+      host.appendChild(social);
+      social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+    });
+  }
+
   function patchReviewConsent(){
     const path=String(location.pathname||'');
     const isArReview=/\/approved-pages\/Dear-Day-Review\.html$/i.test(path);
@@ -199,6 +214,7 @@
     patchGiftLanguageLinks();
     patchLegalFooterLinks();
     patchRefundPolicyLink();
+    patchSocialFooter();
     patchReviewConsent();
     document.querySelectorAll('.dd-mobile-menu-toggle,.dd-mobile-menu').forEach(el=>el.remove());
     document.querySelectorAll('header').forEach(h=>{h.classList.remove('dd-mobile-menu-open');h.removeAttribute('data-dd-mobile-menu-ready');});
@@ -225,6 +241,15 @@
       .dd-occ-footer{background:#5D0C1D!important}
       .dd-legal-links a{color:inherit!important;text-decoration:none!important}
       .dd-legal-links a:hover{text-decoration:underline!important;text-underline-offset:3px}
+      .dd-social-footer{grid-column:1/-1!important;width:100%!important;margin-top:24px!important;padding-top:22px!important;border-top:1px solid rgba(255,255,255,.16)!important}
+      .dd-social-footer h4{margin:0 0 13px!important;color:#fff!important;font-size:14px!important;font-weight:800!important}
+      .dd-social-icons{display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important}
+      .dd-social-icons a{width:38px!important;height:38px!important;margin:0!important;padding:0!important;border:1px solid rgba(255,255,255,.30)!important;border-radius:50%!important;display:grid!important;place-items:center!important;color:#fff!important;background:rgba(255,255,255,.06)!important;text-decoration:none!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;cursor:default!important}
+      .dd-social-icons a:hover{background:rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.55)!important;transform:translateY(-2px)!important}
+      .dd-social-icons span{display:grid!important;place-items:center!important;min-width:18px!important;height:18px!important;font:800 15px/1 Arial,sans-serif!important;letter-spacing:-.03em!important}
+      .dd-social-icons a[data-dd-social="linkedin"] span{font-size:11px!important}
+      .dd-social-icons a[data-dd-social="instagram"] span{font-size:19px!important;font-weight:500!important}
+      .dd-social-icons a[data-dd-social="youtube"] span{font-size:14px!important}
       @media(max-width:700px){
         #ddFloatingCart{left:max(14px,env(safe-area-inset-left))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important}
         #ddBackToTop{right:max(14px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;width:54px!important;height:54px!important;font-size:24px!important}
