@@ -56,7 +56,7 @@
     if(!(p==='/'||/\/index(?:-en)?\.html$/i.test(p)))return;
     if(document.querySelector('script[data-dd-home-categories]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-5';
+    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-6';
     s.defer=true;
     s.setAttribute('data-dd-home-categories','');
     (document.head||document.documentElement).appendChild(s);
