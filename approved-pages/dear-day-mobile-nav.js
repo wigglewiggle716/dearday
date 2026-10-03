@@ -64,6 +64,18 @@
     const direct=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');if(direct&&direct.tagName==='A')direct.href=home;
     const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');const link=img?.closest('a');if(link)link.href=home;
   }
+  function patchFooterFlowers(){
+    const english=isEn();
+    const href=english?'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1';
+    document.querySelectorAll('footer .footer-top>div').forEach(col=>{
+      const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      const isServices=english?heading.includes('dear day services'):(heading.includes('خدمات')&&heading.includes('dear day'));
+      if(!isServices||col.querySelector('a[href*="Dear-Day-Flowers-Approved"]'))return;
+      const link=document.createElement('a');link.href=href;link.textContent=english?'Flowers':'الورد';
+      const cake=[...col.querySelectorAll('a')].find(a=>/Dear-Day-Cake-Approved/i.test(String(a.getAttribute('href')||'')));
+      if(cake)cake.insertAdjacentElement('afterend',link);else col.appendChild(link);
+    });
+  }
   function isLegacyMenuButton(el){
     if(!(el instanceof Element)||el.classList.contains('dd-native-menu-btn'))return false;
     if(el.matches('.dd-mobile-menu-toggle,.menu,.menu-btn,.burger,.hamburger,[class*="burger"],[class*="hamburger"]'))return true;
@@ -115,7 +127,7 @@
       location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
     },true);
   }
-  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchEnglishHomeOccasionFlow()}
+  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
