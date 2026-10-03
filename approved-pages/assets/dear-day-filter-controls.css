@@ -1,0 +1,78 @@
+/* Dear Day customer catalog filter system */
+body.dd-form-brand-ready :where(.filters,.filter-panel,.filter-card){
+  border-color:rgba(107,53,64,.14)!important;
+  background:linear-gradient(180deg,#fffdfc,#fffaf7)!important;
+  box-shadow:0 10px 28px rgba(76,31,36,.045)!important;
+}
+body.dd-form-brand-ready :where(.filter-title strong,.filter-group h4,.filters h4,.filter-panel h4){
+  color:#6B3540!important;
+  font-weight:800!important;
+  letter-spacing:0!important;
+}
+body.dd-form-brand-ready :where(.filter-group){border-color:rgba(107,53,64,.10)!important}
+
+body.dd-form-brand-ready :where(.filters .chip,.filter-panel .chip,.filter-group .chip,.filters .tab,.filter-panel .tab){
+  min-height:34px!important;
+  border:1px solid rgba(107,53,64,.16)!important;
+  border-radius:999px!important;
+  background:#FFFDFC!important;
+  color:#6B3540!important;
+  padding:7px 12px!important;
+  font-weight:700!important;
+  box-shadow:0 3px 10px rgba(76,31,36,.025)!important;
+  transition:background .16s ease,color .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease!important;
+}
+body.dd-form-brand-ready :where(.filters .chip,.filter-panel .chip,.filter-group .chip,.filters .tab,.filter-panel .tab):hover{
+  border-color:rgba(168,88,61,.48)!important;
+  background:#FFF7F3!important;
+  transform:translateY(-1px)!important;
+  box-shadow:0 6px 14px rgba(76,31,36,.05)!important;
+}
+body.dd-form-brand-ready :where(.filters .chip.active,.filter-panel .chip.active,.filter-group .chip.active,.filters .tab.active,.filter-panel .tab.active,[aria-pressed="true"].chip){
+  background:#6B3540!important;
+  border-color:#6B3540!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(107,53,64,.16)!important;
+}
+body.dd-form-brand-ready :where(.filters .chip,.filter-panel .chip,.filter-group .chip,.filters .tab,.filter-panel .tab):focus-visible{
+  outline:3px solid rgba(168,88,61,.24)!important;
+  outline-offset:2px!important;
+}
+
+body.dd-form-brand-ready :where(.reset,.filter-reset,[data-reset-filters]){
+  border:0!important;
+  background:transparent!important;
+  color:#A8583D!important;
+  font-weight:800!important;
+  text-decoration:none!important;
+  border-radius:999px!important;
+  padding:6px 9px!important;
+}
+body.dd-form-brand-ready :where(.reset,.filter-reset,[data-reset-filters]):hover{
+  background:#F8EBE6!important;
+  color:#6B3540!important;
+}
+
+body.dd-form-brand-ready :where(.filters .search,.filter-panel .search){
+  border:1px solid rgba(107,53,64,.16)!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  overflow:hidden!important;
+  box-shadow:0 5px 14px rgba(76,31,36,.025)!important;
+}
+body.dd-form-brand-ready :where(.filters .search,.filter-panel .search):focus-within{
+  border-color:#A8583D!important;
+  box-shadow:0 0 0 4px rgba(168,88,61,.09)!important;
+}
+body.dd-form-brand-ready :where(.filters .search input,.filter-panel .search input){
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+body.dd-form-brand-ready :where(.range-row){color:#827572!important;font-size:11px!important}
+
+@media(max-width:700px){
+  body.dd-form-brand-ready :where(.filters,.filter-panel,.filter-card){border-radius:18px!important}
+  body.dd-form-brand-ready :where(.filters .chip,.filter-panel .chip,.filter-group .chip,.filters .tab,.filter-panel .tab){min-height:36px!important;padding:8px 12px!important}
+}
