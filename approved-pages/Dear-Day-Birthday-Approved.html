@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>عيد ميلاد | Dear Day</title>
-<meta name="description" content="كوّن خطة مناسبتك مع Dear Day خطوة بخطوة. راجع الميزانية واختار الهدايا والكيك والأماكن والتجارب المناسبة، ثم عدّل تفاصيل يومك واجمع اختياراتك قبل استكمال الحجز."/>
+<meta name="description" content="كوّن خطة مناسبتك مع Dear Day خطوة بخطوة. راجع الميزانية واختار الهدايا والكيك والورد والأماكن والتجارب المناسبة، ثم عدّل تفاصيل يومك واجمع اختياراتك قبل استكمال الحجز."/>
 <link rel="canonical" href="https://deardayy.vercel.app/approved-pages/Dear-Day-Birthday-Approved.html"/>
 <meta name="robots" content="noindex, follow"/>
 
@@ -53,7 +53,7 @@ a{color:inherit;text-decoration:none}
 .section-head{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:22px}
 .section-head h2{font-family:Georgia,'Times New Roman',serif;color:var(--wine);font-size:34px;margin:0 0 4px}
 .section-head p{margin:0;color:var(--muted)}
-.services{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.services{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .service{position:relative;border:1px solid var(--line);background:#fff;border-radius:18px;padding:20px 18px 14px;cursor:pointer;transition:.22s ease;box-shadow:0 7px 18px rgba(48,28,29,.035);min-width:0}
 .service:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .service.selected{border-color:var(--wine);box-shadow:0 0 0 2px rgba(107,53,64,.05),var(--shadow)}
@@ -304,6 +304,9 @@ footer{margin-top:44px!important}
 <article class="service" data-img="/approved-pages/assets/media/cake-service.jpg" data-service="كيك وحلويات" tabindex="0">
 <span class="check">✓</span><div class="icon">🎂</div><div><h3>كيك وحلويات</h3><p>تصاميم لذيذة ومخصصة لكل الأذواق</p></div><img alt="كيك وحلويات" src="/approved-pages/assets/media/cake-service.jpg"/>
 </article>
+<article class="service" data-img="/approved-pages/assets/media/flowers-bouquet.jpg" data-service="ورد" tabindex="0">
+<span class="check">✓</span><div class="icon">🌷</div><div><h3>ورد</h3><p>بوكيهات وتنسيقات ورد تناسب المناسبة والذوق</p></div><img alt="ورد" src="/approved-pages/assets/media/flowers-bouquet.jpg"/>
+</article>
 <article class="service" data-img="/approved-pages/assets/media/venue-service.jpg" data-service="أماكن وتجارب" tabindex="0">
 <span class="check">✓</span><div class="icon">⌖</div><div><h3>أماكن وتجارب</h3><p>أماكن مختارة وتجارب لا تُنسى</p></div><img alt="أماكن وتجارب" src="/approved-pages/assets/media/venue-service.jpg"/>
 </article>
@@ -549,9 +552,11 @@ nextBtn.addEventListener('click',()=>{
   const packageMode=plan.services.some(s=>/باقة متكاملة/.test(s));
   const hasGifts=packageMode||plan.services.some(s=>/هدايا/.test(s))||plan.products.some(p=>/هدية|هدايا|بوكيه|ورد/.test(p.name||''));
   const hasCake=packageMode||plan.services.some(s=>/كيك|حلويات/.test(s))||plan.products.some(p=>/كيك|تورت|حلويات|cake/i.test(p.name||''));
+  const hasFlowers=packageMode||plan.services.some(s=>/ورد|زهور/.test(s));
   const hasVenue=packageMode||plan.services.some(s=>/أماكن|تجارب/.test(s))||plan.products.some(p=>/مكان|تجربة|Terrace|Restaurant|Garden/i.test(p.name||''));
   if(hasGifts){ddGo('/approved-pages/Dear-Day-Gifts-Approved.html',plan);return}
   if(hasCake){ddGo('/approved-pages/Dear-Day-Cake-Approved.html',plan);return}
+  if(hasFlowers){ddGo('/approved-pages/Dear-Day-Flowers-Approved.html',plan);return}
   if(hasVenue){ddGo('/approved-pages/Dear-Day-Venues-Approved.html',plan);return}
   showToast('اختار خدمة واحدة على الأقل علشان نكمل');
 });
@@ -674,7 +679,7 @@ updateUI();
     if(packageCard)packageCard.classList.remove('selected');
 
     const needed=new Set(pkg.items.map(x=>x.type));
-    const serviceMap={gift:'هدايا',cake:'كيك وحلويات',venue:'أماكن وتجارب'};
+    const serviceMap={gift:'هدايا',cake:'كيك وحلويات',flower:'ورد',venue:'أماكن وتجارب'};
     cards.forEach(c=>{
       const type=Object.keys(serviceMap).find(k=>serviceMap[k]===c.dataset.service);
       if(type&&needed.has(type)){
