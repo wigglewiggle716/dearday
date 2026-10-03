@@ -4,7 +4,7 @@
   function ensureNativeMobileNav(){
     if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261002-2';
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261003-3';
     s.defer=true;
     s.setAttribute('data-dd-native-mobile-nav','');
     (document.head||document.documentElement).appendChild(s);
@@ -36,7 +36,7 @@
     if(!(p==='/'||/\/index(?:-en)?\.html$/i.test(p)))return;
     if(document.querySelector('script[data-dd-home-categories]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-2';
+    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-3';
     s.defer=true;
     s.setAttribute('data-dd-home-categories','');
     (document.head||document.documentElement).appendChild(s);

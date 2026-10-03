@@ -1,5 +1,5 @@
 (function(){
-  const BP=1120;
+  const BP=900;
   function ensureAuthState(){
     if(document.querySelector('script[data-dd-auth-state]'))return;
     const s=document.createElement('script');s.src='/approved-pages/dear-day-auth-state.js?v=20261002-2';s.async=true;s.dataset.ddAuthState='1';(document.head||document.documentElement).appendChild(s);
@@ -53,9 +53,9 @@
   }
   function menuItems(){
     return isEn()?[
-      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
+      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Flowers','/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
     ]:[
-      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
+      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الورد','/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
     ];
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
