@@ -1,6 +1,6 @@
 (function(){
   const path=String(location.pathname||'').replace(/\/+$/,'')||'/';
-  const isHome=path==='/'||/\/index\.html$/i.test(path);if(!isHome)return;
+  const isHome=path==='/'||/\/index(?:-en)?\.html$/i.test(path);if(!isHome)return;
   const en=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
   const t=(ar,enText)=>en?enText:ar;
   function findPlanner(){
