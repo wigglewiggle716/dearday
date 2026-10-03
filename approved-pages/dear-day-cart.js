@@ -31,6 +31,30 @@
   }
   ensureCustomerRefundPolicy();
 
+  function ensureHomeCategories(){
+    const p=String(location.pathname||'/');
+    if(!(p==='/'||/\/index(?:-en)?\.html$/i.test(p)))return;
+    if(document.querySelector('script[data-dd-home-categories]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-2';
+    s.defer=true;
+    s.setAttribute('data-dd-home-categories','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureHomeCategories();
+
+  function ensureLiveCatalog(){
+    const p=String(location.pathname||'');
+    if(!/\/approved-pages\/Dear-Day-(Gifts|Cake|Flowers)-Approved(?:-en)?\.html$/i.test(p))return;
+    if(document.querySelector('script[data-dd-live-catalog]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-live-catalog.js?v=20261003-2';
+    s.defer=true;
+    s.setAttribute('data-dd-live-catalog','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureLiveCatalog();
+
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
@@ -229,7 +253,7 @@
   window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});
   window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
-  const core='/approved-pages/dear-day-cart-core.js?v=20261001-1';
+  const core='/approved-pages/dear-day-cart-core.js?v=20261003-2';
   if(document.readyState==='loading')document.write('<script src="'+core+'"><\/script>');
   else{const script=document.createElement('script');script.src=core;script.async=false;script.onload=patchPage;(document.head||document.documentElement).appendChild(script);}
 })();
