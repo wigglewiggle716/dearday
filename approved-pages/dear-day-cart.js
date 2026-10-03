@@ -1,4 +1,6 @@
 (function(){
+  function ddHasStoredSession(){try{for(const store of [localStorage,sessionStorage]){for(let i=0;i<store.length;i++){const k=String(store.key(i)||'');if(!/^sb-.*-auth-token$/i.test(k))continue;const raw=String(store.getItem(k)||'');if(raw.includes('access_token')&&raw.includes('user'))return true}}}catch(e){}return false}
+  if(ddHasStoredSession()){document.documentElement.classList.add('dd-auth-session-hint');const st=document.createElement('style');st.id='dd-auth-session-hint-style';st.textContent='.dd-auth-session-hint header a.dd-auth,.dd-auth-session-hint header a.header-auth,.dd-auth-session-hint header a.auth-link,.dd-auth-session-hint header a[href*=\"Dear-Day-Auth\"]{visibility:hidden!important;pointer-events:none!important}';(document.head||document.documentElement).appendChild(st)}
   const KEY='dearDayCart';
 
   function ensureNativeMobileNav(){
