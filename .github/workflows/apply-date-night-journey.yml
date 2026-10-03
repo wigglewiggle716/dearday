@@ -1,0 +1,107 @@
+name: Apply Date Night journey
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-date-night-journey.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace Engagement planning journey with Date Night
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def read(path): return Path(path).read_text(encoding='utf-8')
+          def write(path, text): Path(path).write_text(text, encoding='utf-8')
+          def must_replace(text, old, new, label):
+              if old not in text:
+                  raise SystemExit(f'Missing expected pattern: {label}')
+              return text.replace(old, new)
+
+          # Home pages: replace the Engagement planner tile and route mappings.
+          home_specs = [
+              ('index.html', False),
+              ('index-en.html', True),
+          ]
+          date_button = '''<button aria-pressed="false" class="occasion" data-occasion="Date Night" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 64 64"><path d="M42 11a20 20 0 1 0 11 35A23 23 0 0 1 42 11z"></path><path d="m48 16 1.7 3.3L53 21l-3.3 1.7L48 26l-1.7-3.3L43 21l3.3-1.7L48 16z"></path></svg><span>Date Night</span></button>'''
+          for path, english in home_specs:
+              s = read(path)
+              pattern = r'<button[^>]*class="occasion"[^>]*data-occasion="خطوبة"[^>]*>.*?</button>'
+              s, n = re.subn(pattern, date_button, s, count=1, flags=re.S)
+              if n != 1:
+                  raise SystemExit(f'Expected one Engagement home tile in {path}, found {n}')
+              s = s.replace("'خطوبة':{key:'engagement',label:'خطوبة'}", "'Date Night':{key:'date_night',label:'Date Night'}")
+              s = s.replace("'خطوبة':'engagement'", "'Date Night':'date_night'")
+              s = s.replace("'خطوبة':'Engagement'", "'Date Night':'Date Night'")
+              write(path, s)
+
+          # Arabic All Occasions page.
+          p = 'approved-pages/Dear-Day-Occasions-Approved.html'
+          s = read(p)
+          s = s.replace('من عيد الميلاد والذكرى السنوية للخطوبة وطلب الزواج', 'من عيد الميلاد والذكرى السنوية وطلب الزواج وDate Night')
+          ar_card = '''<article class="card"><div class="media" style="background-image:url('/approved-pages/assets/media/occasion-venue.jpg')"></div><div class="content"><span class="tag">مناسبة</span><h3>Date Night</h3><p>رتّب وقت لشخصين حول مكان أو تجربة، ومعاها الهدية والورد والحلويات لو حابب.</p><a class="btn btn-solid occasion-start" data-name="Date Night" data-occ="date_night" href="Dear-Day-Birthday-Approved.html?occasion=date_night&flow=1">ابدأ التخطيط</a></div></article>'''
+          pattern = r'<article class="card">(?:(?!</article>).)*?data-occ="engagement"(?:(?!</article>).)*?</article>'
+          s, n = re.subn(pattern, ar_card, s, count=1, flags=re.S)
+          if n != 1: raise SystemExit(f'Expected one Arabic engagement card, found {n}')
+          write(p, s)
+
+          # English All Occasions page.
+          p = 'approved-pages/Dear-Day-Occasions-Approved-en.html'
+          s = read(p)
+          s = s.replace('Plan birthdays, anniversaries, engagements and proposals with Dear Day.', 'Plan birthdays, anniversaries, proposals and date nights with Dear Day.')
+          en_card = '''<article class="card"><div class="media" style="background-image:url('/approved-pages/assets/media/occasion-venue.jpg')"></div><div class="content"><span class="tag">Occasion</span><h3>Date Night</h3><p>Plan time for two around a place or experience, with gifts, flowers or sweets if you want them.</p><a class="btn btn-solid occasion-start" data-name="Date Night" data-occ="date_night" href="Dear-Day-Birthday-Approved-en.html?occasion=date_night&flow=1">Start planning</a></div></article>'''
+          pattern = r'<article class="card">(?:(?!</article>).)*?data-occ="engagement"(?:(?!</article>).)*?</article>'
+          s, n = re.subn(pattern, en_card, s, count=1, flags=re.S)
+          if n != 1: raise SystemExit(f'Expected one English engagement card, found {n}')
+          s = s.replace('Dear-Day-Birthday-en.html?occasion=birthday', 'Dear-Day-Birthday-Approved-en.html?occasion=birthday&flow=1')
+          s = s.replace('Dear-Day-Birthday-en.html?occasion=anniversary', 'Dear-Day-Birthday-Approved-en.html?occasion=anniversary&flow=1')
+          s = s.replace('Dear-Day-Birthday-en.html?occasion=proposal', 'Dear-Day-Birthday-Approved-en.html?occasion=proposal&flow=1')
+          write(p, s)
+
+          # Arabic generic planner context.
+          p = 'approved-pages/Dear-Day-Birthday-Approved.html'
+          s = read(p)
+          s = must_replace(s,
+              "'engagement':'engagement','خطوبة':'engagement',",
+              "'date_night':'date_night','date-night':'date_night','Date Night':'date_night',",
+              'Arabic planner keyMap')
+          old_meta = "engagement:{label:'خطوبة',pill:'💍 خطوبة',title:'<strong>جهّزوا لحظة الخطوبة</strong><br/>بكل تفاصيلها',copy:'من الورد والكيك للمكان والتنسيق، اجمع كل تفاصيل الخطوبة في خطة واحدة واضحة.'},"
+          new_meta = "date_night:{label:'Date Night',pill:'🌙 Date Night',title:'<strong>خلّي الـ Date Night</strong><br/>وقت معمول ليكم',copy:'اختار المكان أو التجربة، وأضف الهدية والورد والحلويات لو حابب، وخلي كل تفاصيل الوقت ده في خطة واحدة.'},"
+          s = must_replace(s, old_meta, new_meta, 'Arabic planner meta')
+          s = s.replace('"engagement": "الخطوبة",', '"date_night": "Date Night",')
+          write(p, s)
+
+          # English generic planner context.
+          p = 'approved-pages/Dear-Day-Birthday-Approved-en.html'
+          s = read(p)
+          old_meta = "engagement:{label:'Engagement',pill:'💍 Engagement',title:'Plan the engagement moment from start to finish',copy:'Bring flowers, cake, the place and coordination together in one clear plan.'},"
+          new_meta = "date_night:{label:'Date Night',pill:'🌙 Date Night',title:'Make time for two feel thoughtfully planned',copy:'Choose the place or experience, then add a gift, flowers or sweets if they fit the night.'},"
+          s = must_replace(s, old_meta, new_meta, 'English planner meta')
+          write(p, s)
+
+          # English-home submit override inside the shared mobile runtime.
+          p = 'approved-pages/dear-day-mobile-nav.js'
+          s = read(p)
+          s = must_replace(s,
+              "const map={'عيد ميلاد':'birthday','ذكرى سنوية':'anniversary','خطوبة':'engagement','طلب زواج':'proposal'};",
+              "const map={'عيد ميلاد':'birthday','ذكرى سنوية':'anniversary','Date Night':'date_night','طلب زواج':'proposal'};",
+              'English home occasion map')
+          s = must_replace(s,
+              "const labels={birthday:'Birthday',anniversary:'Anniversary',engagement:'Engagement',proposal:'Marriage Proposal'};",
+              "const labels={birthday:'Birthday',anniversary:'Anniversary',date_night:'Date Night',proposal:'Marriage Proposal'};",
+              'English home occasion labels')
+          write(p, s)
+          PY
+      - name: Remove one-off workflow and commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/apply-date-night-journey.yml
+          git add index.html index-en.html approved-pages/Dear-Day-Occasions-Approved.html approved-pages/Dear-Day-Occasions-Approved-en.html approved-pages/Dear-Day-Birthday-Approved.html approved-pages/Dear-Day-Birthday-Approved-en.html approved-pages/dear-day-mobile-nav.js
+          git commit -m 'Replace engagement planner journey with Date Night'
+          git push
