@@ -1,0 +1,95 @@
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:600;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-600.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+
+:root{
+  --dd-form-wine:#6B3540;
+  --dd-form-terra:#A8583D;
+  --dd-form-cream:#FAF3EA;
+  --dd-form-paper:#FFFDFC;
+  --dd-form-ink:#352D2E;
+  --dd-form-muted:#827572;
+  --dd-form-line:rgba(107,53,64,.18);
+  --dd-form-line-strong:rgba(107,53,64,.38);
+  --dd-form-soft:#F8EBE6;
+  --dd-form-shadow:0 12px 30px rgba(76,31,36,.10);
+}
+
+html[dir="rtl"] body.dd-form-brand-ready :where(input,select,textarea,.dd-select-trigger,.dd-select-option){font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif}
+html[dir="ltr"] body.dd-form-brand-ready :where(input,select,textarea,.dd-select-trigger,.dd-select-option){font-family:Lora,Georgia,'Times New Roman',serif}
+
+body.dd-form-brand-ready :where(input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="search"],input[type="number"],input[type="date"],input[type="time"],input[type="url"],textarea){
+  border:1px solid var(--dd-form-line)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,#fff,#fffdfb)!important;
+  color:var(--dd-form-ink)!important;
+  box-shadow:0 5px 14px rgba(76,31,36,.025)!important;
+  outline:none!important;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease!important;
+}
+body.dd-form-brand-ready :where(input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="search"],input[type="number"],input[type="date"],input[type="time"],input[type="url"]){min-height:46px!important;padding-inline:14px!important}
+body.dd-form-brand-ready textarea{padding:12px 14px!important;min-height:104px;resize:vertical}
+body.dd-form-brand-ready :where(input,textarea)::placeholder{color:#A59792!important;opacity:1}
+body.dd-form-brand-ready :where(input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="search"],input[type="number"],input[type="date"],input[type="time"],input[type="url"],textarea):hover{border-color:rgba(107,53,64,.30)!important}
+body.dd-form-brand-ready :where(input[type="text"],input[type="email"],input[type="password"],input[type="tel"],input[type="search"],input[type="number"],input[type="date"],input[type="time"],input[type="url"],textarea):focus{border-color:var(--dd-form-terra)!important;box-shadow:0 0 0 4px rgba(168,88,61,.09),0 7px 18px rgba(76,31,36,.04)!important;background:#fff!important}
+body.dd-form-brand-ready :where(input,textarea):disabled{opacity:.58!important;cursor:not-allowed!important;background:#F6F0EC!important}
+
+body.dd-form-brand-ready label{accent-color:var(--dd-form-wine)}
+body.dd-form-brand-ready input[type="checkbox"],body.dd-form-brand-ready input[type="radio"]{
+  appearance:none!important;-webkit-appearance:none!important;
+  width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;
+  margin:0!important;border:1.5px solid var(--dd-form-line-strong)!important;background:#fff!important;
+  display:inline-grid!important;place-items:center!important;vertical-align:middle!important;
+  box-shadow:0 3px 9px rgba(76,31,36,.04)!important;transition:.16s ease!important;cursor:pointer!important;
+}
+body.dd-form-brand-ready input[type="checkbox"]{border-radius:6px!important}
+body.dd-form-brand-ready input[type="radio"]{border-radius:50%!important}
+body.dd-form-brand-ready input[type="checkbox"]:checked,body.dd-form-brand-ready input[type="radio"]:checked{background:var(--dd-form-wine)!important;border-color:var(--dd-form-wine)!important;box-shadow:0 0 0 3px rgba(107,53,64,.09)!important}
+body.dd-form-brand-ready input[type="checkbox"]:checked::after{content:'✓';color:#fff;font:800 11px/1 Arial,sans-serif}
+body.dd-form-brand-ready input[type="radio"]:checked::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+body.dd-form-brand-ready input[type="checkbox"]:focus-visible,body.dd-form-brand-ready input[type="radio"]:focus-visible{outline:3px solid rgba(168,88,61,.25)!important;outline-offset:2px!important}
+
+body.dd-form-brand-ready input[type="range"]{
+  appearance:none!important;-webkit-appearance:none!important;width:100%!important;height:20px!important;background:transparent!important;cursor:pointer!important;accent-color:var(--dd-form-wine)!important;
+}
+body.dd-form-brand-ready input[type="range"]::-webkit-slider-runnable-track{height:5px;border-radius:999px;background:linear-gradient(90deg,var(--dd-form-wine),#DDB9AE)}
+body.dd-form-brand-ready input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:5px solid var(--dd-form-wine);margin-top:-6px;box-shadow:0 4px 12px rgba(76,31,36,.16)}
+body.dd-form-brand-ready input[type="range"]::-moz-range-track{height:5px;border-radius:999px;background:#DDB9AE}
+body.dd-form-brand-ready input[type="range"]::-moz-range-progress{height:5px;border-radius:999px;background:var(--dd-form-wine)}
+body.dd-form-brand-ready input[type="range"]::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:5px solid var(--dd-form-wine);box-shadow:0 4px 12px rgba(76,31,36,.16)}
+
+/* Progressive custom select */
+.dd-select-shell{position:relative;display:block;width:100%;min-width:0}
+.dd-select-native{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.dd-select-trigger{
+  width:100%;min-height:46px;border:1px solid var(--dd-form-line);border-radius:14px;background:linear-gradient(180deg,#fff,#fffdfb);color:var(--dd-form-ink);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:start;cursor:pointer;box-shadow:0 5px 14px rgba(76,31,36,.025);transition:.18s ease;font-size:13px;font-weight:600;line-height:1.45
+}
+.dd-select-trigger:hover{border-color:rgba(107,53,64,.31);background:#fff}
+.dd-select-shell.dd-select-open .dd-select-trigger,.dd-select-trigger:focus-visible{border-color:var(--dd-form-terra);box-shadow:0 0 0 4px rgba(168,88,61,.09),0 8px 20px rgba(76,31,36,.05);outline:none;background:#fff}
+.dd-select-trigger[disabled]{opacity:.56;cursor:not-allowed;background:#F6F0EC}
+.dd-select-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-select-chevron{position:relative;width:18px;height:18px;flex:0 0 18px;color:var(--dd-form-wine);transition:transform .18s ease}
+.dd-select-chevron::before,.dd-select-chevron::after{content:'';position:absolute;top:8px;width:7px;height:1.5px;background:currentColor;border-radius:2px}
+.dd-select-chevron::before{left:2px;transform:rotate(42deg)}
+.dd-select-chevron::after{right:2px;transform:rotate(-42deg)}
+.dd-select-shell.dd-select-open .dd-select-chevron{transform:rotate(180deg)}
+.dd-select-menu{
+  position:absolute;z-index:2147482500;top:calc(100% + 7px);inset-inline:0;max-height:min(320px,48vh);overflow:auto;padding:7px;background:rgba(255,253,252,.985);border:1px solid rgba(107,53,64,.16);border-radius:16px;box-shadow:0 18px 45px rgba(76,31,36,.16);backdrop-filter:blur(16px);display:none;scrollbar-width:thin;scrollbar-color:rgba(107,53,64,.28) transparent
+}
+.dd-select-shell.dd-select-open .dd-select-menu{display:grid;gap:3px;animation:ddSelectIn .14s ease-out}
+@keyframes ddSelectIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.dd-select-option{width:100%;min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--dd-form-ink);padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:start;cursor:pointer;font-size:12px;font-weight:500;transition:.13s ease}
+.dd-select-option:hover,.dd-select-option:focus-visible{background:var(--dd-form-soft);color:var(--dd-form-wine);outline:none}
+.dd-select-option[aria-selected="true"]{background:var(--dd-form-wine);color:#fff;font-weight:700}
+.dd-select-option[aria-selected="true"]::after{content:'✓';font:800 11px/1 Arial,sans-serif}
+.dd-select-option:disabled{opacity:.45;cursor:not-allowed;background:transparent}
+
+body.dd-form-brand-ready input[type="date"]::-webkit-calendar-picker-indicator,body.dd-form-brand-ready input[type="time"]::-webkit-calendar-picker-indicator{opacity:.64;cursor:pointer;filter:sepia(.25) saturate(1.2) hue-rotate(300deg)}
+
+@media(max-width:700px){
+  .dd-select-trigger{min-height:48px;border-radius:13px;font-size:13px}
+  .dd-select-menu{position:fixed;top:auto;bottom:max(12px,env(safe-area-inset-bottom));left:12px;right:12px;inset-inline:auto;max-height:52svh;border-radius:22px;padding:9px;box-shadow:0 24px 70px rgba(55,24,29,.24)}
+  .dd-select-option{min-height:46px;border-radius:12px;font-size:13px;padding:10px 12px}
+}
+
+@media(prefers-reduced-motion:reduce){.dd-select-shell *{animation:none!important;transition:none!important}}
