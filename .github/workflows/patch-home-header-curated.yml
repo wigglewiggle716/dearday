@@ -1,0 +1,41 @@
+name: Patch home header and curated cache
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-home-header-curated.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch canonical runtime
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          nav = Path('approved-pages/dear-day-mobile-nav.js')
+          s = nav.read_text()
+          s = s.replace('const BP=1120;', 'const BP=900;')
+          s = s.replace("['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Places & Experiences'", "['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Flowers','/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1'],['Places & Experiences'")
+          s = s.replace("['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الأماكن والتجارب'", "['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الورد','/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'],['الأماكن والتجارب'")
+          nav.write_text(s)
+
+          cart = Path('approved-pages/dear-day-cart.js')
+          c = cart.read_text()
+          c = c.replace('/approved-pages/dear-day-mobile-nav.js?v=20261002-2', '/approved-pages/dear-day-mobile-nav.js?v=20261003-3')
+          c = c.replace('/approved-pages/dear-day-home-categories.js?v=20261003-2', '/approved-pages/dear-day-home-categories.js?v=20261003-3')
+          cart.write_text(c)
+          PY
+          git rm .github/workflows/patch-home-header-curated.yml
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add approved-pages/dear-day-mobile-nav.js approved-pages/dear-day-cart.js .github/workflows/patch-home-header-curated.yml
+          git commit -m 'Fix laptop auth visibility and refresh home curated assets'
+          git push
