@@ -5,6 +5,9 @@
   const t=(ar,enText)=>en()?enText:ar;
   const authPath=()=>en()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
   const home=()=>en()?'/index-en.html':'/';
+
+  const STAFF_ROLES=new Set(['super_admin','admin','operations','accountant','partner_manager','customer_support','marketing','content_admin']);
+  function portalForRole(role){if(role==='super_admin'||role==='admin')return'/Dear-Day-Admin.html';if(role==='partner_user')return'/Dear-Day-Partner.html';if(STAFF_ROLES.has(role))return'/Dear-Day-Staff.html';return null}
   let supabase,user,profile={},pendingAction='',addresses=[];
 
   function status(id,msg,error=false){const el=document.getElementById(id);if(!el)return;el.textContent=msg||'';el.style.color=error?'#A8583D':'#6B3540'}
@@ -113,7 +116,7 @@
 
   async function boot(){
     const cfg=await loadConfig();const mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    const {data,error}=await supabase.auth.getUser();if(error)throw error;user=data?.user;if(!user){location.replace(authPath()+'#login');return}
+    const {data,error}=await supabase.auth.getUser();if(error)throw error;user=data?.user;if(!user){location.replace(authPath()+'#login');return}const {data:ddAccess}=await supabase.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle();if(ddAccess?.is_active===false){await supabase.auth.signOut();location.replace(authPath()+'#login');return}const ddPortal=portalForRole(ddAccess?.role);if(ddPortal){location.replace(ddPortal);return}
     await ensureProfile();fill();await loadAddresses();
     document.getElementById('profileForm')?.addEventListener('submit',saveProfile);
     document.getElementById('addressForm')?.addEventListener('submit',saveAddress);

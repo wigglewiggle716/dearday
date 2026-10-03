@@ -5,6 +5,9 @@
   const home=()=>isEn()?'/index-en.html':'/';
   const authPath=()=>isEn()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
   const text=(ar,en)=>isEn()?en:ar;
+
+  const STAFF_ROLES=new Set(['super_admin','admin','operations','accountant','partner_manager','customer_support','marketing','content_admin']);
+  function portalForRole(role){if(role==='super_admin'||role==='admin')return'/Dear-Day-Admin.html';if(role==='partner_user')return'/Dear-Day-Partner.html';if(STAFF_ROLES.has(role))return'/Dear-Day-Staff.html';return null}
   const safeNext=()=>{const n=new URLSearchParams(location.search).get('next');return n&&n.startsWith('/')&&!n.startsWith('//')&&!/Dear-Day-Complete-Profile/i.test(n)?n:home()};
 
   function loadConfig(){
@@ -38,7 +41,7 @@
     const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;
     const supabase=mod.createClient(config.url,config.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}});
     const {data,error}=await supabase.auth.getUser();
-    if(error||!data?.user){location.replace(authPath()+'#login');return;}
+    if(error||!data?.user){location.replace(authPath()+'#login');return;}const {data:ddAccess}=await supabase.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle();if(ddAccess?.is_active===false){await supabase.auth.signOut();location.replace(authPath()+'#login');return}const ddPortal=portalForRole(ddAccess?.role);if(ddPortal){location.replace(ddPortal);return}
     const user=data.user,meta=user.user_metadata||{},name=splitName(meta);
     const first=document.getElementById('profileFirstName');
     const last=document.getElementById('profileLastName');
