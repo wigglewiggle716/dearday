@@ -219,6 +219,36 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
     });
   }
 
+  function patchMobileFooterAccordion(){
+    const mobile=window.matchMedia('(max-width: 620px)');
+    document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
+      const top=footer.querySelector('.footer-top');
+      if(!top)return;
+      [...top.children].forEach(col=>{
+        if(!(col instanceof HTMLElement))return;
+        if(col.classList.contains('dd-social-footer')||col.classList.contains('footer-brand')||col.querySelector('.footer-logo'))return;
+        const heading=[...col.children].find(el=>el.tagName==='H4');
+        if(!heading)return;
+        col.classList.add('dd-mobile-footer-accordion');
+        if(heading.dataset.ddAccordionReady==='1')return;
+        heading.dataset.ddAccordionReady='1';
+        heading.setAttribute('role','button');
+        heading.setAttribute('tabindex','0');
+        heading.setAttribute('aria-expanded','false');
+        const toggle=()=>{
+          if(!mobile.matches)return;
+          const open=col.classList.toggle('dd-open');
+          heading.setAttribute('aria-expanded',open?'true':'false');
+        };
+        heading.addEventListener('click',toggle);
+        heading.addEventListener('keydown',e=>{
+          if(!mobile.matches)return;
+          if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}
+        });
+      });
+    });
+  }
+
   function patchReviewConsent(){
     const path=String(location.pathname||'');
     const isArReview=/\/approved-pages\/Dear-Day-Review\.html$/i.test(path);
@@ -287,6 +317,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
     patchRefundPolicyLink();
     patchAccountDeletionLink();
     patchSocialFooter();
+    patchMobileFooterAccordion();
     patchReviewConsent();
     document.querySelectorAll('.dd-mobile-menu-toggle,.dd-mobile-menu').forEach(el=>el.remove());
     document.querySelectorAll('header').forEach(h=>{h.classList.remove('dd-mobile-menu-open');h.removeAttribute('data-dd-mobile-menu-ready');});
@@ -338,6 +369,17 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       .dd-social-icons a:hover{background:rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.55)!important;transform:translateY(-2px)!important}
       .dd-social-icons svg{width:20px!important;height:20px!important;display:block!important;overflow:visible!important}
       .dd-social-icons a[data-dd-social="facebook"] svg{width:19px!important;height:19px!important}
+      @media(max-width:620px){
+        .footer-top>div.dd-mobile-footer-accordion{width:100%!important;border-bottom:1px solid rgba(255,255,255,.28)!important;padding:0!important;margin:0!important}
+        .footer-top>div.dd-mobile-footer-accordion>h4{margin:0!important;padding:18px 2px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;color:#fff!important;font-size:16px!important;font-weight:800!important;line-height:1.35!important;cursor:pointer!important;user-select:none!important;-webkit-tap-highlight-color:transparent!important}
+        .footer-top>div.dd-mobile-footer-accordion>h4:after{content:''!important;display:block!important;flex:0 0 auto!important;width:9px!important;height:9px!important;border-right:2px solid currentColor!important;border-bottom:2px solid currentColor!important;transform:rotate(45deg)!important;transition:transform .2s ease!important;margin-inline:5px 3px!important}
+        .footer-top>div.dd-mobile-footer-accordion.dd-open>h4:after{transform:rotate(225deg)!important}
+        .footer-top>div.dd-mobile-footer-accordion:not(.dd-open)>:not(h4){display:none!important}
+        .footer-top>div.dd-mobile-footer-accordion.dd-open>a{display:block!important;margin:0!important;padding:9px 2px!important;color:#efd9de!important;font-size:14px!important}
+        .footer-top>div.dd-mobile-footer-accordion.dd-open>:last-child{margin-bottom:14px!important}
+        .footer-top>div.dd-mobile-footer-accordion>h4:focus-visible{outline:2px solid rgba(255,255,255,.75)!important;outline-offset:3px!important;border-radius:4px!important}
+      }
+
       .dd-social-icons a[data-dd-social="x"] svg{width:18px!important;height:18px!important}
       .dd-social-icons a[data-dd-social="youtube"] svg{width:21px!important;height:21px!important}
       .dd-social-icons a[data-dd-social="snapchat"] svg{width:21px!important;height:21px!important}
