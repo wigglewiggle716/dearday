@@ -1,0 +1,58 @@
+name: Refine mobile curated carousel
+on:
+  push:
+    paths:
+      - '.github/workflows/mobile-curated-carousel.yml'
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refine Dear Day mobile carousel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('approved-pages/dear-day-home-categories.js')
+          s=p.read_text(encoding='utf-8')
+
+          old="""<div class=\"dd-curated-shell\"><button class=\"dd-curated-arrow dd-curated-prev\" type=\"button\" aria-label=\"${t('السابق','Previous')}\" disabled>‹</button><div class=\"dd-curated-track\" id=\"ddCuratedTrack\" tabindex=\"0\" aria-live=\"polite\"><div class=\"dd-curated-loading\">${t('جاري تحميل المختارات…','Loading picks…')}</div></div><button class=\"dd-curated-arrow dd-curated-next\" type=\"button\" aria-label=\"${t('التالي','Next')}\">›</button></div>"""
+          new=old+"""<div class=\"dd-curated-progress\" aria-hidden=\"true\"><i id=\"ddCuratedProgress\"></i></div>"""
+          if old not in s:
+              raise SystemExit('curated shell markup not found')
+          s=s.replace(old,new,1)
+
+          old_fn="""function updateArrows(){const rows=state.data[state.tab]||[],v=visibleCount(),max=Math.max(0,rows.length-v),i=Math.min(state.index[state.tab]||0,max);state.index[state.tab]=i;const prev=document.querySelector('.dd-curated-prev'),next=document.querySelector('.dd-curated-next');if(prev)prev.disabled=i<=0;if(next)next.disabled=i>=max}"""
+          new_fn="""function updateArrows(){const rows=state.data[state.tab]||[],v=visibleCount(),max=Math.max(0,rows.length-v),i=Math.min(state.index[state.tab]||0,max);state.index[state.tab]=i;const prev=document.querySelector('.dd-curated-prev'),next=document.querySelector('.dd-curated-next'),progress=document.getElementById('ddCuratedProgress');if(prev)prev.disabled=i<=0;if(next)next.disabled=i>=max;if(progress)progress.style.width=(max?((i+1)/(max+1))*100:100)+'%'}"""
+          if old_fn not in s:
+              raise SystemExit('updateArrows block not found')
+          s=s.replace(old_fn,new_fn,1)
+
+          old_css="""@media(max-width:679px){.dd-direct-inner,.dd-curated-inner{padding:0 18px}.dd-direct-grid{gap:9px}.dd-direct-grid img{height:115px}.dd-direct-grid div{padding:10px}.dd-direct-grid strong{font-size:13px}.dd-direct-grid small{font-size:10px}.dd-curated-shell{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}.dd-curated-arrow{width:34px;height:34px;font-size:21px}.dd-curated-track{grid-auto-columns:88%;gap:10px}.dd-pick-media{height:175px}.dd-curated-head h2{font-size:24px}}"""
+          new_css=""".dd-curated-progress{display:none;height:3px;background:rgba(107,53,64,.10);border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:110px}.dd-curated-progress i{display:block;height:100%;width:0;background:#A8583D;border-radius:inherit;transition:width .22s ease}@media(max-width:679px){.dd-direct-inner,.dd-curated-inner{padding:0 16px}.dd-direct-grid{gap:9px}.dd-direct-grid img{height:115px}.dd-direct-grid div{padding:10px}.dd-direct-grid strong{font-size:13px}.dd-direct-grid small{font-size:10px}.dd-curated{padding-bottom:42px}.dd-curated-head{margin-bottom:8px}.dd-curated-tabs{padding-bottom:12px}.dd-curated-shell{grid-template-columns:30px minmax(0,1fr) 30px;gap:3px}.dd-curated-arrow{width:30px;height:30px;font-size:18px;box-shadow:0 4px 12px rgba(74,35,39,.05);opacity:.9}.dd-curated-track{grid-auto-columns:82%;gap:10px;padding:2px 0;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}.dd-pick-card{border-radius:16px}.dd-pick-media{height:158px}.dd-pick-media span{top:8px;inset-inline-start:8px}.dd-pick-body{padding:11px 12px 12px}.dd-pick-body small{font-size:9px}.dd-pick-body h3{font-size:14px;line-height:1.45;margin:4px 0 0;min-height:41px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.dd-pick-body p{display:none}.dd-pick-bottom{margin-top:8px;align-items:center}.dd-pick-bottom strong{font-size:12px}.dd-pick-bottom button,.dd-pick-bottom a{padding:8px 10px;font-size:9px}.dd-curated-progress{display:block}.dd-curated-head h2{font-size:24px}}"""
+          if old_css not in s:
+              raise SystemExit('mobile curated CSS block not found')
+          s=s.replace(old_css,new_css,1)
+          p.write_text(s,encoding='utf-8')
+
+          # Cache-bust the dynamic home categories loader.
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          old="/approved-pages/dear-day-home-categories.js?v=20261003-4"
+          new="/approved-pages/dear-day-home-categories.js?v=20261003-5"
+          if old not in s:
+              raise SystemExit('home categories cache token not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add approved-pages/dear-day-home-categories.js approved-pages/dear-day-cart.js
+          git commit -m "Refine mobile curated product carousel"
+          git push
+
+          git rm .github/workflows/mobile-curated-carousel.yml
+          git commit -m "Remove temporary mobile carousel workflow"
+          git push
