@@ -20,6 +20,7 @@ jobs:
         run: |
           git show cb329881d791856e400f8c13f5dab921877b7952:.github/workflows/account-deletion-legal-restore.yml > /tmp/old-workflow.yml
           sed -n "/cat > \/tmp\/patch.py <<'PY'/,/^          PY$/p" /tmp/old-workflow.yml | sed '1d;$d;s/^          //' > /tmp/patch.py
+          sed -i 's/,replacement,s,flags=re.S)/,lambda m: replacement,s,flags=re.S)/' /tmp/patch.py
           python /tmp/patch.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
