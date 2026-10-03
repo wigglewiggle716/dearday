@@ -1,0 +1,40 @@
+name: Fix last admin sidebars
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-last-admin-sidebars.yml'
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize employee and finance admin shells
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          targets=['Dear-Day-Admin-Employees.html','Dear-Day-Finance.html']
+          shell='<script src="/approved-pages/dear-day-admin-shell.js?v=20261003-2"></script>'
+          for name in targets:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('.side{','.sidebar{')
+              s=s.replace('.side{position:relative', '.sidebar{position:relative')
+              s=s.replace('class="side"','class="sidebar"')
+              if name=='Dear-Day-Finance.html':
+                  s=s.replace('<span>Finance Panel</span>','<span>Admin Panel</span>')
+              if 'dear-day-admin-shell.js' not in s:
+                  s=s.replace('</body>',shell+'\n</body>')
+              else:
+                  import re
+                  s=re.sub(r'dear-day-admin-shell\.js\?v=[^"\']+','dear-day-admin-shell.js?v=20261003-2',s)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Dear-Day-Admin-Employees.html Dear-Day-Finance.html
+          git commit -m "Unify employee and finance admin sidebars"
+          git push
