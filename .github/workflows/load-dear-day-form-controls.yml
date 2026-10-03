@@ -17,28 +17,10 @@ jobs:
           p=Path('approved-pages/dear-day-cart.js')
           s=p.read_text(encoding='utf-8')
           anchor="  const KEY='dearDayCart';\n"
-          block="""  const KEY='dearDayCart';
-
-  function ensureBrandedFormControls(){
-    if(!document.querySelector('link[data-dd-form-controls]')){
-      const l=document.createElement('link');
-      l.rel='stylesheet';
-      l.href='/approved-pages/assets/dear-day-form-controls.css?v=20261003-1';
-      l.setAttribute('data-dd-form-controls','');
-      (document.head||document.documentElement).appendChild(l);
-    }
-    if(!document.querySelector('script[data-dd-form-controls]')){
-      const s=document.createElement('script');
-      s.src='/approved-pages/dear-day-form-controls.js?v=20261003-1';
-      s.defer=true;
-      s.setAttribute('data-dd-form-controls','');
-      (document.head||document.documentElement).appendChild(s);
-    }
-  }
-  ensureBrandedFormControls();
-"""
+          block="  const KEY='dearDayCart';\n\n  function ensureBrandedFormControls(){\n    if(!document.querySelector('link[data-dd-form-controls]')){\n      const l=document.createElement('link');\n      l.rel='stylesheet';\n      l.href='/approved-pages/assets/dear-day-form-controls.css?v=20261003-1';\n      l.setAttribute('data-dd-form-controls','');\n      (document.head||document.documentElement).appendChild(l);\n    }\n    if(!document.querySelector('script[data-dd-form-controls]')){\n      const s=document.createElement('script');\n      s.src='/approved-pages/dear-day-form-controls.js?v=20261003-1';\n      s.defer=true;\n      s.setAttribute('data-dd-form-controls','');\n      (document.head||document.documentElement).appendChild(s);\n    }\n  }\n  ensureBrandedFormControls();\n"
           if 'data-dd-form-controls' not in s:
-              if anchor not in s: raise SystemExit('anchor missing')
+              if anchor not in s:
+                  raise SystemExit('anchor missing')
               s=s.replace(anchor,block,1)
               p.write_text(s,encoding='utf-8')
           PY
