@@ -1,0 +1,39 @@
+name: Refine mobile home carousel two-up
+on:
+  push:
+    paths:
+      - '.github/workflows/refine-mobile-home-carousel-two-up.yml'
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch mobile carousel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('approved-pages/dear-day-home-categories.js')
+          s=p.read_text(encoding='utf-8')
+
+          s=s.replace("function visibleCount(){return innerWidth>=1050?4:innerWidth>=680?2:1}","function visibleCount(){return innerWidth>=1050?4:2}",1)
+
+          old='@media(max-width:679px){.dd-direct-inner,.dd-curated-inner{padding:0 18px}.dd-direct-grid{gap:9px}.dd-direct-grid img{height:115px}.dd-direct-grid div{padding:10px}.dd-direct-grid strong{font-size:13px}.dd-direct-grid small{font-size:10px}.dd-curated-shell{grid-template-columns:32px minmax(0,1fr) 32px;gap:4px}.dd-curated-arrow{width:30px;height:30px;font-size:18px}.dd-curated-track{grid-auto-columns:82%;gap:10px;padding:2px 1px 4px}.dd-pick-card{border-radius:16px}.dd-pick-media{height:154px}.dd-pick-body{padding:10px 11px 11px}.dd-pick-body small{font-size:9px}.dd-pick-body h3{font-size:13px;line-height:1.45;margin:3px 0 8px;min-height:38px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.dd-pick-body p{display:none}.dd-pick-bottom{gap:6px}.dd-pick-bottom strong{font-size:12px}.dd-pick-bottom button,.dd-pick-bottom a{padding:8px 10px;font-size:9px}.dd-curated-head h2{font-size:24px}.dd-curated{padding-bottom:42px}.dd-curated-progress{display:block}.dd-curated-tabs{padding-bottom:13px}.dd-curated-tabs button{padding:8px 14px;font-size:11px}}'
+          new='@media(max-width:679px){.dd-direct-inner,.dd-curated-inner{padding:0 16px}.dd-direct-grid{gap:9px}.dd-direct-grid img{height:115px}.dd-direct-grid div{padding:10px}.dd-direct-grid strong{font-size:13px}.dd-direct-grid small{font-size:10px}.dd-curated-shell{display:block}.dd-curated-arrow{display:none!important}.dd-curated-track{grid-auto-columns:calc((100% - 10px)/2);gap:10px;padding:2px 0 5px;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.dd-pick-card{border-radius:16px;scroll-snap-align:start}.dd-pick-media{height:138px}.dd-pick-body{padding:9px 9px 10px}.dd-pick-body small{font-size:8.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dd-pick-body h3{font-size:12px;line-height:1.4;margin:3px 0 7px;min-height:34px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.dd-pick-body p{display:none}.dd-pick-bottom{display:grid;grid-template-columns:1fr;gap:7px;align-items:stretch}.dd-pick-bottom strong{font-size:12px}.dd-pick-bottom button,.dd-pick-bottom a{width:100%;padding:8px 7px;font-size:9px;text-align:center}.dd-curated-head h2{font-size:24px}.dd-curated{padding-bottom:42px}.dd-curated-progress{display:block;width:84px;margin-top:13px}.dd-curated-tabs{padding-bottom:13px}.dd-curated-tabs button{padding:8px 14px;font-size:11px}}'
+          if old not in s:
+              raise SystemExit('mobile carousel CSS block not found')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("/approved-pages/dear-day-home-categories.js?v=20261003-5","/approved-pages/dear-day-home-categories.js?v=20261003-6",1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add approved-pages/dear-day-home-categories.js approved-pages/dear-day-cart.js
+          git diff --cached --quiet || git commit -m "Show two swipe cards on mobile home carousel"
+          git push
