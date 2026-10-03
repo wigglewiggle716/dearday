@@ -1,0 +1,78 @@
+name: Apply admin products category filter
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-admin-products-category-filter.yml'
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch products filter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          hp = Path('Dear-Day-Admin-Products.html')
+          html = hp.read_text(encoding='utf-8')
+          html = html.replace(
+              '<select id="kindFilter"><option value="">كل الأنواع</option><option value="product">Product</option><option value="service">Service</option><option value="venue">Venue</option><option value="experience">Experience</option></select>',
+              '<select id="categoryFilter"><option value="">كل الأقسام</option></select>'
+          )
+          html = html.replace('<th>النوع</th>', '<th>القسم</th>', 1)
+          html = re.sub(r"dear-day-admin-products\.js\?v=[^\"']+", 'dear-day-admin-products.js?v=20261003-2', html)
+          hp.write_text(html, encoding='utf-8')
+
+          jp = Path('approved-pages/dear-day-admin-products.js')
+          js = jp.read_text(encoding='utf-8')
+          js = js.replace(
+              "const currentPartnerFilter=$('partnerFilter').value,currentPartner=$('partnerId').value,currentCategory=$('categoryId').value;",
+              "const currentPartnerFilter=$('partnerFilter').value,currentPartner=$('partnerId').value,currentCategory=$('categoryId').value,currentCategoryFilter=$('categoryFilter')?.value||'';"
+          )
+
+          category_marker = "$('categoryId').innerHTML='<option value=\"\">بدون تصنيف</option>'+categories.filter(c=>c.is_active).map(c=>`<option value=\"${c.id}\">${esc(c.name_ar||c.name_en||c.slug)}</option>`).join('');"
+          if "$('categoryFilter').innerHTML" not in js:
+              js = js.replace(
+                  category_marker,
+                  category_marker + "\n    $('categoryFilter').innerHTML='<option value=\"\">كل الأقسام</option>'+categories.filter(c=>c.is_active).map(c=>`<option value=\"${c.id}\">${esc(c.name_ar||c.name_en||c.slug)}</option>`).join('');"
+              )
+
+          restore_marker = "if([...$('categoryId').options].some(o=>o.value===currentCategory))$('categoryId').value=currentCategory;"
+          if "categoryFilter').options" not in js:
+              js = js.replace(
+                  restore_marker,
+                  restore_marker + "\n    if([...$('categoryFilter').options].some(o=>o.value===currentCategoryFilter))$('categoryFilter').value=currentCategoryFilter;"
+              )
+
+          start = js.index('  function filtered(){')
+          end = js.index('  function stockText', start)
+          replacement = '''  function filtered(){
+    const q=$('searchInput').value.trim().toLowerCase(),pid=$('partnerFilter').value,categoryId=$('categoryFilter').value,av=$('availabilityFilter').value;
+    return listings.filter(l=>{
+      const v=latestFor(l.id)||publishedFor(l),p=partnerBy(l.partner_id),cat=categoryBy(l.category_id);
+      const text=[v?.name_ar,v?.name_en,p?.name_ar,p?.name_en,cat?.name_ar,cat?.name_en,cat?.slug,kindLabel(l.kind)].join(' ').toLowerCase();
+      if(q&&!text.includes(q))return false;
+      if(pid&&l.partner_id!==pid)return false;
+      if(categoryId&&l.category_id!==categoryId)return false;
+      if(av==='available'&&!l.is_available)return false;
+      if(av==='unavailable'&&l.is_available)return false;
+      return true;
+    });
+  }
+
+'''
+          js = js[:start] + replacement + js[end:]
+          js = js.replace("<td>${kindLabel(l.kind)}</td>", "<td>${esc(cat?.name_ar||cat?.name_en||'بدون قسم')}</td>")
+          js = js.replace("['searchInput','partnerFilter','kindFilter','availabilityFilter']", "['searchInput','partnerFilter','categoryFilter','availabilityFilter']")
+          jp.write_text(js, encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Dear-Day-Admin-Products.html approved-pages/dear-day-admin-products.js
+          git commit -m "Use catalog sections in admin product filters"
+          git push
