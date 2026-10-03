@@ -114,10 +114,39 @@
   function askEmailChange(){pendingAction='email-direct';const box=document.getElementById('verifyBox'),input=document.getElementById('verifyInput'),text=document.getElementById('verifyText');box.classList.add('show');input.value='';input.type='email';input.placeholder=t('البريد الإلكتروني الجديد','New email address');text.textContent=t('أدخل البريد الجديد. سيتم إرسال رسالة تأكيد قبل اعتماد التغيير.','Enter the new email. A confirmation message will be sent before the change is applied.')}
   async function continueSecurity(){const input=document.getElementById('verifyInput'),value=input.value.trim();status('securityStatus','');if(!value){status('securityStatus',t('أدخل القيمة المطلوبة أولًا.','Enter the required value first.'),true);return}if(pendingAction==='email-direct'){const {error}=await supabase.auth.updateUser({email:value});if(error){status('securityStatus',error.message,true);return}status('securityStatus',t('تم إرسال رسالة تأكيد للبريد الجديد.','Confirmation sent to the new email address.'));return}const nonce=value;if(pendingAction==='password'){input.value='';input.type='password';input.placeholder=t('كلمة المرور الجديدة','New password');pendingAction='password-new';document.getElementById('verifyText').textContent=t('تم التحقق. أدخل كلمة المرور الجديدة.','Verified. Enter your new password.');input.dataset.nonce=nonce;return}if(pendingAction==='password-new'){if(value.length<8){status('securityStatus',t('كلمة المرور يجب أن تكون 8 أحرف على الأقل.','Password must be at least 8 characters.'),true);return}const {error}=await supabase.auth.updateUser({password:value,nonce:input.dataset.nonce});if(error){status('securityStatus',error.message,true);return}status('securityStatus',t('تم تغيير كلمة المرور بنجاح.','Password changed successfully.'));return}if(pendingAction==='phone'){input.value='';input.type='tel';input.placeholder=t('رقم الموبايل الجديد','New mobile number');pendingAction='phone-new';document.getElementById('verifyText').textContent=t('تم التحقق. أدخل رقم الموبايل الجديد.','Verified. Enter your new mobile number.');input.dataset.nonce=nonce;return}if(pendingAction==='phone-new'){const {data,error}=await supabase.from('profiles').update({phone:value}).eq('id',user.id).select('id,first_name,last_name,full_name,phone,birth_date,area').single();if(error){status('securityStatus',error.message,true);return}profile=data;await supabase.auth.updateUser({data:{...meta(),phone:value},nonce:input.dataset.nonce});document.getElementById('phone').value=value;status('securityStatus',t('تم تغيير رقم الموبايل بعد تأكيد الهوية.','Mobile number changed after identity verification.'));return}}
 
+
+  async function loadDeletionRequest(){
+    const btn=document.getElementById('requestAccountDeletion');if(!btn)return;
+    const {data,error}=await supabase.rpc('my_account_deletion_request');
+    if(error){status('deletionStatus',t('تعذر تحميل حالة طلب الحذف.','Could not load deletion request status.'),true);return}
+    const r=Array.isArray(data)?data[0]:data;
+    if(!r){btn.disabled=false;btn.textContent=t('طلب حذف الحساب','Request account deletion');status('deletionStatus','');return}
+    if(r.status==='pending'){
+      btn.disabled=true;btn.textContent=t('الطلب قيد المراجعة','Request under review');
+      status('deletionStatus',t('تم استلام طلب حذف الحساب وهو الآن بانتظار مراجعة Dear Day.','Your deletion request has been received and is waiting for Dear Day review.'));
+      return;
+    }
+    if(r.status==='rejected'){
+      btn.disabled=false;btn.textContent=t('تقديم طلب حذف جديد','Submit a new deletion request');
+      status('deletionStatus',t('تمت مراجعة الطلب السابق ولم تتم الموافقة عليه. يمكنك التواصل مع خدمة العملاء أو تقديم طلب جديد.','Your previous request was reviewed and was not approved. You can contact support or submit a new request.'),true);
+      return;
+    }
+  }
+
+  async function requestAccountDeletion(){
+    const btn=document.getElementById('requestAccountDeletion');if(!btn)return;
+    const msg=t('هل أنت متأكد من تقديم طلب حذف حسابك وبياناتك نهائيًا؟ لن يتم الحذف فورًا؛ سيقوم Dear Day بمراجعة الطلب أولًا.','Are you sure you want to request permanent deletion of your account and personal data? Deletion is not immediate; Dear Day will review the request first.');
+    if(!confirm(msg))return;
+    btn.disabled=true;status('deletionStatus',t('جاري إرسال الطلب…','Submitting request…'));
+    const {error}=await supabase.rpc('request_account_deletion');
+    if(error){btn.disabled=false;status('deletionStatus',error.message||t('تعذر إرسال الطلب.','Could not submit the request.'),true);return}
+    await loadDeletionRequest();
+  }
+
   async function boot(){
     const cfg=await loadConfig();const mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     const {data,error}=await supabase.auth.getUser();if(error)throw error;user=data?.user;if(!user){location.replace(authPath()+'#login');return}const {data:ddAccess}=await supabase.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle();if(ddAccess?.is_active===false){await supabase.auth.signOut();location.replace(authPath()+'#login');return}const ddPortal=portalForRole(ddAccess?.role);if(ddPortal){location.replace(ddPortal);return}
-    await ensureProfile();fill();await loadAddresses();
+    await ensureProfile();fill();await loadAddresses();await loadDeletionRequest();
     document.getElementById('profileForm')?.addEventListener('submit',saveProfile);
     document.getElementById('addressForm')?.addEventListener('submit',saveAddress);
     document.getElementById('cancelAddressEdit')?.addEventListener('click',resetAddressForm);
@@ -126,6 +155,7 @@
     document.querySelector('[data-action="phone"]')?.addEventListener('click',()=>requestReauth('phone'));
     document.querySelector('[data-action="email"]')?.addEventListener('click',askEmailChange);
     document.getElementById('verifyAction')?.addEventListener('click',continueSecurity);
+    document.getElementById('requestAccountDeletion')?.addEventListener('click',requestAccountDeletion);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>boot().catch(err=>{console.error(err);location.replace(authPath()+'#login')}),{once:true});else boot().catch(err=>{console.error(err);location.replace(authPath()+'#login')});
 })();

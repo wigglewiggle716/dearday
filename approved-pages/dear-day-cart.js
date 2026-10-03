@@ -110,14 +110,39 @@
   }
 
   function patchLegalFooterLinks(){
-    if(isEnglishPage())return;
-    document.querySelectorAll('.footer-bottom div').forEach(el=>{
-      const t=String(el.textContent||'').replace(/\s+/g,' ').trim();
-      if(t==='سياسة الخصوصية · الشروط والأحكام'){
-        el.classList.add('dd-legal-links');
-        el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
-      }
+    const english=isEnglishPage();
+    document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
+      footer.querySelectorAll('a').forEach(a=>{
+        const t=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+        if(english&&t==='privacy policy')a.href='/approved-pages/Dear-Day-Privacy-en.html';
+        if(english&&(t==='terms & conditions'||t==='terms and conditions'))a.href='/approved-pages/Dear-Day-Terms-en.html';
+        if(!english&&t==='سياسة الخصوصية')a.href='/approved-pages/Dear-Day-Privacy.html';
+        if(!english&&t==='الشروط والأحكام')a.href='/approved-pages/Dear-Day-Terms.html';
+      });
+      footer.querySelectorAll('.footer-bottom div,.footer-bottom span').forEach(el=>{
+        const t=String(el.textContent||'').replace(/\s+/g,' ').trim();
+        if(english&&/^Privacy Policy\s*[·|•-]\s*Terms & Conditions$/i.test(t)){
+el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy-en.html">Privacy Policy</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms-en.html">Terms & Conditions</a>';
+        }
+        if(!english&&t==='سياسة الخصوصية · الشروط والأحكام'){
+el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
+        }
+      });
     });
+  }
+
+  function patchLegalLanguageSwitch(){
+    const p=String(location.pathname||'');
+    const map={
+      '/approved-pages/Dear-Day-Privacy.html':['/approved-pages/Dear-Day-Privacy-en.html','EN','English'],
+      '/approved-pages/Dear-Day-Privacy-en.html':['/approved-pages/Dear-Day-Privacy.html','AR','العربية'],
+      '/approved-pages/Dear-Day-Terms.html':['/approved-pages/Dear-Day-Terms-en.html','EN','English'],
+      '/approved-pages/Dear-Day-Terms-en.html':['/approved-pages/Dear-Day-Terms.html','AR','العربية']
+    };
+    const item=map[p];if(!item)return;
+    const host=document.querySelector('.auth-actions')||document.querySelector('header');if(!host||host.querySelector('[data-dd-legal-lang]'))return;
+    const a=document.createElement('a');a.href=item[0];a.textContent=item[1];a.setAttribute('aria-label',item[2]);a.setAttribute('data-dd-legal-lang','');a.className='lang-link';
+    host.appendChild(a);
   }
 
   function patchRefundPolicyLink(){
@@ -163,7 +188,7 @@
     label.id='ddBookingConsent';
     label.className='dd-booking-consent';
     label.innerHTML=english
-      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds-en.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
+      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms-en.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds-en.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
       : '<input id="ddBookingConsentCheck" type="checkbox" required><span>أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> قبل المتابعة للدفع.</span>';
     payBtn.parentNode.insertBefore(label,payBtn);
 
@@ -213,6 +238,7 @@
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
     patchLegalFooterLinks();
+    patchLegalLanguageSwitch();
     patchRefundPolicyLink();
     patchSocialFooter();
     patchReviewConsent();

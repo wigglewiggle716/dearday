@@ -1,7 +1,7 @@
 (function(){
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
-  let supabase,user,profile,customers=[],permissions=new Set(),selectedId=null;
+  let supabase,user,profile,customers=[],deletionRequests=[],permissions=new Set(),selectedId=null;
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
   const money=(v,c='EGP')=>new Intl.NumberFormat('ar-EG',{style:'currency',currency:c||'EGP',maximumFractionDigits:0}).format(Number(v||0));
@@ -83,6 +83,40 @@
     c.is_active=next;show('successBox',next?'تمت إعادة تفعيل الحساب.':'تم إيقاف حساب العميل.');renderStats();render();await openCustomer(c.id);
   }
 
+
+  async function loadDeletionRequests(){
+    const panel=$('account-deletion-requests');if(!panel)return;
+    if(profile?.role!=='super_admin'){panel.hidden=true;return}
+    panel.hidden=false;
+    const {data,error}=await supabase.rpc('admin_account_deletion_list');
+    if(error)throw error;
+    deletionRequests=data||[];renderDeletionRequests();
+    if(location.hash==='#account-deletion-requests')setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }
+
+  function renderDeletionRequests(){
+    const host=$('deletionRequestsList'),count=$('deletionPendingCount');if(!host)return;
+    const pending=deletionRequests.filter(r=>r.status==='pending');if(count)count.textContent=String(pending.length);
+    const rows=[...pending,...deletionRequests.filter(r=>r.status!=='pending').slice(0,8)];
+    if(!rows.length){host.innerHTML='<div class="muted">لا توجد طلبات حذف حساب.</div>';return}
+    host.innerHTML=rows.map(r=>`<article class="deletion-request"><div class="deletion-request-top"><div><strong>${esc(r.full_name||r.email||'عميل Dear Day')}</strong><div class="muted">${esc(r.email||'—')}${r.phone?' · '+esc(r.phone):''}</div><div class="muted">تاريخ الطلب: ${date(r.requested_at)}</div></div><span class="badge ${r.status==='pending'?'bad':'good'}">${r.status==='pending'?'بانتظار المراجعة':r.status==='completed'?'تم الحذف':'مرفوض'}</span></div>${r.status==='pending'?`<div class="deletion-actions"><button class="approve-delete" data-delete-approve="${esc(r.id)}" type="button">موافقة وحذف نهائي</button><button class="reject-delete" data-delete-reject="${esc(r.id)}" type="button">رفض الطلب</button></div>`:''}${r.admin_note?`<div class="muted" style="margin-top:7px">ملاحظة: ${esc(r.admin_note)}</div>`:''}</article>`).join('');
+    host.querySelectorAll('[data-delete-approve]').forEach(b=>b.addEventListener('click',()=>reviewDeletion(b.dataset.deleteApprove,'approve')));
+    host.querySelectorAll('[data-delete-reject]').forEach(b=>b.addEventListener('click',()=>reviewDeletion(b.dataset.deleteReject,'reject')));
+  }
+
+  async function reviewDeletion(id,decision){
+    const req=deletionRequests.find(r=>r.id===id);if(!req)return;
+    if(decision==='approve'){
+      const who=req.full_name||req.email||'العميل';
+      if(!confirm(`تأكيد الحذف النهائي لحساب ${who}؟ سيتم حذف حساب تسجيل الدخول والبيانات الشخصية، وفصل السجلات التاريخية عن هوية العميل.`))return;
+    }
+    const note=prompt(decision==='reject'?'سبب الرفض أو ملاحظة للسجل (اختياري):':'ملاحظة داخلية عن الحذف (اختياري):','')||null;
+    const {error}=await supabase.rpc('admin_review_account_deletion',{p_request_id:id,p_decision:decision,p_note:note});
+    if(error){show('errorBox',error.message||'تعذر مراجعة طلب حذف الحساب.');return}
+    show('successBox',decision==='approve'?'تم حذف الحساب والبيانات الشخصية نهائيًا.':'تم رفض طلب الحذف.');
+    closeDrawer();await loadCustomers();await loadDeletionRequests();
+  }
+
   function openDrawer(){$('drawerBg').classList.add('show');$('drawerBg').setAttribute('aria-hidden','false')}
   function closeDrawer(){$('drawerBg').classList.remove('show');$('drawerBg').setAttribute('aria-hidden','true');selectedId=null}
 
@@ -91,9 +125,9 @@
       const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       if(!await guard())return;
       $('logoutBtn').onclick=async()=>{await supabase.auth.signOut();location.replace('/Dear-Day-Staff-Login.html')};
-      $('searchInput').addEventListener('input',render);$('statusFilter').addEventListener('change',render);$('refreshBtn').onclick=()=>loadCustomers().catch(e=>show('errorBox',e.message));
+      $('searchInput').addEventListener('input',render);$('statusFilter').addEventListener('change',render);$('refreshBtn').onclick=()=>Promise.all([loadCustomers(),loadDeletionRequests()]).catch(e=>show('errorBox',e.message));
       $('closeDrawer').onclick=closeDrawer;$('drawerBg').addEventListener('click',e=>{if(e.target===$('drawerBg'))closeDrawer()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
-      await loadCustomers();
+      await loadCustomers();await loadDeletionRequests();
     }catch(err){console.error(err);show('errorBox','تعذر تحميل إدارة العملاء. راجع الاتصال والصلاحيات.')}finally{$('loading').style.display='none'}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();

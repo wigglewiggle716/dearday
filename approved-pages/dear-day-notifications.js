@@ -48,8 +48,8 @@
     const {data,error}=await supabase.from('notifications').select('*').order('created_at',{ascending:false}).limit(100);if(error)throw error;
     const rows=data||[],unread=rows.filter(x=>!x.is_read).length;count.textContent=unread;count.hidden=!unread;status.textContent=rows.length?`${rows.length} إشعار`:'لا توجد إشعارات جديدة.';
     if(!rows.length){list.innerHTML='<div class="empty">مفيش إشعارات لحد دلوقتي.</div>';return}
-    list.innerHTML=rows.map(n=>`<article class="notice ${n.is_read?'':'unread'}" data-id="${esc(n.id)}"><div class="notice-top"><div><h2>${n.is_read?'':'<span class="dot"></span>'}${esc(n.title_ar)}</h2><p>${esc(n.body_ar)}</p></div><time>${esc(when(n.created_at))}</time></div></article>`).join('');
-    list.querySelectorAll('.notice.unread').forEach(el=>el.addEventListener('click',async()=>{const {error}=await supabase.rpc('mark_notification_read',{p_notification_id:el.dataset.id});if(!error){el.classList.remove('unread');el.querySelector('.dot')?.remove();refresh().catch(()=>{})}}));
+    list.innerHTML=rows.map(n=>`<article class="notice ${n.is_read?'':'unread'}" data-id="${esc(n.id)}" data-entity-type="${esc(n.entity_type||'')}"><div class="notice-top"><div><h2>${n.is_read?'':'<span class="dot"></span>'}${esc(n.title_ar)}</h2><p>${esc(n.body_ar)}</p></div><time>${esc(when(n.created_at))}</time></div></article>`).join('');
+    list.querySelectorAll('.notice').forEach(el=>el.addEventListener('click',async()=>{if(el.classList.contains('unread')){const {error}=await supabase.rpc('mark_notification_read',{p_notification_id:el.dataset.id});if(!error){el.classList.remove('unread');el.querySelector('.dot')?.remove();}}if(el.dataset.entityType==='account_deletion_request'){location.href='/Dear-Day-Admin-Customers.html#account-deletion-requests';return}refresh().catch(()=>{})}));
   }
   async function boot(){
     try{
