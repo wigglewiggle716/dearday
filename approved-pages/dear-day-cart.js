@@ -3,6 +3,24 @@
   if(ddHasStoredSession()){document.documentElement.classList.add('dd-auth-session-hint');const st=document.createElement('style');st.id='dd-auth-session-hint-style';st.textContent='.dd-auth-session-hint header a.dd-auth,.dd-auth-session-hint header a.header-auth,.dd-auth-session-hint header a.auth-link,.dd-auth-session-hint header a[href*=\"Dear-Day-Auth\"]{visibility:hidden!important;pointer-events:none!important}';(document.head||document.documentElement).appendChild(st)}
   const KEY='dearDayCart';
 
+  function ensureBrandedFormControls(){
+    if(!document.querySelector('link[data-dd-form-controls]')){
+      const l=document.createElement('link');
+      l.rel='stylesheet';
+      l.href='/approved-pages/assets/dear-day-form-controls.css?v=20261003-1';
+      l.setAttribute('data-dd-form-controls','');
+      (document.head||document.documentElement).appendChild(l);
+    }
+    if(!document.querySelector('script[data-dd-form-controls]')){
+      const s=document.createElement('script');
+      s.src='/approved-pages/dear-day-form-controls.js?v=20261003-1';
+      s.defer=true;
+      s.setAttribute('data-dd-form-controls','');
+      (document.head||document.documentElement).appendChild(s);
+    }
+  }
+  ensureBrandedFormControls();
+
   function ensureNativeMobileNav(){
     if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
     const s=document.createElement('script');
