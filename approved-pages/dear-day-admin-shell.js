@@ -13,6 +13,8 @@
     ['/Dear-Day-Admin-Employees.html','الموظفون والصلاحيات'],
     ['/Dear-Day-Finance.html','المالية والتسويات']
   ];
+  const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
+  const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
 
   function normalizePath(v){
     const p=String(v||'').split('?')[0].split('#')[0];
@@ -28,6 +30,36 @@
       const active=normalizePath(href).toLowerCase()===current;
       return `<a${active?' class="active" aria-current="page"':''} href="${href}">${label}</a>`;
     }).join('');
+  }
+
+  async function ensureSidebarFooter(sidebar){
+    let foot=sidebar.querySelector('.sidebar-foot');
+    let created=false;
+    if(!foot){
+      foot=document.createElement('div');
+      foot.className='sidebar-foot';
+      foot.innerHTML='<p id="adminEmail">—</p><button id="logoutBtn" class="logout" type="button">تسجيل الخروج</button>';
+      sidebar.appendChild(foot);
+      created=true;
+    }
+    if(!created)return;
+    try{
+      let cfg=window.DEAR_DAY_SUPABASE;
+      if(!cfg){
+        await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=resolve;s.onerror=reject;(document.head||document.documentElement).appendChild(s)});
+        cfg=window.DEAR_DAY_SUPABASE;
+      }
+      if(!cfg)return;
+      const mod=await import(SUPABASE_ESM);
+      const client=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+      const {data:{user}}=await client.auth.getUser();
+      const email=foot.querySelector('#adminEmail');
+      if(email)email.textContent=user?.email||'Admin';
+      foot.querySelector('#logoutBtn')?.addEventListener('click',async()=>{try{await client.auth.signOut()}catch(e){}location.replace('/Dear-Day-Auth.html#login')});
+    }catch(e){
+      const email=foot.querySelector('#adminEmail');
+      if(email)email.textContent='Admin';
+    }
   }
 
   function simplifySiteNav(main){
@@ -125,8 +157,9 @@
           .sidebar .brand{flex:0 0 auto!important}
           .sidebar .nav{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;margin-bottom:0!important;padding-bottom:14px!important;scrollbar-width:thin!important;scrollbar-color:rgba(255,255,255,.24) transparent!important}
           .sidebar .nav::-webkit-scrollbar{width:6px}.sidebar .nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.24);border-radius:999px}
-          .sidebar-foot{position:relative!important;right:auto!important;left:auto!important;bottom:auto!important;margin-top:0!important;padding:14px 0 max(16px,env(safe-area-inset-bottom))!important;flex:0 0 auto!important;background:#6B3540!important;z-index:2!important}
-          .sidebar-foot p{margin-bottom:10px!important}
+          .sidebar-foot{position:relative!important;right:auto!important;left:auto!important;bottom:auto!important;margin-top:0!important;padding:14px 0 max(16px,env(safe-area-inset-bottom))!important;flex:0 0 auto!important;background:#6B3540!important;z-index:2!important;border-top:1px solid rgba(255,255,255,.15)!important}
+          .sidebar-foot p{font-size:11px!important;opacity:.72!important;margin:0 0 10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#fff!important}
+          .sidebar-foot .logout{width:100%!important;border:1px solid rgba(255,255,255,.3)!important;background:transparent!important;color:#fff!important;border-radius:12px!important;padding:10px!important;font:700 12px 'Noto Sans Arabic',Tahoma,Arial,sans-serif!important;cursor:pointer!important}
           .main{margin-right:260px!important;min-height:100vh!important}
         }
         .dd-admin-site-nav{position:sticky;top:0;z-index:35;margin:-30px -30px 24px;padding:10px 30px;background:rgba(250,243,234,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(107,53,64,.14);display:flex;align-items:center;justify-content:flex-start;min-height:56px}
@@ -137,7 +170,7 @@
         @media(max-width:760px){
           .sidebar{position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:block!important;padding-bottom:16px!important}
           .sidebar .nav{overflow-x:auto!important;overflow-y:visible!important;padding-bottom:4px!important}
-          .sidebar-foot{position:static!important;margin-top:14px!important;padding-bottom:0!important}
+          .sidebar-foot{position:static!important;margin-top:14px!important;padding:14px 0 0!important}
           .main{margin-right:0!important}
           .dd-admin-site-nav{margin:-20px -14px 20px!important;padding:9px 14px!important;min-height:54px}
         }
@@ -146,6 +179,7 @@
     }
 
     syncSidebar();
+    ensureSidebarFooter(sidebar);
     simplifySiteNav(main);
     setupCatalogSectionFilter();
   }
