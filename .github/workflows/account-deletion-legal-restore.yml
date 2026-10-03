@@ -1,4 +1,4 @@
-name: Account deletion and legal restore
+name: Finalize legal and deletion QA
 
 on:
   push:
@@ -9,25 +9,38 @@ permissions:
   contents: write
 
 jobs:
-  patch:
+  qa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run patch
+      - name: Fix duplicate legal switch and validate scripts
         shell: bash
         run: |
-          git show cb329881d791856e400f8c13f5dab921877b7952:.github/workflows/account-deletion-legal-restore.yml > /tmp/old-workflow.yml
-          sed -n "/cat > \/tmp\/patch.py <<'PY'/,/^          PY$/p" /tmp/old-workflow.yml | sed '1d;$d;s/^          //' > /tmp/patch.py
-          sed -i 's/,replacement,s,flags=re.S)/,lambda m: replacement,s,flags=re.S)/' /tmp/patch.py
-          python /tmp/patch.py
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['approved-pages/Dear-Day-Privacy-en.html','approved-pages/Dear-Day-Terms-en.html']:
+              path=Path(p)
+              s=path.read_text(encoding='utf-8')
+              s=s.replace('<a class="lang-link" href="/approved-pages/Dear-Day-Privacy.html">AR</a>','<a data-dd-legal-lang="" class="lang-link" href="/approved-pages/Dear-Day-Privacy.html">AR</a>')
+              s=s.replace('<a class="lang-link" href="/approved-pages/Dear-Day-Terms.html">AR</a>','<a data-dd-legal-lang="" class="lang-link" href="/approved-pages/Dear-Day-Terms.html">AR</a>')
+              path.write_text(s,encoding='utf-8')
+          PY
+          node --check approved-pages/dear-day-account.js
+          node --check approved-pages/dear-day-admin-customers.js
+          node --check approved-pages/dear-day-notifications.js
+          node --check approved-pages/dear-day-cart.js
+          grep -q 'requestAccountDeletion' Dear-Day-Account.html
+          grep -q 'account-deletion-requests' Dear-Day-Admin-Customers.html
+          grep -q 'Dear-Day-Privacy-en.html' approved-pages/dear-day-cart.js
+          grep -q 'Dear-Day-Terms-en.html' approved-pages/dear-day-cart.js
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add approved-pages/Dear-Day-Privacy-en.html approved-pages/Dear-Day-Terms-en.html
           if git diff --cached --quiet; then
-            echo "No changes"
+            echo "QA passed; no content changes"
           else
-            git commit -m "Add account deletion workflow and restore English legal pages"
+            git commit -m "Prevent duplicate legal language switch"
             git push origin HEAD:main
           fi
