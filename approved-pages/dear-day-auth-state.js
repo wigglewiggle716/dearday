@@ -20,8 +20,9 @@
     header{overflow:visible!important}
     .dd-account-wrap{position:relative;display:inline-flex;align-items:center;z-index:2147482500;overflow:visible!important}
     .dd-account-trigger{width:42px;height:42px;border-radius:50%;border:1px solid rgba(107,53,64,.25);background:#FFFDFC;color:#6B3540;display:grid;place-items:center;overflow:hidden;cursor:pointer;box-shadow:0 5px 14px rgba(78,32,39,.07);flex:0 0 42px}
-    .dd-account-trigger img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;mix-blend-mode:normal!important}
-    .dd-account-trigger svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .dd-account-trigger img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;mix-blend-mode:normal!important;pointer-events:none!important}
+    .dd-account-trigger svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none!important}
+    .dd-account-trigger svg *{pointer-events:none!important}
     .dd-account-menu{display:none!important;position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:220px;background:#FFFDFC;border:1px solid rgba(107,53,64,.16);border-radius:16px;padding:8px;box-shadow:0 18px 45px rgba(78,32,39,.16);z-index:2147483600}
     .dd-account-wrap.open .dd-account-menu{display:block!important}
     .dd-account-head{padding:9px 10px 10px;border-bottom:1px solid rgba(107,53,64,.12);margin-bottom:5px;overflow:hidden}
