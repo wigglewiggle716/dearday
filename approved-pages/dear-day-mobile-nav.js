@@ -111,7 +111,7 @@
       if(!selected)return;
       e.preventDefault();e.stopImmediatePropagation();
       const raw=selected.dataset.occasion||'';
-      const map={'عيد ميلاد':'birthday','ذكرى سنوية':'anniversary','خطوبة':'engagement','طلب زواج':'proposal'};
+      const map={'عيد ميلاد':'birthday','ذكرى سنوية':'anniversary','Date Night':'date_night','طلب زواج':'proposal'};
       const key=map[raw]||'birthday';
       const area=document.getElementById('area')?.value||'';
       const date=document.getElementById('date')?.value||'';
@@ -119,7 +119,7 @@
       const feedback=document.getElementById('feedback');
       if(!date){if(feedback)feedback.textContent='Choose the occasion date first.';return}
       if(!budgetKey){if(feedback)feedback.textContent='Choose an approximate budget or select “Not sure yet”.';return}
-      const labels={birthday:'Birthday',anniversary:'Anniversary',engagement:'Engagement',proposal:'Marriage Proposal'};
+      const labels={birthday:'Birthday',anniversary:'Anniversary',date_night:'Date Night',proposal:'Marriage Proposal'};
       const budgetLabels={'under-1000':'Under EGP 1,000','1000-2500':'EGP 1,000–2,500','2500-5000':'EGP 2,500–5,000','5000-plus':'EGP 5,000+','unsure':'Not sure yet'};
       const plan={occasion:key,occasionKey:key,occasionLabel:labels[key],occasionLabelEn:labels[key],area,date,budgetKey,budget:budgetKey,budgetLabel:budgetLabels[budgetKey]||'',services:[],servicesEn:[],products:[]};
       try{localStorage.setItem('dearDayPlan',JSON.stringify(plan))}catch(err){}
