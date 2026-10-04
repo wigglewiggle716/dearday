@@ -53,9 +53,9 @@
   }
   function menuItems(){
     return isEn()?[
-      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Flowers','/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
+      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['How It Works','/approved-pages/Dear-Day-How-It-Works-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Flowers','/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
     ]:[
-      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الورد','/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
+      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['كيف نعمل','/approved-pages/Dear-Day-How-It-Works.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الورد','/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
     ];
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
@@ -85,6 +85,14 @@
       if(!isSupport||col.querySelector('a[href*="Dear-Day-Data-Deletion"]'))return;
       const link=document.createElement('a');link.href=href;link.textContent=english?'Account & Data Deletion':'حذف الحساب والبيانات';
       col.appendChild(link);
+    });
+  }
+  function patchHowItWorksLinks(){
+    const english=isEn();
+    const href=english?'/approved-pages/Dear-Day-How-It-Works-en.html':'/approved-pages/Dear-Day-How-It-Works.html';
+    document.querySelectorAll('header a,footer a').forEach(a=>{
+      const text=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      if((english&&text==='how it works')||(!english&&text==='كيف نعمل'))a.href=href;
     });
   }
   function isLegacyMenuButton(el){
@@ -138,7 +146,7 @@
       location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
     },true);
   }
-  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchEnglishHomeOccasionFlow()}
+  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
