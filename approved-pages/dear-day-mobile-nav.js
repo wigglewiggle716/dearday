@@ -97,22 +97,30 @@
   }
   function forceEnglishHowItWorksHeader(){
     if(!/\/approved-pages\/Dear-Day-How-It-Works-en\.html$/i.test(String(location.pathname||'')))return;
-    document.documentElement.lang='en';
-    document.documentElement.dir='ltr';
-    if(document.body)document.body.dir='ltr';
+    if(document.documentElement.lang!=='en')document.documentElement.lang='en';
+    if(document.documentElement.dir!=='ltr')document.documentElement.dir='ltr';
+    if(document.body&&document.body.dir!=='ltr')document.body.dir='ltr';
     const header=document.querySelector('header');if(!header)return;
-    const brand=header.querySelector('.brand,.dd-global-brand,.auth-brand,a.logo');if(brand&&brand.tagName==='A'){brand.href='/index-en.html';brand.setAttribute('aria-label','Dear Day — Home')}
-    let nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
+    const brand=header.querySelector('.brand,.dd-global-brand,.auth-brand,a.logo');
+    if(brand&&brand.tagName==='A'&&brand.getAttribute('href')!=='/index-en.html'){brand.href='/index-en.html';brand.setAttribute('aria-label','Dear Day — Home')}
+    const nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
+    const desiredNav=[['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['How It Works','/approved-pages/Dear-Day-How-It-Works-en.html'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Plan My Occasion','/index-en.html#occasions']];
     if(nav){
-      nav.setAttribute('aria-label','Main navigation');
-      nav.innerHTML='<a href="/index-en.html">Home</a><a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Occasions</a><a class="active" href="/approved-pages/Dear-Day-How-It-Works-en.html">How It Works</a><a href="/approved-pages/Dear-Day-Partners-en.html">For Partners</a><a href="/index-en.html#occasions">Plan My Occasion</a>';
+      const current=[...nav.querySelectorAll(':scope>a')].map(a=>[String(a.textContent||'').trim(),a.getAttribute('href')||'']);
+      const correct=current.length===desiredNav.length&&desiredNav.every((x,i)=>current[i]?.[0]===x[0]&&current[i]?.[1]===x[1]);
+      if(!correct){nav.setAttribute('aria-label','Main navigation');nav.innerHTML=desiredNav.map((x,i)=>`<a${i===2?' class="active"':''} href="${x[1]}">${x[0]}</a>`).join('')}
     }
     const actions=getActions(header);
     if(actions){
-      [...actions.querySelectorAll('a')].forEach(a=>a.remove());
-      const login=document.createElement('a');login.href='/Dear-Day-Auth-en.html#login';login.textContent='Log In';actions.appendChild(login);
-      const signup=document.createElement('a');signup.href='/Dear-Day-Auth-en.html#signup';signup.className='signup';signup.textContent='Create Account';actions.appendChild(signup);
-      const lang=document.createElement('a');lang.href='/approved-pages/Dear-Day-How-It-Works.html';lang.className='lang-link';lang.setAttribute('aria-label','العربية');lang.textContent='AR';actions.appendChild(lang);
+      const links=[...actions.querySelectorAll(':scope>a')];
+      const wanted=[['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup'],['AR','/approved-pages/Dear-Day-How-It-Works.html']];
+      const correct=links.length===3&&wanted.every((x,i)=>String(links[i]?.textContent||'').trim()===x[0]&&(links[i]?.getAttribute('href')||'')===x[1]);
+      if(!correct){
+        links.forEach(a=>a.remove());
+        const login=document.createElement('a');login.href=wanted[0][1];login.textContent=wanted[0][0];actions.appendChild(login);
+        const signup=document.createElement('a');signup.href=wanted[1][1];signup.className='signup';signup.textContent=wanted[1][0];actions.appendChild(signup);
+        const lang=document.createElement('a');lang.href=wanted[2][1];lang.className='lang-link';lang.setAttribute('aria-label','العربية');lang.textContent=wanted[2][0];actions.appendChild(lang);
+      }
     }
   }
   function isLegacyMenuButton(el){
