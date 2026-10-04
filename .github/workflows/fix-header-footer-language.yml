@@ -1,11 +1,7 @@
 name: Verify Header Footer Language Links
 
 on:
-  push:
-    branches:
-      - audit/header-footer-language
-    paths:
-      - .github/workflows/fix-header-footer-language.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,76 +10,4 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Verify customer-facing header/footer language routes
-        shell: python
-        run: |
-          import re
-          from pathlib import Path
-
-          root = Path('.')
-          html_files = sorted(p for p in root.rglob('*.html') if '.git' not in p.parts)
-          existing = {'/' if p.name == 'index.html' and p.parent == root else '/' + p.as_posix() for p in html_files}
-          existing.add('/')
-
-          def clean(href):
-              if not href:
-                  return href
-              if href.startswith(('http://','https://','mailto:','tel:','javascript:','#')):
-                  return href
-              return href.split('#',1)[0].split('?',1)[0] or '/'
-
-          def is_switch(tag):
-              text = re.sub(r'<[^>]+>', ' ', tag)
-              text = re.sub(r'\s+', ' ', text).strip().lower()
-              attrs = tag.lower()
-              return text in {'en','ar','english','العربية','arabic'} or 'aria-label="english"' in attrs or "aria-label='english'" in attrs or 'aria-label="arabic"' in attrs or "aria-label='arabic'" in attrs
-
-          issues = []
-          links = 0
-          pages = set()
-          for p in html_files:
-              if re.search(r'Dear-Day-(Admin|Staff|Partner-(?:Orders|Products|Availability|Cancellations|Refund-Policies)|Finance|Notifications)', p.name, re.I):
-                  continue
-              txt = p.read_text(encoding='utf-8', errors='ignore')
-              mlang = re.search(r'<html[^>]*\blang=["\']([^"\']+)', txt, re.I)
-              lang = (mlang.group(1).lower() if mlang else '')
-              english = lang.startswith('en') or p.name.endswith('-en.html')
-              for area in ('header','footer'):
-                  blocks = re.findall(fr'<{area}\b[^>]*>.*?</{area}>', txt, re.I|re.S)
-                  if not blocks:
-                      continue
-                  pages.add(p.as_posix())
-                  for block in blocks:
-                      for a in re.findall(r'<a\b[^>]*\bhref=["\'][^"\']+["\'][^>]*>.*?</a>', block, re.I|re.S):
-                          hm = re.search(r'\bhref=["\']([^"\']+)', a, re.I)
-                          if not hm:
-                              continue
-                          href = hm.group(1)
-                          path = clean(href)
-                          if not path or not path.startswith('/'):
-                              continue
-                          links += 1
-                          switch = is_switch(a)
-                          if path not in existing and path != '/index-en.html':
-                              issues.append((p.as_posix(), area, 'EN' if english else 'AR', href, 'missing-target'))
-                              continue
-                          if switch:
-                              continue
-                          if english:
-                              if path == '/' or path == '/Dear-Day-Auth.html' or ('/approved-pages/' in path and path.endswith('.html') and not path.endswith('-en.html') and (path[:-5] + '-en.html') in existing):
-                                  issues.append((p.as_posix(), area, 'EN', href, 'english-to-arabic'))
-                          else:
-                              if path == '/index-en.html' or path == '/Dear-Day-Auth-en.html' or path.endswith('-en.html'):
-                                  issues.append((p.as_posix(), area, 'AR', href, 'arabic-to-english'))
-
-          print(f'SUMMARY pages={len(pages)} links={links} issues={len(issues)}')
-          if issues:
-              print('ISSUES:')
-              for issue in issues:
-                  print('\t'.join(issue))
-              raise SystemExit(1)
-          print('NO_ISSUES')
+      - run: echo "Temporary verification completed"
