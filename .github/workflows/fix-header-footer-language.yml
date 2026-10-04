@@ -1,4 +1,4 @@
-name: Fix Legal Footer Override
+name: Unify Legal Footer Social Icons
 
 on:
   push:
@@ -19,36 +19,36 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Stop runtime legal footer replacement
+      - name: Replace old static social block with shared modern social block
         shell: python
         run: |
           from pathlib import Path
           p = Path('approved-pages/dear-day-cart.js')
           text = p.read_text(encoding='utf-8')
-          needle = '    normalizeLegalFooter();\n'
-          count = text.count(needle)
-          print('normalizeLegalFooter call count:', count)
+          old = "      const existing=footer.querySelector('.dd-social-footer');\n      if(existing)existing.remove();\n"
+          new = "      footer.querySelectorAll('.dd-social-footer,.footer-social').forEach(el=>el.remove());\n"
+          count = text.count(old)
+          print('old social cleanup block count:', count)
           if count != 1:
-              raise SystemExit(f'Expected exactly one normalizeLegalFooter() call, found {count}')
-          text = text.replace(needle, '    // Keep each legal page footer markup and its existing link destinations unchanged.\n', 1)
+              raise SystemExit(f'Expected exactly one old social cleanup block, found {count}')
+          text = text.replace(old, new, 1)
           p.write_text(text, encoding='utf-8')
-      - name: Verify only intended JS call changed
+      - name: Verify no navigation routes changed
         shell: bash
         run: |
           git diff --check
           changed="$(git diff --name-only)"
-          echo "$changed"
           test "$changed" = "approved-pages/dear-day-cart.js"
           if git diff -- approved-pages/dear-day-cart.js | grep -E '^[+-].*(href=|Dear-Day-|/approved-pages/)' | grep -v '^---' | grep -v '^+++'; then
             echo 'Unexpected route/link change detected'
             exit 1
           fi
           git diff -- approved-pages/dear-day-cart.js
-      - name: Commit fix to main
+      - name: Commit to main
         shell: bash
         run: |
           git config user.name "Dear Day Automation"
           git config user.email "actions@users.noreply.github.com"
           git add approved-pages/dear-day-cart.js
-          git commit -m "Stop overriding legal page footer structure"
+          git commit -m "Unify legal footer social icons"
           git push origin HEAD:main
