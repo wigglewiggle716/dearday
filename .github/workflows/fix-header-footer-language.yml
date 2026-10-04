@@ -1,4 +1,4 @@
-name: Fix Header Footer Language Links
+name: Verify Header Footer Language Links
 
 on:
   push:
@@ -8,95 +8,82 @@ on:
       - .github/workflows/fix-header-footer-language.yml
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  fix:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
-      - name: Normalize English header/footer routes
+      - name: Verify customer-facing header/footer language routes
         shell: python
         run: |
+          import re
           from pathlib import Path
 
-          replacements = {
-              'Dear-Day-Auth-en.html': [
-                  ('/approved-pages/Dear-Day-Occasions-Approved.html', '/approved-pages/Dear-Day-Occasions-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-              ],
-              'approved-pages/Dear-Day-About-en.html': [
-                  ('/Dear-Day-Auth.html#login', '/Dear-Day-Auth-en.html#login'),
-                  ('/Dear-Day-Auth.html#signup', '/Dear-Day-Auth-en.html#signup'),
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-              ],
-              'approved-pages/Dear-Day-Contact-en.html': [
-                  ('/Dear-Day-Auth.html#login', '/Dear-Day-Auth-en.html#login'),
-                  ('/Dear-Day-Auth.html#signup', '/Dear-Day-Auth-en.html#signup'),
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-              ],
-              'approved-pages/Dear-Day-FAQ-en.html': [
-                  ('/Dear-Day-Auth.html#login', '/Dear-Day-Auth-en.html#login'),
-                  ('/Dear-Day-Auth.html#signup', '/Dear-Day-Auth-en.html#signup'),
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-              ],
-              'approved-pages/Dear-Day-Partners-en.html': [
-                  ('/Dear-Day-Auth.html#login', '/Dear-Day-Auth-en.html#login'),
-                  ('/Dear-Day-Auth.html#signup', '/Dear-Day-Auth-en.html#signup'),
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-              ],
-              'index-en.html': [
-                  ('/approved-pages/Dear-Day-Gifts-Approved.html', '/approved-pages/Dear-Day-Gifts-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Cake-Approved.html', '/approved-pages/Dear-Day-Cake-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-Venues-Approved.html', '/approved-pages/Dear-Day-Venues-Approved-en.html'),
-                  ('/approved-pages/Dear-Day-About.html', '/approved-pages/Dear-Day-About-en.html'),
-              ],
-          }
+          root = Path('.')
+          html_files = sorted(p for p in root.rglob('*.html') if '.git' not in p.parts)
+          existing = {'/' if p.name == 'index.html' and p.parent == root else '/' + p.as_posix() for p in html_files}
+          existing.add('/')
 
-          changed = []
-          total = 0
-          for filename, pairs in replacements.items():
-              p = Path(filename)
-              text = p.read_text(encoding='utf-8')
-              before = text
-              file_count = 0
-              for old, new in pairs:
-                  count = text.count(old)
-                  if count:
-                      text = text.replace(old, new)
-                      file_count += count
-              if text != before:
-                  p.write_text(text, encoding='utf-8')
-                  changed.append((filename, file_count))
-                  total += file_count
+          def clean(href):
+              if not href:
+                  return href
+              if href.startswith(('http://','https://','mailto:','tel:','javascript:','#')):
+                  return href
+              return href.split('#',1)[0].split('?',1)[0] or '/'
 
-          print('Changed files:')
-          for name, count in changed:
-              print(f'  {name}: {count} replacements')
-          print(f'Total replacements: {total}')
-          if len(changed) != 6:
-              raise SystemExit(f'Expected 6 changed files, got {len(changed)}')
-          if total < 30:
-              raise SystemExit(f'Expected at least 30 replacements, got {total}')
-      - name: Commit fixes to main
-        run: |
-          git config user.name "Dear Day Automation"
-          git config user.email "actions@users.noreply.github.com"
-          git add Dear-Day-Auth-en.html approved-pages/Dear-Day-About-en.html approved-pages/Dear-Day-Contact-en.html approved-pages/Dear-Day-FAQ-en.html approved-pages/Dear-Day-Partners-en.html index-en.html
-          git diff --cached --check
-          git commit -m "Fix English header and footer language routes"
-          git push origin HEAD:main
+          def is_switch(tag):
+              text = re.sub(r'<[^>]+>', ' ', tag)
+              text = re.sub(r'\s+', ' ', text).strip().lower()
+              attrs = tag.lower()
+              return text in {'en','ar','english','العربية','arabic'} or 'aria-label="english"' in attrs or "aria-label='english'" in attrs or 'aria-label="arabic"' in attrs or "aria-label='arabic'" in attrs
+
+          issues = []
+          links = 0
+          pages = set()
+          for p in html_files:
+              if re.search(r'Dear-Day-(Admin|Staff|Partner-(?:Orders|Products|Availability|Cancellations|Refund-Policies)|Finance|Notifications)', p.name, re.I):
+                  continue
+              txt = p.read_text(encoding='utf-8', errors='ignore')
+              mlang = re.search(r'<html[^>]*\blang=["\']([^"\']+)', txt, re.I)
+              lang = (mlang.group(1).lower() if mlang else '')
+              english = lang.startswith('en') or p.name.endswith('-en.html')
+              for area in ('header','footer'):
+                  blocks = re.findall(fr'<{area}\b[^>]*>.*?</{area}>', txt, re.I|re.S)
+                  if not blocks:
+                      continue
+                  pages.add(p.as_posix())
+                  for block in blocks:
+                      for a in re.findall(r'<a\b[^>]*\bhref=["\'][^"\']+["\'][^>]*>.*?</a>', block, re.I|re.S):
+                          hm = re.search(r'\bhref=["\']([^"\']+)', a, re.I)
+                          if not hm:
+                              continue
+                          href = hm.group(1)
+                          path = clean(href)
+                          if not path or not path.startswith('/'):
+                              continue
+                          links += 1
+                          switch = is_switch(a)
+                          if path not in existing and path != '/index-en.html':
+                              issues.append((p.as_posix(), area, 'EN' if english else 'AR', href, 'missing-target'))
+                              continue
+                          if switch:
+                              continue
+                          if english:
+                              if path == '/' or path == '/Dear-Day-Auth.html' or ('/approved-pages/' in path and path.endswith('.html') and not path.endswith('-en.html') and (path[:-5] + '-en.html') in existing):
+                                  issues.append((p.as_posix(), area, 'EN', href, 'english-to-arabic'))
+                          else:
+                              if path == '/index-en.html' or path == '/Dear-Day-Auth-en.html' or path.endswith('-en.html'):
+                                  issues.append((p.as_posix(), area, 'AR', href, 'arabic-to-english'))
+
+          print(f'SUMMARY pages={len(pages)} links={links} issues={len(issues)}')
+          if issues:
+              print('ISSUES:')
+              for issue in issues:
+                  print('\t'.join(issue))
+              raise SystemExit(1)
+          print('NO_ISSUES')
