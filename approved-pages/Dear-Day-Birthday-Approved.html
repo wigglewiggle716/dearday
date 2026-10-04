@@ -741,5 +741,22 @@ updateUI();
   render();
 })();
 </script>
+<script id="dd-occasion-photo">
+(function(){
+  const photo=document.querySelector('.hero-photo');
+  if(!photo)return;
+  const params=new URLSearchParams(location.search);
+  let plan={};
+  try{plan=JSON.parse(params.get('dd')||localStorage.getItem('dearDayPlan')||'{}')||{}}catch(e){}
+  const raw=params.get('occasion')||plan.occasionKey||plan.occasion||'birthday';
+  const keys={'birthday':'birthday','عيد ميلاد':'birthday','عيد الميلاد':'birthday','anniversary':'anniversary','ذكرى سنوية':'anniversary','الذكرى السنوية':'anniversary','date_night':'date-night','date-night':'date-night','Date Night':'date-night','proposal':'proposal','طلب زواج':'proposal','طلب الزواج':'proposal'};
+  const key=keys[raw]||'birthday';
+  const en=document.documentElement.lang==='en';
+  const labels={'birthday':['احتفال عيد ميلاد','Birthday celebration'],'anniversary':['احتفال بالذكرى السنوية','Anniversary celebration'],'date-night':['خروجة رومانسية لشخصين','Date night for two'],'proposal':['تنسيق طلب زواج','Marriage proposal setting']};
+  photo.style.backgroundImage="linear-gradient(90deg,rgba(255,253,251,.12),transparent 22%),url('/approved-pages/assets/sections-20261004/occasion-"+key+".jpg')";
+  photo.setAttribute('role','img');
+  photo.setAttribute('aria-label',labels[key][en?1:0]);
+})();
+</script>
 </body>
 </html>
