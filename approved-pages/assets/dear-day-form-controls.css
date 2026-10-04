@@ -93,6 +93,34 @@ body.dd-form-brand-ready input[type="range"]::-moz-range-thumb{width:10px;height
 #ddLiveCatalog .dd-select-trigger{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
 #ddLiveCatalog .dd-cat-field input[type="search"]{display:block!important}
 
+/* Live catalog sidebar branding: visual-only, dimensions stay controlled by the catalog layout. */
+#ddLiveCatalog .dd-cat-filters{
+  background:linear-gradient(180deg,#FFFDFC,#FFFAF7)!important;
+  border-color:rgba(107,53,64,.16)!important;
+  box-shadow:0 10px 28px rgba(76,31,36,.045)!important;
+}
+#ddLiveCatalog .dd-cat-filter-head strong{color:var(--dd-form-wine)!important;font-weight:800!important}
+#ddLiveCatalog .dd-cat-filter-head button{color:var(--dd-form-terra)!important;font-weight:800!important;transition:color .18s ease,background .18s ease!important}
+#ddLiveCatalog .dd-cat-filter-head button:hover{color:var(--dd-form-wine)!important;background:var(--dd-form-soft)!important}
+#ddLiveCatalog .dd-cat-field>span{color:var(--dd-form-wine)!important;font-weight:700!important}
+#ddLiveCatalog .dd-cat-field input,
+#ddLiveCatalog .dd-cat-field select{
+  border-color:rgba(107,53,64,.18)!important;
+  background:rgba(255,253,252,.72)!important;
+  color:var(--dd-form-wine)!important;
+  box-shadow:0 5px 14px rgba(76,31,36,.025)!important;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease!important;
+  outline:none!important;
+}
+#ddLiveCatalog .dd-cat-field input:hover,
+#ddLiveCatalog .dd-cat-field select:hover{border-color:rgba(168,88,61,.55)!important;background:#FFFDFB!important}
+#ddLiveCatalog .dd-cat-field input:focus,
+#ddLiveCatalog .dd-cat-field select:focus{border-color:var(--dd-form-terra)!important;box-shadow:0 0 0 3px rgba(168,88,61,.10),0 8px 22px rgba(76,31,36,.05)!important;background:#fff!important}
+#ddLiveCatalog .dd-cat-field input::placeholder{color:#A59792!important;opacity:1!important}
+#ddLiveCatalog .dd-cat-check{color:var(--dd-form-wine)!important;font-weight:700!important}
+#ddLiveCatalog .dd-cat-check input{border-color:rgba(107,53,64,.38)!important;background:#fff!important;box-shadow:0 3px 9px rgba(76,31,36,.04)!important}
+#ddLiveCatalog .dd-cat-check input:checked{background:var(--dd-form-wine)!important;border-color:var(--dd-form-wine)!important;box-shadow:0 0 0 3px rgba(107,53,64,.09)!important}
+
 body.dd-form-brand-ready input[type="date"]::-webkit-calendar-picker-indicator,body.dd-form-brand-ready input[type="time"]::-webkit-calendar-picker-indicator{opacity:.64;cursor:pointer;filter:sepia(.25) saturate(1.2) hue-rotate(300deg)}
 
 @media(max-width:700px){
