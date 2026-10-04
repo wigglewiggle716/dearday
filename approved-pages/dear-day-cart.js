@@ -4,6 +4,8 @@
   const KEY='dearDayCart';
 
   function ensureBrandedFormControls(){
+    const p=String(location.pathname||'/');
+    if(p==='/'||/\/index(?:-en)?\.html$/i.test(p))return;
     if(!document.querySelector('link[data-dd-form-controls]')){
       const l=document.createElement('link');
       l.rel='stylesheet';
