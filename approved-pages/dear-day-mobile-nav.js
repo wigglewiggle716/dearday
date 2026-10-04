@@ -95,6 +95,26 @@
       if((english&&text==='how it works')||(!english&&text==='كيف نعمل'))a.href=href;
     });
   }
+  function forceEnglishHowItWorksHeader(){
+    if(!/\/approved-pages\/Dear-Day-How-It-Works-en\.html$/i.test(String(location.pathname||'')))return;
+    document.documentElement.lang='en';
+    document.documentElement.dir='ltr';
+    if(document.body)document.body.dir='ltr';
+    const header=document.querySelector('header');if(!header)return;
+    const brand=header.querySelector('.brand,.dd-global-brand,.auth-brand,a.logo');if(brand&&brand.tagName==='A'){brand.href='/index-en.html';brand.setAttribute('aria-label','Dear Day — Home')}
+    let nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
+    if(nav){
+      nav.setAttribute('aria-label','Main navigation');
+      nav.innerHTML='<a href="/index-en.html">Home</a><a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Occasions</a><a class="active" href="/approved-pages/Dear-Day-How-It-Works-en.html">How It Works</a><a href="/approved-pages/Dear-Day-Partners-en.html">For Partners</a><a href="/index-en.html#occasions">Plan My Occasion</a>';
+    }
+    const actions=getActions(header);
+    if(actions){
+      [...actions.querySelectorAll('a')].forEach(a=>a.remove());
+      const login=document.createElement('a');login.href='/Dear-Day-Auth-en.html#login';login.textContent='Log In';actions.appendChild(login);
+      const signup=document.createElement('a');signup.href='/Dear-Day-Auth-en.html#signup';signup.className='signup';signup.textContent='Create Account';actions.appendChild(signup);
+      const lang=document.createElement('a');lang.href='/approved-pages/Dear-Day-How-It-Works.html';lang.className='lang-link';lang.setAttribute('aria-label','العربية');lang.textContent='AR';actions.appendChild(lang);
+    }
+  }
   function isLegacyMenuButton(el){
     if(!(el instanceof Element)||el.classList.contains('dd-native-menu-btn'))return false;
     if(el.matches('.dd-mobile-menu-toggle,.menu,.menu-btn,.burger,.hamburger,[class*="burger"],[class*="hamburger"]'))return true;
@@ -146,7 +166,7 @@
       location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
     },true);
   }
-  function scan(){ensureStyle();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();patchEnglishHomeOccasionFlow()}
+  function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
