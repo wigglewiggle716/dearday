@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://deardayy.vercel.app/sitemap.xml
+Sitemap: https://dear-day.com/sitemap.xml

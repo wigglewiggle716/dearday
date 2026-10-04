@@ -1,6 +1,6 @@
 # Search indexing policy
 
-Production origin: `https://deardayy.vercel.app`.
+Production origin: `https://dear-day.com`.
 
 ## Public pages
 
