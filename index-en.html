@@ -255,18 +255,89 @@ $('.filters').onsubmit=e=>{e.preventDefault();ddOpenSelectedOccasion()};const mo
 </section>
 <footer class="dd-occ-footer"><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">Thoughtfully planned occasions, coordinated in one place — from the first idea to the final detail.</p></div><div><h4>Dear Day Services</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">Occasions</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">Gifts</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">Cakes & Sweets</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">Venues & Experiences</a></div><div><h4>About Dear Day</h4><a href="/approved-pages/Dear-Day-About.html">About Us</a><a href="#">How It Works</a><a href="/approved-pages/Dear-Day-Partners-en.html">For Partners</a></div><div><h4>Customer Care</h4><a href="/approved-pages/Dear-Day-FAQ-en.html">FAQs</a><a href="/approved-pages/Dear-Day-Contact-en.html">Contact Us</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>Privacy Policy · Terms & Conditions</div><div>© 2026 Dear Day</div></div></div></footer>
 
+<style id="dd-branded-calendar">
+.date-control.dd-custom-date .native-date{display:none!important}
+.date-control.dd-custom-date .date-trigger{pointer-events:auto!important;touch-action:manipulation}
+.dd-date-calendar{position:fixed;z-index:300;width:320px;max-width:calc(100vw - 32px);padding:16px;background:var(--dd-ivory);color:var(--dd-wine);border:1px solid var(--dd-line);border-radius:16px;box-shadow:0 12px 36px rgba(107,53,64,.14);font:inherit}
+.dd-date-calendar[hidden]{display:none}
+.dd-date-calendar .dd-cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.dd-date-calendar .dd-cal-title{font-size:14px;font-weight:700;text-align:center}
+.dd-date-calendar button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:38px;padding:0;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--dd-wine);font:inherit;font-size:13px;cursor:pointer}
+.dd-date-calendar .dd-cal-nav{width:38px;border-color:var(--dd-line);font-size:22px}
+.dd-date-calendar .dd-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.dd-date-calendar .dd-cal-weekday{text-align:center;font-size:11px;color:var(--dd-terra);padding:4px 0 8px}
+.dd-date-calendar button:hover:not(:disabled){background:rgba(168,88,61,.1);border-color:var(--dd-terra)}
+.dd-date-calendar button[aria-current=date]{border-color:var(--dd-terra)}
+.dd-date-calendar button[aria-pressed=true]{background:var(--dd-wine);color:var(--dd-ivory);border-color:var(--dd-wine)}
+.dd-date-calendar button:disabled{opacity:.3;cursor:default}
+.dd-date-calendar button:focus-visible{outline:2px solid var(--dd-terra);outline-offset:1px}
+.dd-date-calendar .dd-cal-foot{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--dd-line);margin-top:12px;padding-top:8px}
+.dd-date-calendar .dd-cal-foot button{padding:0 10px;color:var(--dd-terra)}
+</style>
 <script>
 (function(){
- const input=document.getElementById('date'), trigger=document.getElementById('dateTrigger'), copy=document.getElementById('dateCopy');
+ const input=document.getElementById('date'),trigger=document.getElementById('dateTrigger'),copy=document.getElementById('dateCopy');
  if(!input||!trigger||!copy)return;
  const isEn=document.documentElement.lang==='en'||document.body.getAttribute('dir')==='ltr';
- function render(){
-   if(!input.value){copy.textContent=isEn?'Choose a date':'اختر التاريخ';return;}
-   const d=new Date(input.value+'T12:00:00');
-   copy.textContent=new Intl.DateTimeFormat(isEn?'en-GB':'ar-EG',{day:'numeric',month:'long',year:'numeric'}).format(d);
+ const locale=isEn?'en-GB':'ar-EG',control=input.closest('.date-control');
+ const calendar=document.createElement('div');
+ calendar.id='ddDateCalendar';calendar.className='dd-date-calendar';calendar.hidden=true;
+ calendar.dir=isEn?'ltr':'rtl';calendar.setAttribute('role','dialog');calendar.setAttribute('aria-label',isEn?'Choose occasion date':'اختر تاريخ المناسبة');
+ document.body.appendChild(calendar);control.classList.add('dd-custom-date');
+ input.tabIndex=-1;trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-controls',calendar.id);trigger.setAttribute('aria-expanded','false');
+ const key=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const parse=s=>new Date(s+'T12:00:00');
+ const allowed=s=>(!input.min||s>=input.min)&&(!input.max||s<=input.max);
+ let view=new Date(),focusDate='';
+ function renderCopy(){copy.textContent=input.value?new Intl.DateTimeFormat(locale,{day:'numeric',month:'long',year:'numeric'}).format(parse(input.value)):(isEn?'Choose a date':'اختر التاريخ');}
+ function close(restore){calendar.hidden=true;trigger.setAttribute('aria-expanded','false');if(restore)trigger.focus();}
+ function choose(value){if(value&&!allowed(value))return;input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));close(true);}
+ function button(text,label,action,cls){const b=document.createElement('button');b.type='button';b.textContent=text;if(label)b.setAttribute('aria-label',label);if(cls)b.className=cls;b.addEventListener('click',action);return b;}
+ function position(){
+  if(calendar.hidden)return;
+  const r=trigger.getBoundingClientRect(),w=calendar.offsetWidth,h=calendar.offsetHeight;
+  calendar.style.left=Math.max(16,Math.min(isEn?r.left:r.right-w,window.innerWidth-w-16))+'px';
+  calendar.style.top=Math.max(8,Math.min(r.bottom+8,window.innerHeight-h-8))+'px';
  }
- trigger.addEventListener('click',()=>{try{input.showPicker()}catch(e){input.click();input.focus()}});
- input.addEventListener('change',render); render();
+ function draw(){
+  calendar.replaceChildren();
+  const y=view.getFullYear(),m=view.getMonth(),head=document.createElement('div');head.className='dd-cal-head';
+  const title=document.createElement('span');title.className='dd-cal-title';title.setAttribute('aria-live','polite');title.textContent=new Intl.DateTimeFormat(locale,{month:'long',year:'numeric'}).format(view);
+  const prev=button(isEn?'‹':'›',isEn?'Previous month':'الشهر السابق',()=>{view=new Date(y,m-1,1);draw();calendar.querySelector('.dd-cal-nav').focus();},'dd-cal-nav');
+  const next=button(isEn?'›':'‹',isEn?'Next month':'الشهر التالي',()=>{view=new Date(y,m+1,1);draw();calendar.querySelectorAll('.dd-cal-nav')[1].focus();},'dd-cal-nav');
+  prev.disabled=!!input.min&&key(new Date(y,m,0))<input.min;next.disabled=!!input.max&&key(new Date(y,m+1,1))>input.max;
+  head.append(prev,title,next);calendar.append(head);
+  const grid=document.createElement('div');grid.className='dd-cal-grid';
+  const names=isEn?['Su','Mo','Tu','We','Th','Fr','Sa']:['أحد','إثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  names.forEach(name=>{const el=document.createElement('span');el.className='dd-cal-weekday';el.textContent=name;grid.append(el);});
+  for(let i=0;i<new Date(y,m,1).getDay();i++)grid.append(document.createElement('span'));
+  const current=key(new Date());
+  for(let day=1;day<=new Date(y,m+1,0).getDate();day++){
+   const d=new Date(y,m,day,12),value=key(d);
+   const b=button(new Intl.NumberFormat(locale).format(day),new Intl.DateTimeFormat(locale,{dateStyle:'full'}).format(d),()=>choose(value));
+   b.dataset.date=value;b.disabled=!allowed(value);b.tabIndex=-1;b.setAttribute('aria-pressed',String(value===input.value));if(value===current)b.setAttribute('aria-current','date');grid.append(b);
+  }
+  calendar.append(grid);
+  const active=grid.querySelector('[data-date="'+focusDate+'"]:not(:disabled)')||grid.querySelector('[aria-pressed=true]:not(:disabled)')||grid.querySelector('[aria-current=date]:not(:disabled)')||grid.querySelector('button:not(:disabled)');if(active)active.tabIndex=0;
+  const foot=document.createElement('div');foot.className='dd-cal-foot';
+  const today=button(isEn?'Today':'اليوم',null,()=>choose(current));today.disabled=!allowed(current);
+  foot.append(button(isEn?'Clear':'مسح',null,()=>choose('')),today);calendar.append(foot);position();
+ }
+ trigger.addEventListener('click',()=>{
+  if(!calendar.hidden){close(false);return;}
+  focusDate=input.value||key(new Date());if(input.min&&focusDate<input.min)focusDate=input.min;if(input.max&&focusDate>input.max)focusDate=input.max;
+  view=parse(focusDate);view.setDate(1);calendar.hidden=false;trigger.setAttribute('aria-expanded','true');draw();calendar.querySelector('[tabindex="0"]')?.focus({preventScroll:true});
+ });
+ calendar.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();close(true);return;}
+  const value=e.target.dataset.date;if(!value)return;
+  const offsets={ArrowRight:isEn?1:-1,ArrowLeft:isEn?-1:1,ArrowDown:7,ArrowUp:-7};
+  if(!(e.key in offsets))return;e.preventDefault();const d=parse(value);d.setDate(d.getDate()+offsets[e.key]);focusDate=key(d);if(!allowed(focusDate))return;view=new Date(d.getFullYear(),d.getMonth(),1);draw();calendar.querySelector('[data-date="'+focusDate+'"]')?.focus({preventScroll:true});
+ });
+ document.addEventListener('pointerdown',e=>{if(!calendar.hidden&&!calendar.contains(e.target)&&!control.contains(e.target))close(false);});
+ document.addEventListener('focusin',e=>{if(!calendar.hidden&&!calendar.contains(e.target)&&!control.contains(e.target))close(false);});
+ window.addEventListener('resize',position);window.addEventListener('scroll',position,true);
+ input.addEventListener('change',renderCopy);renderCopy();
 })();
 </script><script>/* Dear Day home footer logo scroll-to-top */
 (function(){
