@@ -29,7 +29,7 @@
     });
   }
   function upgrade(select){
-    if(!select||upgraded.has(select)||select.closest('.dd-select-shell'))return;
+    if(!select||upgraded.has(select)||select.closest('.dd-select-shell')||select.closest('#ddLiveCatalog'))return;
     const shell=document.createElement('span');shell.className='dd-select-shell';
     const trigger=document.createElement('button');trigger.type='button';trigger.className='dd-select-trigger';trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
     const value=document.createElement('span');value.className='dd-select-value';
