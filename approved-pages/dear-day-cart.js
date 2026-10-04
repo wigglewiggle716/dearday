@@ -209,8 +209,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
     };
     const platforms=[['facebook','Facebook'],['instagram','Instagram'],['x','X'],['youtube','YouTube'],['snapchat','Snapchat'],['linkedin','LinkedIn']];
     document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
-      const existing=footer.querySelector('.dd-social-footer');
-      if(existing)existing.remove();
+      footer.querySelectorAll('.dd-social-footer,.footer-social').forEach(el=>el.remove());
       const host=footer.querySelector('.footer-top')||footer.querySelector('.wrap')||footer;
       if(!host)return;
       const social=document.createElement('div');
