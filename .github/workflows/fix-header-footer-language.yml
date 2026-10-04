@@ -1,4 +1,4 @@
-name: Inspect Footer Variants
+name: Fix Legal Footer Override
 
 on:
   push:
@@ -8,44 +8,47 @@ on:
       - .github/workflows/fix-header-footer-language.yml
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  inspect:
+  fix:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-      - name: Inspect customer footer variants
+          fetch-depth: 0
+      - name: Stop runtime legal footer replacement
         shell: python
         run: |
-          import re
           from pathlib import Path
-
-          files = [Path('index-en.html')] + sorted(Path('approved-pages').glob('*-en.html')) + [Path('Dear-Day-Auth-en.html')]
-          for p in files:
-              if not p.exists():
-                  continue
-              text = p.read_text(encoding='utf-8', errors='ignore')
-              if '<footer' not in text.lower():
-                  continue
-              footer = re.search(r'<footer\b[^>]*>.*?</footer>', text, re.I|re.S)
-              if not footer:
-                  continue
-              f = footer.group(0)
-              plain = re.sub(r'<script\b.*?</script>', ' ', f, flags=re.I|re.S)
-              plain = re.sub(r'<style\b.*?</style>', ' ', plain, flags=re.I|re.S)
-              plain = re.sub(r'<[^>]+>', ' | ', plain)
-              plain = re.sub(r'\s+', ' ', plain).strip()
-              markers=[]
-              for marker in ['Every detail, one place.','Thoughtful occasions','Dear Day Services','About Dear Day','Customer Care','Legal','Social Media','Payment Methods']:
-                  if marker.lower() in f.lower(): markers.append(marker)
-              hrefs = re.findall(r'<a\b[^>]*href=["\']([^"\']+)["\']', f, re.I)
-              print(f'\n### {p.as_posix()}')
-              print('MARKERS:', markers)
-              print('HREF_COUNT:', len(hrefs))
-              print('TEXT:', plain[:2200])
-              classes = sorted(set(re.findall(r'class=["\']([^"\']+)["\']', f, re.I)))
-              print('CLASSES:', classes[:80])
+          p = Path('approved-pages/dear-day-cart.js')
+          text = p.read_text(encoding='utf-8')
+          needle = '    normalizeLegalFooter();\n'
+          count = text.count(needle)
+          print('normalizeLegalFooter call count:', count)
+          if count != 1:
+              raise SystemExit(f'Expected exactly one normalizeLegalFooter() call, found {count}')
+          text = text.replace(needle, '    // Keep each legal page footer markup and its existing link destinations unchanged.\n', 1)
+          p.write_text(text, encoding='utf-8')
+      - name: Verify only intended JS call changed
+        shell: bash
+        run: |
+          git diff --check
+          changed="$(git diff --name-only)"
+          echo "$changed"
+          test "$changed" = "approved-pages/dear-day-cart.js"
+          if git diff -- approved-pages/dear-day-cart.js | grep -E '^[+-].*(href=|Dear-Day-|/approved-pages/)' | grep -v '^---' | grep -v '^+++'; then
+            echo 'Unexpected route/link change detected'
+            exit 1
+          fi
+          git diff -- approved-pages/dear-day-cart.js
+      - name: Commit fix to main
+        shell: bash
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add approved-pages/dear-day-cart.js
+          git commit -m "Stop overriding legal page footer structure"
+          git push origin HEAD:main
