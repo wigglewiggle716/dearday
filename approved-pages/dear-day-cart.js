@@ -404,7 +404,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
   function patchPage(){
     patchEnglishAuthLinks();
     patchGiftLanguageLinks();
-    normalizeLegalFooter();
+    // Keep each legal page footer markup and its existing link destinations unchanged.
     patchLegalFooterLinks();
     patchLegalLanguageSwitch();
     patchRefundPolicyLink();
