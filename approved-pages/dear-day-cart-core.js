@@ -124,115 +124,112 @@
   }
   function homePath(){
     const p=String(location.pathname||'/').replace(/\/+$/,'')||'/';
-    return p==='/'||/\/index\.html$/i.test(p);
+    return p==='/'||/\/index(?:-en)?\.html$/i.test(p);
   }
-  function normalizeText(v){
-    return String(v||'').replace(/\s+/g,' ').trim();
+  function isEnglishPage(){
+    return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
-  function assignHomeAnchor(id,terms){
-    if(!homePath())return false;
-    if(document.getElementById(id))return true;
-    const nodes=[...document.querySelectorAll('section,[data-section],main>div,footer h2,footer h3,footer h4,footer a')];
-    const found=nodes.find(el=>{
-      const t=normalizeText(el.textContent);
-      return terms.some(term=>t.includes(term));
-    });
-    if(!found)return false;
-    const target=found.matches('h2,h3,h4,a')?(found.closest('section,div,footer')||found):found;
-    if(!target.id)target.id=id;
-    return true;
+  function localePaths(){
+    const en=isEnglishPage();
+    return en?{
+      home:'/index-en.html',occasions:'/approved-pages/Dear-Day-Occasions-Approved-en.html',
+      how:'/approved-pages/Dear-Day-How-It-Works-en.html',partners:'/approved-pages/Dear-Day-Partners-en.html',
+      gifts:'/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1',cakes:'/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1',
+      flowers:'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1',venues:'/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1',
+      about:'/approved-pages/Dear-Day-About-en.html',faq:'/approved-pages/Dear-Day-FAQ-en.html',contact:'/approved-pages/Dear-Day-Contact-en.html',
+      refunds:'/approved-pages/Dear-Day-Refunds-en.html',deletion:'/approved-pages/Dear-Day-Data-Deletion-en.html',
+      privacy:'/approved-pages/Dear-Day-Privacy-en.html',terms:'/approved-pages/Dear-Day-Terms-en.html',
+      login:'/Dear-Day-Auth-en.html#login',signup:'/Dear-Day-Auth-en.html#signup',label:'English',language:'AR',
+      nav:['Home','Occasions','How It Works','For Partners','Plan My Occasion'],
+      footer:['Thoughtful occasions, coordinated in one place — from the first idea to the final detail.','Plan Your Day','About Dear Day','Help & Policies','FAQs','Contact Us','Cancellation & Refund Policy','Account & Data Deletion','Privacy Policy','Terms & Conditions','Payment Methods']
+    }:{
+      home:'/',occasions:'/approved-pages/Dear-Day-Occasions-Approved.html',
+      how:'/approved-pages/Dear-Day-How-It-Works.html',partners:'/approved-pages/Dear-Day-Partners.html',
+      gifts:'/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1',cakes:'/approved-pages/Dear-Day-Cake-Approved.html?standalone=1',
+      flowers:'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1',venues:'/approved-pages/Dear-Day-Venues-Approved.html?standalone=1',
+      about:'/approved-pages/Dear-Day-About.html',faq:'/approved-pages/Dear-Day-FAQ.html',contact:'/approved-pages/Dear-Day-Contact.html',
+      refunds:'/approved-pages/Dear-Day-Refunds.html',deletion:'/approved-pages/Dear-Day-Data-Deletion.html',
+      privacy:'/approved-pages/Dear-Day-Privacy.html',terms:'/approved-pages/Dear-Day-Terms.html',
+      login:'/Dear-Day-Auth.html#login',signup:'/Dear-Day-Auth.html#signup',label:'العربية',language:'EN',
+      nav:['الرئيسية','المناسبات','كيف تعمل','للشركاء','رتّب مناسبتي'],
+      footer:['كل تفاصيل يومك المهم — من أول فكرة لحد آخر تفصيلة — في مكان واحد.','خطّط يومك','عن Dear Day','المساعدة والسياسات','الأسئلة الشائعة','تواصل معنا','سياسة الإلغاء والاسترداد','حذف الحساب والبيانات','سياسة الخصوصية','الشروط والأحكام','وسائل الدفع']
+    };
   }
-  function homeHref(id,fallback){
-    return homePath()&&document.getElementById(id)?'#'+id:'/#'+id;
+  function languageSwitchHref(){
+    const path=String(location.pathname||'/');
+    let target;
+    if(isEnglishPage()){
+      target=path==='/index-en.html'?'/':path.replace(/-en\.html$/i,'.html');
+      if(path==='/approved-pages/Dear-Day-Details-en.html')target='/approved-pages/Dear-Day-Details-Approved.html';
+    }else{
+      target=(path==='/'||path==='/index.html')?'/index-en.html':path.replace(/\.html$/i,'-en.html');
+      if(path==='/approved-pages/Dear-Day-Auth.html')target='/Dear-Day-Auth-en.html';
+    }
+    if(!target||target===path)target=isEnglishPage()?'/':'/index-en.html';
+    return target+String(location.search||'')+String(location.hash||'');
   }
   function normalizeGlobalHeader(){
     const header=document.querySelector('header');
-    if(!header||header.dataset.ddGlobalNav==='1')return header;
+    if(header?.dataset.ddGlobalNavVersion==='2')return header;
+    if(!header){
+      if(!document.body)return null;
+      const created=document.createElement('header');
+      document.body.insertBefore(created,document.body.firstChild);
+      return normalizeGlobalHeader();
+    }
     ensureGlobalHeaderStyle();
-
-    assignHomeAnchor('ddOccasionsStart',['اختار مناسبتك','اختار المناسبة','رتّب مناسبتك','رتب مناسبتك']);
-    assignHomeAnchor('ddHowItWorks',['كيف نعمل','كيف تعمل']);
-    assignHomeAnchor('ddPartners',['للشركاء','الشركاء']);
-
     const oldLogo=header.querySelector('img');
-    const logoSrc=oldLogo?oldLogo.getAttribute('src'):'';
-    const oldLogin=[...header.querySelectorAll('a')].find(a=>normalizeText(a.textContent).includes('تسجيل الدخول'));
-    const oldSignup=[...header.querySelectorAll('a')].find(a=>normalizeText(a.textContent).includes('إنشاء حساب'));
-    const oldLang=header.querySelector('.lang-link,[aria-label="English"]');
-
-    const loginHref=oldLogin?.getAttribute('href')||'#';
-    const signupHref=oldSignup?.getAttribute('href')||'#';
-    const langHref=(oldLang?.getAttribute('href')&&oldLang.getAttribute('href')!=='#')?oldLang.getAttribute('href'):'#';
-
-    const isHome=homePath();
-    const path=String(location.pathname||'');
-    const occasionActive=/Dear-Day-(Occasions|Birthday)-Approved\.html/i.test(path);
-    const partnersActive=/Dear-Day-Partners\.html/i.test(path);
-    const homeActive=isHome?' dd-active':'';
-    const occActive=occasionActive?' dd-active':'';
-    const partnerActive=partnersActive?' dd-active':'';
-
-    const howHref=homeHref('ddHowItWorks','/');
-    const partnersHref='/approved-pages/Dear-Day-Partners.html';
-    const planHref=isHome&&document.getElementById('ddOccasionsStart')?'#ddOccasionsStart':'/approved-pages/Dear-Day-Occasions-Approved.html';
-
+    const logoSrc=oldLogo?.getAttribute('src')||'/approved-pages/assets/dear-day-wordmark.svg';
+    const english=isEnglishPage(),p=localePaths(),langHref=languageSwitchHref(),path=String(location.pathname||'/');
+    const homeActive=homePath()&&(english?path==='/index-en.html':(path==='/'||path==='/index.html'));
+    const occasionActive=/Dear-Day-(Occasions|Birthday)-Approved(?:-en)?\.html/i.test(path);
+    const partnerActive=/Dear-Day-Partners(?:-en)?\.html/i.test(path);
+    const ariaCurrent=value=>value?' aria-current="page"':'';
     header.className='dd-global-header';
     header.dataset.ddGlobalNav='1';
+    header.dataset.ddGlobalNavVersion='2';
+    header.dir=english?'ltr':'rtl';
     header.innerHTML=`
-      <a class="dd-global-brand" href="/" aria-label="Dear Day — الرئيسية">
+      <a class="dd-global-brand" href="${p.home}" aria-label="Dear Day — ${english?'Home':'الرئيسية'}">
         ${logoSrc?'<img src="'+logoSrc+'" alt="Dear Day">':'<span class="dd-global-brand-text">Dear Day</span>'}
       </a>
-      <nav class="dd-global-nav" aria-label="التنقل الرئيسي">
-        <a class="${homeActive.trim()}" href="/">الرئيسية</a>
-        <a class="${occActive.trim()}" href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a>
-        <a href="${howHref}">كيف تعمل</a>
-        <a class="${partnerActive.trim()}" href="${partnersHref}">للشركاء</a>
-        <a class="dd-plan-cta" href="${planHref}">رتّب مناسبتي</a>
+      <nav class="dd-global-nav" aria-label="${english?'Main navigation':'التنقل الرئيسي'}">
+        <a${ariaCurrent(homeActive)} href="${p.home}">${p.nav[0]}</a>
+        <a${ariaCurrent(occasionActive)} href="${p.occasions}">${p.nav[1]}</a>
+        <a href="${p.how}">${p.nav[2]}</a>
+        <a${ariaCurrent(partnerActive)} href="${p.partners}">${p.nav[3]}</a>
+        <a class="dd-plan-cta" href="${p.occasions}">${p.nav[4]}</a>
       </nav>
       <div class="dd-global-actions">
-        <a class="dd-mobile-plan" href="${planHref}">رتّب مناسبتي</a>
-        <a class="dd-auth" href="${loginHref}">تسجيل الدخول</a>
-        <a class="dd-auth dd-signup" href="${signupHref}">إنشاء حساب</a>
-        <a class="dd-lang" href="${langHref}" aria-label="English">EN</a>
+        <a class="dd-mobile-plan" href="${p.occasions}">${p.nav[4]}</a>
+        <a class="dd-auth" href="${p.login}">${english?'Log In':'تسجيل الدخول'}</a>
+        <a class="dd-auth dd-signup" href="${p.signup}">${english?'Create Account':'إنشاء حساب'}</a>
+        <a class="dd-lang" href="${langHref}" aria-label="${p.label}">${p.language}</a>
       </div>
     `;
-
-    if(loginHref==='#')header.querySelector('.dd-auth:not(.dd-signup)')?.addEventListener('click',e=>e.preventDefault());
-    if(signupHref==='#')header.querySelector('.dd-signup')?.addEventListener('click',e=>e.preventDefault());
-    if(langHref==='#')header.querySelector('.dd-lang')?.addEventListener('click',e=>e.preventDefault());
-
-    const brand=header.querySelector('.dd-global-brand');
-    if(isHome&&brand){
-      brand.addEventListener('click',e=>{e.preventDefault();history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'});});
-    }
-
-    if(isHome){
-      const scrollToOccasions=function(e){
-        if(e)e.preventDefault();
-        const heading=[...document.querySelectorAll('h1,h2,h3,h4,[data-section-title]')].find(el=>{
-          const t=normalizeText(el.textContent);
-          return t.includes('اختار مناسبتك')||t.includes('اختار المناسبة');
-        });
-        const target=(heading&&(heading.closest('section,[data-section],main>div')||heading))||document.getElementById('ddOccasionsStart');
-        if(target){
-          if(!target.id)target.id='ddOccasionsStart';
-          history.replaceState(null,'',location.pathname+location.search+'#ddOccasionsStart');
-          target.scrollIntoView({behavior:'smooth',block:'start'});
-        }
-      };
-      header.querySelectorAll('.dd-plan-cta,.dd-mobile-plan').forEach(link=>{
-        link.setAttribute('href','#ddOccasionsStart');
-        link.addEventListener('click',scrollToOccasions);
-      });
-    }
-
-    if(isHome&&location.hash){
-      requestAnimationFrame(()=>{
-        const target=document.querySelector(location.hash);
-        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
-      });
-    }
     return header;
+  }
+  function normalizeGlobalFooter(){
+    if(!document.body)return null;
+    const english=isEnglishPage(),p=localePaths();
+    let footers=[...document.querySelectorAll('footer')];
+    if(!footers.length){const footer=document.createElement('footer');document.body.appendChild(footer);footers=[footer]}
+    footers.forEach(footer=>{
+      footer.classList.add('dd-occ-footer','dd-unified-legal-footer');
+      footer.dataset.ddGlobalFooter='1';
+      footer.dir=english?'ltr':'rtl';
+      footer.innerHTML=`<div class="dd-footer-wrap">
+        <div class="footer-top">
+          <div class="footer-brand"><a class="footer-logo" href="${p.home}" aria-label="Dear Day — ${english?'Home':'الرئيسية'}"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a><p class="footer-note">${p.footer[0]}</p></div>
+          <div><h4>${p.footer[1]}</h4><a href="${p.home}">${p.nav[0]}</a><a href="${p.occasions}">${p.nav[1]}</a><a href="${p.gifts}">${english?'Gifts':'الهدايا'}</a><a href="${p.cakes}">${english?'Cakes & Sweets':'كيك وحلويات'}</a><a href="${p.flowers}">${english?'Flowers':'الورد'}</a><a href="${p.venues}">${english?'Venues & Experiences':'أماكن وتجارب'}</a></div>
+          <div><h4>${p.footer[2]}</h4><a href="${p.about}">${english?'About Us':'من نحن'}</a><a href="${p.how}">${p.nav[2]}</a><a href="${p.partners}">${p.nav[3]}</a></div>
+          <div><h4>${p.footer[3]}</h4><a href="${p.faq}">${p.footer[4]}</a><a href="${p.contact}">${p.footer[5]}</a><a href="${p.refunds}">${p.footer[6]}</a><a href="${p.deletion}">${p.footer[7]}</a><a href="${p.privacy}">${p.footer[8]}</a><a href="${p.terms}">${p.footer[9]}</a></div>
+        </div>
+        <div class="dd-payment-footer"><h4>${p.footer[10]}</h4><div class="dd-payment-icons" aria-label="${english?'Accepted payment methods':'وسائل الدفع المقبولة'}"><span class="dd-pay-card dd-pay-visa" aria-label="Visa">VISA</span><span class="dd-pay-card dd-pay-master" aria-label="Mastercard"><i></i><b></b></span><span class="dd-pay-card dd-pay-apple" aria-label="Apple Pay"><span class="dd-apple">●</span><strong>Pay</strong></span><span class="dd-pay-card dd-pay-google" aria-label="Google Pay"><strong>G</strong><span>Pay</span></span><span class="dd-pay-card dd-pay-wallet" aria-label="Wallet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h14a2 2 0 0 1 2 2v8H4a2 2 0 0 1-2-2v-11A2 2 0 0 1 4 2.5h12v3H4a1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="12.5" r="1" fill="currentColor"/></svg></span></div></div>
+        <div class="footer-bottom"><span>© ${new Date().getFullYear()} Dear Day</span><span class="dd-legal-links"><a href="${p.privacy}">${p.footer[8]}</a><span aria-hidden="true"> · </span><a href="${p.terms}">${p.footer[9]}</a></span></div>
+      </div>`;
+    });
+    return footers[0];
   }
 
   function ensureMobileDateStyle(){
@@ -633,6 +630,7 @@
   window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};
   function boot(){
     normalizeGlobalHeader();
+    normalizeGlobalFooter();
     bindMobileDatePickers();
     normalizePaymentLogos();
     initSignatureExperience();
