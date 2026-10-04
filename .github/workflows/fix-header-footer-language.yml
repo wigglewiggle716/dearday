@@ -1,13 +1,51 @@
-name: Verify Header Footer Language Links
+name: Inspect Footer Variants
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - audit/header-footer-language
+    paths:
+      - .github/workflows/fix-header-footer-language.yml
 
 permissions:
   contents: read
 
 jobs:
-  verify:
+  inspect:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Temporary verification completed"
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Inspect customer footer variants
+        shell: python
+        run: |
+          import re
+          from pathlib import Path
+
+          files = [Path('index-en.html')] + sorted(Path('approved-pages').glob('*-en.html')) + [Path('Dear-Day-Auth-en.html')]
+          for p in files:
+              if not p.exists():
+                  continue
+              text = p.read_text(encoding='utf-8', errors='ignore')
+              if '<footer' not in text.lower():
+                  continue
+              footer = re.search(r'<footer\b[^>]*>.*?</footer>', text, re.I|re.S)
+              if not footer:
+                  continue
+              f = footer.group(0)
+              plain = re.sub(r'<script\b.*?</script>', ' ', f, flags=re.I|re.S)
+              plain = re.sub(r'<style\b.*?</style>', ' ', plain, flags=re.I|re.S)
+              plain = re.sub(r'<[^>]+>', ' | ', plain)
+              plain = re.sub(r'\s+', ' ', plain).strip()
+              markers=[]
+              for marker in ['Every detail, one place.','Thoughtful occasions','Dear Day Services','About Dear Day','Customer Care','Legal','Social Media','Payment Methods']:
+                  if marker.lower() in f.lower(): markers.append(marker)
+              hrefs = re.findall(r'<a\b[^>]*href=["\']([^"\']+)["\']', f, re.I)
+              print(f'\n### {p.as_posix()}')
+              print('MARKERS:', markers)
+              print('HREF_COUNT:', len(hrefs))
+              print('TEXT:', plain[:2200])
+              classes = sorted(set(re.findall(r'class=["\']([^"\']+)["\']', f, re.I)))
+              print('CLASSES:', classes[:80])
