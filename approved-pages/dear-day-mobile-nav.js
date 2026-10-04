@@ -21,6 +21,22 @@
     if(document.getElementById('dd-native-mobile-nav-style'))return;
     const s=document.createElement('style');s.id='dd-native-mobile-nav-style';s.textContent=`
       header .dd-mobile-menu-toggle,header .dd-mobile-menu,header .menu,header .menu-btn,header .burger,header .hamburger,header [class*="burger"],header [class*="hamburger"]{display:none!important}
+      @media(min-width:${BP+1}px){
+        html[lang^="en"] header.dd-en-unified-header{min-height:92px!important;height:auto!important;background:rgba(250,243,234,.96)!important;border-bottom:1px solid rgba(107,53,64,.18)!important;position:sticky!important;top:0!important;z-index:100!important;backdrop-filter:blur(14px)!important;font-family:Arial,Helvetica,sans-serif!important}
+        html[lang^="en"] header.dd-en-unified-header.dd-en-direct-header{display:grid!important;grid-template-columns:minmax(230px,auto) 1fr minmax(300px,auto)!important;align-items:center!important;gap:28px!important;padding:12px clamp(30px,6vw,96px)!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-header-inner{width:100%!important;max-width:none!important;margin:0!important;display:grid!important;grid-template-columns:minmax(230px,auto) 1fr minmax(300px,auto)!important;align-items:center!important;gap:28px!important;padding:12px clamp(30px,6vw,96px)!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-width:0!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-brand img,html[lang^="en"] header.dd-en-unified-header .dd-en-brand .wordmark{width:182px!important;height:68px!important;max-width:182px!important;object-fit:contain!important;mix-blend-mode:multiply!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:38px!important;font:700 14px/1.4 Arial,Helvetica,sans-serif!important;white-space:nowrap!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a{position:relative!important;padding:14px 2px!important;border:0!important;box-shadow:none!important;text-decoration:none!important;background:none!important;color:#6B3540!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a:after{content:""!important;position:absolute!important;inset-inline:0!important;bottom:4px!important;height:2px!important;background:#A8583D!important;border-radius:2px!important;transform:scaleX(0)!important;opacity:0!important;transition:transform .18s ease,opacity .18s ease!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a:hover,html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a.active{color:#A8583D!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a:hover:after,html[lang^="en"] header.dd-en-unified-header .dd-en-nav>a.active:after{transform:scaleX(1)!important;opacity:1!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:11px!important;white-space:nowrap!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-actions>a.auth-link{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;padding:8px 18px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;background:transparent!important;color:#6B3540!important;font:800 13px/1.4 Arial,Helvetica,sans-serif!important;box-shadow:none!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-actions>a.auth-link.signup{background:#6B3540!important;border-color:#6B3540!important;color:#FFFDFC!important}
+        html[lang^="en"] header.dd-en-unified-header .dd-en-actions>a.lang-link{display:grid!important;place-items:center!important;min-width:42px!important;width:42px!important;height:42px!important;padding:0!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.24)!important;background:transparent!important;color:#6B3540!important;font:900 12px/1 Arial,Helvetica,sans-serif!important}
+      }
       @media(max-width:${BP}px){
         header .dd-global-actions button.dd-native-menu-btn ~ button,
         header .auth-actions button.dd-native-menu-btn ~ button,
@@ -97,6 +113,25 @@
         a.href=href;
         if(a.closest('header'))a.textContent='كيف نعمل';
       }
+    });
+  }
+  function normalizeEnglishHeader(){
+    if(!isEn())return;
+    document.querySelectorAll('header').forEach(header=>{
+      const actions=getActions(header);
+      const nav=header.querySelector('.home-nav,.navlinks,.dd-global-nav,.auth-nav,nav');
+      const brand=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');
+      if(!actions||!nav||!brand)return;
+      header.classList.add('dd-en-unified-header');
+      const inner=[...header.children].find(el=>el!==brand&&el.contains?.(brand)&&el.contains?.(nav)&&el.contains?.(actions));
+      if(inner){inner.classList.add('dd-en-header-inner');header.classList.remove('dd-en-direct-header')}else{header.classList.add('dd-en-direct-header')}
+      brand.classList.add('dd-en-brand');nav.classList.add('dd-en-nav');actions.classList.add('dd-en-actions');
+      [...actions.querySelectorAll(':scope>a')].forEach(a=>{
+        const text=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+        if(text==='log in'||text==='login'||text==='sign in')a.classList.add('auth-link');
+        if(text==='create account'||text==='create an account'||text==='sign up'){a.classList.add('auth-link','signup')}
+        if(text==='ar'||a.classList.contains('lang-link')||a.classList.contains('dd-language-switch')||a.classList.contains('dd-lang'))a.classList.add('lang-link');
+      });
     });
   }
   function forceEnglishHowItWorksHeader(){
@@ -178,7 +213,7 @@
       location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
     },true);
   }
-  function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();patchEnglishHomeOccasionFlow()}
+  function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
