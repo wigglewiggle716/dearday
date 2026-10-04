@@ -84,6 +84,15 @@ body.dd-form-brand-ready input[type="range"]::-moz-range-thumb{width:10px;height
 .dd-select-option[aria-selected="true"]::after{content:'✓';font:800 11px/1 Arial,sans-serif}
 .dd-select-option:disabled{opacity:.45;cursor:not-allowed;background:transparent}
 
+/* Live catalog filters must stay inside their sidebar on all catalog pages. */
+#ddLiveCatalog .dd-cat-filters,
+#ddLiveCatalog .dd-cat-field,
+#ddLiveCatalog .dd-select-shell{min-width:0!important;max-width:100%!important}
+#ddLiveCatalog .dd-cat-field input,
+#ddLiveCatalog .dd-cat-field select,
+#ddLiveCatalog .dd-select-trigger{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+#ddLiveCatalog .dd-cat-field input[type="search"]{display:block!important}
+
 body.dd-form-brand-ready input[type="date"]::-webkit-calendar-picker-indicator,body.dd-form-brand-ready input[type="time"]::-webkit-calendar-picker-indicator{opacity:.64;cursor:pointer;filter:sepia(.25) saturate(1.2) hue-rotate(300deg)}
 
 @media(max-width:700px){
