@@ -237,6 +237,28 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
 
       social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
     });
+
+    const syncFooterUtility=()=>{
+      document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
+        const wrap=footer.querySelector('.dd-footer-wrap')||footer.querySelector('.wrap')||footer;
+        const social=footer.querySelector('.dd-social-footer');
+        const payment=footer.querySelector('.dd-payment-footer');
+        if(!wrap||!social||!payment)return;
+        let utility=footer.querySelector('.dd-footer-utility');
+        if(!utility){
+          utility=document.createElement('div');
+          utility.className='dd-footer-utility';
+          const bottom=footer.querySelector('.footer-bottom');
+          if(bottom&&bottom.parentNode===wrap)wrap.insertBefore(utility,bottom);else wrap.appendChild(utility);
+        }
+        utility.classList.add('dd-footer-utility-balanced');
+        if(social.parentNode!==utility)utility.appendChild(social);
+        if(payment.parentNode!==utility)utility.appendChild(payment);
+      });
+    };
+    syncFooterUtility();
+    setTimeout(syncFooterUtility,60);
+    setTimeout(syncFooterUtility,240);
   }
 
   function patchMobileFooterAccordion(){
@@ -494,6 +516,23 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
         .dd-footer-utility{grid-template-columns:1fr!important;gap:24px!important;margin-top:24px!important;padding-top:22px!important}
         .dd-footer-utility .dd-social-footer,.dd-footer-utility .dd-payment-footer,[dir="rtl"] .dd-footer-utility .dd-social-footer,[dir="rtl"] .dd-footer-utility .dd-payment-footer{grid-column:1!important;text-align:center!important}
         .dd-footer-utility .dd-social-icons,.dd-footer-utility .dd-payment-icons,[dir="rtl"] .dd-footer-utility .dd-social-icons,[dir="rtl"] .dd-footer-utility .dd-payment-icons{justify-content:center!important}
+      }
+      .dd-footer-utility.dd-footer-utility-balanced{width:min(860px,100%)!important;margin:26px auto 0!important;padding-top:24px!important;display:grid!important;grid-template-columns:max-content max-content!important;justify-content:space-between!important;align-items:start!important;column-gap:56px!important;row-gap:0!important;border-top:1px solid rgba(255,255,255,.18)!important;direction:ltr!important}
+      .dd-footer-utility-balanced .dd-social-footer,.dd-footer-utility-balanced .dd-payment-footer{width:auto!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;align-self:start!important}
+      .dd-footer-utility-balanced .dd-social-footer{grid-column:1!important;text-align:left!important}
+      .dd-footer-utility-balanced .dd-payment-footer{grid-column:2!important;text-align:right!important}
+      .dd-footer-utility-balanced .dd-social-footer h4,.dd-footer-utility-balanced .dd-payment-footer h4{margin:0 0 12px!important;line-height:1.35!important}
+      .dd-footer-utility-balanced .dd-social-icons,.dd-footer-utility-balanced .dd-payment-icons{direction:ltr!important;flex-wrap:nowrap!important}
+      .dd-footer-utility-balanced .dd-social-icons{justify-content:flex-start!important}
+      .dd-footer-utility-balanced .dd-payment-icons{justify-content:flex-end!important}
+      [dir="rtl"] .dd-footer-utility-balanced .dd-social-footer{grid-column:2!important;text-align:right!important}
+      [dir="rtl"] .dd-footer-utility-balanced .dd-payment-footer{grid-column:1!important;text-align:left!important}
+      [dir="rtl"] .dd-footer-utility-balanced .dd-social-icons{justify-content:flex-end!important}
+      [dir="rtl"] .dd-footer-utility-balanced .dd-payment-icons{justify-content:flex-start!important}
+      @media(max-width:760px){
+        .dd-footer-utility.dd-footer-utility-balanced{width:100%!important;grid-template-columns:1fr!important;justify-content:stretch!important;gap:24px!important;margin-top:22px!important;padding-top:22px!important}
+        .dd-footer-utility-balanced .dd-social-footer,.dd-footer-utility-balanced .dd-payment-footer,[dir="rtl"] .dd-footer-utility-balanced .dd-social-footer,[dir="rtl"] .dd-footer-utility-balanced .dd-payment-footer{grid-column:1!important;text-align:center!important}
+        .dd-footer-utility-balanced .dd-social-icons,.dd-footer-utility-balanced .dd-payment-icons,[dir="rtl"] .dd-footer-utility-balanced .dd-social-icons,[dir="rtl"] .dd-footer-utility-balanced .dd-payment-icons{justify-content:center!important;flex-wrap:wrap!important}
       }
       @media(max-width:620px){
         .footer-top>div.dd-mobile-footer-accordion{width:100%!important;border-bottom:1px solid rgba(255,255,255,.28)!important;padding:0!important;margin:0!important}
