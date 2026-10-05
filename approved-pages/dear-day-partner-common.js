@@ -9,7 +9,7 @@
   function loadConfig(){if(window.DEAR_DAY_SUPABASE)return Promise.resolve(window.DEAR_DAY_SUPABASE);return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=()=>resolve(window.DEAR_DAY_SUPABASE);s.onerror=reject;document.head.appendChild(s)})}
   function ensureNotificationBadge(){if(document.querySelector('script[data-dd-notification-badge]'))return;const s=document.createElement('script');s.src='/approved-pages/dear-day-notification-badge.js?v=20261002-1';s.defer=true;s.dataset.ddNotificationBadge='1';document.head.appendChild(s)}
   function show(id,msg,type){const e=$(id);if(!e)return;e.textContent=msg||'';e.className=type==='success'?'success':'error';e.style.display=msg?'block':'none';if(msg)setTimeout(()=>{if(e.textContent===msg)e.style.display='none'},4500)}
-  async function client(){const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);return mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}
+  async function client(){const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;return mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}})}
   async function guard(){
     ensureNotificationBadge();
     const supabase=await client();
