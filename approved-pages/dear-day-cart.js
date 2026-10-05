@@ -499,7 +499,8 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       .dd-occ-footer .footer-note{margin-bottom:0!important}
       .dd-occ-footer .footer-top>div{min-width:0!important}
       .dd-occ-footer .dd-social-footer h4,.dd-occ-footer .dd-payment-footer h4{margin:0!important}
-      .dd-occ-footer .dd-social-icons a{margin:0!important;min-height:33px!important}
+      .dd-occ-footer .dd-social-icons a{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 33px!important;box-sizing:border-box!important;margin:0!important;padding:0!important;min-height:0!important;line-height:1!important}
+      .dd-occ-footer .dd-social-icons a svg{display:block!important;flex:none!important;margin:0!important}
       .dd-occ-footer .dd-payment-footer{margin-top:12px!important}
       @media(max-width:620px){
         .dd-occ-footer .footer-top{row-gap:0!important}
@@ -519,7 +520,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
         .footer-top>div.dd-mobile-footer-accordion.dd-open>a{padding:7px 2px!important;font-size:12px!important}
         .footer-top>div.dd-mobile-footer-accordion.dd-open>:last-child{margin-bottom:10px!important}
         .dd-occ-footer .dd-social-footer,.dd-occ-footer .dd-payment-footer{margin-top:12px!important;padding-top:12px!important}
-        .dd-occ-footer .dd-social-icons a{width:32px!important;height:32px!important}
+        .dd-occ-footer .dd-social-icons a{width:32px!important;height:32px!important;flex-basis:32px!important}
         .dd-occ-footer .dd-pay-card{width:60px!important;height:36px!important}
         .dd-occ-footer .footer-bottom{margin-top:12px!important;padding-top:10px!important;font-size:11px!important}
       }
