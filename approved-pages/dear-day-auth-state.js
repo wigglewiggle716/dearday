@@ -2,10 +2,10 @@
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   const isEn=()=>String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr';
-  const authPath=()=>isEn()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
+  const authPath=()=>isEn()?'/auth-en':'/auth';
   const profilePath=()=>isEn()?'/Dear-Day-Complete-Profile-en.html':'/Dear-Day-Complete-Profile.html';
-  const accountPath=()=>isEn()?'/Dear-Day-Account-en.html':'/Dear-Day-Account.html';
-  const bookingsPath=()=>isEn()?'/Dear-Day-Bookings-en.html':'/Dear-Day-Bookings.html';
+  const accountPath=()=>isEn()?'/account-en':'/account';
+  const bookingsPath=()=>isEn()?'/bookings-en':'/bookings';
   const text=(ar,en)=>isEn()?en:ar;
   const STAFF_ROLES=new Set(['super_admin','admin','operations','accountant','partner_manager','customer_support','marketing','content_admin']);
   const ADMIN_ROLES=new Set(['super_admin','admin']);

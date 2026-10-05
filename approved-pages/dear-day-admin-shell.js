@@ -55,7 +55,7 @@
       const {data:{user}}=await client.auth.getUser();
       const email=foot.querySelector('#adminEmail');
       if(email)email.textContent=user?.email||'Admin';
-      foot.querySelector('#logoutBtn')?.addEventListener('click',async()=>{try{await client.auth.signOut()}catch(e){}location.replace('/Dear-Day-Auth.html#login')});
+      foot.querySelector('#logoutBtn')?.addEventListener('click',async()=>{try{await client.auth.signOut()}catch(e){}location.replace('/auth#login')});
     }catch(e){
       const email=foot.querySelector('#adminEmail');
       if(email)email.textContent='Admin';

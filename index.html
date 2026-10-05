@@ -216,7 +216,7 @@ const $=s=>document.querySelector(s);let occasion='';const ddForm=$('.filters'),
   const plan={occasion:route.key,occasionKey:route.key,occasionLabel:route.label,area:$('#area').value,date:dateValue,budgetKey,budget:budgetKey,budgetLabel:budgetLabels[budgetKey]||'',services:[],products:[]};
   ddSaveLocal(plan);
   const params=new URLSearchParams({occasion:route.key,flow:'1',area:plan.area,date:plan.date,budget:plan.budgetKey,dd:JSON.stringify(ddCompactPlan(plan))});
-  location.href='/approved-pages/Dear-Day-Birthday-Approved.html?'+params.toString();
+  location.href='/birthday?'+params.toString();
   return true;
 }
 $('.filters').onsubmit=e=>{e.preventDefault();ddOpenSelectedOccasion()};const modal=$('dialog');document.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>{$('#detail-title').textContent=b.querySelector('strong').textContent;$('#detail-price').textContent=b.querySelector('b').textContent;$('#detail-image').src=b.querySelector('img').src;$('#detail-image').alt=b.querySelector('img').alt;modal.showModal()});$('.close').onclick=()=>modal.close();$('#choose').onclick=()=>{modal.close();$('#occasions').scrollIntoView();$('.occasion').focus()};modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modal.close()}});
@@ -228,7 +228,7 @@ $('.filters').onsubmit=e=>{e.preventDefault();ddOpenSelectedOccasion()};const mo
       <h2 id="ddPartnersShowcaseTitle">شركاء بيكمّلوا يومك</h2>
       <p>براندات، محلات وأماكن من الفئات الموجودة حاليًا على Dear Day — وكل ما الشبكة تكبر، الاختيارات قدامك بتكبر معاها.</p>
     </div>
-    <a class="dd-partners-cta" href="/approved-pages/Dear-Day-Partners.html">انضم كشريك</a>
+    <a class="dd-partners-cta" href="/partners">انضم كشريك</a>
   </div>
   <div class="dd-partner-marquee" aria-label="نماذج من شركاء Dear Day">
     <div class="dd-partner-track">
@@ -237,7 +237,7 @@ $('.filters').onsubmit=e=>{e.preventDefault();ddOpenSelectedOccasion()};const mo
     </div>
   </div>
 </section>
-<footer class="dd-occ-footer"><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/approved-pages/Dear-Day-About.html">من نحن</a><a href="#">كيف نعمل</a><a href="/approved-pages/Dear-Day-Partners.html">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/approved-pages/Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="/approved-pages/Dear-Day-Contact.html">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
+<footer class="dd-occ-footer"><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/occasions">المناسبات</a><a href="/gifts">الهدايا</a><a href="/cake">الكيك والحلويات</a><a href="/venues">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/about">من نحن</a><a href="#">كيف نعمل</a><a href="/partners">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/faq">الأسئلة المتكررة</a><a href="/contact">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
 
 <style id="dd-branded-calendar">
 .date-control.dd-custom-date .native-date{display:none!important}
@@ -344,9 +344,9 @@ $('.filters').onsubmit=e=>{e.preventDefault();ddOpenSelectedOccasion()};const mo
 
   let activeProduct='0';
   const targets={
-    '0':{file:'/approved-pages/Dear-Day-Gifts-Approved.html',services:['هدايا'],cta:'استكمل في صفحة الهدايا'},
-    '1':{file:'/approved-pages/Dear-Day-Venues-Approved.html',services:['أماكن وتجارب'],cta:'استكمل في الأماكن والتجارب'},
-    '2':{file:'/approved-pages/Dear-Day-Cake-Approved.html',services:['كيك وحلويات'],cta:'استكمل في الكيك والحلويات'}
+    '0':{file:'/gifts',services:['هدايا'],cta:'استكمل في صفحة الهدايا'},
+    '1':{file:'/venues',services:['أماكن وتجارب'],cta:'استكمل في الأماكن والتجارب'},
+    '2':{file:'/cake',services:['كيك وحلويات'],cta:'استكمل في الكيك والحلويات'}
   };
   const occasionMap={
     'عيد ميلاد':'birthday',

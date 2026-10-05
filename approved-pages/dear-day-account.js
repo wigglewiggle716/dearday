@@ -3,8 +3,8 @@
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   const en=()=>String(document.documentElement.lang||'').toLowerCase().startsWith('en');
   const t=(ar,enText)=>en()?enText:ar;
-  const authPath=()=>en()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
-  const home=()=>en()?'/index-en.html':'/';
+  const authPath=()=>en()?'/auth-en':'/auth';
+  const home=()=>en()?'/en':'/';
 
   const STAFF_ROLES=new Set(['super_admin','admin','operations','accountant','partner_manager','customer_support','marketing','content_admin']);
   function portalForRole(role){if(role==='super_admin'||role==='admin')return'/Dear-Day-Admin.html';if(role==='partner_user')return'/Dear-Day-Partner.html';if(STAFF_ROLES.has(role))return'/Dear-Day-Staff.html';return null}

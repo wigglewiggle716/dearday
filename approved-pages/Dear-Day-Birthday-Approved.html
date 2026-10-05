@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>عيد ميلاد | Dear Day</title>
 <meta name="description" content="كوّن خطة مناسبتك مع Dear Day خطوة بخطوة. راجع الميزانية واختار الهدايا والكيك والورد والأماكن والتجارب المناسبة، ثم عدّل تفاصيل يومك واجمع اختياراتك قبل استكمال الحجز."/>
-<link rel="canonical" href="https://dear-day.com/approved-pages/Dear-Day-Birthday-Approved.html"/>
+<link rel="canonical" href="https://dear-day.com/birthday"/>
 <meta name="robots" content="noindex, follow"/>
 
 <style>
@@ -128,7 +128,7 @@ body{box-sizing:border-box;padding-inline:var(--dd-page-gutter)!important;overfl
 @media(max-width:600px){:root{--dd-page-gutter:16px}.dd-language-bar{min-height:38px}.dd-language-switch{height:28px;min-width:54px}}
 </style>
 
-<link href="assets/site-nav.css" rel="stylesheet"/>
+<link href="/approved-pages/assets/site-nav.css" rel="stylesheet"/>
 <style id="dd-approved-header-footer-sync">
 
 .home-header{box-sizing:border-box;height:auto!important;min-height:92px!important;display:grid!important;grid-template-columns:minmax(230px,auto) 1fr minmax(300px,auto)!important;align-items:center!important;gap:28px!important;padding:12px clamp(30px,6vw,96px)!important;background:rgba(250,243,234,.96)!important;border-bottom:1px solid rgba(107,53,64,.15)!important;position:sticky!important;top:0!important;z-index:100!important;backdrop-filter:blur(14px)!important;width:100%!important}
@@ -207,7 +207,7 @@ footer{margin-top:44px!important}
 .dd-cart-link [data-dd-cart-count]{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#6B3540;color:#fff;display:inline-grid;place-items:center;font-size:11px;line-height:1}
 .dd-cart-link:hover [data-dd-cart-count]{background:#fff;color:#6B3540}
 </style>
-<script src="dear-day-cart.js?v=20261004-4"></script>
+<script src="/approved-pages/dear-day-cart.js?v=20261004-4"></script>
 <style id="dd-recommended-packages-style">
 #package{display:none!important}
 .dd-rec-section{margin:0 0 34px;padding:24px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#fffdfb,#fbefeb)}
@@ -237,7 +237,7 @@ footer{margin-top:44px!important}
 </style>
 <link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/></head>
 <body>
-<header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav"><a class="" href="/">الرئيسية</a><a class="" href="/#gifts">هدايا وتجارب</a><a class="active" href="/approved-pages/Dear-Day-Occasions-Approved.html">رتّب مناسبتي</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/approved-pages/Dear-Day-Cart.html" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="#" onclick="return false">EN</a></div></header>
+<header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav"><a class="" href="/">الرئيسية</a><a class="" href="/#gifts">هدايا وتجارب</a><a class="active" href="/occasions">رتّب مناسبتي</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="#" onclick="return false">EN</a></div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps">
 <div class="dd-flow-step active"><div class="dd-flow-icon">✓</div><div>اختيار الخدمات</div></div>
 <div class="dd-flow-step"><div class="dd-flow-icon">🎁</div><div>الهدايا</div></div>
@@ -554,17 +554,17 @@ nextBtn.addEventListener('click',()=>{
   const hasCake=packageMode||plan.services.some(s=>/كيك|حلويات/.test(s))||plan.products.some(p=>/كيك|تورت|حلويات|cake/i.test(p.name||''));
   const hasFlowers=packageMode||plan.services.some(s=>/ورد|زهور/.test(s));
   const hasVenue=packageMode||plan.services.some(s=>/أماكن|تجارب/.test(s))||plan.products.some(p=>/مكان|تجربة|Terrace|Restaurant|Garden/i.test(p.name||''));
-  if(hasGifts){ddGo('/approved-pages/Dear-Day-Gifts-Approved.html',plan);return}
-  if(hasCake){ddGo('/approved-pages/Dear-Day-Cake-Approved.html',plan);return}
-  if(hasFlowers){ddGo('/approved-pages/Dear-Day-Flowers-Approved.html',plan);return}
-  if(hasVenue){ddGo('/approved-pages/Dear-Day-Venues-Approved.html',plan);return}
+  if(hasGifts){ddGo('/gifts',plan);return}
+  if(hasCake){ddGo('/cake',plan);return}
+  if(hasFlowers){ddGo('/flowers',plan);return}
+  if(hasVenue){ddGo('/venues',plan);return}
   showToast('اختار خدمة واحدة على الأقل علشان نكمل');
 });
 updateUI();
 </script>
-<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><script>(function(){const k=new URLSearchParams(location.search).get('occasion');if(!k)return;let p={};try{p=JSON.parse(localStorage.getItem('dearDayPlan')||'{}')}catch(e){};const m={"anniversary": "الذكرى السنوية", "date_night": "Date Night", "proposal": "طلب الزواج", "birthday": "عيد الميلاد"};p.occasionKey=k;p.occasion=m[k]||p.occasion;localStorage.setItem('dearDayPlan',JSON.stringify(p));})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/approved-pages/Dear-Day-About.html">من نحن</a><a href="#">كيف نعمل</a><a href="/approved-pages/Dear-Day-Partners.html">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/approved-pages/Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="/approved-pages/Dear-Day-Contact.html">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
-<script src="assets/site-nav.js"></script>
-<script src="assets/selection-dock.js"></script><script>/* Dear Day footer logo home link */
+<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><script>(function(){const k=new URLSearchParams(location.search).get('occasion');if(!k)return;let p={};try{p=JSON.parse(localStorage.getItem('dearDayPlan')||'{}')}catch(e){};const m={"anniversary": "الذكرى السنوية", "date_night": "Date Night", "proposal": "طلب الزواج", "birthday": "عيد الميلاد"};p.occasionKey=k;p.occasion=m[k]||p.occasion;localStorage.setItem('dearDayPlan',JSON.stringify(p));})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/occasions">المناسبات</a><a href="/gifts">الهدايا</a><a href="/cake">الكيك والحلويات</a><a href="/venues">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/about">من نحن</a><a href="#">كيف نعمل</a><a href="/partners">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/faq">الأسئلة المتكررة</a><a href="/contact">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
+<script src="/approved-pages/assets/site-nav.js"></script>
+<script src="/approved-pages/assets/selection-dock.js"></script><script>/* Dear Day footer logo home link */
 (function(){
   document.querySelectorAll('.footer-logo').forEach(function(logo){
     logo.style.cursor='pointer';

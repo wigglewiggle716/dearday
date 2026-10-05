@@ -124,7 +124,7 @@
   }
   function homePath(){
     const p=String(location.pathname||'/').replace(/\/+$/,'')||'/';
-    return p==='/'||/\/index(?:-en)?\.html$/i.test(p);
+    return p==='/'||p==='/en'||/\/index(?:-en)?\.html$/i.test(p);
   }
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
@@ -132,40 +132,47 @@
   function localePaths(){
     const en=isEnglishPage();
     return en?{
-      home:'/index-en.html',occasions:'/approved-pages/Dear-Day-Occasions-Approved-en.html',
-      how:'/approved-pages/Dear-Day-How-It-Works-en.html',partners:'/approved-pages/Dear-Day-Partners-en.html',
-      gifts:'/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1',cakes:'/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1',
-      flowers:'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1',venues:'/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1',
-      about:'/approved-pages/Dear-Day-About-en.html',faq:'/approved-pages/Dear-Day-FAQ-en.html',contact:'/approved-pages/Dear-Day-Contact-en.html',
-      refunds:'/approved-pages/Dear-Day-Refunds-en.html',deletion:'/approved-pages/Dear-Day-Data-Deletion-en.html',
-      privacy:'/approved-pages/Dear-Day-Privacy-en.html',terms:'/approved-pages/Dear-Day-Terms-en.html',
-      login:'/Dear-Day-Auth-en.html#login',signup:'/Dear-Day-Auth-en.html#signup',label:'English',language:'AR',
+      home:'/en',occasions:'/occasions-en',
+      how:'/how-it-works-en',partners:'/partners-en',
+      gifts:'/gifts-en',cakes:'/cake-en',
+      flowers:'/flowers-en',venues:'/venues-en',
+      about:'/about-en',faq:'/faq-en',contact:'/contact-en',
+      refunds:'/refunds-en',deletion:'/delete-account-en',
+      privacy:'/privacy-en',terms:'/terms-en',
+      login:'/auth-en#login',signup:'/auth-en#signup',label:'English',language:'AR',
       nav:['Home','Occasions','How It Works','For Partners','Plan My Occasion'],
       footer:['Thoughtful occasions, coordinated in one place — from the first idea to the final detail.','Plan Your Day','About Dear Day','Help & Policies','FAQs','Contact Us','Cancellation & Refund Policy','Account & Data Deletion','Privacy Policy','Terms & Conditions','Payment Methods']
     }:{
-      home:'/',occasions:'/approved-pages/Dear-Day-Occasions-Approved.html',
-      how:'/approved-pages/Dear-Day-How-It-Works.html',partners:'/approved-pages/Dear-Day-Partners.html',
-      gifts:'/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1',cakes:'/approved-pages/Dear-Day-Cake-Approved.html?standalone=1',
-      flowers:'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1',venues:'/approved-pages/Dear-Day-Venues-Approved.html?standalone=1',
-      about:'/approved-pages/Dear-Day-About.html',faq:'/approved-pages/Dear-Day-FAQ.html',contact:'/approved-pages/Dear-Day-Contact.html',
-      refunds:'/approved-pages/Dear-Day-Refunds.html',deletion:'/approved-pages/Dear-Day-Data-Deletion.html',
-      privacy:'/approved-pages/Dear-Day-Privacy.html',terms:'/approved-pages/Dear-Day-Terms.html',
-      login:'/Dear-Day-Auth.html#login',signup:'/Dear-Day-Auth.html#signup',label:'العربية',language:'EN',
+      home:'/',occasions:'/occasions',
+      how:'/how-it-works',partners:'/partners',
+      gifts:'/gifts',cakes:'/cake',
+      flowers:'/flowers',venues:'/venues',
+      about:'/about',faq:'/faq',contact:'/contact',
+      refunds:'/refunds',deletion:'/delete-account',
+      privacy:'/privacy',terms:'/terms',
+      login:'/auth#login',signup:'/auth#signup',label:'العربية',language:'EN',
       nav:['الرئيسية','المناسبات','كيف تعمل','للشركاء','رتّب مناسبتي'],
       footer:['كل تفاصيل يومك المهم — من أول فكرة لحد آخر تفصيلة — في مكان واحد.','خطّط يومك','عن Dear Day','المساعدة والسياسات','الأسئلة الشائعة','تواصل معنا','سياسة الإلغاء والاسترداد','حذف الحساب والبيانات','سياسة الخصوصية','الشروط والأحكام','وسائل الدفع']
     };
   }
   function languageSwitchHref(){
-    const path=String(location.pathname||'/');
-    let target;
-    if(isEnglishPage()){
-      target=path==='/index-en.html'?'/':path.replace(/-en\.html$/i,'.html');
-      if(path==='/approved-pages/Dear-Day-Details-en.html')target='/approved-pages/Dear-Day-Details-Approved.html';
-    }else{
-      target=(path==='/'||path==='/index.html')?'/index-en.html':path.replace(/\.html$/i,'-en.html');
-      if(path==='/approved-pages/Dear-Day-Auth.html')target='/Dear-Day-Auth-en.html';
-    }
-    if(!target||target===path)target=isEnglishPage()?'/':'/index-en.html';
+    const path=String(location.pathname||'/').replace(/\/$/,'')||'/';
+    const pairs={
+      '/':'/en','/en':'/',
+      '/occasions':'/occasions-en','/occasions-en':'/occasions',
+      '/birthday':'/birthday-en','/birthday-en':'/birthday',
+      '/gifts':'/gifts-en','/gifts-en':'/gifts','/cake':'/cake-en','/cake-en':'/cake',
+      '/flowers':'/flowers-en','/flowers-en':'/flowers','/venues':'/venues-en','/venues-en':'/venues',
+      '/how-it-works':'/how-it-works-en','/how-it-works-en':'/how-it-works',
+      '/partners':'/partners-en','/partners-en':'/partners','/about':'/about-en','/about-en':'/about',
+      '/faq':'/faq-en','/faq-en':'/faq','/contact':'/contact-en','/contact-en':'/contact',
+      '/privacy':'/privacy-en','/privacy-en':'/privacy','/terms':'/terms-en','/terms-en':'/terms',
+      '/refunds':'/refunds-en','/refunds-en':'/refunds','/delete-account':'/delete-account-en','/delete-account-en':'/delete-account',
+      '/cart':'/cart-en','/cart-en':'/cart','/details':'/details-en','/details-en':'/details',
+      '/review':'/review-en','/review-en':'/review','/payment':'/payment-en','/payment-en':'/payment',
+      '/auth':'/auth-en','/auth-en':'/auth','/account':'/account-en','/account-en':'/account','/bookings':'/bookings-en','/bookings-en':'/bookings'
+    };
+    const target=pairs[path] || (isEnglishPage()?'/':'/en');
     return target+String(location.search||'')+String(location.hash||'');
   }
   function normalizeGlobalHeader(){
@@ -181,9 +188,9 @@
     const oldLogo=header.querySelector('img');
     const logoSrc=oldLogo?.getAttribute('src')||'/approved-pages/assets/dear-day-wordmark.svg';
     const english=isEnglishPage(),p=localePaths(),langHref=languageSwitchHref(),path=String(location.pathname||'/');
-    const homeActive=homePath()&&(english?path==='/index-en.html':(path==='/'||path==='/index.html'));
-    const occasionActive=/Dear-Day-(Occasions|Birthday)-Approved(?:-en)?\.html/i.test(path);
-    const partnerActive=/Dear-Day-Partners(?:-en)?\.html/i.test(path);
+    const homeActive=homePath()&&(english?path==='/en':path==='/'||path==='/index.html');
+    const occasionActive=/^\/(occasions|birthday)(?:-en)?$/i.test(path)||/Dear-Day-(Occasions|Birthday)-Approved(?:-en)?\.html/i.test(path);
+    const partnerActive=/^\/partners(?:-en)?$/i.test(path)||/Dear-Day-Partners(?:-en)?\.html/i.test(path);
     const ariaCurrent=value=>value?' aria-current="page"':'';
     header.className='dd-global-header';
     header.dataset.ddGlobalNav='1';
@@ -525,7 +532,7 @@
     `;
     if(panels.length>1)stack.insertBefore(section,panels[1]);else stack.appendChild(section);
     section.querySelector('#ddEditHeartMessage').addEventListener('click',function(){
-      location.href='/approved-pages/Dear-Day-Cart.html#ddSignatureCard';
+      location.href='/cart#ddSignatureCard';
     });
   }
   function initSignatureExperience(){
@@ -581,7 +588,7 @@
 
     link=document.createElement('a');
     link.id='ddFloatingCart';
-    link.href='/approved-pages/Dear-Day-Cart.html';
+    link.href='/cart';
     link.setAttribute('aria-label','My Cart');
     link.innerHTML=`
       <svg viewBox="0 0 24 24" aria-hidden="true">

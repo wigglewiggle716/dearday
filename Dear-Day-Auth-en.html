@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#FAF3EA">
 <title>Log In | Dear Day</title>
 <meta name="description" content="Log in to your Dear Day account to keep planning, review your selections, and manage your occasion details.">
-<link rel="canonical" href="https://dear-day.com/Dear-Day-Auth-en.html">
-<link rel="alternate" hreflang="ar" href="https://dear-day.com/Dear-Day-Auth.html">
-<link rel="alternate" hreflang="en" href="https://dear-day.com/Dear-Day-Auth-en.html">
+<link rel="canonical" href="https://dear-day.com/auth-en">
+<link rel="alternate" hreflang="ar" href="https://dear-day.com/auth">
+<link rel="alternate" hreflang="en" href="https://dear-day.com/auth-en">
 <meta name="robots" content="noindex, follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,18 +30,18 @@
 </head>
 <body>
 <header class="auth-header" data-dd-global-nav="1">
-  <a class="auth-brand" href="/index-en.html" aria-label="Dear Day — Home"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
+  <a class="auth-brand" href="/en" aria-label="Dear Day — Home"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
   <nav class="auth-nav" aria-label="Main navigation">
-    <a href="/index-en.html">Home</a>
-    <a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Occasions</a>
-    <a href="/index-en.html#ddHowItWorks">How It Works</a>
-    <a href="/approved-pages/Dear-Day-Partners-en.html">For Partners</a>
-    <a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Plan My Occasion</a>
+    <a href="/en">Home</a>
+    <a href="/occasions-en">Occasions</a>
+    <a href="/en#ddHowItWorks">How It Works</a>
+    <a href="/partners-en">For Partners</a>
+    <a href="/occasions-en">Plan My Occasion</a>
   </nav>
   <div class="auth-actions">
     <a class="header-auth" id="headerLogin" href="#login">Log In</a>
     <a class="header-auth signup" id="headerSignup" href="#signup">Create Account</a>
-    <a class="lang" id="langSwitch" href="/Dear-Day-Auth.html#login" aria-label="العربية">AR</a>
+    <a class="lang" id="langSwitch" href="/auth#login" aria-label="العربية">AR</a>
   </div>
 </header>
 
@@ -93,7 +93,7 @@
   </div>
 </main>
 
-<footer class="dd-footer"><div class="wrap"><div class="footer-top"><div class="footer-logo"><a href="/index-en.html" aria-label="Dear Day — Home"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a><p class="footer-note">Thoughtful occasions, beautifully coordinated in one place — from the first idea to the final detail.</p></div><div><h4>Dear Day Services</h4><a href="/approved-pages/Dear-Day-Occasions-Approved-en.html">Occasions</a><a href="/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1">Gifts</a><a href="/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1">Cake & Sweets</a><a href="/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1">Places & Experiences</a></div><div><h4>About Dear Day</h4><a href="/approved-pages/Dear-Day-About-en.html">About Us</a><a href="/index-en.html#ddHowItWorks">How It Works</a><a href="/approved-pages/Dear-Day-Partners-en.html">For Partners</a></div><div><h4>Customer Care</h4><a href="/approved-pages/Dear-Day-FAQ-en.html">FAQs</a><a href="/approved-pages/Dear-Day-Contact-en.html">Contact Us</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>Privacy Policy · Terms & Conditions</div><div>© 2026 Dear Day</div></div></div></footer>
+<footer class="dd-footer"><div class="wrap"><div class="footer-top"><div class="footer-logo"><a href="/en" aria-label="Dear Day — Home"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a><p class="footer-note">Thoughtful occasions, beautifully coordinated in one place — from the first idea to the final detail.</p></div><div><h4>Dear Day Services</h4><a href="/occasions-en">Occasions</a><a href="/gifts-en">Gifts</a><a href="/cake-en">Cake & Sweets</a><a href="/venues-en">Places & Experiences</a></div><div><h4>About Dear Day</h4><a href="/about-en">About Us</a><a href="/en#ddHowItWorks">How It Works</a><a href="/partners-en">For Partners</a></div><div><h4>Customer Care</h4><a href="/faq-en">FAQs</a><a href="/contact-en">Contact Us</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>Privacy Policy · Terms & Conditions</div><div>© 2026 Dear Day</div></div></div></footer>
 
 <script>
 (function(){
@@ -106,7 +106,7 @@
     Object.entries(panels).forEach(([name,panel])=>panel.hidden=name!==active);
     headerLogin.classList.toggle('active',active==='login');headerSignup.classList.toggle('active',active==='signup');
     document.title=(active==='signup'?'Create Account':active==='forgot'?'Reset Password':'Log In')+' | Dear Day';
-    lang.href='/Dear-Day-Auth.html#'+active;
+    lang.href='/auth#'+active;
     window.scrollTo({top:0,behavior:'auto'});
   }
   window.addEventListener('hashchange',route);route();

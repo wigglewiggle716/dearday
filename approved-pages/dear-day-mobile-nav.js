@@ -69,20 +69,20 @@
   }
   function menuItems(){
     return isEn()?[
-      ['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['How It Works','/approved-pages/Dear-Day-How-It-Works-en.html'],['Gifts','/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1'],['Cake & Sweets','/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1'],['Flowers','/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1'],['Places & Experiences','/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup']
+      ['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['Gifts','/gifts-en'],['Cake & Sweets','/cake-en'],['Flowers','/flowers-en'],['Places & Experiences','/venues-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']
     ]:[
-      ['الرئيسية','/'],['المناسبات','/approved-pages/Dear-Day-Occasions-Approved.html'],['كيف نعمل','/approved-pages/Dear-Day-How-It-Works.html'],['الهدايا','/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'],['الكيك والحلويات','/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'],['الورد','/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'],['الأماكن والتجارب','/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'],['للشركاء','/approved-pages/Dear-Day-Partners.html'],['تسجيل الدخول','/Dear-Day-Auth.html#login'],['إنشاء حساب','/Dear-Day-Auth.html#signup']
+      ['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['الهدايا','/gifts'],['الكيك والحلويات','/cake'],['الورد','/flowers'],['الأماكن والتجارب','/venues'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']
     ];
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
   function patchBrand(header){
-    const home=isEn()?'/index-en.html':'/';
+    const home=isEn()?'/en':'/';
     const direct=header.querySelector('.dd-global-brand,.brand,.auth-brand,a.logo');if(direct&&direct.tagName==='A')direct.href=home;
     const img=header.querySelector('img[alt*="Dear Day" i],.wordmark');const link=img?.closest('a');if(link)link.href=home;
   }
   function patchFooterFlowers(){
     const english=isEn();
-    const href=english?'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1';
+    const href=english?'/flowers-en':'/flowers';
     document.querySelectorAll('footer .footer-top>div').forEach(col=>{
       const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       const isServices=english?heading.includes('dear day services'):(heading.includes('خدمات')&&heading.includes('dear day'));
@@ -94,7 +94,7 @@
   }
   function patchFooterDataDeletion(){
     const english=isEn();
-    const href=english?'/approved-pages/Dear-Day-Data-Deletion-en.html':'/approved-pages/Dear-Day-Data-Deletion.html';
+    const href=english?'/delete-account-en':'/delete-account';
     document.querySelectorAll('footer .footer-top>div').forEach(col=>{
       const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       const isSupport=english?heading.includes('customer service'):heading==='خدمة العملاء';
@@ -105,7 +105,7 @@
   }
   function patchHowItWorksLinks(){
     const english=isEn();
-    const href=english?'/approved-pages/Dear-Day-How-It-Works-en.html':'/approved-pages/Dear-Day-How-It-Works.html';
+    const href=english?'/how-it-works-en':'/how-it-works';
     document.querySelectorAll('header a,footer a').forEach(a=>{
       const text=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       if(english&&text==='how it works')a.href=href;
@@ -141,9 +141,9 @@
     if(document.body&&document.body.dir!=='ltr')document.body.dir='ltr';
     const header=document.querySelector('header');if(!header)return;
     const brand=header.querySelector('.brand,.dd-global-brand,.auth-brand,a.logo');
-    if(brand&&brand.tagName==='A'&&brand.getAttribute('href')!=='/index-en.html'){brand.href='/index-en.html';brand.setAttribute('aria-label','Dear Day — Home')}
+    if(brand&&brand.tagName==='A'&&brand.getAttribute('href')!=='/en'){brand.href='/en';brand.setAttribute('aria-label','Dear Day — Home')}
     const nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
-    const desiredNav=[['Home','/index-en.html'],['Occasions','/approved-pages/Dear-Day-Occasions-Approved-en.html'],['How It Works','/approved-pages/Dear-Day-How-It-Works-en.html'],['For Partners','/approved-pages/Dear-Day-Partners-en.html'],['Plan My Occasion','/index-en.html#occasions']];
+    const desiredNav=[['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Plan My Occasion','/en#occasions']];
     if(nav){
       const current=[...nav.querySelectorAll(':scope>a')].map(a=>[String(a.textContent||'').trim(),a.getAttribute('href')||'']);
       const correct=current.length===desiredNav.length&&desiredNav.every((x,i)=>current[i]?.[0]===x[0]&&current[i]?.[1]===x[1]);
@@ -152,7 +152,7 @@
     const actions=getActions(header);
     if(actions){
       const links=[...actions.querySelectorAll(':scope>a')];
-      const wanted=[['Log In','/Dear-Day-Auth-en.html#login'],['Create Account','/Dear-Day-Auth-en.html#signup'],['AR','/approved-pages/Dear-Day-How-It-Works.html']];
+      const wanted=[['Log In','/auth-en#login'],['Create Account','/auth-en#signup'],['AR','/how-it-works']];
       const correct=links.length===3&&wanted.every((x,i)=>String(links[i]?.textContent||'').trim()===x[0]&&(links[i]?.getAttribute('href')||'')===x[1]);
       if(!correct){
         links.forEach(a=>a.remove());
@@ -210,7 +210,7 @@
       const plan={occasion:key,occasionKey:key,occasionLabel:labels[key],occasionLabelEn:labels[key],area,date,budgetKey,budget:budgetKey,budgetLabel:budgetLabels[budgetKey]||'',services:[],servicesEn:[],products:[]};
       try{localStorage.setItem('dearDayPlan',JSON.stringify(plan))}catch(err){}
       const params=new URLSearchParams({occasion:key,flow:'1',area,date,budget:budgetKey,dd:JSON.stringify(plan)});
-      location.href='/approved-pages/Dear-Day-Birthday-Approved-en.html?'+params.toString();
+      location.href='/birthday-en?'+params.toString();
     },true);
   }
   function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}

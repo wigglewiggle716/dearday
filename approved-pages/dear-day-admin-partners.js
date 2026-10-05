@@ -125,10 +125,10 @@
     try{
       enableCatalogNav();
       const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      const {data:{user:u},error:uErr}=await supabase.auth.getUser();if(uErr||!u){location.replace('/Dear-Day-Auth.html#login');return}user=u;
-      const {data:p,error:pErr}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pErr||!p||!p.is_active||!ALLOWED_ROLES.has(p.role)){location.replace('/Dear-Day-Account.html');return}profile=p;
+      const {data:{user:u},error:uErr}=await supabase.auth.getUser();if(uErr||!u){location.replace('/auth#login');return}user=u;
+      const {data:p,error:pErr}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pErr||!p||!p.is_active||!ALLOWED_ROLES.has(p.role)){location.replace('/account');return}profile=p;
       $('adminEmail').textContent=u.email||p.full_name||'Admin';$('roleBadge').textContent=roleLabel(p.role);
-      $('logoutBtn').onclick=async()=>{await supabase.auth.signOut();location.replace('/Dear-Day-Auth.html#login')};
+      $('logoutBtn').onclick=async()=>{await supabase.auth.signOut();location.replace('/auth#login')};
       $('addPartnerBtn').onclick=()=>{resetForm();openModal('editModal')};$('refreshBtn').onclick=loadData;$('partnerForm').addEventListener('submit',savePartner);$('searchInput').addEventListener('input',render);$('statusFilter').addEventListener('change',render);
       $('nameAr').addEventListener('input',()=>{if(!$('partnerId').value&&!$('slug').dataset.manual)$('slug').value=slugify($('nameAr').value)});$('slug').addEventListener('input',()=>{$('slug').dataset.manual='1'});
       document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close)closeModal(close.dataset.close);const action=e.target.closest('[data-action]');if(!action)return;const p=partners.find(x=>x.id===action.dataset.id);if(!p)return;if(action.dataset.action==='view')showDetails(p);if(action.dataset.action==='edit'){fillForm(p);openModal('editModal')}if(action.dataset.action==='suspend')changeStatus(p.id,'suspended');if(action.dataset.action==='activate')changeStatus(p.id,'active')});

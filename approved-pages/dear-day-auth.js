@@ -2,8 +2,8 @@
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   const isEn=()=>String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
-  const home=()=>isEn()?'/index-en.html':'/';
-  const authPath=()=>isEn()?'/Dear-Day-Auth-en.html':'/Dear-Day-Auth.html';
+  const home=()=>isEn()?'/en':'/';
+  const authPath=()=>isEn()?'/auth-en':'/auth';
   const msg=(ar,en)=>isEn()?en:ar;
   const safeNext=()=>{const n=new URLSearchParams(location.search).get('next');return n&&n.startsWith('/')&&!n.startsWith('//')?n:home()};
   const setStatus=(id,text,error=false)=>{const el=document.getElementById(id);if(!el)return;el.textContent=text||'';el.style.color=error?'#A8583D':'#6B3540'};

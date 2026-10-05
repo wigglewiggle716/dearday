@@ -155,9 +155,9 @@
   async function boot(){
     try{
       const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      const {data:{user:u},error:ue}=await supabase.auth.getUser();if(ue||!u){location.replace('/Dear-Day-Auth.html#login');return}user=u;
-      const {data:p,error:pe}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pe||!p||!p.is_active||!ADMIN_ROLES.has(p.role)){location.replace('/Dear-Day-Account.html');return}profile=p;
-      $('adminEmail').textContent=u.email||p.full_name||'Admin';$('roleBadge').textContent=roleLabel(p.role);$('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/Dear-Day-Auth.html#login')});
+      const {data:{user:u},error:ue}=await supabase.auth.getUser();if(ue||!u){location.replace('/auth#login');return}user=u;
+      const {data:p,error:pe}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pe||!p||!p.is_active||!ADMIN_ROLES.has(p.role)){location.replace('/account');return}profile=p;
+      $('adminEmail').textContent=u.email||p.full_name||'Admin';$('roleBadge').textContent=roleLabel(p.role);$('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/auth#login')});
       $('addBtn').addEventListener('click',openAdd);$('form').addEventListener('submit',save);document.querySelectorAll('[data-close="editModal"]').forEach(b=>b.addEventListener('click',closeModal));$('editModal').addEventListener('click',e=>{if(e.target===$('editModal'))closeModal()});
       ['searchInput','partnerFilter','kindFilter','availabilityFilter'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));$('refreshBtn').addEventListener('click',loadData);
       await loadData();

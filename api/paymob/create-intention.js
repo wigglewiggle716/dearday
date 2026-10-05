@@ -95,7 +95,7 @@ export default async function handler(req,res){
 
   const origin=originFromRequest(req);
   const redirectionUrl=process.env.PAYMOB_REDIRECTION_URL||
-    (origin?`${origin}/approved-pages/Dear-Day-Payment.html?payment_return=1`:'');
+    (origin?`${origin}/payment?payment_return=1`:'');
   const notificationUrl=process.env.PAYMOB_NOTIFICATION_URL||'';
 
   const payload={

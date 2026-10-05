@@ -10,10 +10,10 @@
   const state={tab:'gifts',index:{gifts:0,'cakes-sweets':0,flowers:0,venues:0},data:{gifts:[],'cakes-sweets':[],flowers:[],venues:[]}};
 
   const tabs=[
-    {key:'gifts',label:t('هدايا','Gifts'),url:en?'/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'},
-    {key:'cakes-sweets',label:t('كيك وحلويات','Cakes & Sweets'),url:en?'/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'},
-    {key:'flowers',label:t('ورد','Flowers'),url:en?'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'},
-    {key:'venues',label:t('أماكن وتجارب','Places & Experiences'),url:en?'/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'}
+    {key:'gifts',label:t('هدايا','Gifts'),url:en?'/gifts-en':'/gifts'},
+    {key:'cakes-sweets',label:t('كيك وحلويات','Cakes & Sweets'),url:en?'/cake-en':'/cake'},
+    {key:'flowers',label:t('ورد','Flowers'),url:en?'/flowers-en':'/flowers'},
+    {key:'venues',label:t('أماكن وتجارب','Places & Experiences'),url:en?'/venues-en':'/venues'}
   ];
 
   state.data.venues=[

@@ -80,15 +80,15 @@
   function isEnglishPage(){
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
-  function cartUrl(){return isEnglishPage()?'/approved-pages/Dear-Day-Cart-en.html':'/approved-pages/Dear-Day-Cart.html';}
+  function cartUrl(){return isEnglishPage()?'/cart-en':'/cart';}
   function cartCount(){try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.length:0}catch(e){return 0}}
 
   function patchEnglishAuthLinks(){
     if(!isEnglishPage())return;
     document.querySelectorAll('a').forEach(a=>{
       const t=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
-      if(t==='log in'||t==='login'||t==='sign in')a.href='/Dear-Day-Auth-en.html#login';
-      if(t==='create account'||t==='create an account'||t==='sign up')a.href='/Dear-Day-Auth-en.html#signup';
+      if(t==='log in'||t==='login'||t==='sign in')a.href='/auth-en#login';
+      if(t==='create account'||t==='create an account'||t==='sign up')a.href='/auth-en#signup';
     });
   }
 
@@ -96,7 +96,7 @@
     const path=String(location.pathname||'');
     if(/\/approved-pages\/Dear-Day-Gifts-Approved\.html$/i.test(path)){
       document.querySelectorAll('a.lang-link,a.dd-language-switch').forEach(a=>{
-        a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';
+        a.href='/gifts-en';
         a.removeAttribute('onclick');
         a.setAttribute('aria-label','English');
         if(!String(a.textContent||'').trim())a.textContent='EN';
@@ -105,8 +105,8 @@
     if(isEnglishPage()){
       document.querySelectorAll('a[href]').forEach(a=>{
         const raw=a.getAttribute('href')||'';
-        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html')a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html';
-        if(raw==='/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1')a.href='/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1';
+        if(raw==='/gifts')a.href='/gifts-en';
+        if(raw==='/gifts')a.href='/gifts-en';
       });
     }
   }
@@ -120,13 +120,13 @@
       footer.classList.add('dd-occ-footer','dd-unified-legal-footer');
       footer.innerHTML=`<div class="dd-footer-wrap">
         <div class="footer-top">
-          <div class="footer-brand"><a class="footer-logo" href="${english?'/index-en.html':'/'}"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a><p class="footer-note">${english?'Every detail, one place.':'كل تفصيلة في مكان واحد.'}</p></div>
-          <div><h4>${english?'Dear Day Services':'خدمات Dear Day'}</h4><a href="${english?'/approved-pages/Dear-Day-Gifts-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1'}">${english?'Gifts':'الهدايا'}</a><a href="${english?'/approved-pages/Dear-Day-Cake-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Cake-Approved.html?standalone=1'}">${english?'Cake & Sweets':'كيك وحلويات'}</a><a href="${english?'/approved-pages/Dear-Day-Flowers-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Flowers-Approved.html?standalone=1'}">${english?'Flowers':'الورد'}</a><a href="${english?'/approved-pages/Dear-Day-Venues-Approved-en.html?standalone=1':'/approved-pages/Dear-Day-Venues-Approved.html?standalone=1'}">${english?'Places & Experiences':'أماكن وتجارب'}</a></div>
-          <div><h4>${english?'Customer Care':'خدمة العملاء'}</h4><a href="${english?'/approved-pages/Dear-Day-FAQ-en.html':'/approved-pages/Dear-Day-FAQ.html'}">${english?'FAQs':'الأسئلة الشائعة'}</a><a href="${english?'/approved-pages/Dear-Day-Contact-en.html':'/approved-pages/Dear-Day-Contact.html'}">${english?'Contact Us':'تواصل معنا'}</a><a href="${english?'/approved-pages/Dear-Day-Refunds-en.html':'/approved-pages/Dear-Day-Refunds.html'}">${english?'Cancellation & Refund Policy':'سياسة الإلغاء والاسترداد'}</a><a href="${english?'/approved-pages/Dear-Day-Data-Deletion-en.html':'/approved-pages/Dear-Day-Data-Deletion.html'}">${english?'Account & Data Deletion':'حذف الحساب والبيانات'}</a></div>
-          <div><h4>${english?'Legal':'القانوني'}</h4><a href="${english?'/approved-pages/Dear-Day-Privacy-en.html':'/approved-pages/Dear-Day-Privacy.html'}">${english?'Privacy Policy':'سياسة الخصوصية'}</a><a href="${english?'/approved-pages/Dear-Day-Terms-en.html':'/approved-pages/Dear-Day-Terms.html'}">${english?'Terms & Conditions':'الشروط والأحكام'}</a></div>
+          <div class="footer-brand"><a class="footer-logo" href="${english?'/en':'/'}"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a><p class="footer-note">${english?'Every detail, one place.':'كل تفصيلة في مكان واحد.'}</p></div>
+          <div><h4>${english?'Dear Day Services':'خدمات Dear Day'}</h4><a href="${english?'/gifts-en':'/gifts'}">${english?'Gifts':'الهدايا'}</a><a href="${english?'/cake-en':'/cake'}">${english?'Cake & Sweets':'كيك وحلويات'}</a><a href="${english?'/flowers-en':'/flowers'}">${english?'Flowers':'الورد'}</a><a href="${english?'/venues-en':'/venues'}">${english?'Places & Experiences':'أماكن وتجارب'}</a></div>
+          <div><h4>${english?'Customer Care':'خدمة العملاء'}</h4><a href="${english?'/faq-en':'/faq'}">${english?'FAQs':'الأسئلة الشائعة'}</a><a href="${english?'/contact-en':'/contact'}">${english?'Contact Us':'تواصل معنا'}</a><a href="${english?'/refunds-en':'/refunds'}">${english?'Cancellation & Refund Policy':'سياسة الإلغاء والاسترداد'}</a><a href="${english?'/delete-account-en':'/delete-account'}">${english?'Account & Data Deletion':'حذف الحساب والبيانات'}</a></div>
+          <div><h4>${english?'Legal':'القانوني'}</h4><a href="${english?'/privacy-en':'/privacy'}">${english?'Privacy Policy':'سياسة الخصوصية'}</a><a href="${english?'/terms-en':'/terms'}">${english?'Terms & Conditions':'الشروط والأحكام'}</a></div>
         </div>
         <div class="dd-payment-footer"><h4>${english?'Payment Methods':'وسائل الدفع'}</h4><div class="dd-payment-icons" aria-label="${english?'Accepted payment methods':'وسائل الدفع المقبولة'}"><span class="dd-pay-card dd-pay-visa" aria-label="Visa">VISA</span><span class="dd-pay-card dd-pay-master" aria-label="Mastercard"><i></i><b></b></span><span class="dd-pay-card dd-pay-apple" aria-label="Apple Pay"><span class="dd-apple">●</span><strong>Pay</strong></span><span class="dd-pay-card dd-pay-google" aria-label="Google Pay"><strong>G</strong><span>Pay</span></span><span class="dd-pay-card dd-pay-wallet" aria-label="Wallet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h14a2 2 0 0 1 2 2v8H4a2 2 0 0 1-2-2v-11A2 2 0 0 1 4 2.5h12v3H4a1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="12.5" r="1" fill="currentColor"/></svg></span></div></div>
-        <div class="footer-bottom"><span>© 2026 Dear Day</span><span class="dd-legal-links"><a href="${english?'/approved-pages/Dear-Day-Privacy-en.html':'/approved-pages/Dear-Day-Privacy.html'}">${english?'Privacy Policy':'سياسة الخصوصية'}</a><span aria-hidden="true"> · </span><a href="${english?'/approved-pages/Dear-Day-Terms-en.html':'/approved-pages/Dear-Day-Terms.html'}">${english?'Terms & Conditions':'الشروط والأحكام'}</a></span></div>
+        <div class="footer-bottom"><span>© 2026 Dear Day</span><span class="dd-legal-links"><a href="${english?'/privacy-en':'/privacy'}">${english?'Privacy Policy':'سياسة الخصوصية'}</a><span aria-hidden="true"> · </span><a href="${english?'/terms-en':'/terms'}">${english?'Terms & Conditions':'الشروط والأحكام'}</a></span></div>
       </div>`;
     });
   }
@@ -136,18 +136,18 @@
     document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
       footer.querySelectorAll('a').forEach(a=>{
         const t=String(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
-        if(english&&t==='privacy policy')a.href='/approved-pages/Dear-Day-Privacy-en.html';
-        if(english&&(t==='terms & conditions'||t==='terms and conditions'))a.href='/approved-pages/Dear-Day-Terms-en.html';
-        if(!english&&t==='سياسة الخصوصية')a.href='/approved-pages/Dear-Day-Privacy.html';
-        if(!english&&t==='الشروط والأحكام')a.href='/approved-pages/Dear-Day-Terms.html';
+        if(english&&t==='privacy policy')a.href='/privacy-en';
+        if(english&&(t==='terms & conditions'||t==='terms and conditions'))a.href='/terms-en';
+        if(!english&&t==='سياسة الخصوصية')a.href='/privacy';
+        if(!english&&t==='الشروط والأحكام')a.href='/terms';
       });
       footer.querySelectorAll('.footer-bottom div,.footer-bottom span').forEach(el=>{
         const t=String(el.textContent||'').replace(/\s+/g,' ').trim();
         if(english&&/^Privacy Policy\s*[·|•-]\s*Terms & Conditions$/i.test(t)){
-el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy-en.html">Privacy Policy</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms-en.html">Terms & Conditions</a>';
+el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy-en">Privacy Policy</a><span aria-hidden="true"> · </span><a href="/terms-en">Terms & Conditions</a>';
         }
         if(!english&&t==='سياسة الخصوصية · الشروط والأحكام'){
-el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-Day-Privacy.html">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/approved-pages/Dear-Day-Terms.html">الشروط والأحكام</a>';
+el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy">سياسة الخصوصية</a><span aria-hidden="true"> · </span><a href="/terms">الشروط والأحكام</a>';
         }
       });
     });
@@ -156,10 +156,10 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
   function patchLegalLanguageSwitch(){
     const p=String(location.pathname||'');
     const map={
-      '/approved-pages/Dear-Day-Privacy.html':['/approved-pages/Dear-Day-Privacy-en.html','EN','English'],
-      '/approved-pages/Dear-Day-Privacy-en.html':['/approved-pages/Dear-Day-Privacy.html','AR','العربية'],
-      '/approved-pages/Dear-Day-Terms.html':['/approved-pages/Dear-Day-Terms-en.html','EN','English'],
-      '/approved-pages/Dear-Day-Terms-en.html':['/approved-pages/Dear-Day-Terms.html','AR','العربية']
+      '/privacy':['/privacy-en','EN','English'],
+      '/privacy-en':['/privacy','AR','العربية'],
+      '/terms':['/terms-en','EN','English'],
+      '/terms-en':['/terms','AR','العربية']
     };
     const item=map[p];if(!item)return;
     const host=document.querySelector('.auth-actions')||document.querySelector('header');if(!host||host.querySelector('[data-dd-legal-lang],.dd-lang'))return;
@@ -173,7 +173,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       const isSupport=english ? (heading==='customer service'||heading.includes('customer service')||heading==='customer care'||heading.includes('customer care')) : heading==='خدمة العملاء';
       if(!isSupport)return;
-      const href=english?'/approved-pages/Dear-Day-Refunds-en.html':'/approved-pages/Dear-Day-Refunds.html';
+      const href=english?'/refunds-en':'/refunds';
       if(col.querySelector(`a[href=\"${href}\"]`))return;
       const link=document.createElement('a');
       link.href=href;
@@ -188,7 +188,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       const heading=String(col.querySelector('h4')?.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
       const isSupport=english ? (heading==='customer service'||heading.includes('customer service')||heading==='customer care'||heading.includes('customer care')) : heading==='خدمة العملاء';
       if(!isSupport)return;
-      const href=english?'/approved-pages/Dear-Day-Data-Deletion-en.html':'/approved-pages/Dear-Day-Data-Deletion.html';
+      const href=english?'/delete-account-en':'/delete-account';
       if(col.querySelector(`a[href=\"${href}\"]`))return;
       const link=document.createElement('a');
       link.href=href;
@@ -354,8 +354,8 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
     label.id='ddBookingConsent';
     label.className='dd-booking-consent';
     label.innerHTML=english
-      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/approved-pages/Dear-Day-Terms-en.html" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/approved-pages/Dear-Day-Refunds-en.html" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
-      : '<input id="ddBookingConsentCheck" type="checkbox" required><span>أوافق على <a href="/approved-pages/Dear-Day-Terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/approved-pages/Dear-Day-Refunds.html" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> قبل المتابعة للدفع.</span>';
+      ? '<input id="ddBookingConsentCheck" type="checkbox" required><span>I agree to the <a href="/terms-en" target="_blank" rel="noopener">Terms & Conditions</a> and <a href="/refunds-en" target="_blank" rel="noopener">Cancellation & Refund Policy</a> before continuing to payment.</span>'
+      : '<input id="ddBookingConsentCheck" type="checkbox" required><span>أوافق على <a href="/terms" target="_blank" rel="noopener">الشروط والأحكام</a> و<a href="/refunds" target="_blank" rel="noopener">سياسة الإلغاء والاسترداد</a> قبل المتابعة للدفع.</span>';
     payBtn.parentNode.insertBefore(label,payBtn);
 
     const box=label.querySelector('input');

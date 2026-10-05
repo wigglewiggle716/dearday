@@ -6,7 +6,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>تخصيص الهدايا | Dear Day</title>
 <meta name="description" content="اكتشف هدايا تناسب مناسبتك مع Dear Day، من الورد وبوكسات الهدايا للفضة والعطور. قارن الاختيارات حسب النوع والسعر وأضف لمستك الشخصية ليوم مميز في القاهرة والجيزة."/>
-<link rel="canonical" href="https://dear-day.com/approved-pages/Dear-Day-Gifts-Approved.html"/>
+<link rel="canonical" href="https://dear-day.com/gifts"/>
 <meta name="robots" content="index, follow"/>
 
 <style>
@@ -42,7 +42,7 @@ body{box-sizing:border-box;padding-inline:var(--dd-page-gutter)!important;overfl
 @media(max-width:600px){:root{--dd-page-gutter:16px}.dd-language-bar{min-height:38px}.dd-language-switch{height:28px;min-width:54px}}
 </style>
 
-<link href="assets/site-nav.css" rel="stylesheet"/>
+<link href="/approved-pages/assets/site-nav.css" rel="stylesheet"/>
 <style>
 /* APPROVED SHARED HEADER/FOOTER SYSTEM */
 
@@ -106,12 +106,12 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 .dd-cart-link [data-dd-cart-count]{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#6B3540;color:#fff;display:inline-grid;place-items:center;font-size:11px;line-height:1}
 .dd-cart-link:hover [data-dd-cart-count]{background:#fff;color:#6B3540}
 </style>
-<script src="dear-day-cart.js?v=20261004-4"></script><link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/></head>
+<script src="/approved-pages/dear-day-cart.js?v=20261004-4"></script><link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/></head>
 <body>
 <header class="header"><div class="container nav">
 <a class="logo" href="/"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/></a>
-<nav class="navlinks"><a href="/">الرئيسية</a><a class="active" href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="Dear-Day-How-It-Works.html">كيف نعمل</a><a href="Dear-Day-Partners.html">للشركات</a></nav>
-<div class="actions"><a class="dd-cart-link" href="/approved-pages/Dear-Day-Cart.html" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="#" onclick="return false">EN</a></div>
+<nav class="navlinks"><a href="/">الرئيسية</a><a class="active" href="/occasions">المناسبات</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركات</a></nav>
+<div class="actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="#" onclick="return false">EN</a></div>
 </div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps">
 <div class="dd-flow-step done"><div class="dd-flow-icon">✓</div><div>اختيار الخدمات</div></div>
@@ -246,12 +246,12 @@ document.getElementById('resetFilters').onclick=()=>{filters.category=filters.re
 const headerChoices=document.getElementById('headerChoices');if(headerChoices)headerChoices.onclick=()=>document.querySelector('.sticky')?.scrollIntoView({behavior:'smooth',block:'end'});
 const giftNextBtn=document.getElementById('nextBtn');
 function giftNextState(){const services=plan.services||[];const packageMode=services.some(s=>/باقة متكاملة/.test(s));const needCake=packageMode||services.some(s=>/كيك|حلويات/.test(s));const needFlowers=packageMode||services.some(s=>/ورد|زهور/.test(s));const needVenue=packageMode||services.some(s=>/أماكن|تجارب/.test(s));giftNextBtn.textContent=needCake?'التالي: الكيك والحلويات ←':needFlowers?'التالي: الورد ←':needVenue?'التالي: الأماكن والتجارب ←':'التالي: My Cart ←';return {needCake,needFlowers,needVenue}}
-giftNextBtn.onclick=()=>{persist();if(!selected.size){showToast('اختار هدية واحدة على الأقل علشان نكمل');document.getElementById('productGrid')?.scrollIntoView({behavior:'smooth',block:'start'});return}const {needCake,needFlowers,needVenue}=giftNextState();if(needCake){ddGo('/approved-pages/Dear-Day-Cake-Approved.html',plan);return}if(needFlowers){ddGo('/approved-pages/Dear-Day-Flowers-Approved.html',plan);return}if(needVenue){ddGo('/approved-pages/Dear-Day-Venues-Approved.html',plan);return}ddGo('/approved-pages/Dear-Day-Cart.html',plan);};
+giftNextBtn.onclick=()=>{persist();if(!selected.size){showToast('اختار هدية واحدة على الأقل علشان نكمل');document.getElementById('productGrid')?.scrollIntoView({behavior:'smooth',block:'start'});return}const {needCake,needFlowers,needVenue}=giftNextState();if(needCake){ddGo('/cake',plan);return}if(needFlowers){ddGo('/flowers',plan);return}if(needVenue){ddGo('/venues',plan);return}ddGo('/cart',plan);};
 persist();giftNextState();renderCurrent();renderGrid();updateSummary();
 </script>
-<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/approved-pages/Dear-Day-Occasions-Approved.html">المناسبات</a><a href="/approved-pages/Dear-Day-Gifts-Approved.html?standalone=1">الهدايا</a><a href="/approved-pages/Dear-Day-Cake-Approved.html?standalone=1">الكيك والحلويات</a><a href="/approved-pages/Dear-Day-Venues-Approved.html?standalone=1">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="Dear-Day-About.html">من نحن</a><a href="Dear-Day-How-It-Works.html">كيف نعمل</a><a href="Dear-Day-Partners.html">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="Dear-Day-FAQ.html">الأسئلة المتكررة</a><a href="/approved-pages/Dear-Day-Contact.html">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
-<script src="assets/selection-dock.js"></script>
-<script src="assets/site-nav.js"></script>
+<script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/occasions">المناسبات</a><a href="/gifts">الهدايا</a><a href="/cake">الكيك والحلويات</a><a href="/venues">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/about">من نحن</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/faq">الأسئلة المتكررة</a><a href="/contact">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
+<script src="/approved-pages/assets/selection-dock.js"></script>
+<script src="/approved-pages/assets/site-nav.js"></script>
 <script>/* Dear Day footer logo home link */
 (function(){
   document.querySelectorAll('.footer-logo').forEach(function(logo){

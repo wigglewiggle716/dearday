@@ -5,7 +5,7 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   let supabase;
   async function loadConfig(){if(window.DEAR_DAY_SUPABASE)return window.DEAR_DAY_SUPABASE;await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=resolve;s.onerror=reject;(document.head||document.documentElement).appendChild(s)});return window.DEAR_DAY_SUPABASE}
-  function backFor(role){if(['super_admin','admin'].includes(role))return'/Dear-Day-Admin.html';if(role==='accountant')return'/Dear-Day-Finance.html';if(role==='partner_user')return'/Dear-Day-Partner.html';return'/Dear-Day-Account.html'}
+  function backFor(role){if(['super_admin','admin'].includes(role))return'/Dear-Day-Admin.html';if(role==='accountant')return'/Dear-Day-Finance.html';if(role==='partner_user')return'/Dear-Day-Partner.html';return'/account'}
   function when(v){try{return new Intl.DateTimeFormat('ar-EG',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v))}catch{return String(v||'')}}
 
   function adminNotificationsStyle(){
@@ -39,7 +39,7 @@
     const sidebar=document.createElement('aside');sidebar.className='sidebar';sidebar.innerHTML=`<div class="brand"><strong>Dear Day</strong><span>Admin Panel</span></div><nav class="nav"></nav><div class="sidebar-foot"><p>${esc(user?.email||'Admin')}</p><button id="ddNotificationsLogout" class="logout" type="button">تسجيل الخروج</button></div>`;
     const adminMain=document.createElement('main');adminMain.className='main';
     content.replaceWith(layout);layout.append(sidebar,adminMain);adminMain.appendChild(content);
-    document.getElementById('ddNotificationsLogout')?.addEventListener('click',async()=>{try{await supabase.auth.signOut()}catch(e){}location.replace('/Dear-Day-Auth.html#login')});
+    document.getElementById('ddNotificationsLogout')?.addEventListener('click',async()=>{try{await supabase.auth.signOut()}catch(e){}location.replace('/auth#login')});
     await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='/approved-pages/dear-day-admin-shell.js?v=20261003-3';s.onload=resolve;s.onerror=reject;(document.body||document.documentElement).appendChild(s)});
   }
 
@@ -54,7 +54,7 @@
   async function boot(){
     try{
       const cfg=await loadConfig();const mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      const {data:{user}}=await supabase.auth.getUser();if(!user){location.replace('/Dear-Day-Auth.html?next='+encodeURIComponent('/Dear-Day-Notifications.html')+'#login');return}
+      const {data:{user}}=await supabase.auth.getUser();if(!user){location.replace('/auth?next='+encodeURIComponent('/Dear-Day-Notifications.html')+'#login');return}
       const {data:profile}=await supabase.from('profiles').select('role').eq('id',user.id).single();const role=profile?.role||'customer';
       document.getElementById('backLink').href=backFor(role);
       if(ADMIN_ROLES.has(role))await enableAdminLayout(user);
