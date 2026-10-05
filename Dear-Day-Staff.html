@@ -1,1 +1,76 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#6B3540"><title>بوابة فريق Dear Day</title><style>@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2')}@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2')}*{box-sizing:border-box}body{margin:0;background:#FAF3EA;color:#352D2E;font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif}.wrap{width:min(1050px,calc(100% - 32px));margin:55px auto}.top{display:flex;justify-content:space-between;gap:14px;align-items:center}.logo{width:185px}.logout{border:1px solid rgba(107,53,64,.25);background:#fff;color:#6B3540;border-radius:12px;padding:9px 13px;font:700 11px inherit}.hero{margin:35px 0 22px}h1{color:#6B3540;margin:0;font-size:32px}.hero p{color:#786C69;margin:5px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{display:none;background:#fff;border:1px solid rgba(107,53,64,.14);border-radius:18px;padding:19px;text-decoration:none;color:#352D2E;box-shadow:0 10px 26px rgba(70,37,40,.04)}.card.show{display:block}.card strong{display:block;color:#6B3540;font-size:17px}.card span{display:block;color:#786C69;font-size:11px;margin-top:5px}.role{font-size:11px;font-weight:700;color:#6B3540;background:#fff;border:1px solid rgba(107,53,64,.14);padding:8px 11px;border-radius:999px}@media(max-width:720px){.grid{grid-template-columns:1fr}.wrap{margin-top:25px}}</style></head><body><div class="wrap"><div class="top"><img class="logo" src="/approved-pages/assets/dear-day-wordmark.svg"><div><span id="role" class="role">—</span> <button id="logout" class="logout">خروج</button></div></div><div class="hero"><h1>بوابة فريق Dear Day</h1><p>الأقسام الظاهرة هنا مبنية على صلاحيات حسابك الفعلية.</p></div><div class="grid"><a class="card" data-perm="orders.view" href="/Dear-Day-Admin-Orders.html"><strong>الطلبات</strong><span>متابعة Orders حسب صلاحيتك.</span></a><a class="card" data-perm="partners.view" href="/Dear-Day-Admin-Partners.html"><strong>الشركاء</strong><span>عرض وإدارة Partners حسب الصلاحية.</span></a><a class="card" data-perm="catalog.view" href="/Dear-Day-Admin-Products.html"><strong>المنتجات والخدمات</strong><span>Catalog وإدارة المحتوى.</span></a><a class="card" data-perm="approvals.review" href="/Dear-Day-Admin-Approvals.html"><strong>الموافقات</strong><span>Approve / Reject للتعديلات.</span></a><a class="card" data-perm="finance.view" href="/Dear-Day-Finance.html"><strong>المالية والتسويات</strong><span>Commissions وPartner Settlements.</span></a><a class="card" data-perm="employees.view" href="/Dear-Day-Admin-Employees.html"><strong>الموظفون والصلاحيات</strong><span>Roles وPermission overrides.</span></a></div></div><script src="/approved-pages/dear-day-supabase-config.js?v=20261002-1"></script><script type="module">import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';const c=window.DEAR_DAY_SUPABASE,storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage,s=createClient(c.url,c.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}}),$=id=>document.getElementById(id);const{data:{user}}=await s.auth.getUser();if(!user)location.replace('/Dear-Day-Staff-Login.html');else{const{data:p}=await s.from('profiles').select('role,is_active').eq('id',user.id).single();if(!p?.is_active)location.replace('/Dear-Day-Staff-Login.html');$('role').textContent=p.role;const{data:ps}=await s.rpc('get_my_permissions');const set=new Set((ps||[]).map(x=>x.permission_code));document.querySelectorAll('[data-perm]').forEach(a=>{if(set.has(a.dataset.perm))a.classList.add('show')})}$('logout').onclick=async()=>{await s.auth.signOut();location.replace('/Dear-Day-Staff-Login.html')};</script></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#6B3540">
+  <title>بوابة فريق Dear Day</title>
+  <style>
+    @font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}
+    @font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+    :root{--wine:#6B3540;--wine2:#522731;--ivory:#FAF3EA;--paper:#FFFDFC;--ink:#352D2E;--muted:#786C69;--line:rgba(107,53,64,.14);--good:#376a4a;--warn:#9b6b2f;--bad:#9a4545;--shadow:0 12px 30px rgba(70,37,40,.05)}
+    *{box-sizing:border-box}body{margin:0;background:#f7f2ed;color:var(--ink);font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif}.layout{min-height:100vh;display:grid;grid-template-columns:260px 1fr}.sidebar{background:var(--wine);color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}.brand{padding:0 10px 20px;border-bottom:1px solid rgba(255,255,255,.15)}.brand strong{display:block;font-size:23px}.brand span{font-size:11px;opacity:.72}.nav{display:grid;gap:7px;margin-top:22px}.nav a{color:#fff;text-decoration:none;padding:12px 14px;border-radius:13px;font-size:13px;font-weight:700;opacity:.82}.nav a.active{background:rgba(255,255,255,.14);opacity:1}.main{padding:30px}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}.topbar h1{margin:0;color:var(--wine);font-size:30px}.topbar p{margin:5px 0 0;color:var(--muted);font-size:13px}.pill{display:inline-flex;align-items:center;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--wine);font-size:11px;font-weight:700}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.quick{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border-radius:11px;background:#fff;border:1px solid var(--line);color:var(--wine);text-decoration:none;font-size:11px;font-weight:700}.quick.primary{background:var(--wine);border-color:var(--wine);color:#fff}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}.stat span{display:block;color:var(--muted);font-size:10px}.stat strong{display:block;color:var(--wine);font-size:24px;margin-top:4px;line-height:1.35}.panel{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:17px 19px;border-bottom:1px solid var(--line)}.panel-head h2{margin:0;color:var(--wine);font-size:18px}.panel-head a{color:var(--wine);font-size:11px;font-weight:700;text-decoration:none}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:right;padding:12px 15px;border-bottom:1px solid #f0e8e3;font-size:12px;vertical-align:middle}th{background:#fdfaf8;color:#6b5d5a}.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:700;background:#f1e8e5;color:var(--wine)}.badge.good{background:#e9f3ec;color:var(--good)}.badge.warn{background:#f8f0df;color:var(--warn)}.badge.bad{background:#f8e7e7;color:var(--bad)}.empty{padding:30px;text-align:center;color:var(--muted);font-size:12px}.loading{position:fixed;inset:0;background:var(--ivory);display:grid;place-items:center;z-index:80;color:var(--wine);font-weight:700}.error{display:none;padding:11px 14px;border-radius:13px;margin-bottom:14px;font-size:12px;background:#f8e7e7;color:var(--bad)}.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.staff-card{display:none;background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}.staff-card.show{display:block}.staff-card strong{display:block;color:var(--wine);font-size:17px}.staff-card span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.accountant-sub{font-size:11px;color:var(--muted);margin-top:5px}@media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.staff-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.layout{display:block}.sidebar{position:relative;height:auto;padding:15px}.nav{grid-template-columns:repeat(3,1fr);overflow:auto;margin-top:13px}.nav a{text-align:center;white-space:nowrap;padding:10px}.main{padding:20px 14px}.topbar{display:block}.topbar h1{font-size:25px}.top-actions{margin-top:12px}.cards,.staff-grid{grid-template-columns:1fr 1fr}.stat strong{font-size:20px}}@media(max-width:480px){.cards,.staff-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">جاري تحميل لوحة الفريق…</div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><strong>Dear Day</strong><span>Staff Portal</span></div>
+      <nav class="nav"></nav>
+    </aside>
+    <main class="main">
+      <div id="pageError" class="error"></div>
+
+      <section id="accountantDashboard" hidden>
+        <div class="topbar">
+          <div>
+            <h1>لوحة المحاسب</h1>
+            <p>ملخص المالية والتسويات والطلبات في Dear Day.</p>
+            <div id="accountantEmail" class="accountant-sub"></div>
+          </div>
+          <div class="top-actions">
+            <span id="accountantRole" class="pill">Accountant</span>
+            <a class="quick" href="/Dear-Day-Admin-Orders.html">الطلبات</a>
+            <a class="quick" href="/Dear-Day-Admin-Partners.html">الشركاء</a>
+            <a class="quick primary" href="/Dear-Day-Finance.html">فتح المالية والتسويات</a>
+          </div>
+        </div>
+
+        <section class="cards">
+          <article class="stat"><span>Partner Net غير مسوّى</span><strong id="kpiUnsettled">—</strong></article>
+          <article class="stat"><span>تسويات Draft</span><strong id="kpiDraft">—</strong></article>
+          <article class="stat"><span>تسويات Approved</span><strong id="kpiApproved">—</strong></article>
+          <article class="stat"><span>إجمالي Paid</span><strong id="kpiPaid">—</strong></article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>أحدث التسويات</h2><a href="/Dear-Day-Finance.html">عرض كل التسويات ←</a></div>
+          <div class="table-wrap"><table><thead><tr><th>الشريك</th><th>الفترة</th><th>Partner Net</th><th>الحالة</th><th>Reference</th></tr></thead><tbody id="settlementsBody"></tbody></table><div id="settlementsEmpty" class="empty" hidden>لا توجد تسويات حتى الآن.</div></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>أحدث الطلبات</h2><a href="/Dear-Day-Admin-Orders.html">عرض كل الطلبات ←</a></div>
+          <div class="table-wrap"><table><thead><tr><th>رقم الطلب</th><th>المناسبة</th><th>الحالة</th><th>الإجمالي</th><th>التاريخ</th></tr></thead><tbody id="ordersBody"></tbody></table><div id="ordersEmpty" class="empty" hidden>لا توجد طلبات حتى الآن.</div></div>
+        </section>
+      </section>
+
+      <section id="staffDashboard" hidden>
+        <div class="topbar"><div><h1>بوابة فريق Dear Day</h1><p>الأقسام الظاهرة هنا مبنية على صلاحيات حسابك الفعلية.</p></div><span id="staffRole" class="pill">—</span></div>
+        <div class="staff-grid">
+          <a class="staff-card" data-perm="orders.view" href="/Dear-Day-Admin-Orders.html"><strong>الطلبات</strong><span>متابعة Orders حسب صلاحيتك.</span></a>
+          <a class="staff-card" data-perm="partners.view" href="/Dear-Day-Admin-Partners.html"><strong>الشركاء</strong><span>عرض وإدارة Partners حسب الصلاحية.</span></a>
+          <a class="staff-card" data-perm="catalog.view" href="/Dear-Day-Admin-Products.html"><strong>المنتجات والخدمات</strong><span>Catalog وإدارة المحتوى.</span></a>
+          <a class="staff-card" data-perm="approvals.review" href="/Dear-Day-Admin-Approvals.html"><strong>الموافقات</strong><span>Approve / Reject للتعديلات.</span></a>
+          <a class="staff-card" data-perm="finance.view" href="/Dear-Day-Finance.html"><strong>المالية والتسويات</strong><span>Commissions وPartner Settlements.</span></a>
+          <a class="staff-card" data-perm="employees.view" href="/Dear-Day-Admin-Employees.html"><strong>الموظفون والصلاحيات</strong><span>Roles وPermission overrides.</span></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/approved-pages/dear-day-supabase-config.js?v=20261002-1"></script>
+  <script src="/approved-pages/dear-day-admin-shell.js?v=20261005-2"></script>
+  <script type="module" src="/approved-pages/dear-day-staff-dashboard.js?v=20261005-1"></script>
+</body>
+</html>
