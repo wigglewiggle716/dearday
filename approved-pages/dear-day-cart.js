@@ -506,6 +506,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       .dd-occ-footer .dd-payment-footer{margin-top:12px!important}
       @media(max-width:620px){
         .dd-occ-footer .footer-top{row-gap:0!important}
+        .dd-occ-footer .dd-social-footer{border-top-color:transparent!important}
         .dd-occ-footer .footer-brand{margin-bottom:12px!important}
         .dd-occ-footer .footer-top>div.dd-mobile-footer-accordion>h4{margin:0!important}
         .dd-occ-footer .dd-social-footer,.dd-occ-footer .dd-payment-footer{gap:8px!important}
