@@ -478,8 +478,8 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       .dd-occ-footer .footer-note{font-size:12px!important;line-height:1.65!important;max-width:285px!important;margin-top:10px!important}
       .dd-occ-footer .footer-top h4,.dd-occ-footer .dd-social-footer h4,.dd-occ-footer .dd-payment-footer h4{font-size:12.5px!important;margin-bottom:8px!important}
       .dd-occ-footer .footer-top a{font-size:12px!important;line-height:1.6!important;min-height:24px!important;margin:3px 0!important}
-      /* Increase only the links beneath the three footer section headings. */
-      .dd-occ-footer .footer-top>div:not(.footer-brand):not(.dd-social-footer)>a{font-size:15px!important}
+      /* Size only the links beneath the three footer section headings. */
+      .dd-occ-footer .footer-top>div:not(.footer-brand):not(.dd-social-footer)>a{font-size:14px!important}
       .dd-occ-footer .dd-social-footer,.dd-occ-footer .dd-payment-footer{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:10px 16px!important;margin-top:0!important;padding-top:12px!important}
       .dd-occ-footer .dd-social-icons{gap:8px!important}
       .dd-occ-footer .dd-social-icons a{width:33px!important;height:33px!important}
