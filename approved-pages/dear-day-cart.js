@@ -210,12 +210,31 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
     const platforms=[['facebook','Facebook'],['instagram','Instagram'],['x','X'],['youtube','YouTube'],['snapchat','Snapchat'],['linkedin','LinkedIn']];
     document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{
       footer.querySelectorAll('.dd-social-footer,.footer-social').forEach(el=>el.remove());
-      const host=footer.querySelector('.footer-top')||footer.querySelector('.wrap')||footer;
-      if(!host)return;
+      const wrap=footer.querySelector('.dd-footer-wrap')||footer.querySelector('.wrap')||footer;
+      const top=footer.querySelector('.footer-top')||wrap;
+      if(!wrap||!top)return;
+
+      const existingUtility=footer.querySelector('.dd-footer-utility');
+      if(existingUtility){
+        const previousPayment=existingUtility.querySelector('.dd-payment-footer');
+        if(previousPayment) wrap.insertBefore(previousPayment,existingUtility);
+        existingUtility.remove();
+      }
+
       const social=document.createElement('div');
       social.className='dd-social-footer';
       social.innerHTML=`<h4>${english?'Social Media':'وسائل التواصل الاجتماعي'}</h4><div class="dd-social-icons" aria-label="${english?'Dear Day social media':'وسائل التواصل الاجتماعي الخاصة بـ Dear Day'}">${platforms.map(([key,label])=>`<a href="#" data-dd-social="${key}" aria-label="${label}" title="${label}">${icons[key]}</a>`).join('')}</div>`;
-      host.appendChild(social);
+
+      const utility=document.createElement('div');
+      utility.className='dd-footer-utility';
+      const bottom=footer.querySelector('.footer-bottom');
+      if(bottom&&bottom.parentNode===wrap) wrap.insertBefore(utility,bottom);
+      else wrap.appendChild(utility);
+      utility.appendChild(social);
+
+      const payment=footer.querySelector('.dd-payment-footer');
+      if(payment) utility.appendChild(payment);
+
       social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
     });
   }
@@ -460,6 +479,22 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
       .dd-social-icons a:hover{background:rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.55)!important;transform:translateY(-2px)!important}
       .dd-social-icons svg{width:20px!important;height:20px!important;display:block!important;overflow:visible!important}
       .dd-social-icons a[data-dd-social="facebook"] svg{width:19px!important;height:19px!important}
+      .dd-footer-utility{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:56px!important;align-items:start!important;width:100%!important;margin-top:30px!important;padding-top:26px!important;border-top:1px solid rgba(255,255,255,.18)!important;direction:ltr!important}
+      .dd-footer-utility .dd-social-footer,.dd-footer-utility .dd-payment-footer{width:auto!important;margin:0!important;padding:0!important;border:0!important}
+      .dd-footer-utility .dd-social-footer{grid-column:1!important;text-align:left!important}
+      .dd-footer-utility .dd-payment-footer{grid-column:2!important;text-align:right!important}
+      .dd-footer-utility .dd-social-icons,.dd-footer-utility .dd-payment-icons{direction:ltr!important}
+      .dd-footer-utility .dd-social-icons{justify-content:flex-start!important}
+      .dd-footer-utility .dd-payment-icons{justify-content:flex-end!important}
+      [dir="rtl"] .dd-footer-utility .dd-social-footer{grid-column:2!important;text-align:right!important}
+      [dir="rtl"] .dd-footer-utility .dd-payment-footer{grid-column:1!important;text-align:left!important}
+      [dir="rtl"] .dd-footer-utility .dd-social-icons{justify-content:flex-end!important}
+      [dir="rtl"] .dd-footer-utility .dd-payment-icons{justify-content:flex-start!important}
+      @media(max-width:760px){
+        .dd-footer-utility{grid-template-columns:1fr!important;gap:24px!important;margin-top:24px!important;padding-top:22px!important}
+        .dd-footer-utility .dd-social-footer,.dd-footer-utility .dd-payment-footer,[dir="rtl"] .dd-footer-utility .dd-social-footer,[dir="rtl"] .dd-footer-utility .dd-payment-footer{grid-column:1!important;text-align:center!important}
+        .dd-footer-utility .dd-social-icons,.dd-footer-utility .dd-payment-icons,[dir="rtl"] .dd-footer-utility .dd-social-icons,[dir="rtl"] .dd-footer-utility .dd-payment-icons{justify-content:center!important}
+      }
       @media(max-width:620px){
         .footer-top>div.dd-mobile-footer-accordion{width:100%!important;border-bottom:1px solid rgba(255,255,255,.28)!important;padding:0!important;margin:0!important}
         .footer-top>div.dd-mobile-footer-accordion>h4{margin:0!important;padding:18px 2px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;color:#fff!important;font-size:16px!important;font-weight:800!important;line-height:1.35!important;cursor:pointer!important;user-select:none!important;-webkit-tap-highlight-color:transparent!important}
