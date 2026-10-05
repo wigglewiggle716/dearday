@@ -1,4 +1,4 @@
-name: Balance footer social and payment alignment
+name: Restore stacked footer social and payment sections
 on:
   push:
     paths:
@@ -6,43 +6,21 @@ on:
 permissions:
   contents: write
 jobs:
-  balance:
+  restore:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
-      - name: Balance footer utility alignment
+      - name: Restore stacked footer sections
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('approved-pages/dear-day-cart.js')
-          s=p.read_text()
-
-          # Keep social + payment locked inside the same utility row even if another footer runtime updates later.
-          anchor="""      social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));\n    });\n  }\n\n  function patchMobileFooterAccordion(){"""
-          replacement="""      social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));\n    });\n\n    const syncFooterUtility=()=>{\n      document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{\n        const wrap=footer.querySelector('.dd-footer-wrap')||footer.querySelector('.wrap')||footer;\n        const social=footer.querySelector('.dd-social-footer');\n        const payment=footer.querySelector('.dd-payment-footer');\n        if(!wrap||!social||!payment)return;\n        let utility=footer.querySelector('.dd-footer-utility');\n        if(!utility){\n          utility=document.createElement('div');\n          utility.className='dd-footer-utility';\n          const bottom=footer.querySelector('.footer-bottom');\n          if(bottom&&bottom.parentNode===wrap)wrap.insertBefore(utility,bottom);else wrap.appendChild(utility);\n        }\n        utility.classList.add('dd-footer-utility-balanced');\n        if(social.parentNode!==utility)utility.appendChild(social);\n        if(payment.parentNode!==utility)utility.appendChild(payment);\n      });\n    };\n    syncFooterUtility();\n    setTimeout(syncFooterUtility,60);\n    setTimeout(syncFooterUtility,240);\n  }\n\n  function patchMobileFooterAccordion(){"""
-          if 'dd-footer-utility-balanced' not in s:
-              if anchor not in s:
-                  raise SystemExit('Social footer function anchor not found')
-              s=s.replace(anchor,replacement,1)
-
-          # Add final visual overrides after the existing utility rules so they win without touching other footer styles.
-          css_anchor="""      @media(max-width:620px){\n        .footer-top>div.dd-mobile-footer-accordion"""
-          css="""      .dd-footer-utility.dd-footer-utility-balanced{width:min(860px,100%)!important;margin:26px auto 0!important;padding-top:24px!important;display:grid!important;grid-template-columns:max-content max-content!important;justify-content:space-between!important;align-items:start!important;column-gap:56px!important;row-gap:0!important;border-top:1px solid rgba(255,255,255,.18)!important;direction:ltr!important}\n      .dd-footer-utility-balanced .dd-social-footer,.dd-footer-utility-balanced .dd-payment-footer{width:auto!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;align-self:start!important}\n      .dd-footer-utility-balanced .dd-social-footer{grid-column:1!important;text-align:left!important}\n      .dd-footer-utility-balanced .dd-payment-footer{grid-column:2!important;text-align:right!important}\n      .dd-footer-utility-balanced .dd-social-footer h4,.dd-footer-utility-balanced .dd-payment-footer h4{margin:0 0 12px!important;line-height:1.35!important}\n      .dd-footer-utility-balanced .dd-social-icons,.dd-footer-utility-balanced .dd-payment-icons{direction:ltr!important;flex-wrap:nowrap!important}\n      .dd-footer-utility-balanced .dd-social-icons{justify-content:flex-start!important}\n      .dd-footer-utility-balanced .dd-payment-icons{justify-content:flex-end!important}\n      [dir=\"rtl\"] .dd-footer-utility-balanced .dd-social-footer{grid-column:2!important;text-align:right!important}\n      [dir=\"rtl\"] .dd-footer-utility-balanced .dd-payment-footer{grid-column:1!important;text-align:left!important}\n      [dir=\"rtl\"] .dd-footer-utility-balanced .dd-social-icons{justify-content:flex-end!important}\n      [dir=\"rtl\"] .dd-footer-utility-balanced .dd-payment-icons{justify-content:flex-start!important}\n      @media(max-width:760px){\n        .dd-footer-utility.dd-footer-utility-balanced{width:100%!important;grid-template-columns:1fr!important;justify-content:stretch!important;gap:24px!important;margin-top:22px!important;padding-top:22px!important}\n        .dd-footer-utility-balanced .dd-social-footer,.dd-footer-utility-balanced .dd-payment-footer,[dir=\"rtl\"] .dd-footer-utility-balanced .dd-social-footer,[dir=\"rtl\"] .dd-footer-utility-balanced .dd-payment-footer{grid-column:1!important;text-align:center!important}\n        .dd-footer-utility-balanced .dd-social-icons,.dd-footer-utility-balanced .dd-payment-icons,[dir=\"rtl\"] .dd-footer-utility-balanced .dd-social-icons,[dir=\"rtl\"] .dd-footer-utility-balanced .dd-payment-icons{justify-content:center!important;flex-wrap:wrap!important}\n      }\n"""
-          if css not in s:
-              if css_anchor not in s:
-                  raise SystemExit('Footer style anchor not found')
-              s=s.replace(css_anchor,css+css_anchor,1)
-
-          p.write_text(s)
-          PY
-      - name: Commit balanced footer alignment
+          git checkout 5b7cde3ba8e6307605a9af61cbfb8408a9bfc960 -- approved-pages/dear-day-cart.js
+      - name: Commit stacked footer restore
         run: |
           git config user.name "wigglewiggle716"
           git config user.email "wigglewiggle716@gmail.com"
           git add approved-pages/dear-day-cart.js
           git diff --cached --quiet && exit 0
-          git commit -m "Balance social and payment footer positions"
+          git commit -m "Restore stacked social and payment footer sections"
           git push origin main
