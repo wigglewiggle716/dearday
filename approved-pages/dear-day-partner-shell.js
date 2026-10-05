@@ -38,6 +38,7 @@
         .topbar{display:block!important;margin-bottom:18px!important}
         .topbar>div:last-child{margin-top:12px!important;display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important}
         .topbar h1{font-size:25px!important}
+        .dd-partner-quick-actions a{display:none!important}
         .panel-head{gap:10px!important;align-items:flex-start!important;flex-wrap:wrap!important}
         .toolbar{display:grid!important;grid-template-columns:1fr!important}
         .toolbar input,.toolbar select,.toolbar .btn{width:100%!important;min-width:0!important}
@@ -46,8 +47,7 @@
         .cards{grid-template-columns:1fr!important}
         .stat{padding:15px!important}
         .stat strong{font-size:23px!important}
-        .dd-partner-quick-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
-        .dd-partner-quick-actions a{width:100%}
+        .dd-partner-quick-actions{display:flex;width:100%}
       }
     `;
     document.head.appendChild(style);
