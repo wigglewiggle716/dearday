@@ -1,6 +1,196 @@
 {
   "redirects": [
     {
+      "source": "/approved-pages/Dear-Day-Occasions-Approved",
+      "destination": "/occasions",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Occasions-Approved-en",
+      "destination": "/occasions-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Birthday-Approved",
+      "destination": "/birthday",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Birthday-Approved-en",
+      "destination": "/birthday-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Gifts-Approved",
+      "destination": "/gifts",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Gifts-Approved-en",
+      "destination": "/gifts-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Cake-Approved",
+      "destination": "/cake",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Cake-Approved-en",
+      "destination": "/cake-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Flowers-Approved",
+      "destination": "/flowers",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Flowers-Approved-en",
+      "destination": "/flowers-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Venues-Approved",
+      "destination": "/venues",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Venues-Approved-en",
+      "destination": "/venues-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-How-It-Works",
+      "destination": "/how-it-works",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-How-It-Works-en",
+      "destination": "/how-it-works-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Partners",
+      "destination": "/partners",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Partners-en",
+      "destination": "/partners-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-About",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-About-en",
+      "destination": "/about-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-FAQ",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-FAQ-en",
+      "destination": "/faq-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Contact",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Contact-en",
+      "destination": "/contact-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Privacy",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Privacy-en",
+      "destination": "/privacy-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Terms",
+      "destination": "/terms",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Terms-en",
+      "destination": "/terms-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Refunds",
+      "destination": "/refunds",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Refunds-en",
+      "destination": "/refunds-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Data-Deletion",
+      "destination": "/delete-account",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Data-Deletion-en",
+      "destination": "/delete-account-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Cart",
+      "destination": "/cart",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Cart-en",
+      "destination": "/cart-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Details-Approved",
+      "destination": "/details",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Details-Approved-en",
+      "destination": "/details-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Review",
+      "destination": "/review",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Review-en",
+      "destination": "/review-en",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Payment",
+      "destination": "/payment",
+      "permanent": true
+    },
+    {
+      "source": "/approved-pages/Dear-Day-Payment-en",
+      "destination": "/payment-en",
+      "permanent": true
+    },
+    {
       "source": "/Dear-Day-Auth.html",
       "destination": "/auth",
       "permanent": true
