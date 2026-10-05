@@ -40,9 +40,23 @@
     const mod=await import(SUPABASE_ESM);
     const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;
     const supabase=mod.createClient(config.url,config.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}});
+
+    const logoHome=document.getElementById('profileLogoHome');
+    logoHome?.addEventListener('click',async e=>{
+      e.preventDefault();
+      if(logoHome.dataset.busy==='1')return;
+      logoHome.dataset.busy='1';
+      try{await supabase.auth.signOut();}
+      finally{location.replace(home());}
+    });
+
     const {data,error}=await supabase.auth.getUser();
-    if(error||!data?.user){location.replace(authPath()+'#login');return;}const {data:ddAccess}=await supabase.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle();if(ddAccess?.is_active===false){await supabase.auth.signOut();location.replace(authPath()+'#login');return}const ddPortal=portalForRole(ddAccess?.role);if(ddPortal){location.replace(ddPortal);return}
-    const user=data.user,meta=user.user_metadata||{},name=splitName(meta);
+    if(error||!data?.user){location.replace(authPath()+'#login');return;}
+    const user=data.user;
+    const {data:ddAccess}=await supabase.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle();
+    if(ddAccess?.is_active===false){await supabase.auth.signOut();location.replace(authPath()+'#login');return}
+    const ddPortal=portalForRole(ddAccess?.role);if(ddPortal){location.replace(ddPortal);return}
+    const meta=user.user_metadata||{},name=splitName(meta);
     const first=document.getElementById('profileFirstName');
     const last=document.getElementById('profileLastName');
     const phone=document.getElementById('profilePhone');
