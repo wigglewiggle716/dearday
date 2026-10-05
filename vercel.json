@@ -412,7 +412,5 @@
       "source": "/payment-en",
       "destination": "/approved-pages/Dear-Day-Payment-en.html"
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
