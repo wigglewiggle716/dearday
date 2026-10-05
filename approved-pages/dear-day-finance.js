@@ -1,5 +1,5 @@
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
-const c=window.DEAR_DAY_SUPABASE,s=createClient(c.url,c.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}}),$=id=>document.getElementById(id);let canManage=false,partners=[],settlements=[],eligible=[];
+const c=window.DEAR_DAY_SUPABASE,storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage,s=createClient(c.url,c.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,storage}}),$=id=>document.getElementById(id);let canManage=false,partners=[],settlements=[],eligible=[];
 const money=v=>new Intl.NumberFormat('ar-EG',{style:'currency',currency:'EGP',maximumFractionDigits:2}).format(Number(v||0));
 const esc=v=>String(v??'').replace(/[&<>'"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[x]));
 const date=v=>v?new Intl.DateTimeFormat('ar-EG',{year:'numeric',month:'short',day:'numeric'}).format(new Date(v)):'—';
