@@ -75,7 +75,7 @@ window.DEAR_DAY_SUPABASE = Object.freeze({
   function loadRealAuth(){
     if(document.querySelector('script[data-dd-auth-real],script[src*="/approved-pages/dear-day-auth.js"]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-auth.js?v=20261005-2';
+    s.src='/approved-pages/dear-day-auth.js?v=20261005-4';
     s.async=true;
     s.dataset.ddAuthReal='1';
     (document.head||document.documentElement).appendChild(s);
@@ -96,8 +96,6 @@ window.DEAR_DAY_SUPABASE = Object.freeze({
       if(profile?.is_active===false)return;
       role=profile?.role||'customer';
 
-      /* Incomplete customer profiles are handled by dear-day-auth-state.js so the
-         user can finish the required details before entering the account area. */
       if(role==='customer'&&!profileComplete(user))return;
 
       const next=explicitNext();
