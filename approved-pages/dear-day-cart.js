@@ -507,7 +507,9 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/approved-pages/Dear-D
         .dd-occ-footer .footer-top>div.dd-mobile-footer-accordion>h4{margin:0!important}
         .dd-occ-footer .dd-social-footer,.dd-occ-footer .dd-payment-footer{gap:8px!important}
         .dd-occ-footer .dd-social-footer h4,.dd-occ-footer .dd-payment-footer h4{flex-basis:100%!important}
-        .dd-occ-footer .dd-payment-icons{gap:6px!important}
+        .dd-occ-footer .dd-payment-icons{gap:6px!important;width:100%!important}
+        .dd-occ-footer .dd-pay-card{flex:1 1 0!important;min-width:0!important;max-width:60px!important}
+        .dd-occ-footer .dd-pay-master i{left:calc(50% - 14px)!important}.dd-occ-footer .dd-pay-master b{left:calc(50% - 4px)!important}
 
         .dd-occ-footer{padding-top:22px!important;padding-bottom:16px!important}
         .dd-occ-footer .dd-footer-wrap{width:calc(100% - 36px)!important}
