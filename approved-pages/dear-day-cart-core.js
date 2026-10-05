@@ -209,9 +209,22 @@
     `;
     return header;
   }
+  function ensureSocialFooterStyle(){
+    if(document.getElementById('dd-social-footer-style'))return;
+    const style=document.createElement('style');
+    style.id='dd-social-footer-style';
+    style.textContent=`
+      .dd-social-footer{margin-top:26px!important;padding-top:22px!important;border-top:1px solid rgba(255,255,255,.18)!important}
+      .dd-social-footer h4{margin:0 0 12px!important;color:#fff!important;font-size:14px!important}
+      .dd-social-icons{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important}
+      .dd-social-icon{width:38px!important;height:38px!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;color:#fff!important;font:700 15px/1 Arial,sans-serif!important;background:rgba(255,255,255,.06)!important}
+    `;
+    document.head.appendChild(style);
+  }
   function normalizeGlobalFooter(){
     if(!document.body)return null;
     const english=isEnglishPage(),p=localePaths();
+    ensureSocialFooterStyle();
     let footers=[...document.querySelectorAll('footer')];
     if(!footers.length){const footer=document.createElement('footer');document.body.appendChild(footer);footers=[footer]}
     footers.forEach(footer=>{
@@ -225,6 +238,7 @@
           <div><h4>${p.footer[2]}</h4><a href="${p.about}">${english?'About Us':'من نحن'}</a><a href="${p.how}">${p.nav[2]}</a><a href="${p.partners}">${p.nav[3]}</a></div>
           <div><h4>${p.footer[3]}</h4><a href="${p.faq}">${p.footer[4]}</a><a href="${p.contact}">${p.footer[5]}</a><a href="${p.refunds}">${p.footer[6]}</a><a href="${p.deletion}">${p.footer[7]}</a><a href="${p.privacy}">${p.footer[8]}</a><a href="${p.terms}">${p.footer[9]}</a></div>
         </div>
+        <div class="dd-social-footer" aria-label="${english?'Social media':'وسائل التواصل الاجتماعي'}"><h4>${english?'Follow Dear Day':'تابع Dear Day'}</h4><div class="dd-social-icons"><span class="dd-social-icon" aria-label="Facebook" title="Facebook">f</span><span class="dd-social-icon" aria-label="Instagram" title="Instagram">◎</span><span class="dd-social-icon" aria-label="X" title="X">𝕏</span><span class="dd-social-icon" aria-label="YouTube" title="YouTube">▶</span><span class="dd-social-icon" aria-label="Snapchat" title="Snapchat">♙</span><span class="dd-social-icon" aria-label="LinkedIn" title="LinkedIn">in</span></div></div>
         <div class="dd-payment-footer"><h4>${p.footer[10]}</h4><div class="dd-payment-icons" aria-label="${english?'Accepted payment methods':'وسائل الدفع المقبولة'}"><span class="dd-pay-card dd-pay-visa" aria-label="Visa">VISA</span><span class="dd-pay-card dd-pay-master" aria-label="Mastercard"><i></i><b></b></span><span class="dd-pay-card dd-pay-apple" aria-label="Apple Pay"><span class="dd-apple">●</span><strong>Pay</strong></span><span class="dd-pay-card dd-pay-google" aria-label="Google Pay"><strong>G</strong><span>Pay</span></span><span class="dd-pay-card dd-pay-wallet" aria-label="Wallet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h14a2 2 0 0 1 2 2v8H4a2 2 0 0 1-2-2v-11A2 2 0 0 1 4 2.5h12v3H4a1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="12.5" r="1" fill="currentColor"/></svg></span></div></div>
         <div class="footer-bottom"><span>© ${new Date().getFullYear()} Dear Day</span><span class="dd-legal-links"><a href="${p.privacy}">${p.footer[8]}</a><span aria-hidden="true"> · </span><a href="${p.terms}">${p.footer[9]}</a></span></div>
       </div>`;
