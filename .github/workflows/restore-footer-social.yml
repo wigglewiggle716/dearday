@@ -1,4 +1,4 @@
-name: Restore footer social icons
+name: Refine footer social and payment layout
 on:
   push:
     paths:
@@ -6,35 +6,49 @@ on:
 permissions:
   contents: write
 jobs:
-  restore:
+  refine:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
-      - name: Restore working social footer function
+      - name: Refine footer utility row
         run: |
-          git show 22d56e5d252d5a865caa55f1424579e97101daa2:approved-pages/dear-day-cart.js > /tmp/old-cart.js
           python3 - <<'PY'
           from pathlib import Path
-          cur=Path('approved-pages/dear-day-cart.js')
-          s=cur.read_text()
-          old=Path('/tmp/old-cart.js').read_text()
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text()
+
           marker='  function patchSocialFooter(){'
           next_marker='\n  function patchMobileFooterAccordion(){'
           a=s.index(marker)
           b=s.index(next_marker,a)
-          oa=old.index(marker)
-          ob=old.index(next_marker,oa)
-          working=old[oa:ob]
-          cur.write_text(s[:a]+working+s[b:])
+          block=s[a:b]
+
+          old="""    document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{\n      footer.querySelectorAll('.dd-social-footer,.footer-social').forEach(el=>el.remove());\n      const host=footer.querySelector('.footer-top')||footer.querySelector('.wrap')||footer;\n      if(!host)return;\n      const social=document.createElement('div');\n      social.className='dd-social-footer';\n      social.innerHTML=`<h4>${english?'Social Media':'وسائل التواصل الاجتماعي'}</h4><div class=\"dd-social-icons\" aria-label=\"${english?'Dear Day social media':'وسائل التواصل الاجتماعي الخاصة بـ Dear Day'}\">${platforms.map(([key,label])=>`<a href=\"#\" data-dd-social=\"${key}\" aria-label=\"${label}\" title=\"${label}\">${icons[key]}</a>`).join('')}</div>`;\n      host.appendChild(social);\n      social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));\n    });"""
+
+          new="""    document.querySelectorAll('footer,.dd-occ-footer').forEach(footer=>{\n      footer.querySelectorAll('.dd-social-footer,.footer-social').forEach(el=>el.remove());\n      const wrap=footer.querySelector('.dd-footer-wrap')||footer.querySelector('.wrap')||footer;\n      const top=footer.querySelector('.footer-top')||wrap;\n      if(!wrap||!top)return;\n\n      const existingUtility=footer.querySelector('.dd-footer-utility');\n      if(existingUtility){\n        const previousPayment=existingUtility.querySelector('.dd-payment-footer');\n        if(previousPayment) wrap.insertBefore(previousPayment,existingUtility);\n        existingUtility.remove();\n      }\n\n      const social=document.createElement('div');\n      social.className='dd-social-footer';\n      social.innerHTML=`<h4>${english?'Social Media':'وسائل التواصل الاجتماعي'}</h4><div class=\"dd-social-icons\" aria-label=\"${english?'Dear Day social media':'وسائل التواصل الاجتماعي الخاصة بـ Dear Day'}\">${platforms.map(([key,label])=>`<a href=\"#\" data-dd-social=\"${key}\" aria-label=\"${label}\" title=\"${label}\">${icons[key]}</a>`).join('')}</div>`;\n\n      const utility=document.createElement('div');\n      utility.className='dd-footer-utility';\n      const bottom=footer.querySelector('.footer-bottom');\n      if(bottom&&bottom.parentNode===wrap) wrap.insertBefore(utility,bottom);\n      else wrap.appendChild(utility);\n      utility.appendChild(social);\n\n      const payment=footer.querySelector('.dd-payment-footer');\n      if(payment) utility.appendChild(payment);\n\n      social.querySelectorAll('a[data-dd-social]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));\n    });"""
+
+          if old not in block:
+              raise SystemExit('Current social footer block not found')
+          block=block.replace(old,new,1)
+          s=s[:a]+block+s[b:]
+
+          if '.dd-footer-utility{' not in s:
+              anchor='''      @media(max-width:620px){\n        .footer-top>div.dd-mobile-footer-accordion'''
+              css='''      .dd-footer-utility{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:56px!important;align-items:start!important;width:100%!important;margin-top:30px!important;padding-top:26px!important;border-top:1px solid rgba(255,255,255,.18)!important;direction:ltr!important}\n      .dd-footer-utility .dd-social-footer,.dd-footer-utility .dd-payment-footer{width:auto!important;margin:0!important;padding:0!important;border:0!important}\n      .dd-footer-utility .dd-social-footer{grid-column:1!important;text-align:left!important}\n      .dd-footer-utility .dd-payment-footer{grid-column:2!important;text-align:right!important}\n      .dd-footer-utility .dd-social-icons,.dd-footer-utility .dd-payment-icons{direction:ltr!important}\n      .dd-footer-utility .dd-social-icons{justify-content:flex-start!important}\n      .dd-footer-utility .dd-payment-icons{justify-content:flex-end!important}\n      [dir=\"rtl\"] .dd-footer-utility .dd-social-footer{grid-column:2!important;text-align:right!important}\n      [dir=\"rtl\"] .dd-footer-utility .dd-payment-footer{grid-column:1!important;text-align:left!important}\n      [dir=\"rtl\"] .dd-footer-utility .dd-social-icons{justify-content:flex-end!important}\n      [dir=\"rtl\"] .dd-footer-utility .dd-payment-icons{justify-content:flex-start!important}\n      @media(max-width:760px){\n        .dd-footer-utility{grid-template-columns:1fr!important;gap:24px!important;margin-top:24px!important;padding-top:22px!important}\n        .dd-footer-utility .dd-social-footer,.dd-footer-utility .dd-payment-footer,[dir=\"rtl\"] .dd-footer-utility .dd-social-footer,[dir=\"rtl\"] .dd-footer-utility .dd-payment-footer{grid-column:1!important;text-align:center!important}\n        .dd-footer-utility .dd-social-icons,.dd-footer-utility .dd-payment-icons,[dir=\"rtl\"] .dd-footer-utility .dd-social-icons,[dir=\"rtl\"] .dd-footer-utility .dd-payment-icons{justify-content:center!important}\n      }\n'''
+              if anchor not in s:
+                  raise SystemExit('Footer CSS anchor not found')
+              s=s.replace(anchor,css+anchor,1)
+
+          p.write_text(s)
           PY
-      - name: Commit footer social restore
+      - name: Commit footer layout refinement
         run: |
           git config user.name "wigglewiggle716"
           git config user.email "wigglewiggle716@gmail.com"
           git add approved-pages/dear-day-cart.js
           git diff --cached --quiet && exit 0
-          git commit -m "Restore social icons in active footer script"
+          git commit -m "Refine social and payment footer layout"
           git push origin main
