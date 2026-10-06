@@ -176,45 +176,9 @@
     return target+String(location.search||'')+String(location.hash||'');
   }
   function normalizeGlobalHeader(){
-    const header=document.querySelector('header');
-    if(header?.dataset.ddGlobalNavVersion==='2')return header;
-    if(!header){
-      if(!document.body)return null;
-      const created=document.createElement('header');
-      document.body.insertBefore(created,document.body.firstChild);
-      return normalizeGlobalHeader();
-    }
-    ensureGlobalHeaderStyle();
-    const oldLogo=header.querySelector('img');
-    const logoSrc=oldLogo?.getAttribute('src')||'/approved-pages/assets/dear-day-wordmark.svg';
-    const english=isEnglishPage(),p=localePaths(),langHref=languageSwitchHref(),path=String(location.pathname||'/');
-    const homeActive=homePath()&&(english?path==='/en':path==='/'||path==='/index.html');
-    const occasionActive=/^\/(occasions|birthday)(?:-en)?$/i.test(path)||/Dear-Day-(Occasions|Birthday)-Approved(?:-en)?\.html/i.test(path);
-    const partnerActive=/^\/partners(?:-en)?$/i.test(path)||/Dear-Day-Partners(?:-en)?\.html/i.test(path);
-    const ariaCurrent=value=>value?' aria-current="page"':'';
-    header.className='dd-global-header';
-    header.dataset.ddGlobalNav='1';
-    header.dataset.ddGlobalNavVersion='2';
-    header.dir=english?'ltr':'rtl';
-    header.innerHTML=`
-      <a class="dd-global-brand" href="${p.home}" aria-label="Dear Day — ${english?'Home':'الرئيسية'}">
-        ${logoSrc?'<img src="'+logoSrc+'" alt="Dear Day">':'<span class="dd-global-brand-text">Dear Day</span>'}
-      </a>
-      <nav class="dd-global-nav" aria-label="${english?'Main navigation':'التنقل الرئيسي'}">
-        <a${ariaCurrent(homeActive)} href="${p.home}">${p.nav[0]}</a>
-        <a${ariaCurrent(occasionActive)} href="${p.occasions}">${p.nav[1]}</a>
-        <a href="${p.how}">${p.nav[2]}</a>
-        <a${ariaCurrent(partnerActive)} href="${p.partners}">${p.nav[3]}</a>
-        <a class="dd-plan-cta" href="${p.occasions}">${p.nav[4]}</a>
-      </nav>
-      <div class="dd-global-actions">
-        <a class="dd-mobile-plan" href="${p.occasions}">${p.nav[4]}</a>
-        <a class="dd-auth" href="${p.login}">${english?'Log In':'تسجيل الدخول'}</a>
-        <a class="dd-auth dd-signup" href="${p.signup}">${english?'Create Account':'إنشاء حساب'}</a>
-        <a class="dd-lang" href="${langHref}" aria-label="${p.label}">${p.language}</a>
-      </div>
-    `;
-    return header;
+    // Page HTML is the single source of truth for navigation.
+    // Cart code must never replace or rebuild the header.
+    return document.querySelector('header') || null;
   }
   function ensureSocialFooterStyle(){
     if(document.getElementById('dd-social-footer-style'))return;
