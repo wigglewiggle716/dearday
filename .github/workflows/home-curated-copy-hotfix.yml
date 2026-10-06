@@ -1,0 +1,35 @@
+name: Home curated copy hotfix
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/home-curated-copy-hotfix.yml'
+permissions:
+  contents: write
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Update curated section copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('approved-pages/dear-day-home-categories.js')
+          s = p.read_text(encoding='utf-8')
+          old = "<div><span>${t('اختيارات من Dear Day','Dear Day picks')}</span><h2>${t('مختارات جاهزة ليومك','Ready picks for your day')}</h2><p>${t('اختيارات من كل قسم تقدر تضيفها للسلة مباشرة، والأماكن تستكشفها قبل تأكيد الموعد.','Curated picks you can add straight to your cart, with places reviewed before confirming the date.')}</p></div>"
+          new = "<div><h2>${t('مختارات من Dear Day جاهزة ليومك','Dear Day picks ready for your day')}</h2><p>${t('اختيارات من كل قسم تقدر تضيفها للسلة مباشرة.','Curated picks from every category you can add straight to your cart.')}</p></div>"
+          if old not in s:
+              raise SystemExit('Target curated copy not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit changes and remove temporary workflow
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/home-curated-copy-hotfix.yml
+          git add approved-pages/dear-day-home-categories.js
+          git commit -m "Refine curated picks section copy"
+          git push origin main
