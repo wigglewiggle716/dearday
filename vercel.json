@@ -423,6 +423,14 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/home-live-v3.html"
+    },
+    {
+      "source": "/en",
+      "destination": "/home-live-v3-en.html"
+    },
+    {
       "source": "/auth",
       "destination": "/Dear-Day-Auth.html"
     },
@@ -445,10 +453,6 @@
     {
       "source": "/bookings-en",
       "destination": "/Dear-Day-Bookings-en.html"
-    },
-    {
-      "source": "/en",
-      "destination": "/index-en.html"
     },
     {
       "source": "/occasions",
