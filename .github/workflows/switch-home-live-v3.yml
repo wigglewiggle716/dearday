@@ -1,0 +1,59 @@
+name: Switch live home route v3
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/switch-home-live-v3.yml'
+permissions:
+  contents: write
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create fresh live home files and rewrite root
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          ar = Path('index.html').read_text(encoding='utf-8')
+          en = Path('index-en.html').read_text(encoding='utf-8')
+          if 'dd-static-explore' not in ar or 'اكتشف' not in ar:
+              raise SystemExit('Arabic home does not contain static Explore nav')
+          if 'dd-static-explore' not in en or 'Explore' not in en:
+              raise SystemExit('English home does not contain static Explore nav')
+
+          ar = ar.replace('<!DOCTYPE html>', '<!DOCTYPE html>\n<!-- DD_HOME_LIVE_V3_AR -->', 1)
+          en = en.replace('<!DOCTYPE html>', '<!DOCTYPE html>\n<!-- DD_HOME_LIVE_V3_EN -->', 1)
+          Path('home-live-v3.html').write_text(ar, encoding='utf-8')
+          Path('home-live-v3-en.html').write_text(en, encoding='utf-8')
+
+          p = Path('vercel.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          rewrites = [r for r in data.get('rewrites', []) if r.get('source') not in ('/', '/en')]
+          rewrites.insert(0, {'source':'/en','destination':'/home-live-v3-en.html'})
+          rewrites.insert(0, {'source':'/','destination':'/home-live-v3.html'})
+          data['rewrites'] = rewrites
+
+          headers = [h for h in data.get('headers', []) if h.get('source') not in ('/', '/en')]
+          no_store = [
+            {'key':'Cache-Control','value':'no-store, no-cache, must-revalidate, max-age=0'},
+            {'key':'Pragma','value':'no-cache'},
+            {'key':'Expires','value':'0'}
+          ]
+          headers += [
+            {'source':'/','headers':no_store},
+            {'source':'/en','headers':no_store}
+          ]
+          data['headers'] = headers
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+          PY
+      - name: Commit switch and remove workflow
+        run: |
+          rm .github/workflows/switch-home-live-v3.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add home-live-v3.html home-live-v3-en.html vercel.json .github/workflows/switch-home-live-v3.yml
+          git commit -m 'Serve fresh static home with Explore navigation'
+          git push
