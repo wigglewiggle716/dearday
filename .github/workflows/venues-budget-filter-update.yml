@@ -1,0 +1,110 @@
+name: Update venues budget filter
+on:
+  push:
+    paths:
+      - '.github/workflows/venues-budget-filter-update.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace guests and price filters
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+              Path('venues.html'),
+              Path('venues-en.html'),
+              Path('approved-pages/Dear-Day-Venues-Approved.html'),
+              Path('approved-pages/Dear-Day-Venues-Approved-en.html'),
+          ]
+
+          ar_budget = '<div class="filter-group"><h4>الميزانية</h4><div class="chips" data-filter="budget"><button class="chip active" data-value="all">الكل</button><button class="chip" data-value="low">أقل من 1,000</button><button class="chip" data-value="mid">1,000–2,500</button><button class="chip" data-value="high">أكثر من 2,500</button></div></div>'
+          en_budget = '<div class="filter-group"><h4>Budget</h4><div class="chips" data-filter="budget"><button class="chip active" data-value="all">All</button><button class="chip" data-value="low">Under 1,000</button><button class="chip" data-value="mid">1,000–2,500</button><button class="chip" data-value="high">Over 2,500</button></div></div>'
+
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              is_en = p.name.endswith('-en.html') or p.name == 'venues-en.html'
+
+              # Remove the full guests/people filter group.
+              heading = 'Guests' if is_en else 'عدد الأشخاص'
+              s, n = re.subn(
+                  rf'<div class="filter-group"><h4>{re.escape(heading)}</h4><div class="chips" data-filter="guests">.*?</div></div>',
+                  '', s, count=1, flags=re.S
+              )
+              if n != 1:
+                  raise RuntimeError(f'{p}: guests filter not found exactly once')
+
+              # Replace slider price filter with gift-style budget chips.
+              price_heading = 'Maximum price' if is_en else 'نطاق السعر'
+              replacement = en_budget if is_en else ar_budget
+              s, n = re.subn(
+                  rf'<div class="filter-group"><h4>{re.escape(price_heading)}</h4><input id="priceRange".*?<div class="range-row">.*?</div></div>',
+                  replacement, s, count=1, flags=re.S
+              )
+              if n != 1:
+                  raise RuntimeError(f'{p}: price slider group not found exactly once')
+
+              # Update filter state.
+              old_filters = "const filters={type:'all',area:'all',guests:'all',atmosphere:'all',max:5000,q:''};"
+              new_filters = "const filters={type:'all',area:'all',atmosphere:'all',budget:'all',q:''};"
+              if old_filters not in s:
+                  raise RuntimeError(f'{p}: old filters state not found')
+              s = s.replace(old_filters, new_filters, 1)
+
+              # Remove guest filtering and replace max-slider logic with budget buckets.
+              guest_logic = "if(filters.guests!=='all'&&v.guests>Number(filters.guests))return false;"
+              if guest_logic not in s:
+                  raise RuntimeError(f'{p}: guest filter logic not found')
+              s = s.replace(guest_logic, '', 1)
+
+              max_logic = "if(v.price>filters.max)return false;"
+              budget_logic = "if(filters.budget==='low'&&v.price>=1000)return false;if(filters.budget==='mid'&&(v.price<1000||v.price>2500))return false;if(filters.budget==='high'&&v.price<=2500)return false;"
+              if max_logic not in s:
+                  raise RuntimeError(f'{p}: max-price logic not found')
+              s = s.replace(max_logic, budget_logic, 1)
+
+              # Remove obsolete slider DOM synchronization and input listener.
+              slider_sync = "el('priceRange').value=filters.max;el('maxPrice').textContent='EGP '+money(filters.max);"
+              if slider_sync not in s:
+                  raise RuntimeError(f'{p}: slider sync not found')
+              s = s.replace(slider_sync, '', 1)
+
+              slider_listener = "el('priceRange').oninput=e=>{filters.max=Number(e.target.value);el('maxPrice').textContent='EGP '+money(filters.max);renderGrid()};"
+              if slider_listener not in s:
+                  raise RuntimeError(f'{p}: slider listener not found')
+              s = s.replace(slider_listener, '', 1)
+
+              old_reset = "el('reset').onclick=()=>{filters.type=filters.area=filters.guests=filters.atmosphere='all';filters.max=5000;filters.q='';el('search').value='';syncFilters();renderGrid()};"
+              new_reset = "el('reset').onclick=()=>{filters.type=filters.area=filters.atmosphere=filters.budget='all';filters.q='';el('search').value='';syncFilters();renderGrid()};"
+              if old_reset not in s:
+                  raise RuntimeError(f'{p}: old reset logic not found')
+              s = s.replace(old_reset, new_reset, 1)
+
+              # QA checks.
+              forbidden = ['data-filter="guests"', 'id="priceRange"', 'id="maxPrice"', 'filters.guests', 'filters.max']
+              bad = [x for x in forbidden if x in s]
+              if bad:
+                  raise RuntimeError(f'{p}: stale filter references remain: {bad}')
+              required = ['data-filter="budget"', "filters.budget==='low'", "filters.budget==='mid'", "filters.budget==='high'"]
+              missing = [x for x in required if x not in s]
+              if missing:
+                  raise RuntimeError(f'{p}: missing new budget filter pieces: {missing}')
+
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit updated venues filters
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add venues.html venues-en.html approved-pages/Dear-Day-Venues-Approved.html approved-pages/Dear-Day-Venues-Approved-en.html
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Simplify venues filters and add budget chips"
+          git push
