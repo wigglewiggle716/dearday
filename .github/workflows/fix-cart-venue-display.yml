@@ -22,15 +22,22 @@ jobs:
           from pathlib import Path
 
           files = [Path('cart.html'), Path('approved-pages/Dear-Day-Cart.html')]
-          old = "<div class=\"item-title\">'+esc(item.ar||item.name)+'</div><div class=\"meta\">'+esc([item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div>"
-          new = "<div class=\"item-title\">'+esc(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))+'</div><div class=\"meta\">'+esc([(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div>"
+          old_title = "esc(item.ar||item.name)"
+          new_title = "esc(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))"
+          old_meta = "esc([item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))"
+          new_meta = "esc([(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))"
 
           for path in files:
               text = path.read_text(encoding='utf-8')
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'{path}: expected 1 cart rendering match, found {count}')
-              path.write_text(text.replace(old, new), encoding='utf-8')
+              title_count = text.count(old_title)
+              meta_count = text.count(old_meta)
+              if title_count != 1:
+                  raise SystemExit(f'{path}: expected 1 title match, found {title_count}')
+              if meta_count != 1:
+                  raise SystemExit(f'{path}: expected 1 meta match, found {meta_count}')
+              text = text.replace(old_title, new_title)
+              text = text.replace(old_meta, new_meta)
+              path.write_text(text, encoding='utf-8')
               print(f'updated {path}')
           PY
       - name: Verify venue display logic
@@ -52,4 +59,4 @@ jobs:
           git commit -m 'Show actual venue names in cart'
           git push origin main
 
-# one-time trigger
+# one-time trigger v2
