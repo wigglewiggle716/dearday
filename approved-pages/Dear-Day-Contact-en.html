@@ -55,5 +55,5 @@ footer{background:var(--footer);color:#f8e8eb;padding:52px 0 24px}.footer-top{di
 (function(){const message=document.getElementById('message');if(message){const autoGrow=function(){message.style.height='auto';message.style.height=message.scrollHeight+'px';};message.addEventListener('input',autoGrow);autoGrow();}})();
 (function(){const form=document.getElementById('contactForm');const status=document.getElementById('contactStatus');if(!form)return;form.addEventListener('submit',function(e){e.preventDefault();if(!form.reportValidity())return;const data=Object.fromEntries(new FormData(form).entries());data.createdAt=new Date().toISOString();try{localStorage.setItem('dearDayContactMessage',JSON.stringify(data))}catch(err){}status.className='form-status show';status.textContent='Your message has been saved on this device for now. Actual sending will be enabled once the customer care system is connected.';});})();
 </script>
-<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-1"></script></body>
+<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-2"></script></body>
 </html>

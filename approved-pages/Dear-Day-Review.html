@@ -58,4 +58,4 @@ consentCheck.addEventListener('change',()=>{consent.dataset.touched='1';syncCons
 payBtn.onclick=()=>{if(!consentCheck.checked){consent.dataset.touched='1';syncConsent();warning.style.display='block';warning.textContent='يجب الموافقة على الشروط والأحكام وسياسة الإلغاء والاسترداد قبل المتابعة للدفع.';showToast('وافق على الشروط والأحكام أولًا');return}const hasDetails=!!(details.celebrant&&details.eventDate&&details.eventTime);if(!cart.length){showToast('أضف اختياراتك الأول قبل الدفع');return}if(!hasDetails){showToast('أكمل تفاصيل المناسبة الأول');return}plan.reviewedAt=new Date().toISOString();plan.legalConsent={accepted:true,acceptedAt:new Date().toISOString(),terms:'/terms',refunds:'/refunds'};savePlan(plan);location.href='/payment'};
 renderDetails();renderItems();renderSummary();
 </script>
-<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-1"></script></body></html>
+<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-2"></script></body></html>

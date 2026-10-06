@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VERSION='20261006-1';
+  const VERSION='20261006-2';
   const PATH=String(location.pathname||'/');
   const EN=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr'||document.body?.dir==='ltr'||/-en(?:\.html)?$/i.test(PATH)||PATH==='/en';
   const labels=EN?{
