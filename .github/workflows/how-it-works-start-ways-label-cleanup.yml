@@ -1,0 +1,53 @@
+name: How It Works start ways label cleanup
+on:
+  push:
+    paths:
+      - '.github/workflows/how-it-works-start-ways-label-cleanup.yml'
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update start ways labels and method number size
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+              Path('how-it-works.html'),
+              Path('how-it-works-en.html'),
+              Path('approved-pages/Dear-Day-How-It-Works.html'),
+              Path('approved-pages/Dear-Day-How-It-Works-en.html'),
+          ]
+
+          for p in files:
+              s = p.read_text(encoding='utf-8')
+              # Remove only the small section label directly inside the start-ways section header.
+              s = re.sub(
+                  r'(<section class="start-ways"><div class="wrap"><div class="section-head">)\s*<span>.*?</span>',
+                  r'\1',
+                  s,
+                  count=1,
+                  flags=re.S,
+              )
+              # Make "Method 01 / 02" labels slightly more prominent without changing layout.
+              s = s.replace(
+                  ".way small{display:block;font:700 10px/1 Lora,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:var(--terra)}",
+                  ".way small{display:block;font:700 13px/1 Lora,Georgia,serif;letter-spacing:.08em;text-transform:uppercase;color:var(--terra)}"
+              )
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit update
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add how-it-works.html how-it-works-en.html approved-pages/Dear-Day-How-It-Works.html approved-pages/Dear-Day-How-It-Works-en.html
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Refine How It Works start options labels"
+          git push
