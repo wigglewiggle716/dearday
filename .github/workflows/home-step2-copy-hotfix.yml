@@ -1,0 +1,61 @@
+name: Home step 02 copy hotfix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/home-step2-copy-hotfix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update step 02 copy in Arabic and English
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              'index.html': [
+                  ('اجمع المكان والهدية والكيك والتجربة في خطة واحدة، وعدّل أي تفصيلة براحتك.', 'اجمع المكان والهدية والكيك والورد في خطة واحدة، وعدّل أي تفصيلة براحتك.'),
+              ],
+              'index-en.html': [
+                  ('Bring the venue, gift, cake and experience into one plan, then fine-tune every detail your way.', 'Bring the venue, gift, cake, and flowers into one plan, then fine-tune every detail your way.'),
+              ],
+          }
+
+          changed = False
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              original = text
+              for old, new in pairs:
+                  text = text.replace(old, new)
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  changed = True
+                  print(f'Updated {filename}')
+
+          if not changed:
+              print('No changes needed.')
+          PY
+
+      - name: Commit step 02 copy changes
+        run: |
+          if git diff --quiet -- index.html index-en.html; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html index-en.html
+          git commit -m "Update home step 02 flowers copy"
+          git push origin HEAD:main
