@@ -1,0 +1,56 @@
+name: Compact gifts sort toolbar
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/compact-gifts-sort-toolbar.yml'
+permissions:
+  contents: write
+jobs:
+  compact-toolbar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply compact toolbar styles
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files = [
+              Path('gifts.html'),
+              Path('gifts-en.html'),
+              Path('approved-pages/Dear-Day-Gifts-Approved.html'),
+              Path('approved-pages/Dear-Day-Gifts-Approved-en.html'),
+          ]
+          marker = 'id="dd-gifts-compact-toolbar"'
+          style = '<style id="dd-gifts-compact-toolbar">.toolbar{justify-content:space-between!important;align-items:center!important}.toolbar strong#resultCount{white-space:nowrap!important;flex:0 0 auto!important;line-height:1.2!important}.toolbar>.sort,.toolbar>.dd-select-shell{width:180px!important;min-width:180px!important;max-width:180px!important;flex:0 0 180px!important}.toolbar .dd-select-trigger{width:180px!important;min-width:180px!important;max-width:180px!important;padding-inline:12px!important}.toolbar .dd-select-menu{min-width:220px!important;max-width:260px!important}@media(max-width:620px){.toolbar>.sort,.toolbar>.dd-select-shell,.toolbar .dd-select-trigger{width:165px!important;min-width:165px!important;max-width:165px!important}.toolbar>.sort,.toolbar>.dd-select-shell{flex-basis:165px!important}.toolbar strong#resultCount{font-size:15px!important}}</style>'
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              if marker in text:
+                  print('already styled', path)
+                  continue
+              if '</head>' not in text:
+                  raise SystemExit(f'{path}: missing </head>')
+              path.write_text(text.replace('</head>', style + '\n</head>', 1), encoding='utf-8')
+              print('updated', path)
+          PY
+      - name: Verify toolbar styles
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['gifts.html','gifts-en.html','approved-pages/Dear-Day-Gifts-Approved.html','approved-pages/Dear-Day-Gifts-Approved-en.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'id="dd-gifts-compact-toolbar"' in s
+              assert 'strong#resultCount{white-space:nowrap' in s
+              assert 'width:180px!important' in s
+              print('verified', p)
+          PY
+      - name: Commit compact toolbar
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add gifts.html gifts-en.html approved-pages/Dear-Day-Gifts-Approved.html approved-pages/Dear-Day-Gifts-Approved-en.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Compact gifts sort toolbar'
+          git push origin main
