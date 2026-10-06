@@ -1,0 +1,46 @@
+name: Add flowers hero image
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/flowers-hero-image.yml'
+permissions:
+  contents: write
+jobs:
+  flowers-hero:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Link generated hero artwork
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          link='<link rel="stylesheet" href="/approved-pages/assets/flowers-hero-generated.css?v=20261006-1">'
+          for name in ['approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html']:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              if 'flowers-hero-generated.css' not in s:
+                  if '</head>' not in s:
+                      raise SystemExit(f'{name}: missing </head>')
+                  s=s.replace('</head>',link+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify hero artwork link
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html']:
+              s=Path(name).read_text(encoding='utf-8')
+              assert 'flowers-hero-generated.css?v=20261006-1' in s
+          print('flowers hero linked')
+          PY
+      - name: Commit hero artwork link
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add approved-pages/Dear-Day-Flowers-Approved.html approved-pages/Dear-Day-Flowers-Approved-en.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add generated flowers hero image'
+          git push origin main
