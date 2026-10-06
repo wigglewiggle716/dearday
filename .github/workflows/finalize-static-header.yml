@@ -1,0 +1,84 @@
+name: Finalize static Explore header
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-static-header.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Neutralize legacy header rewrites
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed=[]
+
+          # 1) Mark static Explore nav as authoritative, so even a cached legacy
+          # overlay script exits before rebuilding the desktop nav.
+          html_files=list(Path('.').glob('*.html'))+list(Path('approved-pages').glob('*.html'))
+          for p in html_files:
+              s=p.read_text(encoding='utf-8')
+              n=s
+              # Add legacy-compatible class to the real static Explore wrapper.
+              n=n.replace('class="dd-static-explore"','class="dd-static-explore dd-explore-nav"')
+              # Add version marker to navs that contain the static Explore wrapper.
+              def mark_nav(m):
+                  tag=m.group(0)
+                  if 'dd-static-explore' not in tag:
+                      return tag
+                  if 'data-dd-explore-version=' in tag:
+                      return tag
+                  return tag.replace('>', ' data-dd-explore-version="20261006-2">', 1)
+              n=re.sub(r'<nav\b[^>]*>.*?</nav>', mark_nav, n, flags=re.I|re.S)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8')
+                  changed.append(str(p))
+
+          # 2) Make mobile-nav non-destructive to the new static desktop header.
+          p=Path('approved-pages/dear-day-mobile-nav.js')
+          s=p.read_text(encoding='utf-8')
+          n=s
+          # The old special-case English How It Works rewrite must never touch
+          # a page that already has the static Explore header.
+          needle="const header=document.querySelector('header');if(!header)return;"
+          repl="const header=document.querySelector('header');if(!header)return;if(header.querySelector('.dd-static-explore'))return;"
+          if needle in n and repl not in n:
+              n=n.replace(needle,repl,1)
+          # Avoid calling the legacy rewrite at all from the regular scan when a
+          # static header exists. Keep all unrelated footer/mobile behavior.
+          old="function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}"
+          new="function scan(){ensureStyle();const hasStatic=!!document.querySelector('header .dd-static-explore');if(!hasStatic)forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();if(!hasStatic)forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}"
+          if old in n:
+              n=n.replace(old,new)
+          if n!=s:
+              p.write_text(n,encoding='utf-8')
+              changed.append(str(p))
+
+          # 3) Cache-bust mobile-nav injection so browsers fetch this fixed file.
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          n=re.sub(r"dear-day-mobile-nav\.js\?v=[^'\"]+","dear-day-mobile-nav.js?v=20261006-static1",s)
+          if n!=s:
+              p.write_text(n,encoding='utf-8')
+              changed.append(str(p))
+
+          print('Changed',len(changed),'files')
+          for f in changed: print(f)
+          PY
+      - name: Commit final static-header fix
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add '*.html' 'approved-pages/*.html' approved-pages/dear-day-mobile-nav.js approved-pages/dear-day-cart.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Make static Explore header authoritative"
+          git push
