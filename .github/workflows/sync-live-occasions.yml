@@ -1,0 +1,30 @@
+name: Sync live occasions pages
+
+on:
+  push:
+    paths:
+      - '.github/workflows/sync-live-occasions.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync approved occasions pages to live root files
+        run: |
+          cp approved-pages/Dear-Day-Occasions-Approved.html occasions.html
+          cp approved-pages/Dear-Day-Occasions-Approved-en.html occasions-en.html
+      - name: Commit live page sync
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add occasions.html occasions-en.html
+          if git diff --cached --quiet; then
+            echo "Already synced"
+            exit 0
+          fi
+          git commit -m "Sync live occasions pages with approved versions"
+          git push
