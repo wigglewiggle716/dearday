@@ -1,0 +1,78 @@
+name: Fix mobile Explore menu duplicates
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-mobile-explore-duplicates.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove duplicated mobile category links and style Explore children
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          changed=[]
+
+          # 1) Mobile menu: category links should live only inside Explore.
+          p=Path('approved-pages/dear-day-mobile-nav.js')
+          s=p.read_text(encoding='utf-8')
+          old_en="['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['Gifts','/gifts-en'],['Cake & Sweets','/cake-en'],['Flowers','/flowers-en'],['Places & Experiences','/venues-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']"
+          new_en="['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']"
+          old_ar="['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['الهدايا','/gifts'],['الكيك والحلويات','/cake'],['الورد','/flowers'],['الأماكن والتجارب','/venues'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']"
+          new_ar="['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']"
+          n=s.replace(old_en,new_en).replace(old_ar,new_ar)
+          if n!=s:
+              p.write_text(n,encoding='utf-8')
+              changed.append(str(p))
+
+          # 2) Make Explore children visibly nested with a soft branded background.
+          p=Path('approved-pages/assets/dear-day-explore-static.css')
+          s=p.read_text(encoding='utf-8')
+          n=s
+          n=n.replace(
+            '.dd-static-explore-mobile-list{display:none;padding:3px 8px 8px}',
+            '.dd-static-explore-mobile-list{display:none;margin:4px 8px 8px;padding:6px 8px 8px;border-radius:12px;background:#FBF4F0;border:1px solid rgba(107,53,64,.08)}'
+          )
+          n=n.replace(
+            '.dd-static-explore-mobile-list a{display:block!important;padding:10px 22px!important;margin:4px 0!important;border-radius:10px!important;background:#FBF4F0!important;color:#6B3540!important;font-weight:600!important;text-decoration:none!important}',
+            '.dd-static-explore-mobile-list a{display:block!important;padding:10px 18px!important;margin:2px 0!important;border-radius:9px!important;background:transparent!important;color:#6B3540!important;font-weight:600!important;text-decoration:none!important}.dd-static-explore-mobile-list a:hover,.dd-static-explore-mobile-list a:focus-visible{background:#F6E7E1!important}'
+          )
+          if n!=s:
+              p.write_text(n,encoding='utf-8')
+              changed.append(str(p))
+
+          # 3) Cache-bust both assets wherever referenced.
+          files=list(Path('.').glob('*.html'))+list(Path('approved-pages').glob('*.html'))+[Path('approved-pages/dear-day-cart.js')]
+          for p in files:
+              if not p.exists():
+                  continue
+              s=p.read_text(encoding='utf-8')
+              n=re.sub(r'dear-day-mobile-nav\.js\?v=[^\"\'\s<]+','dear-day-mobile-nav.js?v=20261006-mobileExplore1',s)
+              n=re.sub(r'dear-day-explore-static\.css\?v=[^\"\'\s<]+','dear-day-explore-static.css?v=20261006-mobileExplore1',n)
+              n=re.sub(r'dear-day-explore-static\.js\?v=[^\"\'\s<]+','dear-day-explore-static.js?v=20261006-mobileExplore1',n)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8')
+                  changed.append(str(p))
+
+          print('Changed files:', len(set(changed)))
+          for f in sorted(set(changed)):
+              print(f)
+          PY
+      - name: Commit cleanup and remove one-time workflow
+        run: |
+          rm .github/workflows/fix-mobile-explore-duplicates.yml
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Clean up mobile Explore menu hierarchy"
+          git push
