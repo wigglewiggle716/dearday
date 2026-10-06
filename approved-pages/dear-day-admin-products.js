@@ -29,7 +29,7 @@
 
   async function loadData(){
     const [p,c,l,v]=await Promise.all([
-      supabase.from('partners').select('id,name_ar,name_en,status').order('name_ar'),
+      supabase.from('partner_directory').select('id,name_ar,name_en,status').order('name_ar'),
       supabase.from('categories').select('id,slug,name_ar,name_en,is_active,sort_order').order('sort_order').order('name_ar'),
       supabase.from('listings').select('*').order('updated_at',{ascending:false}),
       supabase.from('listing_versions').select('*').order('created_at',{ascending:false})

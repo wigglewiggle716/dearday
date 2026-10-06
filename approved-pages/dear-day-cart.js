@@ -58,7 +58,7 @@
     if(!(p==='/'||/\/index(?:-en)?\.html$/i.test(p)))return;
     if(document.querySelector('script[data-dd-home-categories]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-home-categories.js?v=20261003-6';
+    s.src='/approved-pages/dear-day-home-categories.js?v=20261006-ops01';
     s.defer=true;
     s.setAttribute('data-dd-home-categories','');
     (document.head||document.documentElement).appendChild(s);
@@ -70,7 +70,7 @@
     if(!/\/approved-pages\/Dear-Day-(Gifts|Cake|Flowers)-Approved(?:-en)?\.html$/i.test(p))return;
     if(document.querySelector('script[data-dd-live-catalog]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-live-catalog.js?v=20261003-2';
+    s.src='/approved-pages/dear-day-live-catalog.js?v=20261006-ops01';
     s.defer=true;
     s.setAttribute('data-dd-live-catalog','');
     (document.head||document.documentElement).appendChild(s);

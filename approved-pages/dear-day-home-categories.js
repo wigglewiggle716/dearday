@@ -126,7 +126,7 @@
     const versionIds=(ls||[]).map(x=>x.published_version_id).filter(Boolean),partnerIds=[...new Set((ls||[]).map(x=>x.partner_id).filter(Boolean))];
     const [{data:vs,error:ve},{data:ps,error:pe}]=await Promise.all([
       versionIds.length?client.from('listing_versions').select('id,status,name_ar,name_en,description_ar,description_en,price,currency,media,metadata').in('id',versionIds).eq('status','published'):Promise.resolve({data:[],error:null}),
-      partnerIds.length?client.from('partners').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
+      partnerIds.length?client.from('partner_directory').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
     ]);if(ve)throw ve;if(pe)throw pe;
     const vm=new Map((vs||[]).map(x=>[x.id,x])),pm=new Map((ps||[]).map(x=>[x.id,x]));
     const grouped={gifts:[],'cakes-sweets':[],flowers:[]};

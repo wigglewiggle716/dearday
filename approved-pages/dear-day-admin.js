@@ -57,7 +57,7 @@
     if(error)throw error;
     const ids=[...new Set((versions||[]).map(x=>x.listing_id).filter(Boolean))];
     let listings=[],partners=[];
-    if(ids.length){const l=await supabase.from('listings').select('id,partner_id').in('id',ids);if(l.error)throw l.error;listings=l.data||[];const pids=[...new Set(listings.map(x=>x.partner_id).filter(Boolean))];if(pids.length){const p=await supabase.from('partners').select('id,name_ar,name_en').in('id',pids);if(p.error)throw p.error;partners=p.data||[]}}
+    if(ids.length){const l=await supabase.from('listings').select('id,partner_id').in('id',ids);if(l.error)throw l.error;listings=l.data||[];const pids=[...new Set(listings.map(x=>x.partner_id).filter(Boolean))];if(pids.length){const p=await supabase.from('partner_directory').select('id,name_ar,name_en').in('id',pids);if(p.error)throw p.error;partners=p.data||[]}}
     const partnerName=listingId=>{const l=listings.find(x=>x.id===listingId),p=partners.find(x=>x.id===l?.partner_id);return p?.name_ar||p?.name_en||'—'};
     $('approvalsBody').innerHTML=(versions||[]).map(v=>`<tr><td><strong>${esc(v.name_ar||v.name_en||'بدون اسم')}</strong></td><td>${esc(partnerName(v.listing_id))}</td><td>${money(v.price,v.currency)}</td><td>${date(v.submitted_at||v.created_at)}</td></tr>`).join('');
     $('approvalsEmpty').hidden=!!versions?.length;

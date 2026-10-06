@@ -37,7 +37,7 @@
     const versionIds=(ls||[]).map(x=>x.published_version_id).filter(Boolean),partnerIds=[...new Set((ls||[]).map(x=>x.partner_id))];
     const [{data:vs,error:ve},{data:ps,error:pe}]=await Promise.all([
       versionIds.length?client.from('listing_versions').select('id,listing_id,status,name_ar,name_en,description_ar,description_en,price,compare_at_price,currency,media,metadata').in('id',versionIds).eq('status','published'):Promise.resolve({data:[],error:null}),
-      partnerIds.length?client.from('partners').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
+      partnerIds.length?client.from('partner_directory').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
     ]);if(ve)throw ve;if(pe)throw pe;
     const vm=new Map((vs||[]).map(x=>[x.id,x])),pm=new Map((ps||[]).map(x=>[x.id,x]));
     items=(ls||[]).map(l=>{const v=vm.get(l.published_version_id),p=pm.get(l.partner_id);if(!v||!p)return null;const media=Array.isArray(v.media)?v.media:[];return{id:l.id,listing_id:l.id,partner_id:l.partner_id,name:EN?(v.name_en||v.name_ar):v.name_ar,name_ar:v.name_ar,name_en:v.name_en,description:EN?(v.description_en||v.description_ar):v.description_ar,price:Number(v.price||0),compare:Number(v.compare_at_price||0),currency:v.currency||'EGP',image:media[0]?.url||'',vendor:EN?(p.name_en||p.name_ar):p.name_ar,meta:v.metadata||{},stock:l.stock_qty}}).filter(Boolean);

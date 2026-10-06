@@ -38,7 +38,7 @@ async function loadAccountant(ctx){
   $('accountantEmail').textContent=ctx.user.email||'';
 
   const[partnersRes,settlementsRes,partnerOrdersRes,itemsRes,ordersRes]=await Promise.all([
-    supabase.from('partners').select('id,name_ar,name_en'),
+    supabase.from('partner_directory').select('id,name_ar,name_en'),
     supabase.from('partner_settlements').select('id,partner_id,status,period_start,period_end,gross_amount,commission_amount,partner_net,payment_reference,created_at').order('created_at',{ascending:false}),
     supabase.from('partner_orders').select('id,partner_id,status,subtotal,commission_amount,partner_net,completed_at').eq('status','completed').order('completed_at',{ascending:false}),
     supabase.from('settlement_items').select('partner_order_id'),
