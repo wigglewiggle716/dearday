@@ -16,26 +16,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fix venue title and description in Arabic cart
+      - name: Use actual venue name in Arabic cart
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
           files = [Path('cart.html'), Path('approved-pages/Dear-Day-Cart.html')]
-          title_pattern = r"item\.ar\s*\|\|\s*item\.name"
-          title_replacement = "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)"
-          meta_pattern = r"\[\s*item\.vendor\s*,\s*item\.area\s*,\s*item\.people\s*,\s*item\.meta\s*\]"
-          meta_replacement = "[(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta]"
+          pattern = r"item\.ar\s*\|\|\s*item\.name"
+          replacement = "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)"
 
           for path in files:
               text = path.read_text(encoding='utf-8')
-              text, title_count = re.subn(title_pattern, title_replacement, text, count=1)
-              text, meta_count = re.subn(meta_pattern, meta_replacement, text, count=1)
-              if title_count != 1:
-                  raise SystemExit(f'{path}: expected 1 venue-title expression, found {title_count}')
-              if meta_count != 1:
-                  raise SystemExit(f'{path}: expected 1 cart-meta array, found {meta_count}')
+              text, count = re.subn(pattern, replacement, text, count=1)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected 1 venue-title expression, found {count}')
               path.write_text(text, encoding='utf-8')
               print(f'updated {path}')
           PY
@@ -46,7 +41,6 @@ jobs:
           for p in ['cart.html','approved-pages/Dear-Day-Cart.html']:
               s=Path(p).read_text(encoding='utf-8')
               assert "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)" in s
-              assert "(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null" in s
               print('verified', p)
           PY
       - name: Commit fix
@@ -58,4 +52,4 @@ jobs:
           git commit -m 'Show actual venue names in cart'
           git push origin main
 
-# one-time trigger v3
+# one-time trigger v4
