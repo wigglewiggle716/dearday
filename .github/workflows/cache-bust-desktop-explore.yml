@@ -1,0 +1,41 @@
+name: Cache bust desktop Explore CSS
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cache-bust-desktop-explore.yml'
+permissions:
+  contents: write
+jobs:
+  bust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Explore CSS version everywhere
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          files=list(Path('.').glob('*.html'))+list(Path('approved-pages').glob('*.html'))
+          for p in files:
+              s=p.read_text(encoding='utf-8')
+              n=re.sub(r'dear-day-explore-static\.css\?v=[^\"\'\s<]+','dear-day-explore-static.css?v=20261006-desktopVisible2',s)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8')
+                  changed.append(str(p))
+          print('updated',len(changed),'files')
+          for f in changed: print(f)
+          PY
+      - name: Commit and remove one-time workflow
+        run: |
+          rm .github/workflows/cache-bust-desktop-explore.yml
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Cache-bust desktop Explore visibility fix"
+          git push
