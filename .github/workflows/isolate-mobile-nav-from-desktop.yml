@@ -1,0 +1,77 @@
+name: Isolate mobile nav from desktop
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/isolate-mobile-nav-from-desktop.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make mobile navigation mobile-only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          cart=Path('approved-pages/dear-day-cart.js')
+          s=cart.read_text(encoding='utf-8')
+          old="""  function ensureNativeMobileNav(){
+    if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261006-static2';
+    s.defer=true;
+    s.setAttribute('data-dd-native-mobile-nav','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureNativeMobileNav();
+"""
+          new="""  const ddMobileNavMedia=window.matchMedia('(max-width:900px)');
+  function ensureNativeMobileNav(){
+    if(!ddMobileNavMedia.matches)return;
+    if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261006-static3';
+    s.defer=true;
+    s.setAttribute('data-dd-native-mobile-nav','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureNativeMobileNav();
+  ddMobileNavMedia.addEventListener?.('change',e=>{if(e.matches)ensureNativeMobileNav()});
+"""
+          if old not in s:
+              raise SystemExit('Expected cart mobile-nav loader not found')
+          cart.write_text(s.replace(old,new,1),encoding='utf-8')
+
+          mobile=Path('approved-pages/dear-day-mobile-nav.js')
+          m=mobile.read_text(encoding='utf-8')
+          marker="(function(){\n  const BP=900;"
+          replacement="(function(){\n  const BP=900;\n  if(!window.matchMedia(`(max-width:${BP}px)`).matches)return;"
+          if marker not in m:
+              raise SystemExit('Expected mobile-nav start marker not found')
+          mobile.write_text(m.replace(marker,replacement,1),encoding='utf-8')
+
+          changed=[]
+          for p in Path('.').rglob('*.html'):
+              try:
+                  h=p.read_text(encoding='utf-8')
+              except Exception:
+                  continue
+              nh=h.replace('/approved-pages/dear-day-cart.js?v=20261006-header1','/approved-pages/dear-day-cart.js?v=20261006-header2')
+              if nh!=h:
+                  p.write_text(nh,encoding='utf-8')
+                  changed.append(str(p))
+          print('HTML cache-bust files:',len(changed))
+          if not changed:
+              raise SystemExit('No HTML cart references updated')
+          PY
+      - name: Commit fix and remove workflow
+        run: |
+          rm .github/workflows/isolate-mobile-nav-from-desktop.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Keep mobile navigation off desktop'
+          git push
