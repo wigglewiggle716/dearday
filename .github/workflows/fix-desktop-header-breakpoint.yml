@@ -1,0 +1,40 @@
+name: Fix desktop header breakpoint
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-desktop-header-breakpoint.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Align desktop and mobile header breakpoints
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          old='@media(max-width:980px){.home-header{grid-template-columns:auto 1fr}.home-nav{display:none}'
+          new='@media(max-width:900px){.home-header{grid-template-columns:auto 1fr}.home-nav{display:none}'
+          changed=[]
+          for p in Path('.').rglob('*.html'):
+              try:
+                  s=p.read_text(encoding='utf-8')
+              except Exception:
+                  continue
+              if old in s:
+                  p.write_text(s.replace(old,new),encoding='utf-8')
+                  changed.append(str(p))
+          print('Changed:', changed)
+          if not changed:
+              raise SystemExit('No matching header breakpoint found')
+          PY
+      - name: Commit fix and remove workflow
+        run: |
+          rm .github/workflows/fix-desktop-header-breakpoint.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Fix desktop header breakpoint dead zone'
+          git push
