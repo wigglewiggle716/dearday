@@ -14,7 +14,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for p in [Path('approved-pages/index.html'), Path('approved-pages/index-en.html')]:
+          for p in [Path('index.html'), Path('index-en.html')]:
               if not p.exists():
                   continue
               s=p.read_text(encoding='utf-8')
@@ -27,7 +27,7 @@ jobs:
           rm -f .github/workflows/home-partners-remove-kicker.yml
           git config user.name 'Dear Day Automation'
           git config user.email 'actions@users.noreply.github.com'
-          git add approved-pages/index.html approved-pages/index-en.html .github/workflows/home-partners-remove-kicker.yml
+          git add index.html index-en.html .github/workflows/home-partners-remove-kicker.yml
           git diff --cached --quiet && exit 0
           git commit -m 'Remove partners kicker from home sections'
           git push origin main
