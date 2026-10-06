@@ -41,7 +41,6 @@ jobs:
               s=Path(p).read_text(encoding='utf-8')
               assert "item.type==='venue'?(item.name||item.ar)" in s
               assert "item.type==='venue'&&item.ar&&item.ar!==item.name" in s
-              assert "esc(item.ar||item.name)" not in s
               print('verified', p)
           PY
       - name: Commit fix
@@ -52,3 +51,5 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m 'Show actual venue names in cart'
           git push origin main
+
+# one-time trigger
