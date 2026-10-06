@@ -144,7 +144,7 @@
     if(brand&&brand.tagName==='A'&&brand.getAttribute('href')!=='/en'){brand.href='/en';brand.setAttribute('aria-label','Dear Day — Home')}
     const nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
     const desiredNav=[['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Plan My Occasion','/en#occasions']];
-    if(nav){
+    if(nav&&!nav.querySelector('.dd-explore-nav')){
       const current=[...nav.querySelectorAll(':scope>a')].map(a=>[String(a.textContent||'').trim(),a.getAttribute('href')||'']);
       const correct=current.length===desiredNav.length&&desiredNav.every((x,i)=>current[i]?.[0]===x[0]&&current[i]?.[1]===x[1]);
       if(!correct){nav.setAttribute('aria-label','Main navigation');nav.innerHTML=desiredNav.map((x,i)=>`<a${i===2?' class="active"':''} href="${x[1]}">${x[0]}</a>`).join('')}
