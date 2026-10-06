@@ -13,6 +13,18 @@
   }
   ensureFilterStyles();
 
+  function ensureCustomerAuth(){
+    const p=String(location.pathname||'/').replace(/\/$/,'')||'/';
+    if(!/^\/(?:auth(?:-en)?(?:\.html)?|Dear-Day-Auth(?:-en)?\.html)$/i.test(p))return;
+    if(window.DEAR_DAY_SUPABASE||document.querySelector('script[data-dd-supabase-config]'))return;
+    const s=document.createElement('script');
+    s.src='/approved-pages/dear-day-supabase-config.js?v=20261006-facebook1';
+    s.async=true;
+    s.setAttribute('data-dd-supabase-config','');
+    (document.head||document.documentElement).appendChild(s);
+  }
+  ensureCustomerAuth();
+
   function closeAll(except){
     document.querySelectorAll('.dd-select-shell.dd-select-open').forEach(shell=>{if(shell!==except){shell.classList.remove('dd-select-open');shell.querySelector('.dd-select-trigger')?.setAttribute('aria-expanded','false')}});
   }
