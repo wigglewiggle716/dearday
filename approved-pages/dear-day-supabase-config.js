@@ -20,6 +20,7 @@ window.DEAR_DAY_SUPABASE = Object.freeze({
   }
 
   function accountPath(){return isEnglish()?'/account-en':'/account'}
+  function completeProfilePath(){return isEnglish()?'/Dear-Day-Complete-Profile-en.html':'/Dear-Day-Complete-Profile.html'}
   function portalPath(role){
     if(ADMIN_ROLES.has(role))return'/Dear-Day-Admin.html';
     if(role==='partner_user')return'/Dear-Day-Partner.html';
@@ -96,9 +97,13 @@ window.DEAR_DAY_SUPABASE = Object.freeze({
       if(profile?.is_active===false)return;
       role=profile?.role||'customer';
 
-      if(role==='customer'&&!profileComplete(user))return;
-
       const next=explicitNext();
+      if(role==='customer'&&!profileComplete(user)){
+        const destination=next||accountPath();
+        location.replace(completeProfilePath()+'?next='+encodeURIComponent(destination));
+        return;
+      }
+
       const destination=next||portalPath(role);
       if(destination&&destination!==path)location.replace(destination);
     }catch(e){}
