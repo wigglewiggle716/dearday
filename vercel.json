@@ -423,12 +423,8 @@
   ],
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/home-live-v3.html"
-    },
-    {
       "source": "/en",
-      "destination": "/home-live-v3-en.html"
+      "destination": "/index-en.html"
     },
     {
       "source": "/auth",
