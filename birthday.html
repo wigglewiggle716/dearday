@@ -235,7 +235,46 @@ footer{margin-top:44px!important}
 @media(max-width:900px){.dd-rec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-rec-head{align-items:flex-start;flex-direction:column}}
 @media(max-width:620px){.dd-rec-section{padding:16px;margin-bottom:24px}.dd-rec-grid{grid-template-columns:1fr}.dd-rec-head h2{font-size:26px}.dd-rec-card{padding:14px}}
 </style>
-<link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/></head>
+<link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/><style id="dd-birthday-date-branding">
+/* Birthday context date — match Dear Day branded select controls */
+.dd-plan-context label:has(#ddContextDate){position:relative}
+#ddContextDate{
+  min-height:46px!important;
+  border:1px solid rgba(107,53,64,.18)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,#fff,#fffdfb)!important;
+  color:#352D2E!important;
+  box-shadow:0 5px 14px rgba(76,31,36,.025)!important;
+  padding:0 42px 0 14px!important;
+  font:600 13px/1.45 'Noto Sans Arabic',Tahoma,Arial,sans-serif!important;
+  outline:none!important;
+  direction:ltr!important;
+  text-align:left!important;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease!important;
+}
+#ddContextDate:hover{border-color:rgba(107,53,64,.31)!important;background:#fff!important}
+#ddContextDate:focus{border-color:#A8583D!important;box-shadow:0 0 0 4px rgba(168,88,61,.09),0 8px 20px rgba(76,31,36,.05)!important;background:#fff!important}
+.dd-plan-context label:has(#ddContextDate)::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  width:17px;
+  height:17px;
+  pointer-events:none;
+  background:center/17px 17px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236B3540' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E");
+}
+#ddContextDate::-webkit-calendar-picker-indicator{
+  opacity:0!important;
+  cursor:pointer!important;
+  width:22px!important;
+  height:22px!important;
+}
+@supports not selector(label:has(input)){
+  #ddContextDate::-webkit-calendar-picker-indicator{opacity:.72!important;filter:sepia(.25) saturate(1.5) hue-rotate(300deg)!important}
+}
+</style>
+</head>
 <body>
 <header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav"><a class="" href="/">الرئيسية</a><a class="" href="/#gifts">هدايا وتجارب</a><a class="active" href="/occasions">رتّب مناسبتي</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link" href="#" onclick="return false">EN</a></div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps">
