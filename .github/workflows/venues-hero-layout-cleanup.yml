@@ -26,7 +26,7 @@ jobs:
           for p, direction in files:
               s = p.read_text(encoding='utf-8')
 
-              # Desktop hero: always keep image on the left and copy on the right.
+              # Desktop hero: image on the left, copy on the right in both languages.
               s = re.sub(r'\.hero\{(?![^}]*direction:)', '.hero{direction:ltr;', s, count=1)
               s = re.sub(
                   r'\.hero-copy\{(?![^}]*direction:)',
@@ -35,7 +35,7 @@ jobs:
                   count=1,
               )
 
-              # Remove the small pill above the hero heading.
+              # Remove the small hero label/pill only.
               s = re.sub(
                   r'(<div class="hero-copy">)\s*<span class="pill">.*?</span>',
                   r'\1',
@@ -44,7 +44,7 @@ jobs:
                   flags=re.S,
               )
 
-              # With the pill gone, remove the old top spacing above the hero title.
+              # Remove now-unused top spacing above the hero title.
               s = re.sub(
                   r'(\.hero h1\{[^}]*?)margin:20px 0 12px;',
                   r'\1margin:0 0 12px;',
@@ -52,31 +52,31 @@ jobs:
                   count=1,
               )
 
-              # Remove the full "Current selection" / "اختيارك الحالي" panel.
+              # Remove the whole current-selection panel. English has an extra paragraph,
+              # so target the stable wrapper/currentWrap structure instead of heading text.
               s = re.sub(
-                  r'<div class="current">\s*<div class="section-title">\s*<div>\s*<h2>.*?</h2>\s*</div>\s*</div>\s*<div id="currentWrap"></div>\s*</div>',
+                  r'<div class="current">.*?<div id="currentWrap"></div>\s*</div>',
                   '',
                   s,
                   count=1,
                   flags=re.S,
               )
 
-              # The selection state still powers cards/cart; make its old renderer a safe no-op
-              # now that the visual current-selection container has been intentionally removed.
+              # Selection state still powers cards/cart. Keep the old renderer harmless
+              # when its intentionally removed visual container is absent.
               guard = "function renderCurrent(){const wrap=el('currentWrap');if(!wrap)return;"
               if guard not in s:
-                  s = s.replace(
-                      'function renderCurrent(){',
-                      guard,
-                      1,
-                  )
+                  s = s.replace('function renderCurrent(){', guard, 1)
 
-              if '<div id="currentWrap"></div>' in s:
-                  raise RuntimeError(f'Current-selection panel still present in {p}')
-              if '<div class="hero-copy"><span class="pill">' in s:
-                  raise RuntimeError(f'Hero pill still present in {p}')
-              if '.hero{direction:ltr;' not in s:
-                  raise RuntimeError(f'Hero direction update missing in {p}')
+              checks = {
+                  'current selection panel': '<div id="currentWrap"></div>' not in s,
+                  'hero pill': '<div class="hero-copy"><span class="pill">' not in s,
+                  'hero direction': '.hero{direction:ltr;' in s,
+                  'safe renderer': guard in s,
+              }
+              failed = [name for name, ok in checks.items() if not ok]
+              if failed:
+                  raise RuntimeError(f'{p}: failed checks: {", ".join(failed)}')
 
               p.write_text(s, encoding='utf-8')
           PY
