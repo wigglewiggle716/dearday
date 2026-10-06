@@ -1,0 +1,54 @@
+name: Fix home HTML cache
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-home-html-cache.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Disable stale cache for home documents
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p=Path('vercel.json')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          headers=data.setdefault('headers',[])
+          headers=[h for h in headers if h.get('source') not in ('/','/en')]
+          no_store=[
+            {'key':'Cache-Control','value':'no-store, no-cache, must-revalidate, max-age=0'},
+            {'key':'Pragma','value':'no-cache'},
+            {'key':'Expires','value':'0'}
+          ]
+          headers.extend([
+            {'source':'/','headers':no_store},
+            {'source':'/en','headers':no_store}
+          ])
+          data['headers']=headers
+          p.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          for name in ('index.html','index-en.html'):
+            f=Path(name)
+            s=f.read_text(encoding='utf-8')
+            if 'http-equiv="Cache-Control"' not in s:
+              marker='<head>'
+              meta='<head><meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0"/><meta http-equiv="Pragma" content="no-cache"/><meta http-equiv="Expires" content="0"/>'
+              if marker not in s:
+                raise SystemExit(f'head marker missing in {name}')
+              s=s.replace(marker,meta,1)
+              f.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit fix and remove workflow
+        run: |
+          rm .github/workflows/fix-home-html-cache.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Prevent stale home navigation cache'
+          git push
