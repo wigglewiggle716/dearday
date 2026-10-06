@@ -1,6 +1,10 @@
 (function(){
   'use strict';
 
+  function pageIsEnglish(){
+    return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
+  }
+
   function closeAll(except){
     document.querySelectorAll('.dd-static-explore.dd-open,.dd-static-explore-mobile.dd-open').forEach(el=>{
       if(el!==except){
@@ -8,6 +12,81 @@
         el.querySelector('button')?.setAttribute('aria-expanded','false');
       }
     });
+  }
+
+  function isGiftPage(){
+    const p=String(location.pathname||'');
+    return /^\/gifts(?:-en)?\/?$/i.test(p)||/\/approved-pages\/Dear-Day-Gifts-Approved(?:-en)?\.html$/i.test(p);
+  }
+
+  function patchGiftFilters(){
+    if(!isGiftPage())return;
+
+    const en=pageIsEnglish();
+    const categoryGroup=document.querySelector('.chips[data-filter="category"]');
+    const recipientGroup=document.querySelector('.chips[data-filter="recipient"]');
+
+    // Flowers have their own Dear Day catalog/page, so remove them from Gifts.
+    categoryGroup?.querySelector('.chip[data-value="flowers"]')?.remove();
+
+    // Remove Anyone / أي شخص and make For both / للإثنين the default.
+    if(recipientGroup){
+      recipientGroup.querySelector('.chip[data-value="all"]')?.remove();
+      const both=recipientGroup.querySelector('.chip[data-value="both"]');
+      if(both&&recipientGroup.dataset.ddGiftRecipientDefault!=='1'){
+        recipientGroup.dataset.ddGiftRecipientDefault='1';
+        both.click();
+      }
+    }
+
+    // Clearing filters must return recipient to For both instead of the removed generic state.
+    const reset=document.getElementById('resetFilters');
+    if(reset&&reset.dataset.ddGiftRecipientReset!=='1'){
+      reset.dataset.ddGiftRecipientReset='1';
+      reset.addEventListener('click',()=>setTimeout(()=>{
+        const both=document.querySelector('.chips[data-filter="recipient"] .chip[data-value="both"]');
+        if(both)both.click();
+      },0));
+    }
+
+    // Remove the two legacy/demo flower products whenever the old Gifts grid re-renders.
+    const legacyFlowerIds=['bouquet','dummy-bouquet-pastel'];
+    const cleanGrid=()=>{
+      legacyFlowerIds.forEach(id=>document.getElementById('prod-'+id)?.remove());
+      const grid=document.getElementById('productGrid');
+      if(!grid)return;
+      const count=grid.querySelectorAll('.product').length;
+      const counter=document.getElementById('resultCount');
+      if(counter)counter.textContent=en?`${count} ${count===1?'gift':'gifts'}`:`${count} ${count===1?'هدية':'هدايا'}`;
+      const empty=document.getElementById('noResults');
+      if(empty)empty.style.display=count?'none':'block';
+    };
+
+    const grid=document.getElementById('productGrid');
+    if(grid&&grid.dataset.ddLegacyFlowerGuard!=='1'){
+      grid.dataset.ddLegacyFlowerGuard='1';
+      new MutationObserver(cleanGrid).observe(grid,{childList:true});
+    }
+
+    // Remove stale flower-as-gift selections from old sessions, if any.
+    const current=document.getElementById('currentWrap');
+    if(current&&current.dataset.ddLegacyFlowerSelectionClean!=='1'){
+      current.dataset.ddLegacyFlowerSelectionClean='1';
+      legacyFlowerIds.forEach(id=>{
+        if(current.innerHTML.includes("removeGift('"+id+"')")&&typeof window.removeGift==='function')window.removeGift(id);
+      });
+    }
+
+    cleanGrid();
+    setTimeout(cleanGrid,0);
+
+    // Keep SEO copy aligned with the separated Flowers category.
+    const description=document.querySelector('meta[name="description"]');
+    if(description){
+      description.content=en
+        ? 'Explore thoughtful gifts for your occasion with Dear Day, including curated gift boxes, silver jewelry, watches, perfumes, and personalised pieces.'
+        : 'اكتشف هدايا تناسب مناسبتك مع Dear Day، من بوكسات الهدايا للفضة والساعات والعطور والهدايا المخصصة، وقارن الاختيارات حسب النوع والسعر.';
+    }
   }
 
   function bind(){
@@ -27,7 +106,7 @@
 
     document.querySelectorAll('.dd-native-mobile-panel').forEach(panel=>{
       if(panel.querySelector('.dd-static-explore-mobile'))return;
-      const en=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
+      const en=pageIsEnglish();
       const row=document.createElement('div');
       row.className='dd-static-explore-mobile';
       const btn=document.createElement('button');
@@ -65,6 +144,8 @@
         });
       }
     });
+
+    patchGiftFilters();
   }
 
   /* Flower cart bridge.
@@ -74,7 +155,7 @@
   const path=String(location.pathname||'');
   const isFlowerPage=/^\/flowers(?:-en)?\/?$/i.test(path)||/Dear-Day-Flowers-Approved(?:-en)?\.html$/i.test(path);
   const isCartPage=/^\/cart(?:-en)?\/?$/i.test(path)||/Dear-Day-Cart(?:-en)?\.html$/i.test(path);
-  const isEnglish=String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.documentElement.dir==='ltr';
+  const isEnglish=pageIsEnglish();
   let restoringFlowers=false;
 
   function readPlan(){
