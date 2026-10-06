@@ -124,7 +124,6 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 <script id="dd-flow-state">(function(){const p=new URLSearchParams(location.search);const on=p.get('flow')==='1';window.__ddFlowActive=on;const s=document.querySelector('[data-dd-flow-stepper]');if(s)s.hidden=!on;})();</script>
 
 <section class="hero"><div class="container"><div class="hero-box"><div><h1>اختار الهدية اللي تشبهه فعلًا</h1><p>استخدم الفلاتر واختار الهدية المناسبة، وتقدر تضيف أكتر من اختيار لو حابب.</p></div><div class="step"><small>الخطوة الحالية</small><strong>تخصيص الهدايا</strong><div class="progress"><i class="on"></i><i></i><i></i><i></i></div></div></div></div></section>
-<section class="current"><div class="container"><div class="section-head"><div><h2>اختيارك الحالي</h2><p>الهدايا اللي تختارها هتظهر هنا علشان تراجعها أو تغيّرها بسهولة.</p></div></div><div id="currentWrap"></div></div></section>
 <section class="catalog"><div class="container"><div class="section-head"><div><h2>اكتشف هدايا أخرى</h2><p>فلتر حسب النوع والسعر ولمن الهدية، واختار اللي يناسب المناسبة.</p></div></div>
 <div class="layout">
 <aside class="filters">
@@ -217,7 +216,7 @@ const grid=document.getElementById('productGrid'), currentWrap=document.getEleme
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1600)}
 function money(n){return new Intl.NumberFormat('en-US').format(n)}
 function persist(){plan.giftSelections=[...selected.values()];ddSaveLocal(plan);if(window.DDCart){DDCart.syncType('gift',plan.giftSelections,plan);DDCart.paint();}}
-function renderCurrent(){
+function renderCurrent(){if(!currentWrap)return;
  const arr=[...selected.values()];
  if(!arr.length){currentWrap.innerHTML='<div class="empty-current">لسه ما اخترتش هدية محددة. استخدم الفلاتر تحت واختر أول هدية.</div>';return;}
  currentWrap.innerHTML=arr.map((p,i)=>`<div class="current-card" style="${i?'margin-top:10px':''}"><img src="${p.img}" alt="${p.name}"><div><small style="color:#8b7b78">${p.vendor}</small><h3>${p.name}</h3><p>${p.meta||'اختيار محفوظ من الخطوة السابقة'} • <strong style="color:#6B3540">EGP ${money(p.price)}</strong></p></div><div class="current-actions"><button class="btn-outline" onclick="scrollToProduct('${p.id}')">تغيير</button><button class="btn-soft" onclick="removeGift('${p.id}')">حذف</button></div></div>`).join('');
