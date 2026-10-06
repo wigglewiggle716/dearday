@@ -1,0 +1,54 @@
+name: Fix cart venue display
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-cart-venue-display.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix venue title and description in Arabic cart
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          files = [Path('cart.html'), Path('approved-pages/Dear-Day-Cart.html')]
+          old = "<div class=\"item-title\">'+esc(item.ar||item.name)+'</div><div class=\"meta\">'+esc([item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div>"
+          new = "<div class=\"item-title\">'+esc(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))+'</div><div class=\"meta\">'+esc([(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div>"
+
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected 1 cart rendering match, found {count}')
+              path.write_text(text.replace(old, new), encoding='utf-8')
+              print(f'updated {path}')
+          PY
+      - name: Verify venue display logic
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['cart.html','approved-pages/Dear-Day-Cart.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert "item.type==='venue'?(item.name||item.ar)" in s
+              assert "item.type==='venue'&&item.ar&&item.ar!==item.name" in s
+              assert "esc(item.ar||item.name)" not in s
+              print('verified', p)
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add cart.html approved-pages/Dear-Day-Cart.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Show actual venue names in cart'
+          git push origin main
