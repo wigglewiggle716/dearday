@@ -1,0 +1,39 @@
+name: Remove legacy Explore overlay
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/remove-explore-overlay.yml'
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove legacy overlay references
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          for p in list(Path('.').glob('*.html')) + list(Path('approved-pages').glob('*.html')):
+              s=p.read_text(encoding='utf-8')
+              n=re.sub(r'<script[^>]+src=["\'][^"\']*dear-day-explore-nav\.js[^"\']*["\'][^>]*>\s*</script>', '', s, flags=re.I)
+              if n!=s:
+                  p.write_text(n,encoding='utf-8')
+                  changed.append(str(p))
+          print('Removed overlay references from',len(changed),'files')
+          for p in changed: print(p)
+          PY
+      - name: Commit cleanup
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add '*.html' 'approved-pages/*.html'
+          if git diff --cached --quiet; then
+            echo "No overlay references remain"
+            exit 0
+          fi
+          git commit -m "Remove legacy Explore overlay references"
+          git push
