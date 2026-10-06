@@ -29,11 +29,11 @@
 </style>
 <script src="/approved-pages/dear-day-cart.js?v=20261004-4"></script>
 <link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1">
-</head>
+<link rel="stylesheet" href="/approved-pages/assets/dear-day-explore-static.css?v=20261006-3"/></head>
 <body>
 <header class="home-header">
 <a class="brand" href="/" aria-label="Dear Day — الرئيسية"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
-<nav class="home-nav"><a href="/">الرئيسية</a><a href="/occasions">المناسبات</a><a href="/partners">للشركاء</a></nav>
+<nav class="home-nav"><a href="/en">Home</a><div class="dd-static-explore"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>Explore</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts-en">Gifts</a><a href="/cake-en">Cake &amp; Sweets</a><a href="/venues-en">Places &amp; Experiences</a><a href="/flowers-en">Flowers</a></div></div><a href="/occasions-en">Occasions</a><a href="/how-it-works-en">How It Works</a><a href="/partners-en">For Partners</a></nav>
 <div class="auth-actions"><a href="/auth#login">تسجيل الدخول</a><a href="/auth#signup">إنشاء حساب</a><a class="lang-link" href="/contact-en" aria-label="English">EN</a></div>
 </header>
 <main>
@@ -58,5 +58,5 @@
 (function(){const message=document.getElementById('message');if(message){const autoGrow=function(){message.style.height='auto';message.style.height=message.scrollHeight+'px';};message.addEventListener('input',autoGrow);autoGrow();}})();
 (function(){const form=document.getElementById('contactForm');const status=document.getElementById('contactStatus');if(!form)return;form.addEventListener('submit',function(e){e.preventDefault();if(!form.reportValidity())return;const data=Object.fromEntries(new FormData(form).entries());data.createdAt=new Date().toISOString();try{localStorage.setItem('dearDayContactMessage',JSON.stringify(data))}catch(err){}status.className='form-status show';status.textContent='تم حفظ الرسالة مبدئيًا على الجهاز. الإرسال الفعلي هيتفعّل بمجرد ربط نظام خدمة العملاء.';});})();
 </script>
-<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-2"></script></body>
+<script src="/approved-pages/dear-day-explore-static.js?v=20261006-3"></script></body>
 </html>
