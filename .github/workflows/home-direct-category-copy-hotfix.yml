@@ -1,0 +1,45 @@
+name: Home direct category copy hotfix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/home-direct-category-copy-hotfix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update direct category heading copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('approved-pages/assets/dear-day-home-live.js')
+          text = path.read_text(encoding='utf-8')
+          original = text
+
+          text = text.replace("<div><span>${t('لو عارف أنت محتاج إيه','Know what you need?')}</span><h2>${t('محتاج حاجة محددة؟','Looking for something specific?')}</h2><p>${t('ادخل مباشرة على القسم، من غير ما نغيّر إن رحلة Dear Day الأساسية تبدأ من المناسبة.','Jump straight to a category while keeping the main Dear Day journey occasion-first.')}</p></div>", "<div><h2>${t('محتاج حاجة محددة؟','Looking for something specific?')}</h2><p>${t('لو عارف انت محتاج ايه ادخل مباشرة علي القسم','If you already know what you need, go directly to the section.')}</p></div>")
+
+          if text == original:
+              raise SystemExit('Target copy was not found; no changes made.')
+
+          path.write_text(text, encoding='utf-8')
+          print('Updated direct category copy')
+          PY
+
+      - name: Commit direct category copy changes
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add approved-pages/assets/dear-day-home-live.js
+          git commit -m "Refine direct category section copy"
+          git push origin HEAD:main
