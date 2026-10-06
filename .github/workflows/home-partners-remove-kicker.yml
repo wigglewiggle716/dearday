@@ -1,0 +1,33 @@
+name: Home partners kicker removal
+on:
+  push:
+    paths:
+      - '.github/workflows/home-partners-remove-kicker.yml'
+permissions:
+  contents: write
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove partners kicker from AR and EN home
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in [Path('approved-pages/index.html'), Path('approved-pages/index-en.html')]:
+              if not p.exists():
+                  continue
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('<span class="dd-partners-kicker">شركاء Dear Day</span>','')
+              s=s.replace('<span class="dd-partners-kicker">Dear Day Partners</span>','')
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes and remove workflow
+        run: |
+          rm -f .github/workflows/home-partners-remove-kicker.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add approved-pages/index.html approved-pages/index-en.html .github/workflows/home-partners-remove-kicker.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove partners kicker from home sections'
+          git push origin main
