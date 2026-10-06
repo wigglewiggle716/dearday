@@ -6,3 +6,4 @@
   .dd-static-explore-menu{display:block!important}
   .dd-static-explore:hover>.dd-static-explore-menu,.dd-static-explore:focus-within>.dd-static-explore-menu,.dd-static-explore.dd-open>.dd-static-explore-menu{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translate(-50%,0)!important}
 }
+@import url('/approved-pages/assets/flowers-hero-generated.css?v=20261006-1');
