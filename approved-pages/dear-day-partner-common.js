@@ -20,7 +20,7 @@
     const {data:members,error:mErr}=await supabase.from('partner_users').select('partner_id,partner_role,is_active').eq('user_id',user.id).eq('is_active',true);if(mErr)throw mErr;
     if(!members?.length){await supabase.auth.signOut();location.replace('/Dear-Day-Partner-Login.html?error=no_partner');return null}
     const ids=members.map(x=>x.partner_id);
-    const {data:partners,error:paErr}=await supabase.from('partners').select('id,name_ar,name_en,status,commission_rate,contact_name,phone,email,coverage_areas').in('id',ids);if(paErr)throw paErr;
+    const {data:partners,error:paErr}=await supabase.from('partners').select('id,name_ar,name_en,status,commission_rate,contact_name,phone,email,coverage_areas').in('id',ids).eq('status','active');if(paErr)throw paErr;
     const partner=partners?.[0];if(!partner){await supabase.auth.signOut();location.replace('/Dear-Day-Partner-Login.html?error=no_partner');return null}
     if($('partnerEmail'))$('partnerEmail').textContent=user.email||profile.full_name||'Partner';
     if($('partnerName'))$('partnerName').textContent=partner.name_ar||partner.name_en||'Partner';

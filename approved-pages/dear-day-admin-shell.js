@@ -1,28 +1,14 @@
 (function(){
   const ADMIN_ROLES=new Set(['super_admin','admin']);
-  const ADMIN_NAV=[
-    {href:'/Dear-Day-Admin.html',label:'نظرة عامة'},
-    {href:'/Dear-Day-Admin-Orders.html',label:'الطلبات'},
-    {href:'/Dear-Day-Admin-Partners.html',label:'الشركاء'},
-    {href:'/Dear-Day-Admin-Products.html',label:'المنتجات والخدمات'},
-    {href:'/Dear-Day-Admin-Approvals.html',label:'الموافقات'},
-    {href:'/Dear-Day-Admin-Availability.html',label:'التوفر والمواعيد'},
-    {href:'/Dear-Day-Admin-Refund-Policies.html',label:'سياسات الإلغاء والاسترداد'},
-    {href:'/Dear-Day-Admin-Cancellations.html',label:'الإلغاءات والاسترداد'},
-    {href:'/Dear-Day-Notifications.html',label:'الإشعارات'},
-    {href:'/Dear-Day-Admin-Customers.html',label:'العملاء'},
-    {href:'/Dear-Day-Admin-Employees.html',label:'الموظفون والصلاحيات'},
-    {href:'/Dear-Day-Finance.html',label:'المالية والتسويات'}
-  ];
   const STAFF_NAV=[
     {href:'/Dear-Day-Staff.html',label:'بوابة الفريق'},
     {href:'/Dear-Day-Admin-Orders.html',label:'الطلبات',perm:'orders.view'},
-    {href:'/Dear-Day-Admin-Partners.html',label:'الشركاء',perm:'partners.view'},
-    {href:'/Dear-Day-Admin-Products.html',label:'المنتجات والخدمات',perm:'catalog.view'},
+    {href:'/Dear-Day-Admin-Partners.html',label:'الشركاء',perm:'partners.view|partners.manage'},
+    {href:'/Dear-Day-Admin-Products.html',label:'المنتجات والخدمات',perm:'catalog.view|catalog.manage'},
     {href:'/Dear-Day-Admin-Approvals.html',label:'الموافقات',perm:'approvals.review'},
     {href:'/Dear-Day-Admin-Availability.html',label:'التوفر والمواعيد',perm:'availability.view'},
-    {href:'/Dear-Day-Admin-Refund-Policies.html',label:'سياسات الإلغاء والاسترداد',perm:'approvals.review'},
-    {href:'/Dear-Day-Admin-Cancellations.html',label:'الإلغاءات والاسترداد',perm:'approvals.review'},
+    {href:'/Dear-Day-Admin-Refund-Policies.html',label:'سياسات الإلغاء والاسترداد',perm:'catalog.manage|approvals.review'},
+    {href:'/Dear-Day-Admin-Cancellations.html',label:'الإلغاءات والاسترداد',perm:'orders.manage'},
     {href:'/Dear-Day-Notifications.html',label:'الإشعارات'},
     {href:'/Dear-Day-Admin-Customers.html',label:'العملاء',perm:'customers.view'},
     {href:'/Dear-Day-Admin-Employees.html',label:'الموظفون والصلاحيات',perm:'employees.view'},
@@ -32,8 +18,8 @@
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
   function normalizePath(v){const p=String(v||'').split('?')[0].split('#')[0];return p==='/'?'/':p.replace(/\/+$/,'')}
   function renderSidebar(navItems){const sidebar=document.querySelector('.sidebar'),nav=sidebar?.querySelector('.nav');if(!sidebar||!nav)return;const current=normalizePath(location.pathname).toLowerCase();nav.innerHTML=navItems.map(({href,label})=>`<a${normalizePath(href).toLowerCase()===current?' class="active" aria-current="page"':''} href="${href}">${label}</a>`).join('');nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>sidebar.classList.remove('dd-mobile-open')))}
-  async function loadShellContext(){let cfg=window.DEAR_DAY_SUPABASE;if(!cfg){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=resolve;s.onerror=reject;(document.head||document.documentElement).appendChild(s)});cfg=window.DEAR_DAY_SUPABASE}if(!cfg)return null;const mod=await import(SUPABASE_ESM);const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;const client=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}});const {data:{user}}=await client.auth.getUser();if(!user)return{client,user:null,role:null,permissions:new Set()};const [{data:profile},{data:rows}]=await Promise.all([client.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle(),client.rpc('get_my_permissions')]);return{client,user,role:profile?.role||null,isActive:profile?.is_active!==false,permissions:new Set((rows||[]).map(x=>x.permission_code))}}
-  function navForContext(ctx){if(!ctx?.user)return[];if(ADMIN_ROLES.has(ctx.role))return ADMIN_NAV;return STAFF_NAV.filter(item=>!item.perm||ctx.permissions.has(item.perm))}
+  async function loadShellContext(){let cfg=window.DEAR_DAY_SUPABASE;if(!cfg){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=CONFIG_SRC;s.onload=resolve;s.onerror=reject;(document.head||document.documentElement).appendChild(s)});cfg=window.DEAR_DAY_SUPABASE}if(!cfg)return null;const mod=await import(SUPABASE_ESM);const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;const client=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}});const {data:{user}}=await client.auth.getUser();if(!user)return{client,user:null,role:null,permissions:new Set()};const [{data:profile},{data:rows}]=await Promise.all([client.from('profiles').select('role,is_active').eq('id',user.id).maybeSingle(),client.rpc('get_my_permissions')]);return{client,user,role:profile?.role||null,isActive:profile?.is_active===true,permissions:new Set((rows||[]).map(x=>x.permission_code))}}
+  function navForContext(ctx){if(!ctx?.user)return[];return STAFF_NAV.map(item=>item.href==='/Dear-Day-Staff.html'&&ADMIN_ROLES.has(ctx.role)?{href:'/Dear-Day-Admin.html',label:'نظرة عامة',perm:'dashboard.view'}:item).filter(item=>!item.perm||item.perm.split('|').some(p=>ctx.permissions.has(p)))}
   async function ensureSidebarFooter(sidebar,ctx){let foot=sidebar.querySelector('.sidebar-foot');if(!foot){foot=document.createElement('div');foot.className='sidebar-foot';foot.innerHTML='<p id="adminEmail">—</p><button id="logoutBtn" class="logout" type="button">تسجيل الخروج</button>';sidebar.appendChild(foot)}const email=foot.querySelector('#adminEmail');if(email)email.textContent=ctx?.user?.email||'—';const button=foot.querySelector('#logoutBtn');if(button&&!button.dataset.ddBound){button.dataset.ddBound='1';button.addEventListener('click',async()=>{try{await ctx?.client?.auth.signOut()}catch(e){}location.replace('/auth#login')})}}
   function labelPortal(sidebar,role){const span=sidebar.querySelector('.brand span');if(span)span.textContent=ADMIN_ROLES.has(role)?'Admin Panel':role==='accountant'?'Finance Portal':'Staff Portal'}
   function ensureMobileMenu(sidebar){

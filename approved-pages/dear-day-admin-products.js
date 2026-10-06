@@ -1,7 +1,7 @@
 (function(){
   const SUPABASE_ESM='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
   const CONFIG_SRC='/approved-pages/dear-day-supabase-config.js?v=20261002-1';
-  const ADMIN_ROLES=new Set(['super_admin','admin']);
+  let canManage=false,canReview=false;
   let supabase,user,profile;
   let partners=[],categories=[],listings=[],versions=[];
 
@@ -84,6 +84,7 @@
       const tr=document.createElement('tr');tr.dataset.id=l.id;
       tr.innerHTML=`<td><strong>${esc(v?.name_ar||v?.name_en||'بدون اسم')}</strong><div style="font-size:10px;color:#786C69;margin-top:3px">${esc(cat?.name_ar||'بدون تصنيف')}</div></td><td>${esc(p?.name_ar||p?.name_en||'—')}</td><td>${kindLabel(l.kind)}</td><td><span class="badge ${statusClass(v?.status)}">${statusLabel(v?.status)}</span>${hasLive&&v?.id!==l.published_version_id?'<div style="font-size:9px;color:#376a4a;margin-top:4px">يوجد إصدار Live</div>':''}</td><td>${money(v?.price,v?.currency)}</td><td><span class="badge ${l.is_available?'good':'bad'}">${l.is_available?'متاح':'غير متاح'}</span></td><td>${esc(stockText(l))}</td><td>${date(l.updated_at)}</td><td><div class="actions"><button class="mini" data-act="edit">تعديل</button><button class="mini" data-act="availability">${l.is_available?'إيقاف':'إتاحة'}</button><button class="mini danger" data-act="archive">أرشفة</button></div></td>`;
       tr.addEventListener('click',e=>{const b=e.target.closest('button');if(!b){openEdit(l.id);return}e.stopPropagation();if(b.dataset.act==='edit')openEdit(l.id);if(b.dataset.act==='availability')toggleAvailability(l.id);if(b.dataset.act==='archive')archiveListing(l.id)});
+      tr.querySelectorAll('[data-act]').forEach(b=>{b.hidden=!canManage||(b.dataset.act==='archive'&&!canReview)});
       body.appendChild(tr);
     }
   }
@@ -92,13 +93,14 @@
     $('form').reset();$('listingId').value='';$('versionStatus').value='draft';$('currency').value='EGP';$('isAvailable').checked=true;$('formTitle').textContent='إضافة منتج أو خدمة';$('history').hidden=true;$('historyList').innerHTML='';
   }
 
-  function openAdd(){resetForm();if(partners.length===1)$('partnerId').value=partners[0].id;$('editModal').classList.add('show');$('editModal').setAttribute('aria-hidden','false')}
+  function openAdd(){if(!canManage)return;resetForm();if(partners.length===1)$('partnerId').value=partners[0].id;$('editModal').classList.add('show');$('editModal').setAttribute('aria-hidden','false')}
   function closeModal(){ $('editModal').classList.remove('show');$('editModal').setAttribute('aria-hidden','true') }
 
   function openEdit(id){
+    if(!canManage)return;
     const l=listings.find(x=>x.id===id);if(!l)return;const v=latestFor(id)||publishedFor(l);const prop=proposed(v);
     resetForm();$('listingId').value=l.id;$('formTitle').textContent='تعديل المنتج / الخدمة';
-    $('partnerId').value=prop.partner_id||l.partner_id||'';$('categoryId').value=prop.category_id||l.category_id||'';$('kind').value=prop.kind||l.kind||'product';$('versionStatus').value=v?.status||'draft';
+    $('partnerId').value=prop.partner_id||l.partner_id||'';$('categoryId').value=prop.category_id||l.category_id||'';$('kind').value=prop.kind||l.kind||'product';$('versionStatus').value=canReview?(v?.status||'draft'):'draft';
     $('nameAr').value=v?.name_ar||'';$('nameEn').value=v?.name_en||'';$('descriptionAr').value=v?.description_ar||'';$('descriptionEn').value=v?.description_en||'';$('price').value=v?.price??0;$('compareAtPrice').value=v?.compare_at_price??'';$('currency').value=v?.currency||'EGP';
     $('stockQty').value=(prop.stock_qty??l.stock_qty)??'';$('capacityPerDay').value=(prop.capacity_per_day??l.capacity_per_day)??'';$('isAvailable').checked=(prop.is_available??l.is_available)!==false;$('mediaUrls').value=Array.isArray(v?.media)?v.media.map(x=>typeof x==='string'?x:(x?.url||'')).filter(Boolean).join('\n'):'';$('reviewNote').value=v?.review_note||'';
     const history=versionsFor(id);$('history').hidden=!history.length;$('historyList').innerHTML=history.map(x=>`<div class="version"><div><strong>${esc(x.name_ar||x.name_en||'نسخة')}</strong><div><span class="badge ${statusClass(x.status)}">${statusLabel(x.status)}</span> ${l.published_version_id===x.id?'<span class="badge good">Live</span>':''}</div></div><div><strong>${money(x.price,x.currency)}</strong><br><small>${date(x.created_at)}</small></div></div>`).join('');
@@ -109,14 +111,14 @@
     const listing={partner_id:$('partnerId').value,category_id:$('categoryId').value||null,kind:$('kind').value,is_available:$('isAvailable').checked,stock_qty:$('stockQty').value===''?null:Number($('stockQty').value),capacity_per_day:$('capacityPerDay').value===''?null:Number($('capacityPerDay').value)};
     const status=$('versionStatus').value;
     const media=$('mediaUrls').value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
-    const version={status,name_ar:$('nameAr').value.trim(),name_en:$('nameEn').value.trim()||null,description_ar:$('descriptionAr').value.trim()||null,description_en:$('descriptionEn').value.trim()||null,price:Number($('price').value||0),compare_at_price:$('compareAtPrice').value===''?null:Number($('compareAtPrice').value),currency:$('currency').value||'EGP',media,metadata:{source:'admin',proposed:listing},review_note:$('reviewNote').value.trim()||null};
+    const version={status,name_ar:$('nameAr').value.trim(),name_en:$('nameEn').value.trim()||null,description_ar:$('descriptionAr').value.trim()||null,description_en:$('descriptionEn').value.trim()||null,price:Number($('price').value||0),compare_at_price:$('compareAtPrice').value===''?null:Number($('compareAtPrice').value),currency:$('currency').value||'EGP',media,metadata:{source:'admin',proposed:listing},review_note:canReview?($('reviewNote').value.trim()||null):null};
     if(status==='pending_review'){version.submitted_by=user.id;version.submitted_at=new Date().toISOString()}
     if(['published','rejected','archived'].includes(status)){version.reviewed_by=user.id;version.reviewed_at=new Date().toISOString()}
     return {listing,version};
   }
 
   async function save(e){
-    e.preventDefault();const id=$('listingId').value,{listing,version}=formPayload();if(!listing.partner_id||!version.name_ar){show('errorBox','الشريك والاسم بالعربي مطلوبان.');return}
+    e.preventDefault();if(!canManage)return;if(!canReview&&!['draft','pending_review'].includes($('versionStatus').value)){show('errorBox','النشر يحتاج صلاحية اعتماد.');return}const id=$('listingId').value,{listing,version}=formPayload();if(!listing.partner_id||!version.name_ar){show('errorBox','الشريك والاسم بالعربي مطلوبان.');return}
     try{
       let listingId=id,before=null;
       if(id){before=listings.find(x=>x.id===id)||null}
@@ -139,10 +141,12 @@
   }
 
   async function toggleAvailability(id){
+    if(!canManage)return;
     const l=listings.find(x=>x.id===id);if(!l)return;try{const next=!l.is_available;const {error}=await supabase.from('listings').update({is_available:next}).eq('id',id);if(error)throw error;await audit('listing_availability_changed',id,{is_available:l.is_available},{is_available:next});show('successBox',next?'تمت إتاحة العنصر.':'تم إيقاف العنصر مؤقتًا.');await loadData()}catch(err){console.error(err);show('errorBox',err.message||'تعذر تغيير التوفر.')}
   }
 
   async function archiveListing(id){
+    if(!canManage||!canReview)return;
     const l=listings.find(x=>x.id===id),v=latestFor(id)||publishedFor(l);if(!l||!v)return;if(!confirm('سيتم إخفاء العنصر من الموقع وأرشفته مع الاحتفاظ بسجله. متابعة؟'))return;
     try{
       const archived={listing_id:id,status:'archived',name_ar:v.name_ar,name_en:v.name_en,description_ar:v.description_ar,description_en:v.description_en,price:v.price,compare_at_price:v.compare_at_price,currency:v.currency,media:v.media||[],metadata:{source:'admin',proposed:{partner_id:l.partner_id,category_id:l.category_id,kind:l.kind,is_available:false,stock_qty:l.stock_qty,capacity_per_day:l.capacity_per_day}},reviewed_by:user.id,reviewed_at:new Date().toISOString(),review_note:'Archived by admin'};
@@ -156,7 +160,9 @@
     try{
       const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       const {data:{user:u},error:ue}=await supabase.auth.getUser();if(ue||!u){location.replace('/auth#login');return}user=u;
-      const {data:p,error:pe}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pe||!p||!p.is_active||!ADMIN_ROLES.has(p.role)){location.replace('/account');return}profile=p;
+      const {data:p,error:pe}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();if(pe||!p||!p.is_active){location.replace('/account');return}profile=p;
+      const {data:perms,error:permError}=await supabase.rpc('get_my_permissions');if(permError)throw permError;const permissions=new Set((perms||[]).map(x=>x.permission_code));canManage=permissions.has('catalog.manage');canReview=permissions.has('approvals.review');if(!permissions.has('catalog.view')&&!canManage){location.replace('/Dear-Day-Staff.html');return}
+      $('addBtn').hidden=!canManage;for(const o of $('versionStatus').options){o.disabled=!canReview&&!['draft','pending_review'].includes(o.value)}$('reviewNote').disabled=!canReview;
       $('adminEmail').textContent=u.email||p.full_name||'Admin';$('roleBadge').textContent=roleLabel(p.role);$('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();location.replace('/auth#login')});
       $('addBtn').addEventListener('click',openAdd);$('form').addEventListener('submit',save);document.querySelectorAll('[data-close="editModal"]').forEach(b=>b.addEventListener('click',closeModal));$('editModal').addEventListener('click',e=>{if(e.target===$('editModal'))closeModal()});
       ['searchInput','partnerFilter','kindFilter','availabilityFilter'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));$('refreshBtn').addEventListener('click',loadData);
