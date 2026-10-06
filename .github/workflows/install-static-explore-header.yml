@@ -1,0 +1,93 @@
+name: Install static Explore header
+on:
+  push:
+    paths:
+      - '.github/workflows/install-static-explore-header.yml'
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rewrite public headers with static Explore dropdown
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+
+          css='<link rel="stylesheet" href="/approved-pages/assets/dear-day-explore-static.css?v=20261006-3"/>'
+          js='<script src="/approved-pages/dear-day-explore-static.js?v=20261006-3"></script>'
+          files={Path('index.html'),Path('index-en.html'),Path('how-it-works.html'),Path('how-it-works-en.html')}
+          cfg=json.loads(Path('vercel.json').read_text(encoding='utf-8'))
+          for item in cfg.get('rewrites',[]):
+              dest=str(item.get('destination') or '')
+              if dest.endswith('.html'): files.add(Path(dest.lstrip('/')))
+
+          nav_re=re.compile(r'(<nav\b[^>]*class="[^"]*(?:home-nav|dd-global-nav|dd-en-nav|auth-nav|navlinks)[^"]*"[^>]*>).*?(</nav>)',re.I|re.S)
+
+          def is_en(p,s):
+              return 'lang="en"' in s.lower() or 'dir="ltr"' in s.lower() or '-en' in p.name.lower() or p.name.lower()=='index-en.html'
+          def active_key(p):
+              n=p.name.lower()
+              if n in ('index.html','index-en.html'): return 'home'
+              if 'occasion' in n or 'birthday' in n: return 'occasions'
+              if 'how-it-works' in n: return 'how'
+              if 'partner' in n: return 'partners'
+              if any(x in n for x in ('gifts','cake','flowers','venues')): return 'explore'
+              return ''
+          def cls(on): return ' class="active"' if on else ''
+          def nav_html(en,active):
+              if en:
+                  explore_class='dd-static-explore'+(' dd-active' if active=='explore' else '')
+                  return (
+                    f'<a{cls(active=="home")} href="/en">Home</a>'
+                    f'<div class="{explore_class}"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>Explore</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts-en">Gifts</a><a href="/cake-en">Cake &amp; Sweets</a><a href="/venues-en">Places &amp; Experiences</a><a href="/flowers-en">Flowers</a></div></div>'
+                    f'<a{cls(active=="occasions")} href="/occasions-en">Occasions</a>'
+                    f'<a{cls(active=="how")} href="/how-it-works-en">How It Works</a>'
+                    f'<a{cls(active=="partners")} href="/partners-en">For Partners</a>'
+                  )
+              explore_class='dd-static-explore'+(' dd-active' if active=='explore' else '')
+              return (
+                f'<a{cls(active=="home")} href="/">الرئيسية</a>'
+                f'<div class="{explore_class}"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>اكتشف</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts">هدايا</a><a href="/cake">كيك وحلويات</a><a href="/venues">أماكن وتجارب</a><a href="/flowers">ورد</a></div></div>'
+                f'<a{cls(active=="occasions")} href="/occasions">المناسبات</a>'
+                f'<a{cls(active=="how")} href="/how-it-works">كيف نعمل</a>'
+                f'<a{cls(active=="partners")} href="/partners">للشركاء</a>'
+              )
+
+          changed=[]
+          for p in sorted(files):
+              if not p.exists(): continue
+              s=p.read_text(encoding='utf-8')
+              m=nav_re.search(s)
+              if not m: continue
+              en=is_en(p,s); active=active_key(p)
+              s=nav_re.sub(lambda m:m.group(1)+nav_html(en,active)+m.group(2),s,count=1)
+              s=re.sub(r'<script[^>]+dear-day-explore-nav\.js[^>]*></script>','',s,flags=re.I)
+              if 'dear-day-explore-static.css' not in s:
+                  s=s.replace('</head>',css+'</head>',1)
+              if 'dear-day-explore-static.js' not in s:
+                  s=re.sub(r'</body\s*>',js+'</body>',s,count=1,flags=re.I)
+              p.write_text(s,encoding='utf-8');changed.append(str(p))
+
+          # Prevent the legacy English How It Works normalizer from rebuilding the static nav.
+          mp=Path('approved-pages/dear-day-mobile-nav.js')
+          if mp.exists():
+              s=mp.read_text(encoding='utf-8')
+              needle="const desiredNav=[['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Plan My Occasion','/en#occasions']];\n    if(nav){"
+              repl="const desiredNav=[['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Plan My Occasion','/en#occasions']];\n    if(nav && !nav.querySelector('.dd-static-explore')){"
+              if needle in s:
+                  s=s.replace(needle,repl,1)
+                  mp.write_text(s,encoding='utf-8');changed.append(str(mp))
+          print('Updated',len(changed),'files')
+          for x in changed: print(x)
+          PY
+      - name: Commit static header
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add '*.html' 'approved-pages/*.html' approved-pages/dear-day-mobile-nav.js
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Make Explore header static across public pages"
+          git push
