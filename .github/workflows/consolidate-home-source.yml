@@ -1,0 +1,69 @@
+name: Consolidate Dear Day home source
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/consolidate-home-source.yml'
+permissions:
+  contents: write
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make index files the single Home source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, shutil
+
+          ar_live = Path('home-live-v3.html')
+          en_live = Path('home-live-v3-en.html')
+          if not ar_live.exists() or not en_live.exists():
+              raise RuntimeError('Expected live Home files are missing')
+
+          # Preserve the exact currently-live Home as the canonical editable source.
+          shutil.copyfile(ar_live, Path('index.html'))
+          shutil.copyfile(en_live, Path('index-en.html'))
+
+          p = Path('vercel.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          rewrites = []
+          for r in data.get('rewrites', []):
+              if r.get('source') == '/':
+                  # No root rewrite is needed: Vercel serves index.html at /.
+                  continue
+              if r.get('source') == '/en':
+                  r = dict(r)
+                  r['destination'] = '/index-en.html'
+              rewrites.append(r)
+          data['rewrites'] = rewrites
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          # Remove temporary duplicate Home files now that index.* is canonical.
+          ar_live.unlink()
+          en_live.unlink()
+          PY
+
+      - name: Remove legacy Explore/Header automation layers
+        run: |
+          rm -f \
+            .github/workflows/explore-nav-cache-bust.yml \
+            .github/workflows/explore-nav-compat-fix.yml \
+            .github/workflows/finalize-static-header.yml \
+            .github/workflows/install-explore-nav.yml \
+            .github/workflows/install-static-explore-header.yml \
+            .github/workflows/remove-explore-overlay.yml
+
+      - name: Commit cleanup and remove this one-time workflow
+        run: |
+          rm -f .github/workflows/consolidate-home-source.yml
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Consolidate Home and header source of truth"
+          git push
