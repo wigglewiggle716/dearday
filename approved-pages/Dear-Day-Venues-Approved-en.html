@@ -72,5 +72,5 @@ el('customBtn').onclick=()=>el('customDialog').showModal();el('saveCustom').oncl
 function go(file){persist();const payload=encodeURIComponent(JSON.stringify(compactPlan(plan)));location.href=file+(flow?'?flow=1&':'?')+'dd='+payload}el('nextBtn').onclick=()=>go('/cart-en');const lang=el('langToAr');lang.onclick=e=>{e.preventDefault();location.href=lang.getAttribute('href')+(location.search||'')+(location.hash||'')};persist();syncFilters();renderCurrent();renderGrid();updateSummary();
 })();
 </script>
-</body>
+<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-1"></script></body>
 </html>

@@ -52,5 +52,5 @@ document.getElementById('detailsBtn').onclick=()=>{location.href='/details-en'};
 const heart=document.getElementById('ddHeartMessage'),heartCount=document.getElementById('heartCount'),heartStatus=document.getElementById('heartStatus');heart.value=String(plan.heartMessage||'').slice(0,220);function autoGrow(){heart.style.height='auto';heart.style.height=heart.scrollHeight+'px'}function saveHeart(){plan.heartMessage=heart.value.slice(0,220);plan.heartMessageUpdatedAt=Date.now();savePlan(plan);heartStatus.textContent='Saved';clearTimeout(saveHeart.t);saveHeart.t=setTimeout(()=>heartStatus.textContent='',1200)}function syncHeart(){autoGrow();heartCount.textContent=heart.value.length+' / 220';clearTimeout(syncHeart.t);syncHeart.t=setTimeout(saveHeart,350)}heart.addEventListener('input',syncHeart);heart.addEventListener('blur',saveHeart);autoGrow();heartCount.textContent=heart.value.length+' / 220';
 const ar=document.getElementById('langToAr');ar.addEventListener('click',e=>{e.preventDefault();location.href=ar.getAttribute('href')+(location.search||'')+(location.hash||'')});renderContext();render();window.addEventListener('ddcartchange',render);
 </script>
-</body>
+<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-1"></script></body>
 </html>

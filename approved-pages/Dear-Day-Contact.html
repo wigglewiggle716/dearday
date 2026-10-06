@@ -58,5 +58,5 @@
 (function(){const message=document.getElementById('message');if(message){const autoGrow=function(){message.style.height='auto';message.style.height=message.scrollHeight+'px';};message.addEventListener('input',autoGrow);autoGrow();}})();
 (function(){const form=document.getElementById('contactForm');const status=document.getElementById('contactStatus');if(!form)return;form.addEventListener('submit',function(e){e.preventDefault();if(!form.reportValidity())return;const data=Object.fromEntries(new FormData(form).entries());data.createdAt=new Date().toISOString();try{localStorage.setItem('dearDayContactMessage',JSON.stringify(data))}catch(err){}status.className='form-status show';status.textContent='تم حفظ الرسالة مبدئيًا على الجهاز. الإرسال الفعلي هيتفعّل بمجرد ربط نظام خدمة العملاء.';});})();
 </script>
-</body>
+<script src="/approved-pages/dear-day-explore-nav.js?v=20261006-1"></script></body>
 </html>
