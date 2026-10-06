@@ -1,0 +1,93 @@
+name: Brand birthday date control
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/birthday-date-branding.yml'
+permissions:
+  contents: write
+jobs:
+  brand-date:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply branded date control
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          files = [Path('birthday.html'), Path('approved-pages/Dear-Day-Birthday-Approved.html')]
+          marker = 'id="dd-birthday-date-branding"'
+          block = r'''<style id="dd-birthday-date-branding">
+/* Birthday context date — match Dear Day branded select controls */
+.dd-plan-context label:has(#ddContextDate){position:relative}
+#ddContextDate{
+  min-height:46px!important;
+  border:1px solid rgba(107,53,64,.18)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,#fff,#fffdfb)!important;
+  color:#352D2E!important;
+  box-shadow:0 5px 14px rgba(76,31,36,.025)!important;
+  padding:0 42px 0 14px!important;
+  font:600 13px/1.45 'Noto Sans Arabic',Tahoma,Arial,sans-serif!important;
+  outline:none!important;
+  direction:ltr!important;
+  text-align:left!important;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease!important;
+}
+#ddContextDate:hover{border-color:rgba(107,53,64,.31)!important;background:#fff!important}
+#ddContextDate:focus{border-color:#A8583D!important;box-shadow:0 0 0 4px rgba(168,88,61,.09),0 8px 20px rgba(76,31,36,.05)!important;background:#fff!important}
+.dd-plan-context label:has(#ddContextDate)::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  width:17px;
+  height:17px;
+  pointer-events:none;
+  background:center/17px 17px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236B3540' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E");
+}
+#ddContextDate::-webkit-calendar-picker-indicator{
+  opacity:0!important;
+  cursor:pointer!important;
+  width:22px!important;
+  height:22px!important;
+}
+@supports not selector(label:has(input)){
+  #ddContextDate::-webkit-calendar-picker-indicator{opacity:.72!important;filter:sepia(.25) saturate(1.5) hue-rotate(300deg)!important}
+}
+</style>'''
+
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              if marker in text:
+                  print('already branded', path)
+                  continue
+              if '</head>' not in text:
+                  raise SystemExit(f'{path}: missing </head>')
+              text = text.replace('</head>', block + '\n</head>', 1)
+              path.write_text(text, encoding='utf-8')
+              print('updated', path)
+          PY
+      - name: Verify branding
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['birthday.html','approved-pages/Dear-Day-Birthday-Approved.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'id="dd-birthday-date-branding"' in s
+              assert '#ddContextDate::-webkit-calendar-picker-indicator' in s
+              assert 'stroke=\'%236B3540\'' in s
+              print('verified', p)
+          PY
+      - name: Commit branded date
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add birthday.html approved-pages/Dear-Day-Birthday-Approved.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Brand birthday date control'
+          git push origin main
