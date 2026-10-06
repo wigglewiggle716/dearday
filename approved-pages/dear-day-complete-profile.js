@@ -77,10 +77,11 @@
       const button=form.querySelector('button[type="submit"]');if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
       try{
         const firstName=first.value.trim(),lastName=last.value.trim(),mobile=phone.value.trim();
+        const fullName=[firstName,lastName].filter(Boolean).join(' ');
         const payload={
           first_name:firstName,
           last_name:lastName,
-          full_name:[firstName,lastName].filter(Boolean).join(' '),
+          full_name:fullName,
           phone:mobile,
           birth_date:birth?.value||'',
           area:area?.value.trim()||'',
@@ -88,6 +89,8 @@
         };
         const {error:updateError}=await supabase.auth.updateUser({data:payload});
         if(updateError)throw updateError;
+        const {error:profileError}=await supabase.from('profiles').update({full_name:fullName,phone:mobile}).eq('id',user.id);
+        if(profileError)throw profileError;
         setStatus(text('تم حفظ بياناتك بنجاح.','Your details were saved successfully.'));
         setTimeout(()=>location.replace(safeNext()),350);
       }catch(err){
