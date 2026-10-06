@@ -1,0 +1,45 @@
+name: Force refresh header scripts
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/force-refresh-header-scripts.yml'
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bust cached header scripts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          changed=[]
+          for p in Path('.').rglob('*.html'):
+              try:
+                  s=p.read_text(encoding='utf-8')
+              except Exception:
+                  continue
+              ns=s.replace('/approved-pages/dear-day-cart.js?v=20261004-5','/approved-pages/dear-day-cart.js?v=20261006-header1')
+              if ns!=s:
+                  p.write_text(ns,encoding='utf-8')
+                  changed.append(str(p))
+          p=Path('approved-pages/dear-day-cart.js')
+          s=p.read_text(encoding='utf-8')
+          ns=s.replace('/approved-pages/dear-day-mobile-nav.js?v=20261006-static1','/approved-pages/dear-day-mobile-nav.js?v=20261006-static2')
+          if ns!=s:
+              p.write_text(ns,encoding='utf-8')
+              changed.append(str(p))
+          print('Changed:', len(changed), changed[:20])
+          if not changed:
+              raise SystemExit('No cache-version references changed')
+          PY
+      - name: Commit refresh and remove workflow
+        run: |
+          rm .github/workflows/force-refresh-header-scripts.yml
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Force refresh desktop header scripts'
+          git push
