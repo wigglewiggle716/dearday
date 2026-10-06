@@ -139,7 +139,7 @@
     if(document.documentElement.lang!=='en')document.documentElement.lang='en';
     if(document.documentElement.dir!=='ltr')document.documentElement.dir='ltr';
     if(document.body&&document.body.dir!=='ltr')document.body.dir='ltr';
-    const header=document.querySelector('header');if(!header)return;
+    const header=document.querySelector('header');if(!header)return;if(header.querySelector('.dd-static-explore'))return;
     const brand=header.querySelector('.brand,.dd-global-brand,.auth-brand,a.logo');
     if(brand&&brand.tagName==='A'&&brand.getAttribute('href')!=='/en'){brand.href='/en';brand.setAttribute('aria-label','Dear Day — Home')}
     const nav=header.querySelector('.home-nav,.dd-global-nav,.auth-nav,nav');
@@ -213,7 +213,7 @@
       location.href='/birthday-en?'+params.toString();
     },true);
   }
-  function scan(){ensureStyle();forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}
+  function scan(){ensureStyle();const hasStatic=!!document.querySelector('header .dd-static-explore');if(!hasStatic)forceEnglishHowItWorksHeader();document.querySelectorAll('header').forEach(mount);patchFooterFlowers();patchFooterDataDeletion();patchHowItWorksLinks();if(!hasStatic)forceEnglishHowItWorksHeader();normalizeEnglishHeader();patchEnglishHomeOccasionFlow()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan,{once:true});else scan();
   document.addEventListener('click',e=>{document.querySelectorAll('header.dd-native-mobile-ready').forEach(header=>{if(!header.contains(e.target)){header.classList.remove('dd-native-menu-open');header.querySelector('.dd-native-menu-btn')?.setAttribute('aria-expanded','false')}})});
   let queued=false;const observer=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});observer.observe(document.documentElement,{subtree:true,childList:true});
