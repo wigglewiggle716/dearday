@@ -70,9 +70,9 @@
   }
   function menuItems(){
     return isEn()?[
-      ['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['Gifts','/gifts-en'],['Cake & Sweets','/cake-en'],['Flowers','/flowers-en'],['Places & Experiences','/venues-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']
+      ['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']
     ]:[
-      ['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['الهدايا','/gifts'],['الكيك والحلويات','/cake'],['الورد','/flowers'],['الأماكن والتجارب','/venues'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']
+      ['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']
     ];
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}

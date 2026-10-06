@@ -29,7 +29,7 @@
 </style>
 <script src="/approved-pages/dear-day-cart.js?v=20261004-4"></script>
 <link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1">
-<link rel="stylesheet" href="/approved-pages/assets/dear-day-explore-static.css?v=20261006-3"/></head>
+<link rel="stylesheet" href="/approved-pages/assets/dear-day-explore-static.css?v=20261006-mobileExplore1"/></head>
 <body>
 <header class="home-header">
 <a class="brand" href="/" aria-label="Dear Day — الرئيسية"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
@@ -58,5 +58,5 @@
 (function(){const message=document.getElementById('message');if(message){const autoGrow=function(){message.style.height='auto';message.style.height=message.scrollHeight+'px';};message.addEventListener('input',autoGrow);autoGrow();}})();
 (function(){const form=document.getElementById('contactForm');const status=document.getElementById('contactStatus');if(!form)return;form.addEventListener('submit',function(e){e.preventDefault();if(!form.reportValidity())return;const data=Object.fromEntries(new FormData(form).entries());data.createdAt=new Date().toISOString();try{localStorage.setItem('dearDayContactMessage',JSON.stringify(data))}catch(err){}status.className='form-status show';status.textContent='تم حفظ الرسالة مبدئيًا على الجهاز. الإرسال الفعلي هيتفعّل بمجرد ربط نظام خدمة العملاء.';});})();
 </script>
-<script src="/approved-pages/dear-day-explore-static.js?v=20261006-3"></script></body>
+<script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script></body>
 </html>
