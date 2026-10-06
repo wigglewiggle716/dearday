@@ -1,0 +1,93 @@
+name: Venues hero layout cleanup
+on:
+  push:
+    paths:
+      - '.github/workflows/venues-hero-layout-cleanup.yml'
+permissions:
+  contents: write
+jobs:
+  update-venues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update venues hero and remove current-selection panel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+              (Path('venues.html'), 'rtl'),
+              (Path('venues-en.html'), 'ltr'),
+              (Path('approved-pages/Dear-Day-Venues-Approved.html'), 'rtl'),
+              (Path('approved-pages/Dear-Day-Venues-Approved-en.html'), 'ltr'),
+          ]
+
+          for p, direction in files:
+              s = p.read_text(encoding='utf-8')
+
+              # Desktop hero: always keep image on the left and copy on the right.
+              s = re.sub(r'\.hero\{(?![^}]*direction:)', '.hero{direction:ltr;', s, count=1)
+              s = re.sub(
+                  r'\.hero-copy\{(?![^}]*direction:)',
+                  f'.hero-copy{{direction:{direction};',
+                  s,
+                  count=1,
+              )
+
+              # Remove the small pill above the hero heading.
+              s = re.sub(
+                  r'(<div class="hero-copy">)\s*<span class="pill">.*?</span>',
+                  r'\1',
+                  s,
+                  count=1,
+                  flags=re.S,
+              )
+
+              # With the pill gone, remove the old top spacing above the hero title.
+              s = re.sub(
+                  r'(\.hero h1\{[^}]*?)margin:20px 0 12px;',
+                  r'\1margin:0 0 12px;',
+                  s,
+                  count=1,
+              )
+
+              # Remove the full "Current selection" / "اختيارك الحالي" panel.
+              s = re.sub(
+                  r'<div class="current">\s*<div class="section-title">\s*<div>\s*<h2>.*?</h2>\s*</div>\s*</div>\s*<div id="currentWrap"></div>\s*</div>',
+                  '',
+                  s,
+                  count=1,
+                  flags=re.S,
+              )
+
+              # The selection state still powers cards/cart; make its old renderer a safe no-op
+              # now that the visual current-selection container has been intentionally removed.
+              guard = "function renderCurrent(){const wrap=el('currentWrap');if(!wrap)return;"
+              if guard not in s:
+                  s = s.replace(
+                      'function renderCurrent(){',
+                      guard,
+                      1,
+                  )
+
+              if '<div id="currentWrap"></div>' in s:
+                  raise RuntimeError(f'Current-selection panel still present in {p}')
+              if '<div class="hero-copy"><span class="pill">' in s:
+                  raise RuntimeError(f'Hero pill still present in {p}')
+              if '.hero{direction:ltr;' not in s:
+                  raise RuntimeError(f'Hero direction update missing in {p}')
+
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit update
+        run: |
+          git config user.name "Dear Day Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add venues.html venues-en.html approved-pages/Dear-Day-Venues-Approved.html approved-pages/Dear-Day-Venues-Approved-en.html
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Refine venues hero layout"
+          git push
