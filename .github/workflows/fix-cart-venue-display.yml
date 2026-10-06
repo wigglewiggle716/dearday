@@ -16,40 +16,43 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Use actual venue name in Arabic cart
+      - name: Clean venue name display logic
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
 
           files = [Path('cart.html'), Path('approved-pages/Dear-Day-Cart.html')]
-          pattern = r"item\.ar\s*\|\|\s*item\.name"
-          replacement = "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)"
+          duplicated = "item.type==='venue'?(item.name||item.ar):(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))"
+          clean = "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)"
 
           for path in files:
               text = path.read_text(encoding='utf-8')
-              text, count = re.subn(pattern, replacement, text, count=1)
+              count = text.count(duplicated)
               if count != 1:
-                  raise SystemExit(f'{path}: expected 1 venue-title expression, found {count}')
-              path.write_text(text, encoding='utf-8')
-              print(f'updated {path}')
+                  raise SystemExit(f'{path}: expected 1 duplicated condition, found {count}')
+              path.write_text(text.replace(duplicated, clean, 1), encoding='utf-8')
+              print(f'cleaned {path}')
           PY
-      - name: Verify venue display logic
+      - name: Verify final cart logic
         run: |
           python - <<'PY'
           from pathlib import Path
+          duplicated = "item.type==='venue'?(item.name||item.ar):(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))"
+          clean = "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)"
           for p in ['cart.html','approved-pages/Dear-Day-Cart.html']:
               s=Path(p).read_text(encoding='utf-8')
-              assert "item.type==='venue'?(item.name||item.ar):(item.ar||item.name)" in s
+              assert clean in s
+              assert duplicated not in s
+              assert "(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null" in s
               print('verified', p)
           PY
-      - name: Commit fix
+      - name: Commit cleanup
         run: |
           git config user.name 'Dear Day Automation'
           git config user.email 'actions@users.noreply.github.com'
           git add cart.html approved-pages/Dear-Day-Cart.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Show actual venue names in cart'
+          git commit -m 'Clean cart venue name display logic'
           git push origin main
 
-# one-time trigger v4
+# one-time trigger v5
