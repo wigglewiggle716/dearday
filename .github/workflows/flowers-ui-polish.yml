@@ -13,7 +13,75 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Apply flowers UI patch
-        env:
-          PATCH_B64: CmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aAoKanNfcGF0aD1QYXRoKCdhcHByb3ZlZC1wYWdlcy9kZWFyLWRheS1saXZlLWNhdGFsb2cuanMnKQpzPWpzX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCgpvbGQgPSAiIiIgICAgY29uc3QgaG9zdD1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdtYWluJyk7aG9zdC5pZD0nZGRMaXZlQ2F0YWxvZyc7aG9zdC5pbm5lckhUTUw9YDxzZWN0aW9uIGNsYXNzPSJkZC1jYXQtaGVybyI+PGRpdj4ke3NlY3Rpb249PT0nZmxvd2Vycyc/JzxzcGFuIGNsYXNzPSJkZC1kZW1vLXBpbGwiPicsVCgn نسخ تجريبية للاختبار','Demo catalog')+'</span>':''}<h1>${sectionCopy.title}</h1><p>${sectionCopy.sub}</p></div></section><section class="dd-cat-wrap"><aside class="dd-cat-filters"><div class="dd-cat-filter-head"><strong>${T('فلترة النتائج','Filters')}</strong><button id="ddResetFilters" type="button">${T('إعادة ضبط','Reset')}</button></div>${filtersHtml()}</aside><div class="dd-cat-content"><div class="dd-cat-toolbar"><strong id="ddResultCount"></strong><select id="ddSort"><option value="featured">${T('مقترحة','Featured')}</option><option value="price_asc">${T('السعر: الأقل','Price: low to high')}</option><option value="price_desc">${T('السعر: الأعلى','Price: high to low')}</option><option value="new">${T('الجديد أولًا','New first')}</option></select></div><div id="ddCatalogGrid" class="dd-cat-grid"></div><div id="ddCatalogEmpty" class="dd-cat-empty" hidden>${T('مفيش نتائج مطابقة للفلاتر دي.','No products match these filters.')}</div></div></section>`;"""
-bmV3ID0gIiIiICAgIGNvbnN0IGhvc3Q9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnbWFpbicpO2hvc3QuaWQ9J2RkTGl2ZUNhdGFsb2cnO2hvc3QuY2xhc3NOYW1lPXNlY3Rpb249PT0nZmxvd2Vycyc/J2RkLWxpdmUtZmxvd2Vycyc6Jyc7CiAgICBjb25zdCBzb3J0T3B0aW9ucz1zZWN0aW9uPT09J2Zsb3dlcnMnCiAgICAgID8gJzxvcHRpb24gdmFsdWU9ImZlYXR1cmVkIj4nK1QoJ+inrNmD2KvYsSDZhNmG2KfYs9ioJywnUmVjb21tZW5kZWQnKSsnPC9vcHRpb24+PG9wdGlvbiB2YWx1ZT0icHJpY2VfYXNjIj4nK1QoJ9in2YTYs9i52LE6INin2YTYo9mC2YQg2KPZiNmE2KfZhycsJ1ByaWNlOiBsb3cgdG8gaGlnaCcpKyc8L29wdGlvbj48b3B0aW9uIHZhbHVlPSJwcmljZV9kZXNjIj4nK1QoJ9in2YTYs9i52LE6INin2YTYo9i52YTZiSDYo9mI2YTYp9mL2Kcg2KfZhNmE2KfZhycsJ1ByaWNlOiBoaWdoIHRvIGxvdycpKyc8L29wdGlvbj4nCiAgICAgIDogJzxvcHRpb24gdmFsdWU9ImZlYXR1cmVkIj4nK1QoJ9mF2YLiqNix2K3YqScsJ0ZlYXR1cmVkJykrJzwvb3B0aW9uPjxvcHRpb24gdmFsdWU9InByaWNlX2FzYyI+JytUKCfYp9mE2LPYudixOiDYp9mE2KPYtNmEJywnUHJpY2U6IGxvdyB0byBoaWdoJykrJzwvb3B0aW9uPjxvcHRpb24gdmFsdWU9InByaWNlX2Rlc2MiPicsVCgn2KfZhNiz2LnYsTog2KfZhNij2LnZhNmJJywnUHJpY2U6IGhpZ2ggdG8gbG93JykrJzwvb3B0aW9uPjxvcHRpb24gdmFsdWU9Im5ldyI+JytUKCfYp9mE2KzYr9mK2K8g2KPYsNmE2KfZhycsJ05ldyBmaXJzdCcpKyc8L29wdGlvbj4nOwogICAgaG9zdC5pbm5lckhUTUw9YDxzZWN0aW9uIGNsYXNzPSJkZC1jYXQtaGVybyI+PGRpdj48aDE+JHt zZWN0aW9uQ29weS50aXRsZX08L2gxPjxwPiR7c2VjdGlvbkNvcHkuc3VifTwvcD48L2Rpdj48L3NlY3Rpb24+PHNlY3Rpb24gY2xhc3M9ImRkLWNhdC13cmFwIj48YXNpZGUgY2xhc3M9ImRkLWNhdC1maWx0ZXJzIj48ZGl2IGNsYXNzPSJkZC1jYXQtZmlsdGVyLWhlYWQiPjxzdHJvbmc+JHtUKCfZgdmE2KrYsdip2Kkg2KfZhNmG2KrYp9im2KwnLCdGaWx0ZXJzJyl9PC9zdHJvbmc+PGJ1dHRvbiBpZD0iZGRSZXNldEZpbHRlcnMiIHR5cGU9ImJ1dHRvbiI+JHtUKCfYpdi52KfYr9ipINi22KjYtycsJ1Jlc2V0Jyl9PC9idXR0b24+PC9kaXY+JHtmaWx0ZXJzSHRtbCgpfTwvYXNpZGU+PGRpdiBjbGFzcz0iZGQtY2F0LWNvbnRlbnQiPjxkaXYgY2xhc3M9ImRkLWNhdC10b29sYmFyIj48c3Ryb25nIGlkPSJkZFJlc3VsdENvdW50Ij48L3N0cm9uZz48c2VsZWN0IGlkPSJkZFNvcnQiPiR7c29ydE9wdGlvbnN9PC9zZWxlY3Q+PC9kaXY+PGRpdiBpZD0iZGRDYXRhbG9nR3JpZCIgY2xhc3M9ImRkLWNhdC1ncmlkIj48L2Rpdj48ZGl2IGlkPSJkZENhdGFsb2dFbXB0eSIgY2xhc3M9ImRkLWNhdC1lbXB0eSIgaGlkZGVuPiR7VCgn2YXYs9mK2LTYqCDZhtiq2KfYptisINmF2LfYp9io2YLYqSDZhNmE2YHZhNin2KrYsSDYr9mKLicsJ05vIHByb2R1Y3RzIG1hdGNoIHRoZXNlIGZpbHRlcnMuJyl9PC9kaXY+PC9kaXY+PC9zZWN0aW9uPmA7IiIiCmlmIG9sZCBub3QgaW4gczoKICAgIHJhaXNlIFN5c3RlbUV4aXQoJ2xpdmUgY2F0YWxvZyBtb3VudCBibG9jayBub3QgZm91bmQnKQpzPXMucmVwbGFjZShvbGQsbmV3LDEpCgpjc3NfYW5jaG9yID0gIi5kZC1jYXQtdG9vbGJhciBzZWxlY3R7d2lkdGg6YXV0byFpbXBvcnRhbnQ7aGVpZ2h0OjQwcHghaW1wb3J0YW50O2JvcmRlcjoxcHggc29saWQgI2U2ZDlkNCFpbXBvcnRhbnQ7Ym9yZGVyLXJhZGl1czoxMHB4IWltcG9ydGFudDtiYWNrZ3JvdW5kOiNmZmYhaW1wb3J0YW50O3BhZGRpbmc6MCAxMHB4IWltcG9ydGFudH0uZGQtY2F0LWdyaWQiCmNzc19uZXcgPSAiIiIuZGQtY2F0LXRvb2xiYXIgc2VsZWN0e3dpZHRoOmF1dG8haW1wb3J0YW50O2hlaWdodDo0MHB4IWltcG9ydGFudDtib3JkZXI6MXB4IHNvbGlkICNlNmQ5ZDQhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MTBweCFpbXBvcnRhbnQ7YmFja2dyb3VuZDojZmZmIWltcG9ydGFudDtwYWRkaW5nOjAgMTBweCFpbXBvcnRhbnR9I2RkTGl2ZUNhdGFsb2cuZGQtbGl2ZS1mbG93ZXJzIC5kZC1jYXQtZmlsdGVyc3ttYXgtaGVpZ2h0OmNhbGMoMTAwdmggLSAxMjVweCk7b3ZlcmZsb3cteTphdXRvO292ZXJzY3JvbGwtYmVoYXZpb3I6Y29udGFpbjtzY3JvbGxiYXItd2lkdGg6dGhpbjtzY3JvbGxiYXItY29sb3I6cmdiYSgxMDcsNTMsNjQsLjMyKSB0cmFuc3BhcmVudDtzY3JvbGxiYXItZ3V0dGVyOnN0YWJsZX0jZGRMaXZlQ2F0YWxvZy5kZC1saXZlLWZsb3dlcnMgLmRkLWNhdC1maWx0ZXJzOjotd2Via2l0LXNjcm9sbGJhcnt3aWR0aDo2cHh9I2RkTGl2ZUNhdGFsb2cuZGQtbGl2ZS1mbG93ZXJzIC5kZC1jYXQtZmlsdGVyczo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWJ7YmFja2dyb3VuZDpyZ2JhKDEwNyw1Myw2NCwuMjgpO2JvcmRlci1yYWRpdXM6OTk5cHh9I2RkTGl2ZUNhdGFsb2cuZGQtbGl2ZS1mbG93ZXJzIC5kZC1jYXQtdG9vbGJhciAjZGRTb3J0e2FwcGVhcmFuY2U6bm9uZSFpbXBvcnRhbnQ7LXdlYmtpdC1hcHBlYXJhbmNlOm5vbmUhaW1wb3J0YW50O3dpZHRoOjE5MHB4IWltcG9ydGFudDttaW4td2lkdGg6MTkwcHghaW1wb3J0YW50O2hlaWdodDo0NHB4IWltcG9ydGFudDtib3JkZXI6MXB4IHNvbGlkIHJnYmEoMTA3LDUzLDY0LC4xOCkhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MTRweCFpbXBvcnRhbnQ7YmFja2dyb3VuZC1jb2xvcjojZmZmIWltcG9ydGFudDtjb2xvcjojMzUyRDJFIWltcG9ydGFudDtib3gtc2hhZG93OjAgNXB4IDE0cHggcmdiYSg3NiwzMSwzNiwuMDM1KSFpbXBvcnRhbnQ7Zm9udC13ZWlnaHQ6NzAwIWltcG9ydGFudDtjdXJzb3I6cG9pbnRlciFpbXBvcnRhbnQ7YmFja2dyb3VuZC1yZXBlYXQ6bm8tcmVwZWF0IWltcG9ydGFudDtiYWNrZ3JvdW5kLXNpemU6MTZweCAxNnB4IWltcG9ydGFudDtiYWNrZ3JvdW5kLWltYWdlOnVybCgiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxOCcgaGVpZ2h0PScxOCcgdmlld0JveD0nMCAwIDI0IDI0JyBmaWxsPSdub25lJyBzdHJva2U9JyUyMzZCMzU0MCcgc3Ryb2tlLXdpZHRoPScyJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnJTNFJTNDcGF0aCBkPSdtNiA5IDYgNiA2LTYnLyUzRSUzQy9zdmclM0UiKSFpbXBvcnRhbnR9aHRtbFtkaXI9InJ0bCJdICNkZExpdmVDYXRhbG9nLmRkLWxpdmUtZmxvd2VycyAuZGQtY2F0LXRvb2xiYXIgI2RkU29ydHtiYWNrZ3JvdW5kLXBvc2l0aW9uOmxlZnQgMTJweCBjZW50ZXIhaW1wb3J0YW50O3BhZGRpbmc6MCAxNHB4IDAgMzhweCFpbXBvcnRhbnR9aHRtbFtkaXI9Imx0ciJdICNkZExpdmVDYXRhbG9nLmRkLWxpdmUtZmxvd2VycyAuZGQtY2F0LXRvb2xiYXIgI2RkU29ydHtiYWNrZ3JvdW5kLXBvc2l0aW9uOnJpZ2h0IDEycHggY2VudGVyIWltcG9ydGFudDtwYWRkaW5nOjAgMzhweCAwIDE0cHghaW1wb3J0YW50fSNkZExpdmVDYXRhbG9nLmRkLWxpdmUtZmxvd2VycyAuZGQtY2F0LXRvb2xiYXIgI2RkU29ydDpob3Zlcntib3JkZXItY29sb3I6cmdiYSgxMDcsNTMsNjQsLjMyKSFpbXBvcnRhbnR9I2RkTGl2ZUNhdGFsb2cuZGQtbGl2ZS1mbG93ZXJzIC5kZC1jYXQtdG9vbGJhciAjZGRTb3J0OmZvY3Vze291dGxpbmU6bm9uZSFpbXBvcnRhbnQ7Ym9yZGVyLWNvbG9yOiNBODU4M0QhaW1wb3J0YW50O2JveC1zaGFkb3c6MCAwIDAgNHB4IHJnYmEoMTY4LDg4LDYxLC4wOSkhaW1wb3J0YW50fS5kZC1jYXQtZ3JpZCIiIgoKaWYgY3NzX2FuY2hvciBub3QgaW4gczoKICAgIHJhaXNlIFN5c3RlbUV4aXQoJ2NhdGFsb2cgc29ydCBDU1MgYW5jaG9yIG5vdCBmb3VuZCcpCnM9cy5yZXBsYWNlKGNzc19hbmNob3IsY3NzX25ldyw xKQoKbWVkaWFfYW5jaG9yPSJAbWVkaWEobWF4LXdpZHRoOjkwMHB4KXsuZGQtY2F0LXdyYXB7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjFmciouZGQtY2F0LWZpbHRlcnN7cG9zaXRpb246c3RhdGljO2dyaWQtdGVtcGxhdGUtY29sdW1uczpyZXBlYXQoMixxZnIp fS5kZC1jYXQtZmlsdGVyLWhlYWR7Z3JpZC1jb2x1bW46MS8tMX0uZGQtY2F0LWdyaWR7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOnJlcGVhdCgyLDFmcikpfSIKbWVkaWFfbmV3PSJAbWVkaWEobWF4LXdpZHRoOjkwMHB4KXsuZGQtY2F0LXdyYXB7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjFmciouZGQtY2F0LWZpbHRlcnN7cG9zaXRpb246c3RhdGljO2dyaWQtdGVtcGxhdGUtY29sdW1uczpyZXBlYXQoMixxZnIp fSNkZExpdmVDYXRhbG9nLmRkLWxpdmUtZmxvd2VycyAuZGQtY2F0LWZpbHRlcnN7bWF4LWhlaWdodDpub25lO292ZXJmbG93OnZpc2libGU7b3ZlcnNjcm9sbC1iZWhhdmlvcjphdXRvO3Njcm9sbGJhci1ndXR0ZXI6YXV0b30uZGQtY2F0LWZpbHRlci1oZWFke2dyaWQtY29sdW1uOjEvLTF9LmRkLWNhdC1ncmlke2dyaWQtdGVtcGxhdGUtY29sdW1zOnJlcGVhdCgyLDFmcikpfSIKaWYgbWVkaWFfYW5jaG9yIG5vdCBpbiBzOgogICAgcmFpc2UgU3lzdGVtRXhpdCgnY2F0YWxvZyBtb2JpbGUgQ1NTIGFuY2hvciBub3QgZm91bmQnKQpzPXMucmVwbGFjZShtZWRpYV9hbmNob3IsbWVkaWFfbmV3LDEpCmpzX3BhdGgud3JpdGVfdGV4dChzLGVuY29kaW5nPSd1dGYtOCcpCgpmb3IgcCBpbiBbUGF0aCgnYXBwcm92ZWQtcGFnZXMvRGVhci1EYXktRmxvd2Vycy1BcHByb3ZlZC5odG1sJyksUGF0aCgnYXBwcm92ZWQtcGFnZXMvRGVhci1EYXktRmxvd2Vycy1BcHByb3ZlZC1lbi5odG1sJyldOgogICAgaD1wLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQogICAgaWYgJ2RlYXItZGF5LWxpdmUtY2F0YWxvZy5qcz92PTIwMjYxMDA2LWZsb3dlcnMtZml4MScgbm90IGluIGg6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdChmJ3twfTogZXhwZWN0ZWQgb2xkIGxpdmUgY2F0YWxvZyB2ZXJzaW9uIG5vdCBmb3VuZCcpCiAgICBoPWgucmVwbGFjZSgnZGVhci1kYXktbGl2ZS1jYXRhbG9nLmpzP3Y9MjAyNjEwMDYtZmxvd2Vycy1maXgxJywnZGVhci1kYXktbGl2ZS1jYXRhbG9nLmpzP3Y9MjAyNjEwMDYtZmxvd2Vycy11aTInLDEpCiAgICBwLndyaXRlX3RleHQoaCxlbmNvZGluZz0ndXRmLTgnKQo=
+      - name: Apply flowers UI changes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js = Path('approved-pages/dear-day-live-catalog.js')
+          s = js.read_text(encoding='utf-8')
+
+          old_host = "const host=document.createElement('main');host.id='ddLiveCatalog';host.innerHTML="
+          new_host = "const host=document.createElement('main');host.id='ddLiveCatalog';if(section==='flowers')host.classList.add('dd-live-flowers');host.innerHTML="
+          if old_host not in s:
+              raise SystemExit('host anchor not found')
+          s = s.replace(old_host, new_host, 1)
+
+          demo = "${section==='flowers'?'<span class=\"dd-demo-pill\">'+T('نسخة تجريبية للاختبار','Demo catalog')+'</span>':''}"
+          if demo not in s:
+              raise SystemExit('demo badge anchor not found')
+          s = s.replace(demo, '', 1)
+
+          footer_anchor = "    const footer=document.querySelector('footer');"
+          flower_sort = "    if(section==='flowers'){const sort=host.querySelector('#ddSort');if(sort)sort.innerHTML='<option value=\"featured\">'+T('الأكثر مناسبة','Recommended')+'</option><option value=\"price_asc\">'+T('السعر: الأقل أولًا','Price: low to high')+'</option><option value=\"price_desc\">'+T('السعر: الأعلى أولًا','Price: high to low')+'</option>';}\n    const footer=document.querySelector('footer');"
+          if footer_anchor not in s:
+              raise SystemExit('footer anchor not found')
+          s = s.replace(footer_anchor, flower_sort, 1)
+          js.write_text(s, encoding='utf-8')
+
+          style = '''<style id="dd-flowers-ui2">
+          #ddLiveCatalog.dd-live-flowers .dd-cat-filters{max-height:calc(100vh - 125px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(107,53,64,.32) transparent;scrollbar-gutter:stable}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-filters::-webkit-scrollbar{width:6px}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-filters::-webkit-scrollbar-thumb{background:rgba(107,53,64,.28);border-radius:999px}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-toolbar #ddSort{appearance:none!important;-webkit-appearance:none!important;width:190px!important;min-width:190px!important;height:44px!important;border:1px solid rgba(107,53,64,.18)!important;border-radius:14px!important;background:#fff!important;color:#352D2E!important;box-shadow:0 5px 14px rgba(76,31,36,.035)!important;font-weight:700!important;cursor:pointer!important;padding-inline:14px 34px!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-toolbar #ddSort:hover{border-color:rgba(107,53,64,.32)!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-toolbar #ddSort:focus{outline:none!important;border-color:#A8583D!important;box-shadow:0 0 0 4px rgba(168,88,61,.09)!important}
+          @media(max-width:900px){#ddLiveCatalog.dd-live-flowers .dd-cat-filters{max-height:none;overflow:visible;overscroll-behavior:auto;scrollbar-gutter:auto}}
+          </style>'''
+
+          pages = [
+              Path('approved-pages/Dear-Day-Flowers-Approved.html'),
+              Path('approved-pages/Dear-Day-Flowers-Approved-en.html'),
+          ]
+          for p in pages:
+              h = p.read_text(encoding='utf-8')
+              if 'id="dd-flowers-ui2"' not in h:
+                  if '</head>' not in h:
+                      raise SystemExit(f'{p}: missing head')
+                  h = h.replace('</head>', style + '\n</head>', 1)
+              h = h.replace('dear-day-live-catalog.js?v=20261006-flowers-fix1','dear-day-live-catalog.js?v=20261006-flowers-ui2')
+              p.write_text(h, encoding='utf-8')
+          PY
+      - name: Verify flowers UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('approved-pages/dear-day-live-catalog.js').read_text(encoding='utf-8')
+          assert "if(section==='flowers')host.classList.add('dd-live-flowers')" in s
+          assert "T('نسخة تجريبية للاختبار','Demo catalog')" not in s
+          assert "T('الأكثر مناسبة','Recommended')" in s
+          for p in ['approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html']:
+              h = Path(p).read_text(encoding='utf-8')
+              assert 'id="dd-flowers-ui2"' in h
+              assert 'max-height:calc(100vh - 125px)' in h
+              assert 'dear-day-live-catalog.js?v=20261006-flowers-ui2' in h
+          print('flowers UI verified')
+          PY
+      - name: Commit flowers UI
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add approved-pages/dear-day-live-catalog.js approved-pages/Dear-Day-Flowers-Approved.html approved-pages/Dear-Day-Flowers-Approved-en.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Polish flowers catalog filters and sort'
+          git push origin main
