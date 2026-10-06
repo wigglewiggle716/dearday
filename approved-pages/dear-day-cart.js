@@ -23,15 +23,18 @@
   }
   ensureBrandedFormControls();
 
+  const ddMobileNavMedia=window.matchMedia('(max-width:900px)');
   function ensureNativeMobileNav(){
+    if(!ddMobileNavMedia.matches)return;
     if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261006-static2';
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261006-static3';
     s.defer=true;
     s.setAttribute('data-dd-native-mobile-nav','');
     (document.head||document.documentElement).appendChild(s);
   }
   ensureNativeMobileNav();
+  if(ddMobileNavMedia.addEventListener)ddMobileNavMedia.addEventListener('change',function(e){if(e.matches)ensureNativeMobileNav()});
 
   function ensureCustomerAvailability(){
     if(document.querySelector('script[data-dd-customer-availability]'))return;
