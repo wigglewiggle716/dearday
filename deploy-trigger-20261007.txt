@@ -1,3 +1,4 @@
 Dear Day deployment trigger
-Reason: retry publishing approved Flowers EN + Cake EN fixes after Vercel rate-limit cooldown.
-Trigger version: 2026-10-07-4
+Reason: retry publishing latest approved Cake + Venues fixes after Vercel cooldown.
+Trigger version: 2026-10-07-5
+Target source commit: 2db9940f3bcc36a6699a311e97c4887ce68f8d83
