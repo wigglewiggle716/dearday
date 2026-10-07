@@ -74,6 +74,20 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px;font-family:Arial,He
 #ddLiveCatalog.dd-live-flowers .dd-cat-toolbar #ddSort{width:165px!important;min-width:165px!important;max-width:165px!important;flex-basis:165px!important}
 #ddLiveCatalog.dd-live-flowers .dd-cat-toolbar strong#ddResultCount{font-size:15px!important}
 }
+</style><style id="dd-flower-custom-sort">
+#ddLiveCatalog.dd-live-flowers .dd-flower-native-sort{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}
+#ddLiveCatalog.dd-live-flowers .dd-flower-sort-shell{position:relative!important;width:180px!important;min-width:180px!important;max-width:180px!important;flex:0 0 180px!important;font-size:14px!important;z-index:30!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-trigger{width:100%!important;height:48px!important;border:1px solid #d9c7c1!important;border-radius:14px!important;background:#fff!important;color:#3f3332!important;padding:0 14px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;cursor:pointer!important;font:inherit!important;box-shadow:none!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-trigger:hover,#ddLiveCatalog.dd-live-flowers .dd-flower-sort-shell.open .dd-select-trigger{border-color:#A8583D!important;box-shadow:0 0 0 2px rgba(168,88,61,.12)!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-arrow{color:#6B3540!important;font-size:18px!important;line-height:1!important;transition:transform .2s ease!important}
+#ddLiveCatalog.dd-live-flowers .dd-flower-sort-shell.open .dd-select-arrow{transform:rotate(180deg)!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-menu{position:absolute!important;top:calc(100% + 8px)!important;left:0!important;right:0!important;background:#fff!important;border:1px solid #eadfd9!important;border-radius:14px!important;box-shadow:0 14px 34px rgba(62,29,33,.14)!important;padding:6px!important;display:none!important;overflow:hidden!important;z-index:1000!important;min-width:220px!important}
+#ddLiveCatalog.dd-live-flowers .dd-flower-sort-shell.open .dd-select-menu{display:block!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-option{width:100%!important;border:0!important;background:#fff!important;color:#5f5553!important;display:grid!important;grid-template-columns:22px 1fr!important;align-items:center!important;gap:8px!important;padding:11px 12px!important;border-radius:10px!important;text-align:start!important;cursor:pointer!important;font:inherit!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-option:hover{background:#fff6f2!important;color:#6B3540!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-option.selected{background:#6B3540!important;color:#fff!important;font-weight:800!important}
+#ddLiveCatalog.dd-live-flowers .dd-select-check{font-weight:900!important}
+@media(max-width:620px){#ddLiveCatalog.dd-live-flowers .dd-flower-sort-shell{width:165px!important;min-width:165px!important;max-width:165px!important;flex-basis:165px!important}#ddLiveCatalog.dd-live-flowers .dd-select-menu{min-width:205px!important}}
 </style></head>
 <body>
 <header class="header" data-dd-global-nav="1"><div class="container nav">
@@ -85,7 +99,7 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px;font-family:Arial,He
 <footer><div class="dd-home-footer-wrap"><div class="footer-top"><div class="footer-logo"><a href="/en"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a><p class="footer-note">Thoughtfully planned occasions, coordinated in one place — from the first idea to the final detail.</p></div><div><h4>Dear Day Services</h4><a href="/occasions-en">Occasions</a><a href="/gifts-en">Gifts</a><a href="/cake-en">Chocolate & Cakes</a><a href="/flowers-en">Flowers</a><a href="/venues-en">Venues & Experiences</a></div><div><h4>About Dear Day</h4><a href="/about-en">About Us</a><a href="/how-it-works-en">How It Works</a><a href="/partners-en">For Partners</a></div><div><h4>Customer Care</h4><a href="/faq-en">FAQs</a><a href="/contact-en">Contact Us</a><a href="/refunds-en">Cancellation & Refund Policy</a><a href="/delete-account-en">Account & Data Deletion</a></div></div><div class="footer-bottom"><div class="payments dd-payment-icons" aria-label="Accepted payment methods"><span class="dd-pay-card dd-pay-visa" aria-label="Visa">VISA</span><span class="dd-pay-card dd-pay-master" aria-label="Mastercard"><i></i><b></b></span><span class="dd-pay-card dd-pay-apple" aria-label="Apple Pay"><span class="dd-apple">●</span><strong>Pay</strong></span><span class="dd-pay-card dd-pay-google" aria-label="Google Pay"><strong>G</strong><span>Pay</span></span><span class="dd-pay-card dd-pay-wallet" aria-label="Wallet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h14a2 2 0 0 1 2 2v8H4a2 2 0 0 1-2-2v-11A2 2 0 0 1 4 2.5h12v3H4a1 1 0 0 0 0 2z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="12.5" r="1" fill="currentColor"/></svg></span></div><div class="dd-legal-links"><a href="/privacy-en">Privacy Policy</a><span aria-hidden="true"> · </span><a href="/terms-en">Terms & Conditions</a></div><div>© 2026 Dear Day</div></div></div></footer>
 <script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script>
 <script>window.__ddFlowerPrettyUrl=location.pathname+location.search+location.hash;if(/^\/flowers(?:-en)?\/?$/i.test(location.pathname)){history.replaceState(history.state,'','/approved-pages/Dear-Day-Flowers-Approved-en.html'+location.search+location.hash);}</script>
-<script src="/approved-pages/dear-day-live-catalog.js?v=20261007-flowercustom1"></script>
+<script src="/approved-pages/dear-day-live-catalog.js?v=20261007-flowercustomsort2"></script>
 <script>if(window.__ddFlowerPrettyUrl){history.replaceState(history.state,'',window.__ddFlowerPrettyUrl);delete window.__ddFlowerPrettyUrl;}</script>
 </body>
 </html>
