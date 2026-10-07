@@ -175,6 +175,11 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 @media(max-width:620px){
   .dd-curated-top-row .toolbar{width:165px!important;max-width:165px!important;flex-basis:165px!important}
 }
+</style><style id="dd-cake-ar-single-sort-final">
+.dd-cake-sort-shell{display:none!important}
+.dd-curated-top-row .toolbar{width:360px!important;max-width:360px!important;flex:0 1 360px!important;margin:0!important;direction:rtl!important}
+#sort,#sort.dd-cake-native-sort{display:block!important;position:static!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;width:100%!important;min-width:0!important;max-width:none!important;height:48px!important;margin:0!important;padding:0 14px!important;border:1px solid #d9c7c1!important;border-radius:14px!important;background:#fff!important;color:#3f3332!important;direction:rtl!important}
+@media(max-width:620px){.dd-curated-top-row .toolbar{width:165px!important;max-width:165px!important;flex-basis:165px!important}}
 </style></head><body>
 <header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav" data-dd-explore-version="20261006-2"><a href="/">الرئيسية</a><div class="dd-static-explore dd-active"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>اكتشف</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts">هدايا</a><a href="/cake">شكولاته و كيك</a><a href="/venues">أماكن وتجارب</a><a href="/flowers">ورد</a></div></div><a href="/occasions">المناسبات</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركاء</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a class="lang-link dd-language-switch" data-dd-lang-target="/cake-en" href="/cake-en" aria-label="English">EN</a></div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps">
@@ -283,7 +288,7 @@ window.focusProduct=id=>{filters.category='all';syncAll();renderGrid();setTimeou
 function syncAll(){document.querySelectorAll('.chips').forEach(g=>g.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.value===filters[g.dataset.filter])))}
 document.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{if(!e.target.classList.contains('chip'))return;filters[g.dataset.filter]=e.target.dataset.value;if(g.dataset.filter==='category');syncAll();renderGrid()}));
 
-mountCakeSortShell();el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;
+el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;
 el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';el('search').value='';syncAll();renderGrid()};
 el('refUpload').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{plan.cakeReferenceImage=r.result;persist();el('uploadPreview').src=r.result;el('uploadPreview').style.display='block';showToast('تم حفظ الصورة المرجعية')};r.readAsDataURL(f)};
 if(el('headerChoices'))el('headerChoices').onclick=()=>el('sticky')?.scrollIntoView({behavior:'smooth',block:'end'});
