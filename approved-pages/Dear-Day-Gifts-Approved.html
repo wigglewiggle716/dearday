@@ -119,7 +119,20 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 }
 @media(max-width:900px){.filters{max-height:none!important;overflow:visible!important;overscroll-behavior:auto!important;scrollbar-gutter:auto}}
 </style>
-</head>
+<style id="dd-gifts-hero-match-cake">
+.hero .hero-box{height:310px!important;border-radius:30px!important;overflow:hidden!important;display:grid!important;grid-template-columns:52% 48%!important;gap:0!important;padding:0!important;align-items:stretch!important;background:linear-gradient(120deg,#fffaf7,#fae6df)!important;border:1px solid #efe2dc!important;box-shadow:0 10px 32px rgba(82,37,43,.06)!important;direction:ltr!important}
+.hero .hero-box:after{display:none!important}
+.hero .hero-gift-img{height:100%!important;border-radius:0!important;overflow:hidden!important;box-shadow:none!important;position:relative!important;z-index:1!important;grid-column:1!important;grid-row:1!important}
+.hero .hero-gift-img img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}
+.hero .hero-copy{grid-column:2!important;grid-row:1!important;position:relative!important;z-index:2!important;padding:46px 48px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;direction:rtl!important;text-align:right!important}
+.hero .hero-copy:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 20%,rgba(203,113,108,.13),transparent 40%)}
+.hero .hero-copy>*{position:relative}
+@media(max-width:760px){
+  .hero .hero-box{height:auto!important;grid-template-columns:1fr!important}
+  .hero .hero-gift-img{grid-column:1!important;grid-row:1!important;height:210px!important}
+  .hero .hero-copy{grid-column:1!important;grid-row:2!important;padding:30px 24px!important}
+}
+</style></head>
 <body>
 <header class="header"><div class="container nav">
 <a class="logo" href="/"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/></a>
@@ -136,7 +149,7 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 </div></section>
 <script id="dd-flow-state">(function(){const p=new URLSearchParams(location.search);const on=p.get('flow')==='1';window.__ddFlowActive=on;const s=document.querySelector('[data-dd-flow-stepper]');if(s)s.hidden=!on;})();</script>
 
-<section class="hero"><div class="container"><div class="hero-box"><div class="hero-copy"><h1>اختار الهدية اللي تشبهه فعلًا</h1><p>استخدم الفلاتر واختار الهدية المناسبة، وتقدر تضيف أكتر من اختيار لو حابب.</p></div><div class="hero-gift-img"><img src="/approved-pages/assets/media/occasion-gift.jpg" alt="هدايا Dear Day"></div></div></div></section>
+<section class="hero"><div class="container"><div class="hero-box"><div class="hero-gift-img"><img src="/approved-pages/assets/media/occasion-gift.jpg" alt="هدايا Dear Day"></div><div class="hero-copy"><h1>اختار الهدية اللي تشبهه فعلًا</h1><p>استخدم الفلاتر واختار الهدية المناسبة، وتقدر تضيف أكتر من اختيار لو حابب.</p></div></div></div></section>
 <section class="catalog"><div class="container">
 <div class="layout">
 <aside class="filters">
