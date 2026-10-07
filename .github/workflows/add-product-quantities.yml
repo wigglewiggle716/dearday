@@ -1,0 +1,299 @@
+name: Add product quantities
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-product-quantities.yml'
+permissions:
+  contents: write
+jobs:
+  quantity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add quantity support
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def exact(path, old, new, label):
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if old not in s:
+                  raise SystemExit(f'MISSING {label} in {path}')
+              p.write_text(s.replace(old,new,1),encoding='utf-8')
+
+          core='approved-pages/dear-day-cart-core.js'
+          exact(core,
+          """  function read(){
+              try{
+                const x=JSON.parse(localStorage.getItem(KEY)||'[]');
+                return Array.isArray(x)?x:[];
+              }catch(e){return []}
+            }""",
+          """  function quantityOf(item){
+              if(!item||item.type==='venue')return 1;
+              const q=Math.floor(Number(item.quantity)||1);
+              return Math.max(1,q);
+            }
+            function read(){
+              try{
+                const x=JSON.parse(localStorage.getItem(KEY)||'[]');
+                return Array.isArray(x)?x.map(item=>({...item,quantity:quantityOf(item)})):[];
+              }catch(e){return []}
+            }""",'core read')
+
+          exact(core,
+          """      occasion:context.occasion||context.occasionLabel||'',
+                addedAt:Date.now()""",
+          """      occasion:context.occasion||context.occasionLabel||'',
+                quantity:type==='venue'?1:Math.max(1,Math.floor(Number(item.quantity)||1)),
+                addedAt:Date.now()""",'core normalize')
+
+          exact(core,
+          """  function syncType(type,items,context){
+              const keep=read().filter(x=>x.type!==type);
+              const add=(Array.isArray(items)?items:[]).filter(Boolean).map(x=>normalize(type,x,context));
+              return write(keep.concat(add));
+            }
+            function upsert(type,item,context){
+              const n=normalize(type,item,context);
+              const a=read().filter(x=>x.key!==n.key);
+              a.push(n); return write(a);
+            }
+            function remove(key){
+              return write(read().filter(x=>x.key!==key));
+            }
+            function clear(){ return write([]); }
+            function count(){return read().length}
+            function total(){return read().reduce((s,x)=>s+price(x.price),0)}""",
+          """  function syncType(type,items,context){
+              const existing=read();
+              const keep=existing.filter(x=>x.type!==type);
+              const add=(Array.isArray(items)?items:[]).filter(Boolean).map(x=>{
+                const n=normalize(type,x,context);
+                const prev=existing.find(y=>y.key===n.key);
+                if(prev&&type!=='venue')n.quantity=quantityOf(prev);
+                return n;
+              });
+              return write(keep.concat(add));
+            }
+            function upsert(type,item,context){
+              const n=normalize(type,item,context);
+              const current=read();
+              const prev=current.find(x=>x.key===n.key);
+              if(prev&&type!=='venue')n.quantity=quantityOf(prev)+Math.max(1,Math.floor(Number(item&&item.quantity)||1));
+              const a=current.filter(x=>x.key!==n.key);
+              a.push(n); return write(a);
+            }
+            function setQuantity(key,value){
+              const a=read();
+              const item=a.find(x=>x.key===key);
+              if(!item)return a;
+              item.quantity=item.type==='venue'?1:Math.max(1,Math.floor(Number(value)||1));
+              return write(a);
+            }
+            function adjustQuantity(key,delta){
+              const item=read().find(x=>x.key===key);
+              if(!item||item.type==='venue')return read();
+              return setQuantity(key,quantityOf(item)+(Number(delta)||0));
+            }
+            function remove(key){
+              return write(read().filter(x=>x.key!==key));
+            }
+            function clear(){ return write([]); }
+            function count(){return read().reduce((s,x)=>s+quantityOf(x),0)}
+            function total(){return read().reduce((s,x)=>s+(price(x.price)*quantityOf(x)),0)}""",'core operations')
+
+          exact(core,
+          """    return write(a);
+            }
+            window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};""",
+          """    const current=read();
+              current.filter(x=>!['gift','cake','venue'].includes(x.type)).forEach(x=>{
+                if(!a.some(y=>y.key===x.key))a.push(x);
+              });
+              a=a.map(n=>{
+                const prev=current.find(x=>x.key===n.key);
+                if(prev&&n.type!=='venue')n.quantity=quantityOf(prev);
+                return n;
+              });
+              return write(a);
+            }
+            window.DDCart={read,write,syncType,upsert,setQuantity,adjustQuantity,remove,clear,count,total,paint,importPlan,price,quantityOf,normalizeHeader:normalizeGlobalHeader};""",'core import')
+
+          boot='approved-pages/dear-day-cart.js'
+          exact(boot,
+          """  function cartCount(){try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.length:0}catch(e){return 0}}""",
+          """  function cartCount(){try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.reduce((sum,item)=>sum+(item&&item.type==='venue'?1:Math.max(1,Math.floor(Number(item&&item.quantity)||1))),0):0}catch(e){return 0}}""",'bootstrap count')
+          p=Path(boot); s=p.read_text(encoding='utf-8')
+          s=s.replace('dear-day-cart-core.js?v=20261004-5','dear-day-cart-core.js?v=20261007-qty1')
+          s=s.replace('dear-day-cart-drawer.js?v=20261007-2','dear-day-cart-drawer.js?v=20261007-qty1')
+          p.write_text(s,encoding='utf-8')
+
+          drawer='approved-pages/dear-day-cart-drawer.js'
+          exact(drawer,"""  function displayName(item){""",
+                       """  function qty(item){return !item||item.type==='venue'?1:Math.max(1,Math.floor(Number(item.quantity)||1));}
+            function displayName(item){""",'drawer qty helper')
+          exact(drawer,
+          """  function removeItem(item,index){
+              if(window.DDCart&&typeof window.DDCart.remove==='function'&&item&&item.key){
+                window.DDCart.remove(item.key);
+                return;
+              }
+              const a=read();
+              a.splice(index,1);
+              try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}
+              window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.length}}));
+            }""",
+          """  function removeItem(item,index){
+              if(window.DDCart&&typeof window.DDCart.remove==='function'&&item&&item.key){
+                window.DDCart.remove(item.key);
+                return;
+              }
+              const a=read();
+              a.splice(index,1);
+              try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}
+              window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.reduce((n,x)=>n+qty(x),0)}}));
+            }
+            function adjustItem(item,index,delta){
+              if(!item||item.type==='venue')return;
+              if(window.DDCart&&typeof window.DDCart.adjustQuantity==='function'&&item.key){
+                window.DDCart.adjustQuantity(item.key,delta);
+                return;
+              }
+              const a=read(),row=a[index];
+              if(!row)return;
+              row.quantity=Math.max(1,qty(row)+(Number(delta)||0));
+              try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}
+              window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.reduce((n,x)=>n+qty(x),0)}}));
+            }""",'drawer adjust')
+          exact(drawer,
+          """      .dd-cart-drawer-price{margin-top:5px;color:#6B3540;font-weight:800;font-size:13px}
+                .dd-cart-drawer-remove""",
+          """      .dd-cart-drawer-price{margin-top:5px;color:#6B3540;font-weight:800;font-size:13px}
+                .dd-cart-drawer-buyrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+                .dd-cart-drawer-qty{display:inline-flex;align-items:center;border:1px solid rgba(107,53,64,.20);border-radius:999px;background:#fff;overflow:hidden;min-height:30px}
+                .dd-cart-drawer-qty button{width:30px;height:30px;border:0;background:transparent;color:#6B3540;font:800 18px/1 Arial,sans-serif;cursor:pointer}
+                .dd-cart-drawer-qty button:hover{background:#F6E7E1}
+                .dd-cart-drawer-qty span{min-width:26px;text-align:center;font:800 12px/1 Arial,sans-serif;color:#352D2E}
+                .dd-cart-drawer-remove""",'drawer css')
+          exact(drawer,
+          """          '<div><div class="dd-cart-drawer-name">'+esc(name)+'</div>'+
+                    (meta?'<div class="dd-cart-drawer-meta">'+esc(meta)+'</div>':'')+
+                    '<div class="dd-cart-drawer-price">1 × '+esc(money(item.price))+'</div></div>'+
+                    '<button class="dd-cart-drawer-remove" type="button" data-dd-remove="'+index+'" aria-label="'+esc(en?'Remove item':'حذف العنصر')+'">×</button>'+""",
+          """          '<div><div class="dd-cart-drawer-name">'+esc(name)+'</div>'+
+                    (meta?'<div class="dd-cart-drawer-meta">'+esc(meta)+'</div>':'')+
+                    '<div class="dd-cart-drawer-buyrow"><div class="dd-cart-drawer-price">'+esc(money((Number(item.price)||0)*qty(item)))+'</div>'+
+                    (item.type!=='venue'?'<div class="dd-cart-drawer-qty" aria-label="'+esc(en?'Quantity':'الكمية')+'"><button type="button" data-dd-qty="'+index+'" data-delta="-1" aria-label="'+esc(en?'Decrease quantity':'تقليل الكمية')+'">−</button><span>'+qty(item)+'</span><button type="button" data-dd-qty="'+index+'" data-delta="1" aria-label="'+esc(en?'Increase quantity':'زيادة الكمية')+'">+</button></div>':'')+
+                    '</div></div>'+
+                    '<button class="dd-cart-drawer-remove" type="button" data-dd-remove="'+index+'" aria-label="'+esc(en?'Remove item':'حذف العنصر')+'">×</button>'+""",'drawer item')
+          exact(drawer,
+          """      list.querySelectorAll('[data-dd-remove]').forEach(btn=>btn.addEventListener('click',()=>{""",
+          """      list.querySelectorAll('[data-dd-qty]').forEach(btn=>btn.addEventListener('click',()=>{
+                const index=Number(btn.getAttribute('data-dd-qty')),delta=Number(btn.getAttribute('data-delta'));
+                const current=read();
+                if(Number.isInteger(index)&&current[index])adjustItem(current[index],index,delta);
+                render();
+              }));
+              list.querySelectorAll('[data-dd-remove]').forEach(btn=>btn.addEventListener('click',()=>{""",'drawer bind')
+          exact(drawer,
+          """    const total=items.reduce((sum,x)=>sum+(Number(String(x.price??0).replace(/[^0-9.]/g,''))||0),0);""",
+          """    const total=items.reduce((sum,x)=>sum+((Number(String(x.price??0).replace(/[^0-9.]/g,''))||0)*qty(x)),0);""",'drawer total')
+
+          # Live catalog fallback: repeated Add increments quantity.
+          cat=Path('approved-pages/dear-day-live-catalog.js')
+          s=cat.read_text(encoding='utf-8')
+          old="""else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch{};rows=Array.isArray(rows)?rows.filter(r=>r.key!==`${type}:${id}`):[];rows.push({key:`${type}:${id}`,type,id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,image:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:1,addedAt:Date.now()});localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:rows.length}}))}"""
+          new="""else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch{};rows=Array.isArray(rows)?rows:[];const key=`${type}:${id}`,prev=rows.find(r=>r.key===key);rows=rows.filter(r=>r.key!==key);rows.push({key,type,id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,image:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:Math.max(1,Math.floor(Number(prev?.quantity)||0)+1),addedAt:Date.now()});localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:rows.reduce((n,r)=>n+(r.type==='venue'?1:Math.max(1,Math.floor(Number(r.quantity)||1))),0)}}))}"""
+          if old not in s: raise SystemExit('MISSING catalog fallback')
+          cat.write_text(s.replace(old,new,1),encoding='utf-8')
+
+          qty_css='''<style id="dd-cart-quantity-style">
+          .dd-qty-control{display:inline-flex;align-items:center;border:1px solid rgba(107,53,64,.20);border-radius:999px;background:#fff;overflow:hidden;margin-top:7px;margin-inline-start:auto}
+          .dd-qty-control button{width:31px;height:31px;border:0;background:transparent;color:#6B3540;font:800 18px/1 Arial,sans-serif;cursor:pointer}
+          .dd-qty-control button:hover{background:#f8ece7}.dd-qty-control span{min-width:28px;text-align:center;font:800 12px/1 Arial,sans-serif;color:#352D2E}
+          </style>'''
+
+          for path,lang in [('cart.html','ar'),('approved-pages/Dear-Day-Cart.html','ar'),('cart-en.html','en'),('approved-pages/Dear-Day-Cart-en.html','en')]:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-cart-quantity-style"' not in s:
+                  s=s.replace('</head>',qty_css+'\n</head>',1)
+              if lang=='ar':
+                  old='<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div>'
+                  new='<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type===\'venue\'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!==\'venue\'?\'<div class="dd-qty-control"><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="-1" aria-label="تقليل الكمية">−</button><span>\'+(Number(item.quantity)||1)+\'</span><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="1" aria-label="زيادة الكمية">+</button></div>\':\'\')+\'<button class="remove" data-remove="\'+esc(item.key)+\'">حذف</button></div>'
+                  if old not in s: raise SystemExit('MISSING AR cart render '+path)
+                  s=s.replace(old,new,1)
+                  s=s.replace("document.getElementById('cartCount').textContent=items.length;","document.getElementById('cartCount').textContent=items.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0);",1)
+                  old_click="""document.getElementById('cartItems').addEventListener('click',e=>{
+            const b=e.target.closest('[data-remove]');if(!b||!window.DDCart)return;
+            const item=DDCart.read().find(x=>x.key===b.dataset.remove);if(item)syncPlanRemoval(item);
+            DDCart.remove(b.dataset.remove);render();
+          });"""
+                  new_click="""document.getElementById('cartItems').addEventListener('click',e=>{
+            if(!window.DDCart)return;
+            const q=e.target.closest('[data-qty-key]');
+            if(q){DDCart.adjustQuantity(q.dataset.qtyKey,Number(q.dataset.delta)||0);return;}
+            const b=e.target.closest('[data-remove]');if(!b)return;
+            const item=DDCart.read().find(x=>x.key===b.dataset.remove);if(item)syncPlanRemoval(item);
+            DDCart.remove(b.dataset.remove);render();
+          });"""
+              else:
+                  old='<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">Remove</button></div>'
+                  new='<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type===\'venue\'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!==\'venue\'?\'<div class="dd-qty-control"><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="-1" aria-label="Decrease quantity">−</button><span>\'+(Number(item.quantity)||1)+\'</span><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="1" aria-label="Increase quantity">+</button></div>\':\'\')+\'<button class="remove" data-remove="\'+esc(item.key)+\'">Remove</button></div>'
+                  if old not in s: raise SystemExit('MISSING EN cart render '+path)
+                  s=s.replace(old,new,1)
+                  s=s.replace("document.getElementById('cartCount').textContent=items.length;","document.getElementById('cartCount').textContent=items.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0);",1)
+                  old_click="document.getElementById('cartItems').addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b||!window.DDCart)return;const item=DDCart.read().find(x=>x.key===b.dataset.remove);if(item)syncPlanRemoval(item);DDCart.remove(b.dataset.remove);render()});"
+                  new_click="document.getElementById('cartItems').addEventListener('click',e=>{if(!window.DDCart)return;const q=e.target.closest('[data-qty-key]');if(q){DDCart.adjustQuantity(q.dataset.qtyKey,Number(q.dataset.delta)||0);return}const b=e.target.closest('[data-remove]');if(!b)return;const item=DDCart.read().find(x=>x.key===b.dataset.remove);if(item)syncPlanRemoval(item);DDCart.remove(b.dataset.remove);render()});"
+              if old_click not in s: raise SystemExit('MISSING cart click '+path)
+              s=s.replace(old_click,new_click,1)
+              p.write_text(s,encoding='utf-8')
+
+          # Review: quantity-aware line totals and item count.
+          for path in ['review.html','approved-pages/Dear-Day-Review.html','review-en.html','approved-pages/Dear-Day-Review-en.html']:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              s=s.replace('money(item.price)',"money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))")
+              s=s.replace("cart.reduce((s,x)=>s+(Number(x.price)||0),0)","cart.reduce((s,x)=>s+((Number(x.price)||0)*(x.type==='venue'?1:(Number(x.quantity)||1))),0)")
+              s=s.replace("document.getElementById('itemCount').textContent=cart.length","document.getElementById('itemCount').textContent=cart.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0)")
+              p.write_text(s,encoding='utf-8')
+
+          # Payment: correct total, count, mini line price, and Paymob quantity.
+          for path in ['payment.html','approved-pages/Dear-Day-Payment.html','payment-en.html','approved-pages/Dear-Day-Payment-en.html']:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              s=s.replace("cart.reduce((s,x)=>s+(Number(x.price)||0),0)","cart.reduce((s,x)=>s+((Number(x.price)||0)*(x.type==='venue'?1:(Number(x.quantity)||1))),0)")
+              s=s.replace("itemCount.textContent=cart.length","itemCount.textContent=cart.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0)")
+              s=s.replace('money(item.price)',"money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))")
+              s=s.replace("quantity:1}))","quantity:x.type==='venue'?1:Math.max(1,Math.floor(Number(x.quantity)||1))}))")
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Syntax and behavior checks
+        run: |
+          node --check approved-pages/dear-day-cart-core.js
+          node --check approved-pages/dear-day-cart.js
+          node --check approved-pages/dear-day-cart-drawer.js
+          node --check approved-pages/dear-day-live-catalog.js
+          python - <<'PY'
+          from pathlib import Path
+          core=Path('approved-pages/dear-day-cart-core.js').read_text()
+          drawer=Path('approved-pages/dear-day-cart-drawer.js').read_text()
+          assert 'adjustQuantity' in core and "item.type==='venue'?1" in core
+          assert 'dd-cart-drawer-qty' in drawer and 'data-dd-qty' in drawer
+          for p in ['cart.html','approved-pages/Dear-Day-Cart.html','cart-en.html','approved-pages/Dear-Day-Cart-en.html']:
+              s=Path(p).read_text()
+              assert 'data-qty-key' in s and 'dd-qty-control' in s
+          for p in ['payment.html','approved-pages/Dear-Day-Payment.html','payment-en.html','approved-pages/Dear-Day-Payment-en.html']:
+              s=Path(p).read_text()
+              assert "quantity:x.type==='venue'?1" in s
+          print('Quantity checks passed')
+          PY
+      - name: Commit quantity support
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add approved-pages/dear-day-cart-core.js approved-pages/dear-day-cart.js approved-pages/dear-day-cart-drawer.js approved-pages/dear-day-live-catalog.js cart.html cart-en.html approved-pages/Dear-Day-Cart.html approved-pages/Dear-Day-Cart-en.html review.html review-en.html approved-pages/Dear-Day-Review.html approved-pages/Dear-Day-Review-en.html payment.html payment-en.html approved-pages/Dear-Day-Payment.html approved-pages/Dear-Day-Payment-en.html
+          git commit -m 'Add quantities for products except venues'
+          git push origin main
