@@ -155,11 +155,19 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 .dd-cake-sort-shell{display:block!important;width:180px!important;min-width:180px!important;max-width:180px!important}
 .dd-cake-sort-shell .dd-select-trigger{width:100%!important;height:48px!important;border:1px solid #d9c7c1!important;border-radius:14px!important;background:#fff!important;color:#3f3332!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 14px!important;cursor:pointer!important}
 @media(max-width:620px){.dd-cake-sort-shell{width:165px!important;min-width:165px!important;max-width:165px!important}}
+</style><style id="dd-cake-sort-position-final">
+#sort{display:none!important}
+.dd-curated-top-row .toolbar{width:360px!important;max-width:360px!important;flex:0 1 360px!important}
+.dd-curated-top-row .dd-cake-sort-shell{width:100%!important;min-width:0!important;max-width:none!important;flex:1 1 auto!important}
+@media(max-width:620px){
+  .dd-curated-top-row .toolbar{width:165px!important;max-width:165px!important;flex-basis:165px!important}
+}
 </style><style id="dd-cake-fullbleed-header">
 .home-header{
-  width:calc(100% + var(--dd-page-gutter, 0px) + var(--dd-page-gutter, 0px))!important;
-  max-width:none!important;
-  margin-inline:calc(0px - var(--dd-page-gutter, 0px))!important;
+  width:100vw!important;
+  max-width:100vw!important;
+  margin-left:calc(50% - 50vw)!important;
+  margin-right:calc(50% - 50vw)!important;
 }
 </style></head><body>
 <header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav"><a href="/">الرئيسية</a><a class="active" href="/#gifts">هدايا وتجارب</a><a href="/occasions">رتّب مناسبتي</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a class="lang-link dd-language-switch" data-dd-lang-target="/cake-en" href="/cake-en" aria-label="English">EN</a></div></header>
@@ -172,7 +180,7 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 <div class="dd-flow-step"><div class="dd-flow-icon">♡</div><div>مراجعة وحجز</div></div>
 </div></section>
 <script id="dd-flow-state">(function(){const p=new URLSearchParams(location.search);const on=p.get('flow')==='1';window.__ddFlowActive=on;const s=document.querySelector('[data-dd-flow-stepper]');if(s)s.hidden=!on;})();</script>
-<section class="hero"><div class="container"><div class="hero-box"><div class="hero-copy"><div class="eyebrow">🎂 شكولاته و كيك</div><h1>كيك لكل لحظة</h1><p>اختار شكولاته و كيك اللي تناسب المناسبة، وعدد الأشخاص، والذوق اللي بتحبه. ولو عندك تصميم في بالك ارفعلنا صورة مرجعية.</p></div><div class="hero-img"></div></div></div></section>
+<section class="hero"><div class="container"><div class="hero-box"><div class="hero-copy"><h1>كيك لكل لحظة</h1><p>اختار شكولاته و كيك اللي تناسب المناسبة، وعدد الأشخاص، والذوق اللي بتحبه. ولو عندك تصميم في بالك ارفعلنا صورة مرجعية.</p></div><div class="hero-img"></div></div></div></section>
 <main class="main"><div class="container layout">
 <aside class="filters">
 <div class="search">⌕ <input id="search" placeholder="ابحث عن كيك أو حلويات..."/></div>
@@ -184,7 +192,7 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 <div class="filter-group"><h4>السعر</h4><div class="chips" data-filter="budget"><button class="chip active" data-value="all">الكل</button><button class="chip" data-value="low">أقل من 1,000</button><button class="chip" data-value="mid">1,000–2,500</button><button class="chip" data-value="high">أكثر من 2,500</button></div></div>
 </aside>
 <section class="content">
-<div class="section-title"><div><h2>اكتشف المزيد من شكولاته و كيك</h2></div></div>
+
 <div class="dd-curated-top-row"><div class="toolbar"><select id="sort"><option value="featured">الترتيب المقترح</option><option value="asc">السعر: الأقل أولًا</option><option value="desc">السعر: الأعلى أولًا</option></select></div><div class="dd-curated-heading" id="ddCuratedHeading">مختارات Dear Day</div></div><div class="grid" id="grid"></div><div class="no-results" id="noResults">مفيش منتجات مطابقة للفلاتر الحالية.</div>
 <div class="custom"><img alt="تصميم كيك مخصص" src="/approved-pages/assets/media/custom-cake.jpg"/><div><h3>تصميم مخصص؟</h3><p>شارك معنا فكرتك أو صورة مرجعية وسنحتفظ بها مع تفاصيل المناسبة.</p><img alt="المعاينة" class="upload-preview" id="uploadPreview"/></div><label class="upload">⇧ رفع صورة مرجعية<input accept="image/*" id="refUpload" type="file"/></label></div>
 </section></div></main>
