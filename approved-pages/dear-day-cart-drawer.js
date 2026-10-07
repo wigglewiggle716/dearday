@@ -47,7 +47,7 @@
       #ddCartDrawerRoot{position:fixed;inset:0;z-index:2147483600;pointer-events:none;font-family:Tahoma,Arial,sans-serif}
       #ddCartDrawerRoot *{box-sizing:border-box}
       #ddCartDrawerBackdrop{position:absolute;inset:0;background:rgba(28,20,21,.58);opacity:0;transition:opacity .24s ease}
-      #ddCartDrawerPanel{position:absolute;top:0;right:0;width:min(430px,82vw);min-width:min(310px,100vw);height:100dvh;background:#FFFDFC;color:#352D2E;display:flex;flex-direction:column;box-shadow:-18px 0 50px rgba(39,23,26,.18);transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.75,.25,1);overflow:hidden}
+      #ddCartDrawerPanel{position:absolute;top:0;right:0;width:min(390px,76vw);min-width:min(300px,100vw);height:100dvh;background:#FFFDFC;color:#352D2E;display:flex;flex-direction:column;box-shadow:-18px 0 50px rgba(39,23,26,.18);transform:translateX(102%);transition:transform .28s cubic-bezier(.2,.75,.25,1);overflow:hidden}
       #ddCartDrawerRoot.dd-open{pointer-events:auto}
       #ddCartDrawerRoot.dd-open #ddCartDrawerBackdrop{opacity:1}
       #ddCartDrawerRoot.dd-open #ddCartDrawerPanel{transform:translateX(0)}
@@ -74,7 +74,7 @@
       html[dir="rtl"] #ddCartDrawerPanel{direction:rtl;text-align:right}
       html[dir="ltr"] #ddCartDrawerPanel{direction:ltr;text-align:left}
       @media(max-width:520px){
-        #ddCartDrawerPanel{width:86vw;min-width:0}
+        #ddCartDrawerPanel{width:80vw;min-width:0}
         .dd-cart-drawer-head{min-height:82px;padding:20px 18px 17px}
         .dd-cart-drawer-title{font-size:24px}
         .dd-cart-drawer-item{grid-template-columns:72px minmax(0,1fr) 26px;padding:17px 16px;gap:12px}

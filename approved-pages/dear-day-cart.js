@@ -607,7 +607,7 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy">سياسة �
   window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
   const core='/approved-pages/dear-day-cart-core.js?v=20261004-5';
-  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-1';
+  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-2';
   function loadCartDrawer(){
     if(document.querySelector('script[data-dd-cart-drawer]'))return;
     const d=document.createElement('script');
