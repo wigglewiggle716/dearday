@@ -1,0 +1,106 @@
+name: Rename cake service labels
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rename-cake-service-labels.yml'
+permissions:
+  contents: write
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Replace old customer-facing service names
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          roots = [Path('.'), Path('approved-pages')]
+          skip_dirs = {'.git', '.github', 'supabase', 'docs', 'node_modules'}
+          exts = {'.html', '.js', '.json', '.xml', '.txt'}
+
+          replacements = [
+              ('Cakes &amp; Sweets', 'Chocolate &amp; Cakes'),
+              ('Cake &amp; Sweets', 'Chocolate &amp; Cakes'),
+              ('Cakes & Sweets', 'Chocolate & Cakes'),
+              ('Cake & Sweets', 'Chocolate & Cakes'),
+              ('Cakes and Sweets', 'Chocolate & Cakes'),
+              ('Cake and Sweets', 'Chocolate & Cakes'),
+              ('الكيك والحلويات', 'شكولاته و كيك'),
+              ('الكيك و الحلويات', 'شكولاته و كيك'),
+              ('كيك وحلويات', 'شكولاته و كيك'),
+              ('كيك و حلويات', 'شكولاته و كيك'),
+          ]
+
+          changed = []
+          seen = set()
+          for root in roots:
+              for p in root.rglob('*'):
+                  if not p.is_file() or p.suffix.lower() not in exts:
+                      continue
+                  if any(part in skip_dirs for part in p.parts):
+                      continue
+                  rp = str(p)
+                  if rp in seen:
+                      continue
+                  seen.add(rp)
+                  try:
+                      s = p.read_text(encoding='utf-8')
+                  except UnicodeDecodeError:
+                      continue
+                  old = s
+                  for a,b in replacements:
+                      s = s.replace(a,b)
+                  if s != old:
+                      p.write_text(s, encoding='utf-8')
+                      changed.append(rp)
+
+          print('Changed files:')
+          for p in changed:
+              print(p)
+          if not changed:
+              raise SystemExit('No files changed; old labels not found in scanned frontend files')
+          PY
+      - name: Verify old labels are gone from frontend
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          skip_dirs = {'.git', '.github', 'supabase', 'docs', 'node_modules'}
+          exts = {'.html', '.js', '.json', '.xml', '.txt'}
+          old_terms = [
+              'Cakes &amp; Sweets','Cake &amp; Sweets',
+              'Cakes & Sweets','Cake & Sweets',
+              'Cakes and Sweets','Cake and Sweets',
+              'الكيك والحلويات','الكيك و الحلويات',
+              'كيك وحلويات','كيك و حلويات'
+          ]
+          leftovers=[]
+          for p in Path('.').rglob('*'):
+              if not p.is_file() or p.suffix.lower() not in exts:
+                  continue
+              if any(part in skip_dirs for part in p.parts):
+                  continue
+              try:
+                  s=p.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              for term in old_terms:
+                  if term in s:
+                      leftovers.append((str(p),term))
+          if leftovers:
+              for x in leftovers[:50]:
+                  print('LEFTOVER',x)
+              raise SystemExit('Old labels still present')
+          print('Verified: all customer-facing old cake service labels replaced')
+          PY
+      - name: Commit renamed service
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- '*.html' '*.js' '*.json' '*.xml' '*.txt' 'approved-pages/**'
+          git diff --cached --quiet && exit 0
+          git commit -m 'Rename cake service to Chocolate & Cakes'
+          git push origin main
