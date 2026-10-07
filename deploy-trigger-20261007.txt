@@ -1,4 +1,4 @@
 Dear Day deployment trigger
-Reason: publish unified Arabic/English home categories and curated picks structure.
-Trigger version: 2026-10-07-home-2
-Source commit: 5f1fa4767b008d93e2ce7d7d321e282224995bc8
+Reason: retry publishing latest English Home unified sections after Vercel cooldown.
+Trigger version: 2026-10-07-home-3
+Latest main includes: bca22d0c4870f29ac1b4c16440135442b8b61fe9
