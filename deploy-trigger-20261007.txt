@@ -1,0 +1,3 @@
+Dear Day deployment trigger
+Reason: verify GitHub -> Vercel auto deployment after approved-page fixes.
+Trigger version: 2026-10-07-1
