@@ -1,4 +1,4 @@
 Dear Day deployment trigger
-Reason: publish English Home parity fix (transparent occasion form + products section parity).
-Trigger version: 2026-10-07-home-en-1
-Source commit: 1b7e0ad2cadf858d67f2551ae60274a0208e1a09
+Reason: publish unified Arabic/English home categories and curated picks structure.
+Trigger version: 2026-10-07-home-2
+Source commit: 5f1fa4767b008d93e2ce7d7d321e282224995bc8
