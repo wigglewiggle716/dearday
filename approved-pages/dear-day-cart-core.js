@@ -15,10 +15,15 @@
     const n=Number(String(v||'').replace(/[^0-9.]/g,''));
     return Number.isFinite(n)?n:0;
   }
+  function quantityOf(item){
+    if(!item||item.type==='venue')return 1;
+    const q=Math.floor(Number(item.quantity)||1);
+    return Math.max(1,q);
+  }
   function read(){
     try{
       const x=JSON.parse(localStorage.getItem(KEY)||'[]');
-      return Array.isArray(x)?x:[];
+      return Array.isArray(x)?x.map(item=>({...item,quantity:quantityOf(item)})):[];
     }catch(e){return []}
   }
   function safeImage(v){
@@ -42,6 +47,7 @@
       image:safeImage(item.img||item.image),
       occasionKey:context.occasionKey||'',
       occasion:context.occasion||context.occasionLabel||'',
+      quantity:type==='venue'?1:Math.max(1,Math.floor(Number(item.quantity)||1)),
       addedAt:Date.now()
     };
   }
@@ -52,21 +58,42 @@
     return items||[];
   }
   function syncType(type,items,context){
-    const keep=read().filter(x=>x.type!==type);
-    const add=(Array.isArray(items)?items:[]).filter(Boolean).map(x=>normalize(type,x,context));
+    const existing=read();
+    const keep=existing.filter(x=>x.type!==type);
+    const add=(Array.isArray(items)?items:[]).filter(Boolean).map(x=>{
+      const n=normalize(type,x,context);
+      const prev=existing.find(y=>y.key===n.key);
+      if(prev&&type!=='venue')n.quantity=quantityOf(prev);
+      return n;
+    });
     return write(keep.concat(add));
   }
   function upsert(type,item,context){
     const n=normalize(type,item,context);
-    const a=read().filter(x=>x.key!==n.key);
+    const current=read();
+    const prev=current.find(x=>x.key===n.key);
+    if(prev&&type!=='venue')n.quantity=quantityOf(prev)+Math.max(1,Math.floor(Number(item&&item.quantity)||1));
+    const a=current.filter(x=>x.key!==n.key);
     a.push(n); return write(a);
+  }
+  function setQuantity(key,value){
+    const a=read();
+    const item=a.find(x=>x.key===key);
+    if(!item)return a;
+    item.quantity=item.type==='venue'?1:Math.max(1,Math.floor(Number(value)||1));
+    return write(a);
+  }
+  function adjustQuantity(key,delta){
+    const item=read().find(x=>x.key===key);
+    if(!item||item.type==='venue')return read();
+    return setQuantity(key,quantityOf(item)+(Number(delta)||0));
   }
   function remove(key){
     return write(read().filter(x=>x.key!==key));
   }
   function clear(){ return write([]); }
-  function count(){return read().length}
-  function total(){return read().reduce((s,x)=>s+price(x.price),0)}
+  function count(){return read().reduce((s,x)=>s+quantityOf(x),0)}
+  function total(){return read().reduce((s,x)=>s+(price(x.price)*quantityOf(x)),0)}
   function removeHeaderCart(){
     document.querySelectorAll('.dd-cart-link').forEach(el=>el.remove());
   }
@@ -610,9 +637,18 @@
       const exists=a.some(x=>x.key===n.key||(x.type===n.type&&String(x.name||x.ar||'').trim().toLowerCase()===nName));
       if(!exists)a.push(n);
     });
+    const current=read();
+    current.filter(x=>!['gift','cake','venue'].includes(x.type)).forEach(x=>{
+      if(!a.some(y=>y.key===x.key))a.push(x);
+    });
+    a=a.map(n=>{
+      const prev=current.find(x=>x.key===n.key);
+      if(prev&&n.type!=='venue')n.quantity=quantityOf(prev);
+      return n;
+    });
     return write(a);
   }
-  window.DDCart={read,write,syncType,upsert,remove,clear,count,total,paint,importPlan,price,normalizeHeader:normalizeGlobalHeader};
+  window.DDCart={read,write,syncType,upsert,setQuantity,adjustQuantity,remove,clear,count,total,paint,importPlan,price,quantityOf,normalizeHeader:normalizeGlobalHeader};
   function boot(){
     normalizeGlobalHeader();
     normalizeGlobalFooter();

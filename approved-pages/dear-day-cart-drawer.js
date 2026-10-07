@@ -23,6 +23,7 @@
       return Array.isArray(x)?x:[];
     }catch(e){return []}
   }
+  function qty(item){return !item||item.type==='venue'?1:Math.max(1,Math.floor(Number(item.quantity)||1));}
   function displayName(item){
     if(!item)return english()?'Item':'عنصر';
     if(item.type==='venue')return item.name||item.ar||(english()?'Venue':'مكان');
@@ -36,7 +37,19 @@
     const a=read();
     a.splice(index,1);
     try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}
-    window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.length}}));
+    window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.reduce((n,x)=>n+qty(x),0)}}));
+  }
+  function adjustItem(item,index,delta){
+    if(!item||item.type==='venue')return;
+    if(window.DDCart&&typeof window.DDCart.adjustQuantity==='function'&&item.key){
+      window.DDCart.adjustQuantity(item.key,delta);
+      return;
+    }
+    const a=read(),row=a[index];
+    if(!row)return;
+    row.quantity=Math.max(1,qty(row)+(Number(delta)||0));
+    try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}
+    window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:a.reduce((n,x)=>n+qty(x),0)}}));
   }
   function ensureStyle(){
     if(document.getElementById('dd-cart-drawer-style'))return;
@@ -62,6 +75,11 @@
       .dd-cart-drawer-name{font-weight:800;font-size:15px;line-height:1.55;color:#352D2E;overflow-wrap:anywhere}
       .dd-cart-drawer-meta{margin-top:6px;color:#978985;font-size:12px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       .dd-cart-drawer-price{margin-top:5px;color:#6B3540;font-weight:800;font-size:13px}
+      .dd-cart-drawer-buyrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+      .dd-cart-drawer-qty{display:inline-flex;align-items:center;border:1px solid rgba(107,53,64,.20);border-radius:999px;background:#fff;overflow:hidden;min-height:30px}
+      .dd-cart-drawer-qty button{width:30px;height:30px;border:0;background:transparent;color:#6B3540;font:800 18px/1 Arial,sans-serif;cursor:pointer}
+      .dd-cart-drawer-qty button:hover{background:#F6E7E1}
+      .dd-cart-drawer-qty span{min-width:26px;text-align:center;font:800 12px/1 Arial,sans-serif;color:#352D2E}
       .dd-cart-drawer-remove{align-self:start;margin-top:2px;width:28px;height:28px;border:0;background:transparent;color:#7C6C69;font-size:24px;line-height:1;cursor:pointer;border-radius:50%}
       .dd-cart-drawer-remove:hover{background:#F6E7E1;color:#6B3540}
       .dd-cart-drawer-empty{min-height:280px;padding:44px 28px;display:grid;place-items:center;text-align:center;color:#8A7B77}
@@ -140,19 +158,27 @@
           (img?'<img class="dd-cart-drawer-img" src="'+esc(img)+'" alt="'+esc(name)+'">':'<span class="dd-cart-drawer-placeholder" aria-hidden="true">DD</span>')+
           '<div><div class="dd-cart-drawer-name">'+esc(name)+'</div>'+
           (meta?'<div class="dd-cart-drawer-meta">'+esc(meta)+'</div>':'')+
-          '<div class="dd-cart-drawer-price">1 × '+esc(money(item.price))+'</div></div>'+
+          '<div class="dd-cart-drawer-buyrow"><div class="dd-cart-drawer-price">'+esc(money((Number(item.price)||0)*qty(item)))+'</div>'+
+          (item.type!=='venue'?'<div class="dd-cart-drawer-qty" aria-label="'+esc(en?'Quantity':'الكمية')+'"><button type="button" data-dd-qty="'+index+'" data-delta="-1" aria-label="'+esc(en?'Decrease quantity':'تقليل الكمية')+'">−</button><span>'+qty(item)+'</span><button type="button" data-dd-qty="'+index+'" data-delta="1" aria-label="'+esc(en?'Increase quantity':'زيادة الكمية')+'">+</button></div>':'')+
+          '</div></div>'+
           '<button class="dd-cart-drawer-remove" type="button" data-dd-remove="'+index+'" aria-label="'+esc(en?'Remove item':'حذف العنصر')+'">×</button>'+
         '</article>';
       }).join('');
       list.querySelectorAll('img.dd-cart-drawer-img').forEach(img=>img.addEventListener('error',()=>{const ph=document.createElement('span');ph.className='dd-cart-drawer-placeholder';ph.textContent='DD';img.replaceWith(ph)},{once:true}));
-      list.querySelectorAll('[data-dd-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+      list.querySelectorAll('[data-dd-qty]').forEach(btn=>btn.addEventListener('click',()=>{
+      const index=Number(btn.getAttribute('data-dd-qty')),delta=Number(btn.getAttribute('data-delta'));
+      const current=read();
+      if(Number.isInteger(index)&&current[index])adjustItem(current[index],index,delta);
+      render();
+    }));
+    list.querySelectorAll('[data-dd-remove]').forEach(btn=>btn.addEventListener('click',()=>{
         const index=Number(btn.getAttribute('data-dd-remove'));
         const current=read();
         if(Number.isInteger(index)&&current[index])removeItem(current[index],index);
         render();
       }));
     }
-    const total=items.reduce((sum,x)=>sum+(Number(String(x.price??0).replace(/[^0-9.]/g,''))||0),0);
+    const total=items.reduce((sum,x)=>sum+((Number(String(x.price??0).replace(/[^0-9.]/g,''))||0)*qty(x)),0);
     root.querySelector('#ddCartDrawerSubtotal').textContent=money(total);
   }
   function open(){

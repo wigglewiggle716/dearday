@@ -321,7 +321,7 @@ footer{margin-top:25px}
   }
 
   function persistPayment(status){
-    const total=window.DDCart?DDCart.total():cart.reduce((s,x)=>s+(Number(x.price)||0),0);
+    const total=window.DDCart?DDCart.total():cart.reduce((s,x)=>s+((Number(x.price)||0)*(x.type==='venue'?1:(Number(x.quantity)||1))),0);
     plan.payment={
       ...(plan.payment||{}),
       orderReference:previous.orderReference,
@@ -369,11 +369,11 @@ footer{margin-top:25px}
     const mini=document.getElementById('miniItems');
     mini.innerHTML=cart.slice(0,4).map(item=>{
       const icon=item.type==='gift'?'🎁':item.type==='cake'?'🎂':item.type==='venue'?'📍':'♡';
-      return '<div class="mini-item"><div class="mini-thumb">'+(item.image?'<img src="'+esc(item.image)+'" alt="">':icon)+'</div><div class="mini-copy"><b>'+esc(item.ar||item.name||'اختيار')+'</b><small>'+esc(item.vendor||item.area||'')+'</small></div><div class="mini-price">EGP '+money(item.price)+'</div></div>';
+      return '<div class="mini-item"><div class="mini-thumb">'+(item.image?'<img src="'+esc(item.image)+'" alt="">':icon)+'</div><div class="mini-copy"><b>'+esc(item.ar||item.name||'اختيار')+'</b><small>'+esc(item.vendor||item.area||'')+'</small></div><div class="mini-price">EGP '+money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))+'</div></div>';
     }).join('')+(cart.length>4?'<div style="font-size:10px;color:#786b68">+'+(cart.length-4)+' عناصر أخرى</div>':'');
     if(!cart.length)mini.innerHTML='<div style="font-size:11px;color:#786b68;padding:8px 0">لا توجد عناصر في السلة.</div>';
 
-    const total=window.DDCart?DDCart.total():cart.reduce((s,x)=>s+(Number(x.price)||0),0);
+    const total=window.DDCart?DDCart.total():cart.reduce((s,x)=>s+((Number(x.price)||0)*(x.type==='venue'?1:(Number(x.quantity)||1))),0);
     document.getElementById('itemCount').textContent=cart.length;
     document.getElementById('subtotal').textContent='EGP '+money(total);
     document.getElementById('grandTotal').textContent='EGP '+money(total);
@@ -401,7 +401,7 @@ footer{margin-top:25px}
       currency:'EGP',
       payment_method:p.method,
       special_reference:p.orderReference,
-      items:cart.map(x=>({name:x.ar||x.name||'Dear Day item',amount:Number(x.price)||0,quantity:1})),
+      items:cart.map(x=>({name:x.ar||x.name||'Dear Day item',amount:Number(x.price)||0,quantity:x.type==='venue'?1:Math.max(1,Math.floor(Number(x.quantity)||1))})),
       billing_data:{
         first_name:nameParts[0]||p.billing.fullName,
         last_name:nameParts.slice(1).join(' ')||'-',

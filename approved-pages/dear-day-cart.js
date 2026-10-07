@@ -84,7 +84,7 @@
     return String(document.documentElement.lang||'').toLowerCase().startsWith('en')||document.body?.dir==='ltr';
   }
   function cartUrl(){return isEnglishPage()?'/cart-en':'/cart';}
-  function cartCount(){try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.length:0}catch(e){return 0}}
+  function cartCount(){try{const items=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(items)?items.reduce((sum,item)=>sum+(item&&item.type==='venue'?1:Math.max(1,Math.floor(Number(item&&item.quantity)||1))),0):0}catch(e){return 0}}
 
   function patchEnglishAuthLinks(){
     if(!isEnglishPage())return;
@@ -606,8 +606,8 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy">سياسة �
   window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});
   window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
-  const core='/approved-pages/dear-day-cart-core.js?v=20261004-5';
-  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-2';
+  const core='/approved-pages/dear-day-cart-core.js?v=20261007-qty1';
+  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-qty1';
   function loadCartDrawer(){
     if(document.querySelector('script[data-dd-cart-drawer]'))return;
     const d=document.createElement('script');

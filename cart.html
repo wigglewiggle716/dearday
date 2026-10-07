@@ -23,7 +23,12 @@
 @media(max-width:650px){.home-header{grid-template-columns:auto 1fr;height:auto;min-height:68px;padding:10px 16px}.brand img{width:108px}.auth-actions{justify-content:flex-end}.auth-link,.signup{display:none}.wrap{width:calc(100% - 24px)}.hero{padding-top:30px}.hero-box{padding:24px 20px}.hero h1{font-size:34px}.cart-item{grid-template-columns:64px 1fr}.thumb{width:64px;height:60px}.item-actions{grid-column:2;text-align:right;display:flex;align-items:center;justify-content:space-between}.remove{display:inline;margin:0}.footer-top{grid-template-columns:1fr}.footer-bottom{flex-direction:column}}
 </style>
 <script src="/approved-pages/dear-day-cart.js?v=20261004-4"></script>
-<link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/></head>
+<link data-dd-brand-fonts="" rel="preconnect" href="https://fonts.googleapis.com"/><link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com"/><link data-dd-brand-fonts="" href="https://fonts.googleapis.com/css2?family=Alex+Brush&amp;family=Lora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style id="dd-final-a11y-style">:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #A8583D!important;outline-offset:3px!important}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style><link rel="stylesheet" href="/approved-pages/assets/page-scroll.css?v=20260930-1"/><style id="dd-cart-quantity-style">
+.dd-qty-control{display:inline-flex;align-items:center;border:1px solid rgba(107,53,64,.20);border-radius:999px;background:#fff;overflow:hidden;margin-top:7px;margin-inline-start:auto}
+.dd-qty-control button{width:31px;height:31px;border:0;background:transparent;color:#6B3540;font:800 18px/1 Arial,sans-serif;cursor:pointer}
+.dd-qty-control button:hover{background:#f8ece7}.dd-qty-control span{min-width:28px;text-align:center;font:800 12px/1 Arial,sans-serif;color:#352D2E}
+</style>
+</head>
 <body>
 <header class="home-header">
 <a class="brand" href="/" aria-label="Dear Day — الرئيسية"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a>
@@ -70,15 +75,18 @@ function render(){
   if(!items.length){
     wrap.innerHTML='<div class="empty"><div class="icon">🛒</div><strong>السلة لسه فاضية</strong><div>ارجع لاختيارات المناسبة واختر هدية أو كيك أو مكان، وهيظهر هنا تلقائيًا.</div></div>';
   }else{
-    wrap.innerHTML=items.map(item=>'<article class="cart-item"><div class="thumb">'+(item.image?'<img src="'+esc(item.image)+'" alt="">':emoji(item.type))+'</div><div><span class="type">'+typeLabel(item.type)+'</span><div class="item-title">'+esc(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))+'</div><div class="meta">'+esc([(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div></div><div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div></article>').join('');
+    wrap.innerHTML=items.map(item=>'<article class="cart-item"><div class="thumb">'+(item.image?'<img src="'+esc(item.image)+'" alt="">':emoji(item.type))+'</div><div><span class="type">'+typeLabel(item.type)+'</span><div class="item-title">'+esc(item.type==='venue'?(item.name||item.ar):(item.ar||item.name))+'</div><div class="meta">'+esc([(item.type==='venue'&&item.ar&&item.ar!==item.name)?item.ar:null,item.vendor,item.area,item.people,item.meta].filter(Boolean).join(' • '))+'</div></div><div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!=='venue'?'<div class="dd-qty-control"><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="-1" aria-label="تقليل الكمية">−</button><span>'+(Number(item.quantity)||1)+'</span><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="1" aria-label="زيادة الكمية">+</button></div>':'')+'<button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div></article>').join('');
   }
-  document.getElementById('cartCount').textContent=items.length;
+  document.getElementById('cartCount').textContent=items.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0);
   document.getElementById('cartTotal').textContent='EGP '+money(window.DDCart?DDCart.total():0);
   document.getElementById('clearCart').style.visibility=items.length?'visible':'hidden';
   if(window.DDCart)DDCart.paint();
 }
 document.getElementById('cartItems').addEventListener('click',e=>{
-  const b=e.target.closest('[data-remove]');if(!b||!window.DDCart)return;
+  if(!window.DDCart)return;
+  const q=e.target.closest('[data-qty-key]');
+  if(q){DDCart.adjustQuantity(q.dataset.qtyKey,Number(q.dataset.delta)||0);return;}
+  const b=e.target.closest('[data-remove]');if(!b)return;
   const item=DDCart.read().find(x=>x.key===b.dataset.remove);if(item)syncPlanRemoval(item);
   DDCart.remove(b.dataset.remove);render();
 });
