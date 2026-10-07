@@ -1,3 +1,3 @@
 Dear Day deployment trigger
-Reason: publish approved English flowers alignment + single English cake sort control.
-Trigger version: 2026-10-07-3
+Reason: retry publishing approved Flowers EN + Cake EN fixes after Vercel rate-limit cooldown.
+Trigger version: 2026-10-07-4
