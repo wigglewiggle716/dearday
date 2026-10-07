@@ -205,7 +205,7 @@
       footer.innerHTML=`<div class="dd-footer-wrap">
         <div class="footer-top">
           <div class="footer-brand"><a class="footer-logo" href="${p.home}" aria-label="Dear Day — ${english?'Home':'الرئيسية'}"><img src="/approved-pages/assets/dear-day-wordmark.svg" alt="Dear Day"></a><p class="footer-note">${p.footer[0]}</p></div>
-          <div><h4>${p.footer[1]}</h4><a href="${p.home}">${p.nav[0]}</a><a href="${p.occasions}">${p.nav[1]}</a><a href="${p.gifts}">${english?'Gifts':'الهدايا'}</a><a href="${p.cakes}">${english?'Cakes & Sweets':'كيك وحلويات'}</a><a href="${p.flowers}">${english?'Flowers':'الورد'}</a><a href="${p.venues}">${english?'Venues & Experiences':'أماكن وتجارب'}</a></div>
+          <div><h4>${p.footer[1]}</h4><a href="${p.home}">${p.nav[0]}</a><a href="${p.occasions}">${p.nav[1]}</a><a href="${p.gifts}">${english?'Gifts':'الهدايا'}</a><a href="${p.cakes}">${english?'Chocolate & Cakes':'شكولاته و كيك'}</a><a href="${p.flowers}">${english?'Flowers':'الورد'}</a><a href="${p.venues}">${english?'Venues & Experiences':'أماكن وتجارب'}</a></div>
           <div><h4>${p.footer[2]}</h4><a href="${p.about}">${english?'About Us':'من نحن'}</a><a href="${p.how}">${p.nav[2]}</a><a href="${p.partners}">${p.nav[3]}</a></div>
           <div><h4>${p.footer[3]}</h4><a href="${p.faq}">${p.footer[4]}</a><a href="${p.contact}">${p.footer[5]}</a><a href="${p.refunds}">${p.footer[6]}</a><a href="${p.deletion}">${p.footer[7]}</a><a href="${p.privacy}">${p.footer[8]}</a><a href="${p.terms}">${p.footer[9]}</a></div>
         </div>

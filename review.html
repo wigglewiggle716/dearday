@@ -40,7 +40,7 @@ function savePlan(p){try{localStorage.setItem('dearDayPlan',JSON.stringify(p||{}
 function money(n){return new Intl.NumberFormat('en-US').format(Number(n)||0)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function emoji(type){return type==='gift'?'🎁':type==='cake'?'🎂':type==='venue'?'📍':'♡'}
-function typeLabel(type){return type==='gift'?'هدية':type==='cake'?'كيك وحلويات':type==='venue'?'مكان وتجربة':'اختيار'}
+function typeLabel(type){return type==='gift'?'هدية':type==='cake'?'شكولاته و كيك':type==='venue'?'مكان وتجربة':'اختيار'}
 function formatDate(v){if(!v)return '—';try{return new Intl.DateTimeFormat('ar-EG',{year:'numeric',month:'long',day:'numeric'}).format(new Date(v+'T12:00:00'))}catch(e){return v}}
 function formatTime(v){if(!v)return '—';try{const [h,m]=v.split(':');const d=new Date();d.setHours(+h,+m,0,0);return new Intl.DateTimeFormat('ar-EG',{hour:'numeric',minute:'2-digit'}).format(d)}catch(e){return v}}
 function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>x.classList.remove('show'),1800)}

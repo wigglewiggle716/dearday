@@ -116,8 +116,8 @@
       const list=document.createElement('div');
       list.className='dd-static-explore-mobile-list';
       const items=en
-        ?[['Gifts','/gifts-en'],['Cake & Sweets','/cake-en'],['Places & Experiences','/venues-en'],['Flowers','/flowers-en']]
-        :[['هدايا','/gifts'],['كيك وحلويات','/cake'],['أماكن وتجارب','/venues'],['ورد','/flowers']];
+        ?[['Gifts','/gifts-en'],['Chocolate & Cakes','/cake-en'],['Places & Experiences','/venues-en'],['Flowers','/flowers-en']]
+        :[['هدايا','/gifts'],['شكولاته و كيك','/cake'],['أماكن وتجارب','/venues'],['ورد','/flowers']];
       items.forEach(([t,h])=>{
         const a=document.createElement('a');
         a.href=h;

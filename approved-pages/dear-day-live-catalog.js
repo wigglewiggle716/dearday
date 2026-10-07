@@ -12,7 +12,7 @@
 
   const sectionCopy={
     gifts:{title:T('الهدايا','Gifts'),sub:T('اختيارات هدايا مرتبة حسب المناسبة والشخص والميزانية.','Gift ideas organized by occasion, recipient and budget.')},
-    'cakes-sweets':{title:T('كيك وحلويات','Cakes & Sweets'),sub:T('كيك وحلويات للمناسبات مع وقت تجهيز وحجم واضحين.','Cakes and sweets with clear preparation time and serving size.')},
+    'cakes-sweets':{title:T('شكولاته و كيك','Chocolate & Cakes'),sub:T('شكولاته و كيك للمناسبات مع وقت تجهيز وحجم واضحين.','Cakes and sweets with clear preparation time and serving size.')},
     flowers:{title:T('الورد','Flowers'),sub:T('بوكيهات وبوكسات وفازات حسب اللون ونوع الورد والمناسبة.','Bouquets, boxes and vases by color, flower type and occasion.')}
   }[section];
 
