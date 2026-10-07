@@ -70,10 +70,8 @@ window.adjustGiftQty=(id,delta)=>{const p=PRODUCTS.find(x=>x.id===id);if(!p)retu
 """
               if 'function giftQty(id)' not in s:
                   s=s.replace(marker,helper+marker,1)
-              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" type="button" onclick="toggleGift('${p.id}')">${selected.has(p.id)?'✓ Selected':'Add'}</button></div>"""
-              if old not in s:
-                  old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="toggleGift('${p.id}')">${selected.has(p.id)?'✓ Selected':'Add'}</button></div>"""
-              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty"><button type="button" onclick="adjustGiftQty('${p.id}',-1)" aria-label="Decrease quantity">−</button><span>${giftQty(p.id)||1}</span><button type="button" onclick="adjustGiftQty('${p.id}',1)" aria-label="Increase quantity">+</button></div>`:`<button class="add" type="button" onclick="toggleGift('${p.id}')">Add</button>`}</div>"""
+              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" type="button">${selected.has(p.id)?'✓ Selected':'Add'}</button></div>"""
+              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty" onclick="event.stopPropagation()"><button type="button" onclick="event.stopPropagation();adjustGiftQty('${p.id}',-1)" aria-label="Decrease quantity">−</button><span>${giftQty(p.id)||1}</span><button type="button" onclick="event.stopPropagation();adjustGiftQty('${p.id}',1)" aria-label="Increase quantity">+</button></div>`:`<button class="add" type="button">Add</button>`}</div>"""
               if old not in s: raise SystemExit('MISSING EN gift price row '+path)
               s=s.replace(old,new,1)
               p.write_text(s,encoding='utf-8')
