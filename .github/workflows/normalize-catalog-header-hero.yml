@@ -1,0 +1,170 @@
+name: Normalize catalog headers and heroes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/normalize-catalog-header-hero.yml'
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Normalize headers and heroes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # 1) Arabic Gifts: use same header structure as approved Cake/Venues.
+          gift_ar = ['gifts.html','approved-pages/Dear-Day-Gifts-Approved.html']
+          new_header = '''<header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav" data-dd-explore-version="20261006-2"><a href="/">الرئيسية</a><div class="dd-static-explore dd-active"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>اكتشف</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts">هدايا</a><a href="/cake">شكولاته و كيك</a><a href="/venues">أماكن وتجارب</a><a href="/flowers">ورد</a></div></div><a href="/occasions">المناسبات</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركاء</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="/auth#login">تسجيل الدخول</a><a class="auth-link signup" href="/auth#signup">إنشاء حساب</a><a aria-label="English" class="lang-link dd-language-switch" data-dd-lang-target="/gifts-en" href="/gifts-en">EN</a></div></header>'''
+          for path in gift_ar:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              s,n=re.subn(r'<header class="header".*?</header>',new_header,s,count=1,flags=re.S)
+              if n!=1: raise SystemExit('Gift Arabic header replacement failed: '+path)
+              p.write_text(s,encoding='utf-8')
+
+          # Exact header visual reference used by Cake/Venues.
+          home_header_css = '''
+          <style id="dd-catalog-header-standard">
+          .home-header{box-sizing:border-box;height:auto!important;min-height:92px!important;display:grid!important;grid-template-columns:minmax(230px,auto) 1fr minmax(300px,auto)!important;align-items:center!important;gap:28px!important;padding:12px clamp(30px,6vw,96px)!important;background:rgba(250,243,234,.96)!important;border-bottom:1px solid rgba(107,53,64,.15)!important;position:sticky!important;top:0!important;z-index:100!important;backdrop-filter:blur(14px)!important;width:100%!important}
+          .home-header a{text-decoration:none!important;color:#3B292B!important;transition:.2s ease!important;cursor:pointer!important}
+          .home-header .brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-width:0!important}
+          .home-header .wordmark{width:182px!important;height:68px!important;object-fit:contain!important;mix-blend-mode:multiply!important;display:block!important}
+          .home-header .home-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:38px!important;font-size:14px!important;font-weight:700!important;white-space:nowrap!important}
+          .home-header .home-nav a{position:relative!important;padding:14px 2px!important}
+          .home-header .home-nav a:hover,.home-header .dd-static-explore-trigger:hover{color:#A8583D!important}
+          .home-header .dd-static-explore-trigger{font:inherit!important;font-weight:700!important;color:#3B292B!important;cursor:pointer!important}
+          .home-header .dd-static-explore.dd-active>.dd-static-explore-trigger{color:#A8583D!important}
+          .home-header .auth-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:11px!important;white-space:nowrap!important}
+          .home-header .auth-link{min-height:42px!important;padding:8px 18px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:13px!important;font-weight:800!important;background:transparent!important;color:#6B3540!important}
+          .home-header .auth-link.signup{background:#6B3540!important;border-color:#6B3540!important;color:#fff!important}
+          .home-header .auth-link:hover{transform:translateY(-1px)!important;border-color:#A8583D!important}
+          .home-header .lang-link{min-width:42px!important;width:42px!important;height:42px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.24)!important;display:grid!important;place-items:center!important;font-size:12px!important;font-weight:900!important;color:#6B3540!important;background:#FAF3EA!important;cursor:pointer!important}
+          @media(max-width:1100px){.home-header{grid-template-columns:auto 1fr auto!important;padding-inline:24px!important}.home-header .home-nav{gap:18px!important}.home-header .wordmark{width:160px!important}.home-header .auth-link{padding-inline:12px!important}}
+          @media(max-width:760px){.home-header{min-height:74px!important;grid-template-columns:auto 1fr!important;gap:12px!important;padding:8px 16px!important}.home-header .wordmark{width:132px!important;height:52px!important}.home-header .home-nav{display:none!important}.home-header .auth-actions{gap:6px!important}.home-header .auth-link{min-height:36px!important;padding:6px 10px!important;font-size:11px!important}.home-header .lang-link{width:36px!important;height:36px!important;min-width:36px!important}}
+          </style>
+          '''
+          classic_header_css = '''
+          <style id="dd-catalog-header-standard">
+          .header{position:sticky!important;top:0!important;z-index:100!important;background:rgba(250,243,234,.97)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid rgba(107,53,64,.14)!important}
+          .header .container{width:min(1180px,calc(100% - 40px))!important;margin:auto!important}
+          .header .nav{min-height:88px!important;height:auto!important;display:grid!important;grid-template-columns:minmax(190px,auto) 1fr minmax(300px,auto)!important;gap:26px!important;align-items:center!important;padding:8px 0!important}
+          .header .logo{display:flex!important;align-items:center!important}
+          .header .logo img{width:168px!important;height:62px!important;object-fit:contain!important;mix-blend-mode:multiply!important;display:block!important}
+          .header .navlinks{display:flex!important;justify-content:center!important;gap:28px!important;font-size:13px!important;font-weight:700!important;white-space:nowrap!important}
+          .header .navlinks a{position:relative!important;padding:12px 1px!important;cursor:pointer!important}
+          .header .navlinks a:hover,.header .navlinks .active,.header .dd-static-explore-trigger:hover{color:#A8583D!important}
+          .header .dd-static-explore-trigger{font:inherit!important;font-weight:700!important;cursor:pointer!important}
+          .header .actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;white-space:nowrap!important}
+          .header .auth-link{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;cursor:pointer!important}
+          .header .auth-link.signup{background:#6B3540!important;border-color:#6B3540!important;color:#fff!important}
+          .header .lang-link{min-width:40px!important;width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.22)!important;display:grid!important;place-items:center!important;font:900 11px/1 Arial!important;color:#6B3540!important;cursor:pointer!important}
+          @media(max-width:980px){.header .navlinks{display:none!important}.header .nav{grid-template-columns:auto 1fr!important}.header .actions{justify-content:flex-end!important}.header .auth-link{display:none!important}}
+          @media(max-width:620px){.header .container{width:min(100% - 24px,1180px)!important}.header .nav{min-height:68px!important}.header .logo img{width:116px!important;height:50px!important}}
+          </style>
+          '''
+
+          # Apply standard header CSS to Gifts + Flowers, AR + EN, live + approved where relevant.
+          header_files = [
+            'gifts.html','approved-pages/Dear-Day-Gifts-Approved.html',
+            'gifts-en.html','approved-pages/Dear-Day-Gifts-Approved-en.html',
+            'approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html'
+          ]
+          for path in header_files:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-catalog-header-standard"' in s: continue
+              css = home_header_css if 'class="home-header"' in s else classic_header_css
+              s=s.replace('</head>',css+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+
+          # 2) Gifts Hero is the standard:
+          # 310px box, 52/48 image-copy, 44px title, 16px description, 22px top / 28px bottom.
+
+          hero_standard = '''
+          <style id="dd-catalog-hero-standard">
+          .hero{padding:22px 0 28px!important}
+          .hero .container{width:min(1180px,calc(100% - 40px))!important;margin:auto!important}
+          .hero .hero-box{height:310px!important;grid-template-columns:52% 48%!important}
+          .hero .hero-copy{padding:46px 48px!important}
+          .hero h1{font-size:44px!important;line-height:1.15!important}
+          .hero p{font-size:16px!important}
+          @media(max-width:760px){.hero{padding:18px 0 22px!important}.hero .container{width:min(100% - 24px,1180px)!important}.hero .hero-box{height:auto!important;grid-template-columns:1fr!important}.hero .hero-img,.hero .hero-gift-img{height:210px!important}.hero .hero-copy{padding:30px 24px!important}.hero h1{font-size:34px!important}}
+          </style>
+          '''
+          for path in [
+            'cake.html','approved-pages/Dear-Day-Cake-Approved.html',
+            'cake-en.html','approved-pages/Dear-Day-Cake-Approved-en.html'
+          ]:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-catalog-hero-standard"' not in s:
+                  s=s.replace('</head>',hero_standard+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+
+          venue_standard = '''
+          <style id="dd-catalog-hero-standard">
+          .container>.hero{height:310px!important;grid-template-columns:52% 48%!important;margin-top:22px!important;margin-bottom:28px!important}
+          .container>.hero .hero-copy{padding:46px 48px!important}
+          .container>.hero h1{font-size:44px!important;line-height:1.15!important}
+          .container>.hero p{font-size:16px!important}
+          .shell{margin-top:0!important}
+          @media(max-width:760px){.container>.hero{height:auto!important;grid-template-columns:1fr!important;margin-top:18px!important;margin-bottom:22px!important}.container>.hero .hero-img{height:210px!important}.container>.hero .hero-copy{padding:30px 24px!important}.container>.hero h1{font-size:34px!important}}
+          </style>
+          '''
+          for path in [
+            'venues.html','approved-pages/Dear-Day-Venues-Approved.html',
+            'venues-en.html','approved-pages/Dear-Day-Venues-Approved-en.html'
+          ]:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-catalog-hero-standard"' not in s:
+                  s=s.replace('</head>',venue_standard+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+
+          flower_standard = '''
+          <style id="dd-catalog-hero-standard">
+          #ddLiveCatalog.dd-live-flowers .dd-cat-hero{width:min(1180px,calc(100% - 40px))!important;max-width:none!important;margin:auto!important;padding:22px 0 28px!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-hero>div{height:310px!important;min-height:310px!important;padding:46px 48px 46px calc(52% + 48px)!important;border-radius:30px!important;box-shadow:0 10px 32px rgba(82,37,43,.06)!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-hero>div::before{width:52%!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-hero h1{font-size:44px!important;line-height:1.15!important;margin:0 0 10px!important}
+          #ddLiveCatalog.dd-live-flowers .dd-cat-hero p{font-size:16px!important}
+          @media(max-width:760px){
+            #ddLiveCatalog.dd-live-flowers .dd-cat-hero{width:min(100% - 24px,1180px)!important;padding:18px 0 22px!important}
+            #ddLiveCatalog.dd-live-flowers .dd-cat-hero>div{height:auto!important;min-height:0!important;padding:240px 24px 30px!important}
+            #ddLiveCatalog.dd-live-flowers .dd-cat-hero>div::before{width:100%!important;height:210px!important;bottom:auto!important}
+            #ddLiveCatalog.dd-live-flowers .dd-cat-hero h1{font-size:34px!important}
+          }
+          </style>
+          '''
+          for path in ['approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html']:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-catalog-hero-standard"' not in s:
+                  s=s.replace('</head>',flower_standard+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['gifts.html','approved-pages/Dear-Day-Gifts-Approved.html','approved-pages/Dear-Day-Flowers-Approved.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'dd-catalog-header-standard' in s, p
+          for p in ['cake.html','cake-en.html','venues.html','venues-en.html','approved-pages/Dear-Day-Flowers-Approved.html','approved-pages/Dear-Day-Flowers-Approved-en.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'dd-catalog-hero-standard' in s, p
+          assert 'class="home-header"' in Path('gifts.html').read_text(encoding='utf-8')
+          assert 'grid-template-columns:52% 48%' in Path('cake.html').read_text(encoding='utf-8')
+          assert 'font-size:44px!important' in Path('venues.html').read_text(encoding='utf-8')
+          assert 'width:52%!important' in Path('approved-pages/Dear-Day-Flowers-Approved.html').read_text(encoding='utf-8')
+          print('Header and hero normalization verified')
+          PY
+      - name: Commit
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add gifts.html gifts-en.html cake.html cake-en.html venues.html venues-en.html approved-pages/Dear-Day-Gifts-Approved.html approved-pages/Dear-Day-Gifts-Approved-en.html approved-pages/Dear-Day-Cake-Approved.html approved-pages/Dear-Day-Cake-Approved-en.html approved-pages/Dear-Day-Venues-Approved.html approved-pages/Dear-Day-Venues-Approved-en.html approved-pages/Dear-Day-Flowers-Approved.html approved-pages/Dear-Day-Flowers-Approved-en.html
+          git commit -m 'Normalize catalog headers and hero sizing'
+          git push origin main
