@@ -56,11 +56,12 @@ jobs:
                   raise SystemExit('syncAll old range logic missing in '+path)
               s=s.replace(old_sync,new_sync,1)
 
-              old_handlers="el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;el('priceRange').oninput=e=>{filters.max=+e.target.value;el('maxPrice').textContent='EGP '+money(filters.max);renderGrid()};el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design='all';filters.max=2000;filters.q='';el('search').value='';syncAll();renderGrid()};"
-              new_handlers="el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';el('search').value='';syncAll();renderGrid()};"
-              if old_handlers not in s:
+              import re
+              before=s
+              s=re.sub(r"el\('priceRange'\)\.oninput=e=>\{filters\.max=\+e\.target\.value;el\('maxPrice'\)\.textContent='EGP '\+money\(filters\.max\);renderGrid\(\)\};?","",s,count=1)
+              s=s.replace("filters.category=filters.people=filters.flavor=filters.design='all';filters.max=2000;filters.q='';","filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';",1)
+              if s==before:
                   raise SystemExit('old price handlers missing in '+path)
-              s=s.replace(old_handlers,new_handlers,1)
 
               p.write_text(s,encoding='utf-8')
           PY
