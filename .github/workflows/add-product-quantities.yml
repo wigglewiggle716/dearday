@@ -223,8 +223,8 @@ jobs:
               if 'id="dd-cart-quantity-style"' not in s:
                   s=s.replace('</head>',qty_css+'\n</head>',1)
               if lang=='ar':
-                  old='<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div>'
-                  new='<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type===\'venue\'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!==\'venue\'?\'<div class="dd-qty-control"><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="-1" aria-label="تقليل الكمية">−</button><span>\'+(Number(item.quantity)||1)+\'</span><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="1" aria-label="زيادة الكمية">+</button></div>\':\'\')+\'<button class="remove" data-remove="\'+esc(item.key)+\'">حذف</button></div>'
+                  old="""<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div>"""
+                  new="""<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!=='venue'?'<div class="dd-qty-control"><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="-1" aria-label="تقليل الكمية">−</button><span>'+(Number(item.quantity)||1)+'</span><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="1" aria-label="زيادة الكمية">+</button></div>':'')+'<button class="remove" data-remove="'+esc(item.key)+'">حذف</button></div>"""
                   if old not in s: raise SystemExit('MISSING AR cart render '+path)
                   s=s.replace(old,new,1)
                   s=s.replace("document.getElementById('cartCount').textContent=items.length;","document.getElementById('cartCount').textContent=items.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0);",1)
@@ -242,8 +242,8 @@ jobs:
             DDCart.remove(b.dataset.remove);render();
           });"""
               else:
-                  old='<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">Remove</button></div>'
-                  new='<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type===\'venue\'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!==\'venue\'?\'<div class="dd-qty-control"><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="-1" aria-label="Decrease quantity">−</button><span>\'+(Number(item.quantity)||1)+\'</span><button type="button" data-qty-key="\'+esc(item.key)+\'" data-delta="1" aria-label="Increase quantity">+</button></div>\':\'\')+\'<button class="remove" data-remove="\'+esc(item.key)+\'">Remove</button></div>'
+                  old="""<div class="item-actions"><div class="price">EGP '+money(item.price)+'</div><button class="remove" data-remove="'+esc(item.key)+'">Remove</button></div>"""
+                  new="""<div class="item-actions"><div class="price">EGP '+money((Number(item.price)||0)*(item.type==='venue'?1:(Number(item.quantity)||1)))+'</div>'+(item.type!=='venue'?'<div class="dd-qty-control"><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="-1" aria-label="Decrease quantity">−</button><span>'+(Number(item.quantity)||1)+'</span><button type="button" data-qty-key="'+esc(item.key)+'" data-delta="1" aria-label="Increase quantity">+</button></div>':'')+'<button class="remove" data-remove="'+esc(item.key)+'">Remove</button></div>"""
                   if old not in s: raise SystemExit('MISSING EN cart render '+path)
                   s=s.replace(old,new,1)
                   s=s.replace("document.getElementById('cartCount').textContent=items.length;","document.getElementById('cartCount').textContent=items.reduce((n,x)=>n+(x.type==='venue'?1:(Number(x.quantity)||1)),0);",1)
