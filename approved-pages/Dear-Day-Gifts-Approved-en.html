@@ -143,7 +143,40 @@ document.querySelectorAll('.chips').forEach(group=>group.addEventListener('click
 function giftNextState(){const services=plan.services||[];const packageMode=services.some(s=>/باقة متكاملة|full package|complete package|package/i.test(s));const needCake=packageMode||services.some(s=>/كيك|حلويات|cake|sweets/i.test(s));const needFlowers=packageMode||services.some(s=>/flowers?|ورد|زهور/i.test(s));const needVenue=packageMode||services.some(s=>/أماكن|تجارب|places|venue|experience/i.test(s));nextBtn.textContent=needCake?'Next: Chocolate & Cakes →':needFlowers?'Next: Flowers →':needVenue?'Next: Places & Experiences →':'Next: My Cart →';return{needCake,needFlowers,needVenue}}
 function go(file){persist();const payload=encodeURIComponent(JSON.stringify(compactPlan(plan)));location.href=file+(flow?'?flow=1&':'?')+'dd='+payload}
 nextBtn.onclick=()=>{if(!selected.size){showToast('Choose at least one gift to continue');grid.scrollIntoView({behavior:'smooth',block:'start'});return}const{needCake,needFlowers,needVenue}=giftNextState();if(needCake){go('/cake-en');return}if(needFlowers){go('/flowers-en');return}if(needVenue){go('/venues-en');return}go('/cart-en')};
-const lang=document.getElementById('langToAr');lang.addEventListener('click',e=>{e.preventDefault();location.href=lang.getAttribute('href')+(location.search||'')+(location.hash||'')});persist();giftNextState();renderCurrent();renderGrid();updateSummary();
+const lang=document.getElementById('langToAr');lang.addEventListener('click',e=>{e.preventDefault();location.href=lang.getAttribute('href')+(location.search||'')+(location.hash||'')});
+async function ddLoadLiveGiftProducts(){
+  try{
+    let cfg=window.DEAR_DAY_SUPABASE;
+    if(!cfg){
+      await new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='/approved-pages/dear-day-supabase-config.js?v=20261002-1';sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});
+      cfg=window.DEAR_DAY_SUPABASE;
+    }
+    if(!cfg)return;
+    const mod=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm');
+    const sb=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data:cat,error:ce}=await sb.from('categories').select('id').eq('slug','gifts').single();if(ce||!cat)return;
+    const {data:ls,error:le}=await sb.from('listings').select('id,partner_id,stock_qty,published_version_id').eq('category_id',cat.id).eq('is_available',true).not('published_version_id','is',null);if(le)return;
+    const versionIds=(ls||[]).map(x=>x.published_version_id).filter(Boolean);
+    const partnerIds=[...new Set((ls||[]).map(x=>x.partner_id).filter(Boolean))];
+    const [{data:vs,error:ve},{data:ps,error:pe}]=await Promise.all([
+      versionIds.length?sb.from('listing_versions').select('id,status,name_ar,name_en,description_ar,description_en,price,currency,media,metadata').in('id',versionIds).eq('status','published'):Promise.resolve({data:[],error:null}),
+      partnerIds.length?sb.from('partner_directory').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
+    ]);
+    if(ve||pe)return;
+    const vm=new Map((vs||[]).map(v=>[v.id,v])),pm=new Map((ps||[]).map(p=>[p.id,p]));
+    const mapCategory=m=>{const sub=String(m?.subcategory||'');if(sub==='watches')return'watch';if(sub==='perfumes')return'perfume';if(sub==='jewelry')return'silver';if(sub==='plants')return'flowers';return'box'};
+    const mapRecipient=m=>{const r=Array.isArray(m?.recipient)?m.recipient:[];if(r.includes('couple')||(r.includes('her')&&r.includes('him')))return'both';if(r.includes('her'))return'her';if(r.includes('him'))return'him';return'both'};
+    const mapTag=m=>{const tags=Array.isArray(m?.tags)?m.tags:[];if(tags.includes('best_seller'))return'Best Seller';if(tags.includes('new'))return'New';if(m?.personalized)return'Personalized';return'Gift'};
+    const live=(ls||[]).map(l=>{const v=vm.get(l.published_version_id),p=pm.get(l.partner_id);if(!v||!p)return null;const media=Array.isArray(v.media)?v.media:[];return{id:l.id,listing_id:l.id,partner_id:l.partner_id,name:v.name_en||v.name_ar||'Gift',vendor:p.name_en||p.name_ar||'Dear Day Partner',price:Number(v.price||0),category:mapCategory(v.metadata||{}),recipient:mapRecipient(v.metadata||{}),img:media[0]?.url||'/approved-pages/assets/media/occasion-gift.jpg',tag:mapTag(v.metadata||{}),meta:v.description_en||v.description_ar||'',stock:l.stock_qty,metadata:v.metadata||{}}}).filter(Boolean);
+    if(!live.length)return;
+    PRODUCTS.splice(0,PRODUCTS.length,...live);
+    selected.clear();
+    (Array.isArray(plan.giftSelections)?plan.giftSelections:[]).forEach(g=>{const p=PRODUCTS.find(x=>x.id===g.id||x.listing_id===g.listing_id);if(p)selected.set(p.id,p)});
+    renderGrid();updateSummary();
+  }catch(e){console.warn('Dear Day live gifts load failed',e)}
+}
+
+persist();giftNextState();renderCurrent();renderGrid();updateSummary();ddLoadLiveGiftProducts();
 })();
 </script>
 <script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script></body>
