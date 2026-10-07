@@ -107,6 +107,44 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px;font-family:Arial,He
 .dd-curated-top-row .dd-curated-heading{order:1!important;text-align:left!important;margin-right:auto!important}
 .dd-curated-top-row .toolbar{order:2!important;margin-left:auto!important;margin-right:0!important}
 .dd-all-products-heading{text-align:left!important}
+</style><style id="dd-cake-single-sort-final">
+/* English Cake: use one sort control only */
+.dd-cake-sort-shell{display:none!important}
+.dd-curated-top-row .toolbar{
+  order:2!important;
+  width:360px!important;
+  max-width:360px!important;
+  flex:0 1 360px!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+}
+#sort,
+#sort.dd-cake-native-sort{
+  display:block!important;
+  position:static!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:48px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  border:1px solid #d9c7c1!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  color:#3f3332!important;
+}
+.dd-curated-top-row .dd-curated-heading{
+  order:1!important;
+  text-align:left!important;
+  margin-right:auto!important;
+}
+.dd-all-products-heading{text-align:left!important}
+@media(max-width:620px){
+  .dd-curated-top-row .toolbar{width:165px!important;max-width:165px!important;flex-basis:165px!important}
+}
 </style></head>
 <body>
 <header class="header" data-dd-global-nav="1"><div class="container nav">
@@ -162,7 +200,7 @@ function renderGrid(){let arr=PRODUCTS.filter(pass);const s=el('sort').value;if(
 function updateSummary(){const arr=[...selected.values()],total=arr.reduce((s,p)=>s+p.price,0);el('summaryText').textContent=arr.length?`${arr.length} ${arr.length===1?'selection':'selections'}`:'No cake selected';el('totalPrice').textContent='EGP '+money(total);el('thumbs').innerHTML=arr.slice(0,4).map(p=>`<img src="${p.img}" alt="">`).join('');el('nextBtn').disabled=!arr.length}
 window.toggleCake=id=>{const p=PRODUCTS.find(x=>x.id===id);if(selected.has(id)){selected.delete(id);showToast('Selection removed')}else{selected.set(id,p);showToast('Selection added')}persist();renderCurrent();renderGrid();updateSummary()};window.removeCake=id=>{selected.delete(id);persist();renderCurrent();renderGrid();updateSummary();showToast('Removed')};window.focusProduct=id=>{filters.category='all';syncAll();renderGrid();setTimeout(()=>el('prod-'+id)?.scrollIntoView({behavior:'smooth',block:'center'}),40)};
 function syncAll(){document.querySelectorAll('.chips').forEach(g=>g.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.value===filters[g.dataset.filter])))}
-document.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{if(!e.target.classList.contains('chip'))return;filters[g.dataset.filter]=e.target.dataset.value;syncAll();renderGrid()}));mountCakeSortShell();el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';el('search').value='';syncAll();renderGrid()};
+document.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{if(!e.target.classList.contains('chip'))return;filters[g.dataset.filter]=e.target.dataset.value;syncAll();renderGrid()}));el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';el('search').value='';syncAll();renderGrid()};
 el('refUpload').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{plan.cakeReferenceImage=r.result;persist();el('uploadPreview').src=r.result;el('uploadPreview').style.display='block';showToast('Reference image saved')};r.readAsDataURL(f)};
 function nextState(){const services=plan.services||[];const packageMode=services.some(s=>/باقة متكاملة|full package|complete package|package/i.test(s));const needFlowers=packageMode||services.some(s=>/flowers?|ورد|زهور/i.test(s));const needVenue=packageMode||services.some(s=>/أماكن|تجارب|places|venues|experiences/i.test(s));el('nextBtn').textContent=needFlowers?'Next: Flowers →':needVenue?'Next: Places & Experiences →':'Next: My Cart →';return {needFlowers,needVenue}}
 el('nextBtn').onclick=()=>{persist();const {needFlowers,needVenue}=nextState();if(needFlowers){ddGo('/flowers-en',plan);return}if(needVenue){ddGo('/venues-en',plan);return}ddGo('/cart-en',plan)};
