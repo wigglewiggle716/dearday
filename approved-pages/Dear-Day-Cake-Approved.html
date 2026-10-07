@@ -135,7 +135,6 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
 </aside>
 <section class="content">
 <div class="section-title"><div><h2>اكتشف المزيد من شكولاته و كيك</h2></div></div>
-<div class="category-tabs" id="tabs"><button class="tab active" data-value="all">الكل</button><button class="tab" data-value="cake">Birthday Cake</button><button class="tab" data-value="cupcakes">Cupcakes</button><button class="tab" data-value="dessert">Dessert Box</button><button class="tab" data-value="cookies">Cookies</button></div>
 <div class="toolbar"><span>منتجات مختارة من شركاء Dear Day</span><select id="sort"><option value="featured">الترتيب المقترح</option><option value="asc">السعر: الأقل أولًا</option><option value="desc">السعر: الأعلى أولًا</option></select></div>
 <div class="grid" id="grid"></div><div class="no-results" id="noResults">مفيش منتجات مطابقة للفلاتر الحالية.</div>
 <div class="custom"><img alt="تصميم كيك مخصص" src="/approved-pages/assets/media/custom-cake.jpg"/><div><h3>تصميم مخصص؟</h3><p>شارك معنا فكرتك أو صورة مرجعية وسنحتفظ بها مع تفاصيل المناسبة.</p><img alt="المعاينة" class="upload-preview" id="uploadPreview"/></div><label class="upload">⇧ رفع صورة مرجعية<input accept="image/*" id="refUpload" type="file"/></label></div>
@@ -217,9 +216,9 @@ function updateSummary(){const arr=[...selected.values()],total=arr.reduce((s,p)
 window.toggleCake=id=>{const p=PRODUCTS.find(x=>x.id===id);if(selected.has(id)){selected.delete(id);showToast('تمت إزالة الاختيار')}else{selected.set(id,p);showToast('تمت إضافة الاختيار')}persist();renderCurrent();renderGrid();updateSummary()};
 window.removeCake=id=>{selected.delete(id);persist();renderCurrent();renderGrid();updateSummary();showToast('تم الحذف')};
 window.focusProduct=id=>{filters.category='all';syncAll();renderGrid();setTimeout(()=>el('prod-'+id)?.scrollIntoView({behavior:'smooth',block:'center'}),40)};
-function syncAll(){document.querySelectorAll('.chips').forEach(g=>g.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.value===filters[g.dataset.filter])));document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.value===filters.category))}
-document.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{if(!e.target.classList.contains('chip'))return;filters[g.dataset.filter]=e.target.dataset.value;if(g.dataset.filter==='category')document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.value===filters.category));syncAll();renderGrid()}));
-el('tabs').onclick=e=>{if(!e.target.classList.contains('tab'))return;filters.category=e.target.dataset.value;syncAll();renderGrid()};
+function syncAll(){document.querySelectorAll('.chips').forEach(g=>g.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.value===filters[g.dataset.filter])))}
+document.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{if(!e.target.classList.contains('chip'))return;filters[g.dataset.filter]=e.target.dataset.value;if(g.dataset.filter==='category');syncAll();renderGrid()}));
+
 el('search').oninput=e=>{filters.q=e.target.value.trim().toLowerCase();renderGrid()};el('sort').onchange=renderGrid;
 el('reset').onclick=()=>{filters.category=filters.people=filters.flavor=filters.design=filters.budget='all';filters.q='';el('search').value='';syncAll();renderGrid()};
 el('refUpload').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{plan.cakeReferenceImage=r.result;persist();el('uploadPreview').src=r.result;el('uploadPreview').style.display='block';showToast('تم حفظ الصورة المرجعية')};r.readAsDataURL(f)};
