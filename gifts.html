@@ -296,7 +296,40 @@ const headerChoices=document.getElementById('headerChoices');if(headerChoices)he
 const giftNextBtn=document.getElementById('nextBtn');
 function giftNextState(){const services=plan.services||[];const packageMode=services.some(s=>/باقة متكاملة/.test(s));const needCake=packageMode||services.some(s=>/كيك|حلويات/.test(s));const needFlowers=packageMode||services.some(s=>/ورد|زهور/.test(s));const needVenue=packageMode||services.some(s=>/أماكن|تجارب/.test(s));giftNextBtn.textContent=needCake?'التالي: شكولاته و كيك ←':needFlowers?'التالي: الورد ←':needVenue?'التالي: الأماكن والتجارب ←':'التالي: My Cart ←';return {needCake,needFlowers,needVenue}}
 giftNextBtn.onclick=()=>{persist();if(!selected.size){showToast('اختار هدية واحدة على الأقل علشان نكمل');document.getElementById('productGrid')?.scrollIntoView({behavior:'smooth',block:'start'});return}const {needCake,needFlowers,needVenue}=giftNextState();if(needCake){ddGo('/cake',plan);return}if(needFlowers){ddGo('/flowers',plan);return}if(needVenue){ddGo('/venues',plan);return}ddGo('/cart',plan);};
-persist();giftNextState();renderCurrent();renderGrid();updateSummary();
+
+async function ddLoadLiveGiftProducts(){
+  try{
+    let cfg=window.DEAR_DAY_SUPABASE;
+    if(!cfg){
+      await new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='/approved-pages/dear-day-supabase-config.js?v=20261002-1';sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});
+      cfg=window.DEAR_DAY_SUPABASE;
+    }
+    if(!cfg)return;
+    const mod=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm');
+    const sb=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data:cat,error:ce}=await sb.from('categories').select('id').eq('slug','gifts').single();if(ce||!cat)return;
+    const {data:ls,error:le}=await sb.from('listings').select('id,partner_id,stock_qty,published_version_id').eq('category_id',cat.id).eq('is_available',true).not('published_version_id','is',null);if(le)return;
+    const versionIds=(ls||[]).map(x=>x.published_version_id).filter(Boolean);
+    const partnerIds=[...new Set((ls||[]).map(x=>x.partner_id).filter(Boolean))];
+    const [{data:vs,error:ve},{data:ps,error:pe}]=await Promise.all([
+      versionIds.length?sb.from('listing_versions').select('id,status,name_ar,name_en,description_ar,description_en,price,currency,media,metadata').in('id',versionIds).eq('status','published'):Promise.resolve({data:[],error:null}),
+      partnerIds.length?sb.from('partner_directory').select('id,name_ar,name_en,status').in('id',partnerIds).eq('status','active'):Promise.resolve({data:[],error:null})
+    ]);
+    if(ve||pe)return;
+    const vm=new Map((vs||[]).map(v=>[v.id,v])),pm=new Map((ps||[]).map(p=>[p.id,p]));
+    const mapCategory=m=>{const sub=String(m?.subcategory||'');if(sub==='watches')return'watch';if(sub==='perfumes')return'perfume';if(sub==='jewelry')return'silver';if(sub==='plants')return'flowers';return'box'};
+    const mapRecipient=m=>{const r=Array.isArray(m?.recipient)?m.recipient:[];if(r.includes('couple')||(r.includes('her')&&r.includes('him')))return'both';if(r.includes('her'))return'her';if(r.includes('him'))return'him';return'both'};
+    const mapTag=m=>{const tags=Array.isArray(m?.tags)?m.tags:[];if(tags.includes('best_seller'))return'اختيار شائع';if(tags.includes('new'))return'جديد';if(m?.personalized)return'Personalized';return'هدية'};
+    const live=(ls||[]).map(l=>{const v=vm.get(l.published_version_id),p=pm.get(l.partner_id);if(!v||!p)return null;const media=Array.isArray(v.media)?v.media:[];return{id:l.id,listing_id:l.id,partner_id:l.partner_id,name:v.name_ar||v.name_en||'هدية',vendor:p.name_ar||p.name_en||'Dear Day Partner',price:Number(v.price||0),category:mapCategory(v.metadata||{}),recipient:mapRecipient(v.metadata||{}),img:media[0]?.url||'/approved-pages/assets/media/occasion-gift.jpg',tag:mapTag(v.metadata||{}),meta:v.description_ar||v.description_en||'',stock:l.stock_qty,metadata:v.metadata||{}}}).filter(Boolean);
+    if(!live.length)return;
+    PRODUCTS.splice(0,PRODUCTS.length,...live);
+    selected.clear();
+    (Array.isArray(plan.giftSelections)?plan.giftSelections:[]).forEach(g=>{const p=PRODUCTS.find(x=>x.id===g.id||x.listing_id===g.listing_id);if(p)selected.set(p.id,p)});
+    renderGrid();updateSummary();
+  }catch(e){console.warn('Dear Day live gifts load failed',e)}
+}
+
+persist();giftNextState();renderCurrent();renderGrid();updateSummary();ddLoadLiveGiftProducts();
 </script>
 <script>(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;a.addEventListener('click',function(e){e.preventDefault();const target=a.getAttribute('data-dd-lang-target');location.href=target+(location.search||'')+(location.hash||'');});})();</script><script>(function(){const b=[...document.querySelectorAll('button.tool,.tools button')];if(b[0])b[0].onclick=()=>location.href='Dear-Day-Favorites.html';if(b[1])b[1].onclick=()=>location.href='Dear-Day-Bookings.html';if(b[2])b[2].onclick=()=>location.href='Dear-Day-Profile.html';})();</script><footer><div class="wrap"><div class="footer-top"><div class="footer-logo"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/><p class="footer-note">مناسبات متفكّر فيها بعناية، متنسّقة في مكان واحد — من أول الفكرة لآخر تفصيلة.</p></div><div><h4>خدمات Dear Day</h4><a href="/occasions">المناسبات</a><a href="/gifts">الهدايا</a><a href="/cake">شكولاته و كيك</a><a href="/venues">الأماكن والتجارب</a></div><div><h4>عن Dear Day</h4><a href="/about">من نحن</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركاء</a></div><div><h4>خدمة العملاء</h4><a href="/faq">الأسئلة المتكررة</a><a href="/contact">تواصل معنا</a></div></div><div class="footer-bottom"><div class="payments"><span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">Apple Pay</span></div><div>سياسة الخصوصية · الشروط والأحكام</div><div>© 2026 Dear Day</div></div></div></footer>
 <script src="/approved-pages/assets/selection-dock.js"></script>
