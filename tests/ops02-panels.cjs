@@ -21,7 +21,7 @@ async function panel(browser, pageFile, script, role, permissions, check) {
   const mock = `export function createClient(){
     const profile={id:'fixture-user',role:${JSON.stringify(role)},is_active:true};
     const tables=${JSON.stringify(tables)};
-    return {auth:{getUser:async()=>({data:{user:{id:'fixture-user',email:'fixture@example.test'}}}),signOut:async()=>({})},
+    return {auth:{mfa:{getAuthenticatorAssuranceLevel:async()=>({data:{currentLevel:'aal1',nextLevel:'aal1'}})},getUser:async()=>({data:{user:{id:'fixture-user',email:'fixture@example.test'}}}),signOut:async()=>({})},
       rpc:async()=>({data:${JSON.stringify(permissions.map(permission_code=>({permission_code})))},error:null}),
       from(table){const q=new Proxy({}, {get(_,key){
         if(key==='then')return resolve=>resolve({data:table==='profiles'?profile:(tables[table]||[]),error:null});
@@ -48,7 +48,7 @@ async function panel(browser, pageFile, script, role, permissions, check) {
   await page.close();
 }
 (async()=>{
-  const browser=await chromium.launch({headless:true});
+  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}:{} )});
   try {
     await panel(browser,'Dear-Day-Admin-Products.html','dear-day-admin-products.js','content_admin',['catalog.view','catalog.manage'],async p=>{
       assert.equal(await p.locator('#addBtn').isVisible(),true);

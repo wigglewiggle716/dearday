@@ -12,9 +12,10 @@
 <script src="/approved-pages/dear-day-supabase-config.js?v=20261002-1"></script>
 <script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
+import{guardMfa}from'/approved-pages/dear-day-mfa.js';
 const c=window.DEAR_DAY_SUPABASE,s=createClient(c.url,c.publishableKey,{auth:{persistSession:true,autoRefreshToken:true}}),$=id=>document.getElementById(id);
 const routes={super_admin:'/Dear-Day-Admin.html',admin:'/Dear-Day-Admin.html',operations:'/Dear-Day-Admin-Orders.html',accountant:'/Dear-Day-Finance.html',partner_manager:'/Dear-Day-Admin-Partners.html',customer_support:'/Dear-Day-Admin-Orders.html',marketing:'/Dear-Day-Staff.html',content_admin:'/Dear-Day-Admin-Products.html'};
-async function routeUser(u){const{data:p,error}=await s.from('profiles').select('role,is_active').eq('id',u.id).single();if(error||!p||!p.is_active||!routes[p.role]){await s.auth.signOut();$('status').textContent='هذا الحساب غير مصرح له بدخول بوابة الفريق.';return false}location.replace(routes[p.role]);return true}
+async function routeUser(u){const{data:p,error}=await s.from('profiles').select('role,is_active').eq('id',u.id).single();if(error||!p||!p.is_active||!routes[p.role]){await s.auth.signOut();$('status').textContent='هذا الحساب غير مصرح له بدخول بوابة الفريق.';return false}if(!await guardMfa(s,p.role,routes[p.role]))return false;location.replace(routes[p.role]);return true}
 const{data:{user}}=await s.auth.getUser();if(user)routeUser(user);
 $('form').addEventListener('submit',async e=>{e.preventDefault();$('status').textContent='جاري تسجيل الدخول…';$('submit').disabled=true;const{data,error}=await s.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('status').textContent='بيانات الدخول غير صحيحة أو الحساب غير متاح.';$('submit').disabled=false;return}await routeUser(data.user);$('submit').disabled=false});
 </script></body></html>
