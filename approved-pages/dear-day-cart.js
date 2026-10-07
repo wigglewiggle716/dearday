@@ -607,6 +607,13 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy">سياسة �
   window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
   const core='/approved-pages/dear-day-cart-core.js?v=20261004-5';
-  if(document.readyState==='loading')document.write('<script src="'+core+'"><\/script>');
-  else{const script=document.createElement('script');script.src=core;script.async=false;script.onload=patchPage;(document.head||document.documentElement).appendChild(script);}
+  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-1';
+  function loadCartDrawer(){
+    if(document.querySelector('script[data-dd-cart-drawer]'))return;
+    const d=document.createElement('script');
+    d.src=drawer;d.async=false;d.setAttribute('data-dd-cart-drawer','');
+    (document.head||document.documentElement).appendChild(d);
+  }
+  if(document.readyState==='loading')document.write('<script src="'+core+'"><\/script><script src="'+drawer+'" data-dd-cart-drawer><\/script>');
+  else{const script=document.createElement('script');script.src=core;script.async=false;script.onload=()=>{patchPage();loadCartDrawer();};(document.head||document.documentElement).appendChild(script);}
 })();
