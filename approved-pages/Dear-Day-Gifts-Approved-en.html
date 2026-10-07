@@ -98,7 +98,7 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px;font-family:Arial,He
 <header class="header" data-dd-global-nav="1"><div class="container nav">
 <a class="logo" href="/en" aria-label="Dear Day — Home"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a>
 <nav class="navlinks" aria-label="Main navigation" data-dd-explore-version="20261006-2"><a href="/en">Home</a><div class="dd-static-explore dd-active"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>Explore</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts-en">Gifts</a><a href="/cake-en">Chocolate &amp; Cakes</a><a href="/venues-en">Places &amp; Experiences</a><a href="/flowers-en">Flowers</a></div></div><a href="/occasions-en">Occasions</a><a href="/how-it-works-en">How It Works</a><a href="/partners-en">For Partners</a></nav>
-<div class="actions"><a class="auth-link" href="/auth-en#login">Log In</a><a class="auth-link signup" href="/auth-en#signup">Create Account</a><a class="lang-link dd-language-switch" id="langToAr" data-dd-lang-target="/gifts" href="/gifts" aria-label="العربية">AR</a></div>
+<div class="actions"><a class="auth-link" href="/auth-en#login">Log In</a><a class="auth-link signup" href="/auth-en#signup">Create Account</a><a class="lang-link dd-language-switch" data-dd-lang-target="/gifts" href="/gifts" aria-label="العربية">AR</a></div>
 </div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps"><div class="dd-flow-step done"><div class="dd-flow-icon">✓</div><div>Services</div></div><div class="dd-flow-step active"><div class="dd-flow-icon">🎁</div><div>Gifts</div></div><div class="dd-flow-step"><div class="dd-flow-icon">🎂</div><div>Chocolate & Cakes</div></div><div class="dd-flow-step"><div class="dd-flow-icon">⌖</div><div>Places & Experiences</div></div><div class="dd-flow-step"><div class="dd-flow-icon">▣</div><div>Occasion Details</div></div><div class="dd-flow-step"><div class="dd-flow-icon">♡</div><div>Review & Book</div></div></div></section>
 <section class="hero"><div class="container"><div class="hero-box"><div class="hero-gift-img"><img src="/approved-pages/assets/media/occasion-gift.jpg" alt="Dear Day gifts"></div><div class="hero-copy"><h1>Choose a gift that feels like them</h1><p>Use the filters to find the right gift for the occasion. You can add more than one if you want to build a fuller surprise.</p></div></div></div></section>
@@ -155,7 +155,7 @@ document.querySelectorAll('.chips').forEach(group=>group.addEventListener('click
 function giftNextState(){const services=plan.services||[];const packageMode=services.some(s=>/باقة متكاملة|full package|complete package|package/i.test(s));const needCake=packageMode||services.some(s=>/كيك|حلويات|cake|sweets/i.test(s));const needFlowers=packageMode||services.some(s=>/flowers?|ورد|زهور/i.test(s));const needVenue=packageMode||services.some(s=>/أماكن|تجارب|places|venue|experience/i.test(s));nextBtn.textContent=needCake?'Next: Chocolate & Cakes →':needFlowers?'Next: Flowers →':needVenue?'Next: Places & Experiences →':'Next: My Cart →';return{needCake,needFlowers,needVenue}}
 function go(file){persist();const payload=encodeURIComponent(JSON.stringify(compactPlan(plan)));location.href=file+(flow?'?flow=1&':'?')+'dd='+payload}
 nextBtn.onclick=()=>{if(!selected.size){showToast('Choose at least one gift to continue');grid.scrollIntoView({behavior:'smooth',block:'start'});return}const{needCake,needFlowers,needVenue}=giftNextState();if(needCake){go('/cake-en');return}if(needFlowers){go('/flowers-en');return}if(needVenue){go('/venues-en');return}go('/cart-en')};
-const lang=document.getElementById('langToAr');if(lang)lang.href='/gifts'+(location.search||'')+(location.hash||'');
+
 async function ddLoadLiveGiftProducts(){
   try{
     let cfg=window.DEAR_DAY_SUPABASE;
@@ -191,5 +191,5 @@ async function ddLoadLiveGiftProducts(){
 persist();giftNextState();renderCurrent();renderGrid();updateSummary();ddLoadLiveGiftProducts();
 })();
 </script>
-<script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script></body>
+<script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script><script id="dd-language-link-fix">(function(){const a=document.querySelector('.dd-language-switch');if(!a)return;const t=a.getAttribute('data-dd-lang-target')||a.getAttribute('href');if(!t)return;a.setAttribute('href',t+(location.search||'')+(location.hash||''));})();</script></body>
 </html>
