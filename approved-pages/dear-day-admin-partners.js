@@ -125,7 +125,7 @@
   async function boot(){
     try{
       enableCatalogNav();
-      const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+      const cfg=await loadConfig(),mod=await import(SUPABASE_ESM);const storage=localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage;supabase=mod.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage}});
       const {data:{user:u},error:uErr}=await supabase.auth.getUser();if(uErr||!u){location.replace('/auth#login');return}user=u;
       const {data:p,error:pErr}=await supabase.from('profiles').select('id,full_name,role,is_active').eq('id',u.id).single();
       if(pErr||!p||!p.is_active){location.replace('/account');return}
