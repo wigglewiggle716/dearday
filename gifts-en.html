@@ -56,7 +56,25 @@ footer{background:#5D0C1D;color:#f8e8eb;padding:52px 0 24px;font-family:Arial,He
   .hero .hero-gift-img{grid-column:1!important;grid-row:1!important;height:210px!important}
   .hero .hero-copy{grid-column:1!important;grid-row:2!important;padding:30px 24px!important}
 }
-</style></head>
+</style>
+<style id="dd-catalog-header-standard">
+.header{position:sticky!important;top:0!important;z-index:100!important;background:rgba(250,243,234,.97)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid rgba(107,53,64,.14)!important}
+.header .container{width:min(1180px,calc(100% - 40px))!important;margin:auto!important}
+.header .nav{min-height:88px!important;height:auto!important;display:grid!important;grid-template-columns:minmax(190px,auto) 1fr minmax(300px,auto)!important;gap:26px!important;align-items:center!important;padding:8px 0!important}
+.header .logo{display:flex!important;align-items:center!important}
+.header .logo img{width:168px!important;height:62px!important;object-fit:contain!important;mix-blend-mode:multiply!important;display:block!important}
+.header .navlinks{display:flex!important;justify-content:center!important;gap:28px!important;font-size:13px!important;font-weight:700!important;white-space:nowrap!important}
+.header .navlinks a{position:relative!important;padding:12px 1px!important;cursor:pointer!important}
+.header .navlinks a:hover,.header .navlinks .active,.header .dd-static-explore-trigger:hover{color:#A8583D!important}
+.header .dd-static-explore-trigger{font:inherit!important;font-weight:700!important;cursor:pointer!important}
+.header .actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;white-space:nowrap!important}
+.header .auth-link{min-height:40px!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:800!important;color:#6B3540!important;cursor:pointer!important}
+.header .auth-link.signup{background:#6B3540!important;border-color:#6B3540!important;color:#fff!important}
+.header .lang-link{min-width:40px!important;width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.22)!important;display:grid!important;place-items:center!important;font:900 11px/1 Arial!important;color:#6B3540!important;cursor:pointer!important}
+@media(max-width:980px){.header .navlinks{display:none!important}.header .nav{grid-template-columns:auto 1fr!important}.header .actions{justify-content:flex-end!important}.header .auth-link{display:none!important}}
+@media(max-width:620px){.header .container{width:min(100% - 24px,1180px)!important}.header .nav{min-height:68px!important}.header .logo img{width:116px!important;height:50px!important}}
+</style>
+</head>
 <body>
 <header class="header" data-dd-global-nav="1"><div class="container nav">
 <a class="logo" href="/en" aria-label="Dear Day — Home"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"></a>

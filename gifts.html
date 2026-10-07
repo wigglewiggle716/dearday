@@ -132,13 +132,28 @@ footer .wrap{max-width:1440px!important;margin:auto!important;padding:0 34px!imp
   .hero .hero-gift-img{grid-column:1!important;grid-row:1!important;height:210px!important}
   .hero .hero-copy{grid-column:1!important;grid-row:2!important;padding:30px 24px!important}
 }
-</style></head>
+</style>
+<style id="dd-catalog-header-standard">
+.home-header{box-sizing:border-box;height:auto!important;min-height:92px!important;display:grid!important;grid-template-columns:minmax(230px,auto) 1fr minmax(300px,auto)!important;align-items:center!important;gap:28px!important;padding:12px clamp(30px,6vw,96px)!important;background:rgba(250,243,234,.96)!important;border-bottom:1px solid rgba(107,53,64,.15)!important;position:sticky!important;top:0!important;z-index:100!important;backdrop-filter:blur(14px)!important;width:100%!important}
+.home-header a{text-decoration:none!important;color:#3B292B!important;transition:.2s ease!important;cursor:pointer!important}
+.home-header .brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;min-width:0!important}
+.home-header .wordmark{width:182px!important;height:68px!important;object-fit:contain!important;mix-blend-mode:multiply!important;display:block!important}
+.home-header .home-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:38px!important;font-size:14px!important;font-weight:700!important;white-space:nowrap!important}
+.home-header .home-nav a{position:relative!important;padding:14px 2px!important}
+.home-header .home-nav a:hover,.home-header .dd-static-explore-trigger:hover{color:#A8583D!important}
+.home-header .dd-static-explore-trigger{font:inherit!important;font-weight:700!important;color:#3B292B!important;cursor:pointer!important}
+.home-header .dd-static-explore.dd-active>.dd-static-explore-trigger{color:#A8583D!important}
+.home-header .auth-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:11px!important;white-space:nowrap!important}
+.home-header .auth-link{min-height:42px!important;padding:8px 18px!important;border-radius:999px!important;border:1px solid rgba(107,53,64,.32)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:13px!important;font-weight:800!important;background:transparent!important;color:#6B3540!important}
+.home-header .auth-link.signup{background:#6B3540!important;border-color:#6B3540!important;color:#fff!important}
+.home-header .auth-link:hover{transform:translateY(-1px)!important;border-color:#A8583D!important}
+.home-header .lang-link{min-width:42px!important;width:42px!important;height:42px!important;border-radius:50%!important;border:1px solid rgba(107,53,64,.24)!important;display:grid!important;place-items:center!important;font-size:12px!important;font-weight:900!important;color:#6B3540!important;background:#FAF3EA!important;cursor:pointer!important}
+@media(max-width:1100px){.home-header{grid-template-columns:auto 1fr auto!important;padding-inline:24px!important}.home-header .home-nav{gap:18px!important}.home-header .wordmark{width:160px!important}.home-header .auth-link{padding-inline:12px!important}}
+@media(max-width:760px){.home-header{min-height:74px!important;grid-template-columns:auto 1fr!important;gap:12px!important;padding:8px 16px!important}.home-header .wordmark{width:132px!important;height:52px!important}.home-header .home-nav{display:none!important}.home-header .auth-actions{gap:6px!important}.home-header .auth-link{min-height:36px!important;padding:6px 10px!important;font-size:11px!important}.home-header .lang-link{width:36px!important;height:36px!important;min-width:36px!important}}
+</style>
+</head>
 <body>
-<header class="header"><div class="container nav">
-<a class="logo" href="/"><img alt="Dear Day" src="/approved-pages/assets/dear-day-wordmark.svg"/></a>
-<nav class="navlinks"><a href="/">الرئيسية</a><a class="active" href="/occasions">المناسبات</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركات</a></nav>
-<div class="actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="Dear-Day-Auth.html#login">تسجيل الدخول</a><a class="auth-link signup" href="Dear-Day-Auth.html#signup">إنشاء حساب</a><a aria-label="English" class="lang-link dd-language-switch" data-dd-lang-target="/gifts-en" href="/gifts-en">EN</a></div>
-</div></header>
+<header class="home-header"><a aria-label="Dear Day — الرئيسية" class="brand" href="/"><img alt="Dear Day" class="wordmark" src="/approved-pages/assets/dear-day-wordmark.svg"/></a><nav aria-label="التنقل الرئيسي" class="home-nav" data-dd-explore-version="20261006-2"><a href="/">الرئيسية</a><div class="dd-static-explore dd-active"><button class="dd-static-explore-trigger" type="button" aria-haspopup="true" aria-expanded="false"><span>اكتشف</span><span class="dd-chevron" aria-hidden="true">⌄</span></button><div class="dd-static-explore-menu"><a href="/gifts">هدايا</a><a href="/cake">شكولاته و كيك</a><a href="/venues">أماكن وتجارب</a><a href="/flowers">ورد</a></div></div><a href="/occasions">المناسبات</a><a href="/how-it-works">كيف نعمل</a><a href="/partners">للشركاء</a></nav><div class="auth-actions"><a class="dd-cart-link" href="/cart" aria-label="My Cart">My Cart <span data-dd-cart-count>0</span></a><a class="auth-link" href="/auth#login">تسجيل الدخول</a><a class="auth-link signup" href="/auth#signup">إنشاء حساب</a><a aria-label="English" class="lang-link dd-language-switch" data-dd-lang-target="/gifts-en" href="/gifts-en">EN</a></div></header>
 <section class="dd-flow-stepper" data-dd-flow-stepper hidden><div class="dd-flow-steps">
 <div class="dd-flow-step done"><div class="dd-flow-icon">✓</div><div>اختيار الخدمات</div></div>
 <div class="dd-flow-step active"><div class="dd-flow-icon">🎁</div><div>الهدايا</div></div>
