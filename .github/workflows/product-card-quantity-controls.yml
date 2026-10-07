@@ -1,0 +1,152 @@
+name: Product card quantity controls
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/product-card-quantity-controls.yml'
+permissions:
+  contents: write
+jobs:
+  quantity-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add quantity controls to product cards
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new, label):
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if old not in s:
+                  raise SystemExit(f'MISSING {label}: {path}')
+              p.write_text(s.replace(old,new,1),encoding='utf-8')
+
+          qty_css = """
+<style id="dd-product-card-qty-style">
+.dd-product-qty{display:inline-flex;align-items:center;border:1px solid rgba(107,53,64,.22);border-radius:999px;background:#fff;overflow:hidden;height:36px;direction:ltr}
+.dd-product-qty button{width:34px;height:34px;border:0;background:transparent;color:#6B3540;font:800 18px/1 Arial,sans-serif;padding:0;cursor:pointer}
+.dd-product-qty button:hover{background:#f7e9e4}
+.dd-product-qty span{min-width:28px;text-align:center;color:#352D2E;font:800 12px/1 Arial,sans-serif}
+</style>
+"""
+          pages=[
+            'gifts.html','gifts-en.html',
+            'approved-pages/Dear-Day-Gifts-Approved.html','approved-pages/Dear-Day-Gifts-Approved-en.html',
+            'cake.html','cake-en.html',
+            'approved-pages/Dear-Day-Cake-Approved.html','approved-pages/Dear-Day-Cake-Approved-en.html'
+          ]
+          for path in pages:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              if 'id="dd-product-card-qty-style"' not in s:
+                  s=s.replace('</head>',qty_css+'</head>',1)
+              p.write_text(s,encoding='utf-8')
+
+          # Gifts Arabic
+          ar_gifts=['gifts.html','approved-pages/Dear-Day-Gifts-Approved.html']
+          for path in ar_gifts:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              marker="function renderGrid(){"
+              helper="""function giftQty(id){try{const rows=window.DDCart?DDCart.read():JSON.parse(localStorage.getItem('dearDayCart')||'[]');const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='gift:'+id);return row?Math.max(1,Number(row.quantity)||1):0}catch(e){return 0}}
+window.adjustGiftQty=(id,delta)=>{const p=PRODUCTS.find(x=>x.id===id);if(!p)return;const q=giftQty(id);if(delta<0&&q<=1){selected.delete(id);persist();showToast('تمت إزالة الهدية')}else{if(!selected.has(id)){selected.set(id,p);persist()}if(window.DDCart?.adjustQuantity)DDCart.adjustQuantity('gift:'+id,delta);else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch(e){};const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='gift:'+id);if(row){row.quantity=Math.max(1,(Number(row.quantity)||1)+delta);localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange'))}}}renderGrid();updateSummary()}
+"""
+              if 'function giftQty(id)' not in s:
+                  s=s.replace(marker,helper+marker,1)
+              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="event.stopPropagation();toggleGift('${p.id}')">${selected.has(p.id)?'✓ مختارة':'أضف'}</button></div>"""
+              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty" onclick="event.stopPropagation()"><button type="button" onclick="event.stopPropagation();adjustGiftQty('${p.id}',-1)" aria-label="تقليل الكمية">−</button><span>${giftQty(p.id)||1}</span><button type="button" onclick="event.stopPropagation();adjustGiftQty('${p.id}',1)" aria-label="زيادة الكمية">+</button></div>`:`<button class="add" onclick="event.stopPropagation();toggleGift('${p.id}')">أضف</button>`}</div>"""
+              if old not in s: raise SystemExit('MISSING AR gift price row '+path)
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+
+          # Gifts English
+          en_gifts=['gifts-en.html','approved-pages/Dear-Day-Gifts-Approved-en.html']
+          for path in en_gifts:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              marker="function renderGrid(){"
+              helper="""function giftQty(id){try{const rows=window.DDCart?DDCart.read():JSON.parse(localStorage.getItem('dearDayCart')||'[]');const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='gift:'+id);return row?Math.max(1,Number(row.quantity)||1):0}catch(e){return 0}}
+window.adjustGiftQty=(id,delta)=>{const p=PRODUCTS.find(x=>x.id===id);if(!p)return;const q=giftQty(id);if(delta<0&&q<=1){selected.delete(id);persist();showToast('Gift removed')}else{if(!selected.has(id)){selected.set(id,p);persist()}if(window.DDCart?.adjustQuantity)DDCart.adjustQuantity('gift:'+id,delta);else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch(e){};const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='gift:'+id);if(row){row.quantity=Math.max(1,(Number(row.quantity)||1)+delta);localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange'))}}}renderGrid();updateSummary()}
+"""
+              if 'function giftQty(id)' not in s:
+                  s=s.replace(marker,helper+marker,1)
+              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" type="button" onclick="toggleGift('${p.id}')">${selected.has(p.id)?'✓ Selected':'Add'}</button></div>"""
+              if old not in s:
+                  old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="toggleGift('${p.id}')">${selected.has(p.id)?'✓ Selected':'Add'}</button></div>"""
+              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty"><button type="button" onclick="adjustGiftQty('${p.id}',-1)" aria-label="Decrease quantity">−</button><span>${giftQty(p.id)||1}</span><button type="button" onclick="adjustGiftQty('${p.id}',1)" aria-label="Increase quantity">+</button></div>`:`<button class="add" type="button" onclick="toggleGift('${p.id}')">Add</button>`}</div>"""
+              if old not in s: raise SystemExit('MISSING EN gift price row '+path)
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+
+          # Cakes Arabic
+          for path in ['cake.html','approved-pages/Dear-Day-Cake-Approved.html']:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              marker="function renderGrid(){"
+              helper="""function cakeQty(id){try{const rows=window.DDCart?DDCart.read():JSON.parse(localStorage.getItem('dearDayCart')||'[]');const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='cake:'+id);return row?Math.max(1,Number(row.quantity)||1):0}catch(e){return 0}}
+window.adjustCakeQty=(id,delta)=>{const p=PRODUCTS.find(x=>x.id===id);if(!p)return;const q=cakeQty(id);if(delta<0&&q<=1){selected.delete(id);persist();showToast('تمت إزالة الاختيار')}else{if(!selected.has(id)){selected.set(id,p);persist()}if(window.DDCart?.adjustQuantity)DDCart.adjustQuantity('cake:'+id,delta)}renderGrid();updateSummary()}
+"""
+              if 'function cakeQty(id)' not in s:
+                  s=s.replace(marker,helper+marker,1)
+              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" onclick="toggleCake('${p.id}')">${selected.has(p.id)?'✓':'+'}</button></div>"""
+              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty"><button type="button" onclick="adjustCakeQty('${p.id}',-1)" aria-label="تقليل الكمية">−</button><span>${cakeQty(p.id)||1}</span><button type="button" onclick="adjustCakeQty('${p.id}',1)" aria-label="زيادة الكمية">+</button></div>`:`<button class="add" onclick="toggleCake('${p.id}')">أضف</button>`}</div>"""
+              if old not in s: raise SystemExit('MISSING AR cake row '+path)
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+
+          # Cakes English
+          for path in ['cake-en.html','approved-pages/Dear-Day-Cake-Approved-en.html']:
+              p=Path(path); s=p.read_text(encoding='utf-8')
+              marker="function renderGrid(){"
+              helper="""function cakeQty(id){try{const rows=window.DDCart?DDCart.read():JSON.parse(localStorage.getItem('dearDayCart')||'[]');const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key==='cake:'+id);return row?Math.max(1,Number(row.quantity)||1):0}catch(e){return 0}}
+window.adjustCakeQty=(id,delta)=>{const p=PRODUCTS.find(x=>x.id===id);if(!p)return;const q=cakeQty(id);if(delta<0&&q<=1){selected.delete(id);persist();showToast('Selection removed')}else{if(!selected.has(id)){selected.set(id,p);persist()}if(window.DDCart?.adjustQuantity)DDCart.adjustQuantity('cake:'+id,delta)}renderGrid();updateSummary()}
+"""
+              if 'function cakeQty(id)' not in s:
+                  s=s.replace(marker,helper+marker,1)
+              old="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span><button class="add" type="button" onclick="toggleCake('${p.id}')">${selected.has(p.id)?'✓':'+'}</button></div>"""
+              new="""<div class="price-row"><span class="price">EGP ${money(p.price)}</span>${selected.has(p.id)?`<div class="dd-product-qty"><button type="button" onclick="adjustCakeQty('${p.id}',-1)" aria-label="Decrease quantity">−</button><span>${cakeQty(p.id)||1}</span><button type="button" onclick="adjustCakeQty('${p.id}',1)" aria-label="Increase quantity">+</button></div>`:`<button class="add" type="button" onclick="toggleCake('${p.id}')">Add</button>`}</div>"""
+              if old not in s: raise SystemExit('MISSING EN cake row '+path)
+              s=s.replace(old,new,1)
+              p.write_text(s,encoding='utf-8')
+
+          # Live catalog: gifts, cakes and flowers only; venues are not part of this catalog.
+          p=Path('approved-pages/dear-day-live-catalog.js')
+          s=p.read_text(encoding='utf-8')
+          old="""  function render(){const grid=document.getElementById('ddCatalogGrid'),empty=document.getElementById('ddCatalogEmpty');document.getElementById('ddResultCount').textContent=`${filtered.length} ${T('اختيار','items')}`;empty.hidden=!!filtered.length;grid.innerHTML=filtered.map(x=>`<article class="dd-cat-card"><div class="dd-cat-media"><img src="${esc(x.image)}" alt="${esc(x.name)}"><span>${esc(tagText(x))}</span></div><div class="dd-cat-body"><small>${esc(x.vendor)}</small><h3>${esc(x.name)}</h3><p>${esc(metaLine(x))}</p><div class="dd-cat-price"><strong>${money(x.price,x.currency)}</strong><button data-add="${esc(x.id)}" type="button">${T('أضف للسلة','Add')}</button></div></div></article>`).join('');grid.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>add(b.dataset.add,b))}
+  function add(id,btn){const x=items.find(z=>z.id===id);if(!x)return;const type=section==='gifts'?'gift':section==='cakes-sweets'?'cake':'flower';const item={id:x.id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,img:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:1,meta:metaLine(x)};if(window.DDCart?.upsert)window.DDCart.upsert(type,item,{});else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch{};rows=Array.isArray(rows)?rows:[];const key=`${type}:${id}`,prev=rows.find(r=>r.key===key);rows=rows.filter(r=>r.key!==key);rows.push({key,type,id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,image:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:Math.max(1,Math.floor(Number(prev?.quantity)||0)+1),addedAt:Date.now()});localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange',{detail:{count:rows.reduce((n,r)=>n+(r.type==='venue'?1:Math.max(1,Math.floor(Number(r.quantity)||1))),0)}}))}btn.textContent=T('تمت الإضافة ✓','Added ✓');setTimeout(()=>btn.textContent=T('أضف للسلة','Add'),1200)}"""
+          new="""  function catalogType(){return section==='gifts'?'gift':section==='cakes-sweets'?'cake':'flower'}
+  function catalogQty(id){try{const type=catalogType(),rows=window.DDCart?DDCart.read():JSON.parse(localStorage.getItem('dearDayCart')||'[]');const row=(Array.isArray(rows)?rows:[]).find(x=>x&&x.key===type+':'+id);return row?Math.max(1,Number(row.quantity)||1):0}catch(e){return 0}}
+  function render(){const grid=document.getElementById('ddCatalogGrid'),empty=document.getElementById('ddCatalogEmpty');document.getElementById('ddResultCount').textContent=`${filtered.length} ${T('اختيار','items')}`;empty.hidden=!!filtered.length;grid.innerHTML=filtered.map(x=>{const q=catalogQty(x.id);return `<article class="dd-cat-card"><div class="dd-cat-media"><img src="${esc(x.image)}" alt="${esc(x.name)}"><span>${esc(tagText(x))}</span></div><div class="dd-cat-body"><small>${esc(x.vendor)}</small><h3>${esc(x.name)}</h3><p>${esc(metaLine(x))}</p><div class="dd-cat-price"><strong>${money(x.price,x.currency)}</strong>${q?`<div class="dd-cat-qty"><button type="button" data-qty="${esc(x.id)}" data-delta="-1" aria-label="${T('تقليل الكمية','Decrease quantity')}">−</button><span>${q}</span><button type="button" data-qty="${esc(x.id)}" data-delta="1" aria-label="${T('زيادة الكمية','Increase quantity')}">+</button></div>`:`<button data-add="${esc(x.id)}" type="button">${T('أضف للسلة','Add')}</button>`}</div></div></article>`}).join('');grid.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>add(b.dataset.add));grid.querySelectorAll('[data-qty]').forEach(b=>b.onclick=()=>adjustCatalogQty(b.dataset.qty,Number(b.dataset.delta)||0))}
+  function add(id){const x=items.find(z=>z.id===id);if(!x)return;const type=catalogType();const item={id:x.id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,img:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:1,meta:metaLine(x)};if(window.DDCart?.upsert)window.DDCart.upsert(type,item,{});else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch{};rows=Array.isArray(rows)?rows:[];const key=`${type}:${id}`,prev=rows.find(r=>r.key===key);rows=rows.filter(r=>r.key!==key);rows.push({key,type,id,name:x.name,ar:x.name_ar,vendor:x.vendor,price:x.price,image:x.image,listing_id:x.listing_id,partner_id:x.partner_id,quantity:Math.max(1,Math.floor(Number(prev?.quantity)||0)+1),addedAt:Date.now()});localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange'))}render()}
+  function adjustCatalogQty(id,delta){const type=catalogType(),key=type+':'+id,q=catalogQty(id);if(delta<0&&q<=1){if(window.DDCart?.remove)DDCart.remove(key);else{let rows=[];try{rows=JSON.parse(localStorage.getItem('dearDayCart')||'[]')}catch{};rows=(Array.isArray(rows)?rows:[]).filter(x=>x&&x.key!==key);localStorage.setItem('dearDayCart',JSON.stringify(rows));window.dispatchEvent(new CustomEvent('ddcartchange'))}}else if(window.DDCart?.adjustQuantity)DDCart.adjustQuantity(key,delta);render()}"""
+          if old not in s:
+              raise SystemExit('MISSING live catalog render/add block')
+          s=s.replace(old,new,1)
+          css_old=".dd-cat-price button{border:0;background:#6B3540;color:#fff;border-radius:999px;padding:8px 13px;font-weight:800;font-size:11px}"
+          css_new=css_old+".dd-cat-qty{display:inline-flex;align-items:center;height:34px;border:1px solid rgba(107,53,64,.22);border-radius:999px;overflow:hidden;background:#fff;direction:ltr}.dd-cat-qty button{width:32px!important;height:32px!important;padding:0!important;border-radius:0!important;background:transparent!important;color:#6B3540!important;font-size:17px!important}.dd-cat-qty span{min-width:26px;text-align:center;font-weight:800;font-size:11px}"
+          if css_old not in s: raise SystemExit('MISSING live catalog CSS hook')
+          s=s.replace(css_old,css_new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Verify
+        run: |
+          node --check approved-pages/dear-day-live-catalog.js
+          python - <<'PY'
+          from pathlib import Path
+          for p in ['gifts.html','gifts-en.html','approved-pages/Dear-Day-Gifts-Approved.html','approved-pages/Dear-Day-Gifts-Approved-en.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'adjustGiftQty' in s and 'dd-product-qty' in s
+          for p in ['cake.html','cake-en.html','approved-pages/Dear-Day-Cake-Approved.html','approved-pages/Dear-Day-Cake-Approved-en.html']:
+              s=Path(p).read_text(encoding='utf-8')
+              assert 'adjustCakeQty' in s and 'dd-product-qty' in s
+          s=Path('approved-pages/dear-day-live-catalog.js').read_text(encoding='utf-8')
+          assert 'adjustCatalogQty' in s and 'dd-cat-qty' in s
+          assert "section==='gifts'?'gift':section==='cakes-sweets'?'cake':'flower'" in s
+          print('Product-card quantity controls verified')
+          PY
+      - name: Commit
+        run: |
+          git config user.name 'Dear Day Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add gifts.html gifts-en.html cake.html cake-en.html approved-pages/Dear-Day-Gifts-Approved.html approved-pages/Dear-Day-Gifts-Approved-en.html approved-pages/Dear-Day-Cake-Approved.html approved-pages/Dear-Day-Cake-Approved-en.html approved-pages/dear-day-live-catalog.js
+          git commit -m 'Add quantity controls to product cards'
+          git push origin main
