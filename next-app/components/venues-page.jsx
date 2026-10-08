@@ -1,0 +1,329 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import PlanningStepper from "./planning-stepper";
+import BrandedDropdown from "./branded-dropdown";
+import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
+import { pathFor } from "../lib/locales";
+import { venuePreviewAr, venuePreviewEn } from "../lib/venues-preview";
+
+const filtersEmpty={type:"all",area:"all",atmosphere:"all",budget:"all"};
+const labels={
+  ar:{
+    title:"أماكن لكل لحظة",
+    hero:"اكتشف أماكن وتجارب تناسب أسلوبكم وتضيف لمسة خاصة ليوم ميلادهم.",
+    search:"ابحث عن مكان أو تجربة...",type:"نوع المكان / التجربة",area:"المنطقة",
+    atmosphere:"الأجواء",budget:"الميزانية",reset:"مسح الفلاتر",
+    typeChoices:[["all","الكل"],["restaurant","مطاعم وكافيهات"],["private","أماكن خاصة"],["experience","تجارب وترفيه"]],
+    areaChoices:[["all","الكل"],["الشيخ زايد","الشيخ زايد"],["التجمع الخامس","التجمع"],["الزمالك","الزمالك"],["مصر الجديدة","مصر الجديدة"],["أكتوبر","أكتوبر"]],
+    atmosphereChoices:[["all","الكل"],["romantic","رومانسي"],["quiet","هادئ"],["outdoor","Outdoor"],["luxury","فاخر"]],
+    budgetChoices:[["all","الكل"],["low","أقل من 1,000"],["mid","1,000–2,500"],["high","أكثر من 2,500"]],
+    sort:"ترتيب الأماكن",sortChoices:[["recommended","الأكثر مناسبة"],["asc","السعر: الأقل أولًا"],["desc","السعر: الأعلى أولًا"]],
+    results:"اكتشف أماكن وتجارب أكثر",picks:"مختارات Dear Day",more:"كل الأماكن والتجارب",
+    noResults:"لا توجد نتائج لهذه الفلاتر. جرّب مسح الفلاتر أو تغيير الاختيارات.",
+    prototype:"* الأسماء والأسعار والتوافر في هذه النسخة بيانات توضيحية للـprototype وليست حجوزات فعلية.",
+    current:"اختيارك الحالي",emptyCurrent:"لسه ما اخترتش مكان أو تجربة. اختار من النتائج تحت.",
+    people:"أشخاص",change:"تغيير",remove:"حذف",choose:"اختيار المكان",removeChoice:"إلغاء اختيار المكان",
+    favorite:"أضف للمفضلة",unfavorite:"إزالة من المفضلة",
+    customTitle:"تجربة مخصصة حسب ذوقك؟",
+    customCopy:"اكتب فكرتك وسنحتفظ بها ضمن تفاصيل المناسبة كطلب مخصص.",
+    customAction:"طلب تجربة مخصصة",dialogTitle:"احكي لنا عن تجربتك",
+    dialogCopy:"أضف الفكرة والتكلفة التقريبية، وهنحتفظ بيها في خطة مناسبتك.",
+    idea:"وصف التجربة",ideaPlaceholder:"احكي لنا عايز تعمل إيه...",
+    ideaError:"اكتب فكرة التجربة الأول",expectedBudget:"ميزانية تقريبية (اختياري)",
+    save:"حفظ التجربة",cancel:"إلغاء",customSaved:"تم حفظ التجربة المخصصة",
+    selected:"تم اختيار المكان",removed:"تم إزالة المكان",selectedSummary:"مكان مختار في الخطة",
+    customSummary:"عندك طلب تجربة مخصصة محفوظ",next:"حفظ ومتابعة التخطيط",continue:"الانتقال للسلة",
+    note:"المكان هنا اختيار تخطيطي فقط، مش حجز مؤكد. السعر والتوافر يتم تأكيدهم قبل أي حجز."
+  },
+  en:{
+    title:"Find the right setting for the moment",
+    hero:"Explore places and experiences that fit the occasion, your mood and your budget — from relaxed dinners to private settings and something a little different.",
+    search:"Search places or experiences...",type:"Place / experience type",area:"Area",
+    atmosphere:"Atmosphere",budget:"Budget",reset:"Clear filters",
+    typeChoices:[["all","All"],["restaurant","Restaurants & Cafés"],["private","Private Places"],["experience","Experiences"]],
+    areaChoices:[["all","All"],["الشيخ زايد","Sheikh Zayed"],["التجمع الخامس","New Cairo"],["الزمالك","Zamalek"],["مصر الجديدة","Heliopolis"],["أكتوبر","6th of October"]],
+    atmosphereChoices:[["all","All"],["romantic","Romantic"],["quiet","Quiet"],["outdoor","Outdoor"],["luxury","Luxury"]],
+    budgetChoices:[["all","All"],["low","Under 1,000"],["mid","1,000–2,500"],["high","Over 2,500"]],
+    sort:"Sort places",sortChoices:[["recommended","Recommended"],["asc","Price: low to high"],["desc","Price: high to low"]],
+    results:"Explore more places & experiences",picks:"Dear Day Picks",more:"All Places & Experiences",
+    noResults:"No places match these filters. Try changing or clearing the filters.",
+    prototype:"* Names, prices and availability on this prototype are illustrative and do not represent confirmed bookings.",
+    current:"Your current choice",emptyCurrent:"You haven't selected a place or experience yet. Choose one from the results below.",
+    people:"guests",change:"Change",remove:"Remove",choose:"Choose place",removeChoice:"Remove selection",
+    favorite:"Add to favorites",unfavorite:"Remove from favorites",
+    customTitle:"Have a custom experience in mind?",
+    customCopy:"Tell us the idea and we will keep it with the rest of your occasion details as a custom request.",
+    customAction:"Request a Custom Experience",dialogTitle:"Tell us about the experience",
+    dialogCopy:"Save your idea and an approximate budget with your occasion plan.",
+    idea:"Describe your experience",ideaPlaceholder:"Tell us what you have in mind...",
+    ideaError:"Add your experience idea first",expectedBudget:"Approximate budget (optional)",
+    save:"Save experience",cancel:"Cancel",customSaved:"Custom experience saved",
+    selected:"Place selected",removed:"Place removed",selectedSummary:"Selected place in your plan",
+    customSummary:"Custom experience request saved",next:"Save & continue planning",continue:"Go to cart",
+    note:"This is a planning selection, not a confirmed reservation. Final price and availability must be confirmed."
+  }
+};
+function readPlan() {
+  try { const p=JSON.parse(localStorage.getItem("dearDayPlan")||"{}");return p&&typeof p==="object"&&!Array.isArray(p)?p:{}; }
+  catch{return {};}
+}
+function budgetDistance(price,budget) {
+  const p=Number(price)||0;
+  const bands={"under-1000":[0,1000,700],"1000-2500":[1000,2500,1750],"2500-5000":[2500,5000,3750],"5000-plus":[5000,Infinity,6000]};
+  const band=bands[budget];if(!band)return 0;
+  const [min,max,target]=band;
+  return p>=min&&p<=max?Math.abs(p-target):p<min?100000+min-p:100000+p-max;
+}
+const currency=n=>"EGP "+new Intl.NumberFormat("en-US",{maximumFractionDigits:0}).format(Number(n)||0);
+function FilterGroup({name,choices,value,onChange}) {
+  return <section className="dd-venues-filter-group">
+    <h3>{name}</h3>
+    <div className="dd-venues-chips" role="group" aria-label={name}>
+      {choices.map(([key,label])=><button key={key} type="button"
+        className={"dd-venues-chip"+(key===value?" is-active":"")}
+        aria-pressed={key===value} onClick={()=>onChange(key)}>{label}</button>)}
+    </div>
+  </section>;
+}
+function VenueCard({venue,locale,t,isSelected,isFavorite,onSelect,onFavorite}) {
+  const title=venue.name;
+  const desc=locale==="ar"?venue.ar:venue.descEn;
+  const area=locale==="ar"?venue.area:venue.areaEn;
+  return <article className={"dd-venues-card"+(isSelected?" is-selected":"")} id={"dd-venue-"+venue.id}>
+    <div className="dd-venues-card-media">
+      <img src={venue.img} alt={desc||title} loading="lazy"/>
+      <button type="button" className={"dd-venues-favorite"+(isFavorite?" is-active":"")}
+        aria-label={isFavorite?t.unfavorite:t.favorite} aria-pressed={isFavorite}
+        onClick={()=>onFavorite(venue.id)}>{isFavorite?"♥":"♡"}</button>
+    </div>
+    <div className="dd-venues-card-body">
+      <h4>{title}</h4>
+      <p>{desc}</p>
+      <div className="dd-venues-card-meta">
+        <span><span aria-hidden="true">⌖ </span>{area}</span>
+        <span><span aria-hidden="true">♙ </span>{venue.people}</span>
+        <span><span aria-hidden="true">★ </span>{venue.rating}</span>
+      </div>
+      <div className="dd-venues-card-buy">
+        <strong>{currency(venue.price)}</strong>
+        <button type="button" className="dd-venues-card-select"
+          aria-label={isSelected?t.removeChoice:t.choose}
+          aria-pressed={isSelected} onClick={()=>onSelect(venue.id)}>
+          {isSelected?"✓":"+"}
+        </button>
+      </div>
+    </div>
+  </article>;
+}
+export default function VenuesPage({locale="ar",flow=false,standalone=false,incoming=null}){
+  const router=useRouter();
+  const t=labels[locale]||labels.ar;
+  const venues=locale==="en"?venuePreviewEn:venuePreviewAr;
+  const [filters,setFilters]=useState(filtersEmpty);
+  const [sort,setSort]=useState("recommended");
+  const [search,setSearch]=useState("");
+  const [budgetKey,setBudgetKey]=useState("unsure");
+  const [selectedId,setSelectedId]=useState(null);
+  const [custom,setCustom]=useState(null);
+  const [hydrated,setHydrated]=useState(false);
+  const [favorites,setFavorites]=useState([]);
+  const [customIdea,setCustomIdea]=useState("");
+  const [customBudget,setCustomBudget]=useState("");
+  const [notice,setNotice]=useState("");
+  const [ideaError,setIdeaError]=useState(false);
+  const [mobileFilterOpen,setMobileFilterOpen]=useState(false);
+  const dialog=useRef(null);
+
+  useEffect(()=>{
+    let saved=standalone?{}:readPlan();
+    if(incoming&&typeof incoming==="string"&&incoming.length<30000){
+      try{const from=JSON.parse(incoming);if(from&&typeof from==="object"&&!Array.isArray(from))saved={...saved,...from};}catch{}
+    }
+    const old=Array.isArray(saved.venueSelections)?saved.venueSelections:[];
+    const match=venues.find(v=>v.id===old[0]?.id);
+    setSelectedId(match?.id||null);
+    const cust=saved.customExperience&&typeof saved.customExperience==="object"?saved.customExperience:null;
+    setCustom(cust);
+    setCustomIdea(cust?.idea||"");
+    setCustomBudget(cust?.budget?String(cust.budget):"");
+    setBudgetKey(saved.budgetKey||saved.budget||"unsure");
+    setHydrated(true);
+  },[locale,standalone,incoming,venues]);
+
+  const selected=venues.find(v=>v.id===selectedId)||null;
+  useEffect(()=>{
+    if(!hydrated)return;
+    // Preserve products and gifts already in the customer plan.
+    // Sample venue preview is *not* a live listing and stays OUT of the paid cart.
+    const before=readPlan();
+    const preview=selected?{...selected,previewOnly:true,bookingConfirmed:false} : null;
+    const next={...before,venueSelections:preview?[preview]:[],customExperience:custom||null};
+    try{localStorage.setItem("dearDayPlan",JSON.stringify(next));}catch{}
+  },[hydrated,selectedId,custom,locale]);
+
+  const filtered=useMemo(()=>{
+    const q=search.trim().toLowerCase();
+    const arr=venues.map((v,index)=>({...v,order:index})).filter(v=>{
+      if(filters.type!=="all"&&v.type!==filters.type)return false;
+      if(filters.area!=="all"&&v.area!==filters.area)return false;
+      if(filters.atmosphere!=="all"&&v.atmosphere!==filters.atmosphere)return false;
+      if(filters.budget==="low"&&v.price>=1000)return false;
+      if(filters.budget==="mid"&&(v.price<1000||v.price>2500))return false;
+      if(filters.budget==="high"&&v.price<=2500)return false;
+      if(q&&![v.name,v.ar,v.descEn,v.area,v.areaEn].join(" ").toLowerCase().includes(q))return false;
+      return true;
+    });
+    arr.sort((a,b)=>sort==="asc"?a.price-b.price:sort==="desc"?b.price-a.price:
+      budgetDistance(a.price,budgetKey)-budgetDistance(b.price,budgetKey)||a.order-b.order);
+    return arr;
+  },[venues,search,filters,sort,budgetKey]);
+  const picks=filtered.filter(v=>v.isPick);
+  const rest=filtered.filter(v=>!v.isPick);
+
+  function choose(id){
+    const next=id===selectedId?null:id;
+    setSelectedId(next);
+    setNotice(next?t.selected:t.removed);
+  }
+  function scrollToSelection(){
+    if(!selectedId)return;
+    setFilters(filtersEmpty);setSearch("");
+    requestAnimationFrame(()=>document.getElementById("dd-venue-"+selectedId)?.scrollIntoView({behavior:"smooth",block:"center"}));
+  }
+  function reset(){setFilters(filtersEmpty);setSearch("");}
+  function saveCustom(event){
+    event.preventDefault();
+    const idea=customIdea.trim();
+    if(!idea){setIdeaError(true);return;}
+    setIdeaError(false);
+    setCustom({idea,budget:Math.max(0,Number(customBudget)||0)});
+    dialog.current?.close();
+    setNotice(t.customSaved);
+  }
+  function continuePlanning(){
+    // All preview venues are example inventory; never present them as a
+    // confirmed reservation or turn them into real cart line items.
+    if(!selected&&!custom)return;
+    if(flow){
+      const target=getNextPlanningStep("venues",readPlanningServices());
+      router.push(pathFor(target,locale)+"?flow=1");
+    }else router.push(pathFor("cart",locale));
+  }
+  function renderCards(list) {
+    return list.map(v=><VenueCard key={v.id} venue={v} locale={locale} t={t}
+      isSelected={selectedId===v.id} isFavorite={favorites.includes(v.id)}
+      onSelect={choose} onFavorite={id=>setFavorites(old=>old.includes(id)?old.filter(x=>x!==id):[...old,id])}/>);
+  }
+
+  return <>
+    {flow&&<PlanningStepper locale={locale} current="venues"/>}
+    <div className="dd-venues-page" dir={locale==="ar"?"rtl":"ltr"}>
+      <div className="dd-venues-container">
+        <section className="dd-venues-hero" aria-labelledby="dd-venues-hero-heading">
+          <div className="dd-venues-hero-image" role="img" aria-label={t.title}/>
+          <div className="dd-venues-hero-copy"><h1 id="dd-venues-hero-heading">{t.title}</h1><p>{t.hero}</p></div>
+        </section>
+      </div>
+      <main id="main-content" className="dd-venues-shell">
+        <div className="dd-venues-container">
+          <div className="dd-venues-layout">
+            <aside className={"dd-venues-filters"+(mobileFilterOpen?" is-mobile-open":"")} aria-label={t.search}>
+              <div className="dd-venues-search">
+                <input type="search" value={search} placeholder={t.search}
+                  aria-label={t.search} onChange={e=>setSearch(e.target.value)}/>
+                <span aria-hidden="true">⌕</span>
+              </div>
+              <FilterGroup name={t.type} choices={t.typeChoices} value={filters.type}
+                onChange={value=>setFilters(x=>({...x,type:value}))}/>
+              <FilterGroup name={t.area} choices={t.areaChoices} value={filters.area}
+                onChange={value=>setFilters(x=>({...x,area:value}))}/>
+              <FilterGroup name={t.atmosphere} choices={t.atmosphereChoices} value={filters.atmosphere}
+                onChange={value=>setFilters(x=>({...x,atmosphere:value}))}/>
+              <FilterGroup name={t.budget} choices={t.budgetChoices} value={filters.budget}
+                onChange={value=>setFilters(x=>({...x,budget:value}))}/>
+              <button className="dd-venues-reset" type="button" onClick={reset}>{t.reset}</button>
+            </aside>
+            <section className="dd-venues-results" aria-label={t.results}>
+              {selected&&<div className="dd-venues-current">
+                <h2>{t.current}</h2>
+                <div className="dd-venues-current-card">
+                  <img src={selected.img} alt={selected.name}/>
+                  <div><small>{locale==="ar"?selected.meta:selected.metaEn}</small><h3>{selected.name}</h3>
+                    <p>{locale==="ar"?selected.area:selected.areaEn} · {selected.people} {t.people} · <strong>{currency(selected.price)}</strong></p>
+                  </div>
+                  <div className="dd-venues-current-actions">
+                    <button type="button" onClick={scrollToSelection}>{t.change}</button>
+                    <button type="button" onClick={()=>choose(selected.id)}>{t.remove}</button>
+                  </div>
+                </div>
+              </div>}
+              <div className="dd-venues-section-title">
+                <h2>{t.results}</h2>
+                <div className="dd-venues-sort">
+                  <BrandedDropdown locale={locale} label={t.sort} placeholder={t.sort}
+                    value={sort} onChange={setSort} options={t.sortChoices}/>
+                </div>
+              </div>
+              {picks.length>0&&<section className="dd-venues-group">
+                <h3>{t.picks}</h3>
+                <div className="dd-venues-group-box">
+                  <div className="dd-venues-grid">{renderCards(picks)}</div>
+                </div>
+              </section>}
+              {rest.length>0&&<section className="dd-venues-group">
+                <h3>{t.more}</h3>
+                <div className="dd-venues-group-box">
+                  <div className="dd-venues-grid">{renderCards(rest)}</div>
+                </div>
+              </section>}
+              {filtered.length===0&&<p className="dd-venues-no-results">{t.noResults}</p>}
+              <p className="dd-venues-prototype">{t.prototype}</p>
+              <section className="dd-venues-custom">
+                <img src="/approved-pages/assets/media/custom-venue.jpg" alt="" loading="lazy"/>
+                <div className="dd-venues-custom-copy">
+                  <h3>{t.customTitle}</h3><p>{t.customCopy}</p>
+                </div>
+                <button type="button" onClick={()=>dialog.current?.showModal()}>{t.customAction}</button>
+              </section>
+              {(selected||custom)&&<div className="dd-venues-plan-summary" aria-live="polite">
+                <span>{selected? t.selectedSummary+": "+selected.name : t.customSummary}</span>
+                {custom?.idea&&<small>{t.customSummary}: {custom.idea}</small>}
+                <p>{t.note}</p>
+              </div>}
+              <div className="dd-venues-continue">
+                <button type="button" onClick={continuePlanning} disabled={!selected&&!custom}>
+                  {flow?t.next:t.continue}
+                </button>
+              </div>
+              {notice&&<p className="dd-venues-notice" role="status">{notice}</p>}
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+    <dialog className="dd-venues-dialog" ref={dialog} dir={locale==="ar"?"rtl":"ltr"}
+      onCancel={()=>setIdeaError(false)}>
+      <form onSubmit={saveCustom}>
+        <div className="dd-venues-dialog-top">
+          <h2>{t.dialogTitle}</h2>
+          <button type="button" aria-label={t.cancel} onClick={()=>dialog.current?.close()}>×</button>
+        </div>
+        <p>{t.dialogCopy}</p>
+        <label htmlFor="dd-venues-idea">{t.idea}</label>
+        <textarea id="dd-venues-idea" rows={4} value={customIdea}
+          onChange={e=>{setCustomIdea(e.target.value);setIdeaError(false);}}
+          aria-invalid={ideaError||undefined} placeholder={t.ideaPlaceholder}/>
+        {ideaError&&<p className="dd-venues-error" role="alert">{t.ideaError}</p>}
+        <label htmlFor="dd-venues-budget">{t.expectedBudget}</label>
+        <input id="dd-venues-budget" type="number" min="0" inputMode="numeric"
+          value={customBudget} onChange={e=>setCustomBudget(e.target.value)}/>
+        <div className="dd-venues-dialog-actions">
+          <button type="button" onClick={()=>dialog.current?.close()}>{t.cancel}</button>
+          <button type="submit">{t.save}</button>
+        </div>
+      </form>
+    </dialog>
+  </>;
+}
