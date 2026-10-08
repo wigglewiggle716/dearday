@@ -10,7 +10,7 @@ export default async function EnglishPreviewPage({ params, searchParams }) {
   const query=await searchParams;
   const flow=query?.flow==="1";
   if (slug === "occasions") return <OccasionsPage locale="en" />;
-  if (slug === "cart") return <CartPage locale="en" />;
+  if (slug === "cart") return <CartPage locale="en" flow={flow} />;
   if (["gifts","cake","flowers"].includes(slug)) return <CategoryCatalogPage locale="en" slug={slug} flow={flow} />;
   return <MigrationPlaceholder locale="en" slug={slug} />;
 }

@@ -181,6 +181,12 @@ function FloatingCart({ locale }) {
 function CartDrawer({ locale }) {
   const { items,open,setOpen,total,count } = useCart();
   const t = cartCopy(locale);
+  const [planningFlow,setPlanningFlow] = useState(false);
+  // A cart item does not start the planning journey. Only retain the explicit
+  // flow marker from the *current page* when the drawer is opened.
+  useEffect(() => {
+    if (open) setPlanningFlow(new URLSearchParams(window.location.search).get("flow") === "1");
+  }, [open]);
   useEffect(() => {
     if (!open) return;
     const prev = document.activeElement;
@@ -208,13 +214,13 @@ function CartDrawer({ locale }) {
       </div>}
       <div className="dd-cart-drawer-bottom">
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
-        <Link className="dd-cart-goto" href={pathFor("cart",locale)} onClick={() => setOpen(false)}>{t.viewCart}</Link>
+        <Link className="dd-cart-goto" href={pathFor("cart",locale)+(planningFlow?"?flow=1":"")} onClick={() => setOpen(false)}>{t.viewCart}</Link>
       </div>
     </aside>
   </div>;
 }
 
-export function CartPage({ locale }) {
+export function CartPage({ locale,flow=false }) {
   const { items,total } = useCart();
   const t = cartCopy(locale);
   return <main id="main-content" className="dd-cart-page dd-main">
@@ -226,7 +232,7 @@ export function CartPage({ locale }) {
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
       </div>
       <p className="dd-cart-notice">{t.unavailable}</p>
-      <Link href={pathFor("gifts",locale)} className="dd-cart-goto">{t.back}</Link>
+      <Link href={pathFor("gifts",locale)+(flow?"?flow=1":"")} className="dd-cart-goto">{t.back}</Link>
     </div>
   </main>;
 }

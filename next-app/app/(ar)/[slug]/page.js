@@ -10,7 +10,7 @@ export default async function ArabicPreviewPage({ params, searchParams }) {
   const query=await searchParams;
   const flow=query?.flow==="1";
   if (slug === "occasions") return <OccasionsPage locale="ar" />;
-  if (slug === "cart") return <CartPage locale="ar" />;
+  if (slug === "cart") return <CartPage locale="ar" flow={flow} />;
   if (["gifts","cake","flowers"].includes(slug)) return <CategoryCatalogPage locale="ar" slug={slug} flow={flow} />;
   return <MigrationPlaceholder locale="ar" slug={slug} />;
 }

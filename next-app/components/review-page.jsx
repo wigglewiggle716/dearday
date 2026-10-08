@@ -146,14 +146,14 @@ export default function ReviewPage({locale="ar",flow=false}){
     {flow&&<PlanningStepper locale={locale} current="review"/>}
     <main id="main-content" className="dd-review-page" dir={locale==="ar"?"rtl":"ltr"}>
       <div className="dd-review-wrap">
-        <nav className="dd-review-steps" aria-label={t.progress}>
+        {flow&&<nav className="dd-review-steps" aria-label={t.progress}>
           {t.steps.map((label,index)=><div key={label}
             className={"dd-review-step"+(index<2?" is-done":index===2?" is-active":"")}
             aria-current={index===2?"step":undefined}>
             <span className="dd-review-step-num">{index<2?"✓":index+1}</span>
             <span>{label}</span>
           </div>)}
-        </nav>
+        </nav>}
         <section className="dd-review-hero">
           <div className="dd-review-hero-copy">
             <span className="dd-review-eyebrow">{t.eyebrow}</span>
