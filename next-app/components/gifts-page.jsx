@@ -176,6 +176,13 @@ export default function GiftsPage({locale="ar",flow=false}){
     });
     return selected;
   },[gifts,criteria,sort,planBudget]);
+  // The original approved catalog separates Dear Day picks from the rest.
+  // Reuse that layout with published listings, never with preview-only products.
+  const curatedIds=useMemo(()=>new Set([...gifts]
+    .sort((a,b)=>(b.score||0)-(a.score||0)||String(a.id).localeCompare(String(b.id)))
+    .slice(0,6).map(item=>item.id)),[gifts]);
+  const curatedGifts=filtered.filter(item=>curatedIds.has(item.id));
+  const otherGifts=filtered.filter(item=>!curatedIds.has(item.id));
   const giftCart=items.filter(x=>x.type==="gift");
   const giftCount=giftCart.reduce((n,x)=>n+Math.max(1,Number(x.quantity)||1),0);
 
@@ -229,9 +236,19 @@ export default function GiftsPage({locale="ar",flow=false}){
               !gifts.length?<p className="dd-gifts-message">{t.noStock}</p>:
               !filtered.length?<p className="dd-gifts-message">{t.none}</p>:
               <>
-                <div className="dd-gifts-grid">
-                  {filtered.map(item=><GiftItem key={item.id} item={item} locale={locale} t={t}/>)}
-                </div>
+                {curatedGifts.length>0&&<section className="dd-gifts-curated-box" aria-label={t.curated}>
+                  <div className="dd-gifts-grid">
+                    {curatedGifts.map(item=><GiftItem key={item.id} item={item} locale={locale} t={t}/>)}
+                  </div>
+                </section>}
+                {otherGifts.length>0&&<section className="dd-gifts-rest-section" aria-label={locale==="ar"?"كل المنتجات":"All Products"}>
+                  <h3 className="dd-gifts-all-products-heading">{locale==="ar"?"كل المنتجات":"All Products"}</h3>
+                  <div className="dd-gifts-rest-box">
+                    <div className="dd-gifts-grid">
+                      {otherGifts.map(item=><GiftItem key={item.id} item={item} locale={locale} t={t}/>)}
+                    </div>
+                  </div>
+                </section>}
                 <p className="dd-gifts-found" role="status">{t.show}: {filtered.length}</p>
               </>}
           </div>
