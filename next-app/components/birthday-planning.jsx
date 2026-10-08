@@ -54,15 +54,14 @@ const texts={
     more:"عرض المزيد ←",inspire:"محتاج أفكار أكتر؟",inspireCopy:"استكشف تجارب مناسبة واستوحي منها فكرتك الخاصة.",
     viewExperiences:"شاهد التجارب ←",selectedCount:(n)=>n? n+" "+(n===1?"عنصر مختار":"عناصر مختارة"):"لم تختر أي عناصر بعد",
     continue:"التالي: كمّل ترتيب مناسبتك",nextShort:"التالي",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
-    serviceImage:"صورة الخدمة",venueDisclaimer:"يمكن استكشاف الأماكن في الخطوة التالية؛ الحجز لسه قيد النقل.",
-    packageDisclaimer:"الباقات نماذج تخطيطية من النسخة المعتمدة؛ لا تتم إضافتها تلقائيًا لسلة الشراء.",
-    packageItemsNote:"اختيار الباقة يحدد فئات الخدمات فقط؛ تأكيد المنتجات والأسعار في الصفحات التالية."
+    serviceImage:"صورة الخدمة",venueDisclaimer:"تقدر تستكشف الأماكن والتجارب في الخطوة التالية.",
+        packageItemsNote:"اختيار الباقة يحدد فئات الخدمات فقط؛ تأكيد المنتجات والأسعار في الصفحات التالية."
   },
   en:{
     select:"Choose services",flow:["Choose services","Gifts","Chocolate & Cakes","Places & Experiences","Occasion Details","Review & Booking"],
     chosen:"Selected occasion",area:"Area",areaPlace:"Choose an area",date:"Occasion date",datePlace:"Choose the date",
     budget:"Estimated budget",budgetAll:"Not sure yet",budgetNote:"Based on your budget",
-    recHeading:"Suggested packages for your day",recIntro:"Start with an example bundle and personalize every item in the next steps.",
+    recHeading:"Suggested packages for your day",recIntro:"Choose a suggested bundle and personalize every item in the next steps.",
     recAll:"Browse all suggested packages and customize them later.",
     selectPackage:"Choose package",selectedPackage:"✓ Selected",packageTotal:"Bundle total",emptyPackages:"No suggested packages for this budget yet.",
     packageTypes:{gift:"Gift",cake:"Chocolate & Cakes",venue:"Place or experience"},
@@ -72,9 +71,8 @@ const texts={
     more:"View more →",inspire:"Need more inspiration?",inspireCopy:"Explore experiences and get inspired for your own celebration.",
     viewExperiences:"See experiences →",selectedCount:(n)=>n?n+" selected "+(n===1?"item":"items"):"No items selected yet",
     continue:"Next: Build your occasion",nextShort:"Next",choose:"Choose at least one service to continue",
-    serviceImage:"Service image",venueDisclaimer:"You can browse venues in the next step; booking is still being migrated.",
-    packageDisclaimer:"Bundles are example planning packages from the approved site and are not added to the live shopping cart.",
-    packageItemsNote:"Choosing a package selects service categories. Confirm products and prices in the next steps."
+    serviceImage:"Service image",venueDisclaimer:"Browse places and experiences in the next step.",
+        packageItemsNote:"Choosing a package selects service categories. Confirm products and prices in the next steps."
   }
 };
 
@@ -252,7 +250,6 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
               </article>;
             }):<p>{t.emptyPackages}</p>}
           </div>
-          <p className="dd-birthday-packages-note">{t.packageDisclaimer}</p>
         </section>
         <section className="dd-birthday-services-section" aria-labelledby="dd-birthday-services">
           <div className="dd-birthday-section-head"><div><h2 id="dd-birthday-services">{t.services}</h2><p>{t.serviceHint}</p></div></div>

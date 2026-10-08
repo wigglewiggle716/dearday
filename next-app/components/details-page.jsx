@@ -32,7 +32,7 @@ const words={
     selectedVenue:"في مكان محدد معنا",venueDescription:"اختر من الأماكن والتجارب المتاحة",
     otherAddress:"في عنوان آخر",addressDescription:"أضف العنوان وسننسق التوصيل",
     address:"تفاصيل العنوان",addressHint:"مثال: التجمع الخامس، القاهرة الجديدة",
-    chosenVenue:"المكان المختار في خطتك",chosenVenueUnconfirmed:"المكان اختيار تخطيطي؛ الحجز والتوافر غير مؤكدين.",
+    chosenVenue:"المكان المختار في خطتك",
     noVenue:"مفيش مكان مختار في الخطة. اختار مكان الأول أو استخدم «في عنوان آخر».",
     total:"الإجمالي الحالي",noChoices:"لا توجد اختيارات",selectedLabel:"اختيار",
     back:"رجوع: My Cart",next:"التالي: مراجعة وحجز",backShort:"رجوع",nextShort:"التالي",
@@ -54,7 +54,7 @@ const words={
     selectedVenue:"At a place selected with Dear Day",venueDescription:"Use the place or experience already in your plan.",
     otherAddress:"At another address",addressDescription:"Add the address and we will keep it with the order details.",
     address:"Address details",addressHint:"For example: Fifth Settlement, New Cairo",
-    chosenVenue:"Selected place in your plan",chosenVenueUnconfirmed:"This is a planning selection, not a confirmed reservation.",
+    chosenVenue:"Selected place in your plan",
     noVenue:"No venue selected yet. Choose one from Places & Experiences or use another address.",
     total:"Current total",noChoices:"No selections yet",selectedLabel:"selection",
     back:"Back: My Cart",next:"Next: Review & Book",backShort:"Back",nextShort:"Next",
@@ -279,7 +279,6 @@ export default function DetailsPage({locale="ar",flow=false}){
                 <div className="dd-details-venue-hint">
                   <div>
                     <strong>{t.chosenVenue}: {venue.name||venue.ar||""}</strong>
-                    <span>{t.chosenVenueUnconfirmed}</span>
                   </div>
                   <button type="button" onClick={choosePlace}>{locale==="ar"?"تغيير المكان":"Change place"}</button>
                 </div>:

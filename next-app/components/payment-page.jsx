@@ -16,7 +16,7 @@ const copy={
   ar:{
     steps:["الاختيارات","تفاصيل المناسبة","مراجعة الحجز","الدفع"],
     eyebrow:"الدفع",title:"إتمام الحجز بأمان",
-    intro:"راجع الإجمالي وأدخل بيانات التواصل الخاصة بالدافع. الدفع الإلكتروني غير متاح حاليًا في نسخة المعاينة.",
+    intro:"راجع اختياراتك وأدخل بيانات التواصل الخاصة بالدافع.",
     secureTitle:"Secure Checkout",secureSubtitle:"متاح بعد تفعيل بوابة الدفع",
     contactTitle:"بيانات التواصل والفاتورة",
     contactIntro:"البيانات دي تخص الشخص اللي هيكمل الدفع، وممكن تختلف عن اسم صاحب المناسبة.",
@@ -27,31 +27,27 @@ const copy={
     city:"المدينة *",chooseCity:"اختر المدينة",cairo:"القاهرة",giza:"الجيزة",
     country:"الدولة",
     methodTitle:"طريقة الدفع",
-    methodIntro:"اختار وسيلة الدفع لمعاينة شكلها. الوسائل غير مفعّلة حاليًا في نسخة React.",
+    methodIntro:"اختار وسيلة الدفع المناسبة لك.",
     card:"بطاقة بنكية",cardDesc:"Visa أو Mastercard — بيانات البطاقة تُدخل في بوابة الدفع بعد تفعيل Paymob.",
     cardNote:"3D Secure عند طلب البنك",
     wallet:"محفظة إلكترونية",walletDesc:"Mobile Wallet عبر Paymob، بعد تفعيل المحافظ على الحساب.",
     methodDisabled:"الدفع الإلكتروني غير متاح حاليًا.",
     securityTitle:"بيانات البطاقة آمنة",
     securityDesc:"Dear Day لا يطلب أو يخزّن أرقام البطاقات. عند تفعيل الدفع، تُدخل البيانات داخل بوابة الدفع المعتمدة فقط.",
-    gatewayNote:"الرجوع من بوابة الدفع مش دليل على نجاح العملية. أي دفع فعلي لازم يتأكد من السيرفر والـWebhook قبل اعتبار الطلب مدفوعًا.",
     summary:"ملخص الدفع",occasion:"المناسبة",datePlace:"التاريخ والمكان",
-    items:"عدد العناصر",subtotal:"قيمة الاختيارات",fee:"رسوم الخدمة",total:"الإجمالي",
-    noFee:"غير محددة",estimated:"قيمة الاختيارات الحالية فقط — المبلغ النهائي يحتاج تأكيد السعر والرسوم والتوافر.",
+    items:"عدد العناصر",subtotal:"قيمة الاختيارات",fee:"رسوم الخدمة",total:"إجمالي الاختيارات",
+    noFee:"غير محددة",
     pay:"الانتقال إلى الدفع الآمن",back:"الرجوع للمراجعة",
-    paymentsUnavailable:"الدفع الإلكتروني غير متاح حاليًا. زر الدفع متوقف في هذه المعاينة ولا يتم إنشاء طلب أو تحصيل مبلغ.",
-    secureFoot:"عند إتاحة Paymob، مش هنعتبر أي عملية مدفوعة إلا بعد التحقق من حالتها على السيرفر.",
+    paymentsUnavailable:"الدفع الإلكتروني غير متاح حاليًا.",
     returnWarning:"معاملات النجاح الظاهرة في الرابط لا تثبت دفعًا حقيقيًا. يلزم التحقق من السيرفر.",
-    empty:"سلتك فاضية حاليًا",noData:"—",example:"منتج توضيحي — السعر والتوافر غير مؤكدين.",
-    venuePreview:"المكان المختار ضمن الخطة فقط، وليس حجزًا مؤكدًا.",
-    note:"في المعاينة، بيانات التواصل بتتحفظ مؤقتًا داخل تبويب المتصفح فقط، ومش بتتبعت للسيرفر.",
+    empty:"سلتك فاضية حاليًا",noData:"—",
     progress:"مراحل الحجز",
     occasionLabels:{birthday:"عيد ميلاد",anniversary:"ذكرى سنوية",engagement:"خطوبة",proposal:"طلب زواج"}
   },
   en:{
     steps:["Selections","Occasion Details","Review & Book","Payment"],
     eyebrow:"Payment",title:"Complete your booking securely",
-    intro:"Review your selections and fill in your billing details. Online payment is currently unavailable in this preview.",
+    intro:"Review your selections and fill in your billing details.",
     secureTitle:"Secure checkout",secureSubtitle:"Available after the payment gateway is enabled",
     contactTitle:"Billing & contact details",
     contactIntro:"These details belong to the person completing payment and can be different from the occasion recipient.",
@@ -62,24 +58,20 @@ const copy={
     city:"City *",chooseCity:"Select city",cairo:"Cairo",giza:"Giza",
     country:"Country",
     methodTitle:"Payment method",
-    methodIntro:"Preview a payment method. No methods are currently active in this React preview.",
+    methodIntro:"Choose your preferred payment method.",
     card:"Bank card",cardDesc:"Visa or Mastercard — card details will be entered in Paymob after activation.",
     cardNote:"Your bank may request 3D Secure",
     wallet:"Mobile Wallet",walletDesc:"Mobile wallet through Paymob when supported wallets are enabled.",
     methodDisabled:"Online payment is currently unavailable.",
     securityTitle:"Card details stay secure",
     securityDesc:"Dear Day does not request or store card numbers. Once payment is enabled, card details will be entered only within the authorized gateway.",
-    gatewayNote:"Returning from a payment gateway does not confirm payment. Final status must be verified on the server via the webhook.",
     summary:"Payment summary",occasion:"Occasion",datePlace:"Date & location",
-    items:"Items",subtotal:"Selections subtotal",fee:"Service fee",total:"Total",
-    noFee:"Not set",estimated:"Selections subtotal only — prices, availability, fees and the final amount still need confirmation.",
+    items:"Items",subtotal:"Selections subtotal",fee:"Service fee",total:"Selections total",
+    noFee:"Not set",
     pay:"Continue to Secure Payment",back:"Back to Review",
-    paymentsUnavailable:"Online payment is unavailable. The payment button is disabled and this preview cannot create an order or charge you.",
-    secureFoot:"When Paymob is enabled, an order will be marked paid only after server-side verification.",
+    paymentsUnavailable:"Online payment is currently unavailable.",
     returnWarning:"Payment parameters in the URL do not prove that any transaction succeeded. Server-side verification is required.",
-    empty:"Your cart is empty",noData:"—",example:"Illustrative product — final price and availability are not confirmed.",
-    venuePreview:"Your planned venue is not a confirmed booking.",
-    note:"In this preview, contact details are stored only for this browser tab and are not sent to a server.",
+    empty:"Your cart is empty",noData:"—",
     progress:"Booking progress",
     occasionLabels:{birthday:"Birthday",anniversary:"Anniversary",engagement:"Engagement",proposal:"Marriage Proposal"}
   }
@@ -169,7 +161,6 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
   const eventAddress=details.locationMode==="selected"?"":(details.address||plan.area||"");
   const cityFromPlan=plan.area==="القاهرة"?"Cairo":plan.area==="الجيزة"?"Giza":"";
   const displayedTotal=Number.isFinite(total)?total:0;
-  const hasExamples=items.some(item=>item.previewOnly)||Boolean(venue);
   const mini=items.slice(0,4);
   function update(key,value){
     setForm(old=>({...old,[key]:value}));
@@ -241,7 +232,6 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
                   <input id="dd-billing-country" value="Egypt" readOnly aria-readonly="true"/>
                 </BillingField>
               </form>
-              <p className="dd-payment-storage-note">{t.note}</p>
             </section>
             <section className="dd-payment-panel" aria-labelledby="dd-payment-methods">
               <div className="dd-payment-panel-head">
@@ -258,7 +248,6 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
                 <span className="dd-payment-shield" aria-hidden="true">♢</span>
                 <div><strong>{t.securityTitle}</strong><p>{t.securityDesc}</p></div>
               </div>
-              <p className="dd-payment-gateway-note">{t.gatewayNote}</p>
             </section>
           </div>
           <aside className="dd-payment-panel dd-payment-summary" aria-labelledby="dd-payment-summary">
@@ -268,7 +257,6 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
               <strong>{hydrated?occasion+recipient:t.noData}</strong>
               <small>{t.datePlace}</small>
               <strong>{hydrated?[occasionDate,place].filter(Boolean).join(" · "):t.noData}</strong>
-              {venue&&<span className="dd-payment-venue-note">{t.venuePreview}</span>}
             </div>}
             <div className="dd-payment-mini-items">
               {hydrated&&mini.length?mini.map((item,index)=><div key={item.key||index} className="dd-payment-mini-item">
@@ -278,7 +266,6 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
                 <div className="dd-payment-mini-copy">
                   <b>{locale==="ar"?item.ar||item.name:item.name||item.ar}</b>
                   <small>{money((Number(item.price)||0)*Math.max(1,Number(item.quantity)||1),locale)}</small>
-                  {item.previewOnly&&<small className="dd-payment-preview-note">{t.example}</small>}
                 </div>
                 <span className="dd-payment-mini-qty">×{item.quantity||1}</span>
               </div>):<p className="dd-payment-no-items">{t.empty}</p>}
@@ -287,13 +274,9 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
             <div className="dd-payment-sum-row"><span>{t.subtotal}</span><b>{money(displayedTotal,locale)}</b></div>
             <div className="dd-payment-sum-row"><span>{t.fee}</span><b>{t.noFee}</b></div>
             <div className="dd-payment-sum-row is-total"><span>{t.total}</span><b>{money(displayedTotal,locale)}</b></div>
-            <p className="dd-payment-estimated">{t.estimated}</p>
             <button className="dd-payment-primary" disabled aria-disabled="true" type="button">{t.pay}</button>
             <button className="dd-payment-secondary" type="button" onClick={goBack}>{t.back}</button>
             <div className="dd-payment-unavailable" role="status">{t.paymentsUnavailable}</div>
-            <div className="dd-payment-paymob-ready">
-              <span>●</span><span>{t.secureFoot}</span>
-            </div>
           </aside>
         </div>
       </div>
