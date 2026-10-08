@@ -5,6 +5,7 @@ export const sections = [
   ["venues", "venues"],
   ["flowers", "flowers"],
   ["occasions", "occasions"],
+  ["birthday", "birthday"],
   ["howItWorks", "how-it-works"],
   ["partners", "partners"],
   ["about", "about"],
