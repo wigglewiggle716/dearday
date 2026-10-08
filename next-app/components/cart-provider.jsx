@@ -166,25 +166,7 @@ function CartRows({ locale }) {
 function FloatingCart({ locale }) {
   const { count, setOpen } = useCart();
   const t = cartCopy(locale);
-  const [bottom, setBottom] = useState(28);
-
-  useEffect(() => {
-    function positionAboveFooter() {
-      const base = window.innerWidth <= 640 ? 20 : 28;
-      const footer = document.querySelector(".dd-footer");
-      if (!footer) return setBottom(base);
-      const gap = 16;
-      setBottom(Math.max(base, Math.ceil(window.innerHeight - footer.getBoundingClientRect().top + gap)));
-    }
-    positionAboveFooter();
-    window.addEventListener("scroll", positionAboveFooter, { passive:true });
-    window.addEventListener("resize", positionAboveFooter);
-    return () => {
-      window.removeEventListener("scroll", positionAboveFooter);
-      window.removeEventListener("resize", positionAboveFooter);
-    };
-  }, []);
-  return <button style={{bottom:bottom+"px"}} className="dd-floating-cart" type="button" onClick={() => setOpen(true)} aria-label={t.cart}>
+  return <button className="dd-floating-cart" type="button" onClick={() => setOpen(true)} aria-label={t.cart}>
     <svg width="27" height="27" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M3 4h2l2.5 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6.1"/><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/>
     </svg>

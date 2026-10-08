@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CuratedCatalog } from "./live-catalog";
+import OccasionDatePicker from "./occasion-date-picker";
 import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 
@@ -135,7 +136,7 @@ function Planner({ locale, t }) {
         <label>{t.area}<select value={area} onChange={e=>setArea(e.target.value)} required>
           <option value="">{t.chooseArea}</option><option value="القاهرة">{t.cairo}</option><option value="الجيزة">{t.giza}</option>
         </select></label>
-        <label>{t.date}<span className="dd-home-date"><input aria-label={t.date} value={date} onChange={e=>setDate(e.target.value)} type="date" required/></span></label>
+        <OccasionDatePicker locale={locale} value={date} onChange={setDate} label={t.date} placeholder={t.chooseDate}/>
         <label>{t.budget}<select value={budget} onChange={e=>setBudget(e.target.value)} required>
           <option value="">{t.chooseBudget}</option>
           {t.budgets.map(([k,v])=><option key={k} value={k}>{v}</option>)}

@@ -242,3 +242,56 @@
     transition: width .13s ease-out;
   }
 }
+
+
+/* Occasion date — same branded date trigger used by approved Dear Day home */
+.dd-home-date-field { min-width: 0; font-size: 14px; font-weight: 800; color: #6B3540; }
+.dd-home-date-label { display: block; margin-bottom: 9px; }
+.dd-home-date-control { position: relative; height: 53px; }
+.dd-home-date-trigger {
+  width: 100%; height: 53px; border: 1px solid #e1d2d0; border-radius: 12px;
+  background: #fffaf7; color: #6B3540; padding: 0 14px 0 10px;
+  display: flex; align-items: center; justify-content: space-between; gap: 9px;
+  cursor: pointer; text-align: start; font-family: inherit; font-weight: 600; font-size: 14px;
+}
+html[lang=en] .dd-home-date-trigger { padding: 0 10px 0 14px; }
+.dd-home-date-trigger:hover { border-color: #A8583D; }
+.dd-home-date-copy { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dd-home-date-left {
+  width: 34px; height: 34px; flex: 0 0 auto; background: rgba(168,88,61,.09);
+  color: #A8583D; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+  font-size: 12px;
+}
+.dd-home-date-calendar {
+  position: fixed; z-index: 800; width: 320px; max-width: calc(100vw - 32px);
+  max-height: min(450px,calc(100dvh - 16px)); overflow: auto;
+  border: 1px solid rgba(107,53,64,.18); border-radius: 16px; background: #FAF3EA; color: #6B3540;
+  box-shadow: 0 12px 36px rgba(107,53,64,.18); padding: 16px;
+  font-family: "Noto Sans Arabic",Tahoma,Arial,sans-serif;
+}
+html[lang=en] .dd-home-date-calendar { font-family: Arial,Helvetica,sans-serif; }
+.dd-home-date-calhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.dd-home-date-calhead strong { font-size: 14px; text-align: center; }
+.dd-home-date-calhead button {
+  border: 1px solid rgba(107,53,64,.2); border-radius: 10px; background: transparent; color: #6B3540;
+  font-size: 22px; width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer;
+}
+.dd-home-date-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 3px; }
+.dd-home-date-grid .dd-home-date-weekday { font-size: 11px; color: #A8583D; text-align: center; padding: 4px 0 8px; }
+.dd-home-date-grid button {
+  min-width: 0; height: 38px; border: 1px solid transparent; border-radius: 10px;
+  background: transparent; color: #6B3540; font: inherit; font-size: 13px; cursor: pointer;
+}
+.dd-home-date-grid button:hover { background: rgba(168,88,61,.1); border-color: #A8583D; }
+.dd-home-date-grid button[aria-pressed=true] { background: #6B3540; color: #FAF3EA; border-color: #6B3540; }
+.dd-home-date-grid button[aria-current=date]:not([aria-pressed=true]) { border-color: #A8583D; }
+.dd-home-date-calfooter { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(107,53,64,.18); margin-top: 12px; padding-top: 8px; }
+.dd-home-date-calfooter button { border: 0; padding: 7px 10px; color: #A8583D; background: transparent; cursor: pointer; font: inherit; font-size: 13px; }
+@media(max-width:640px) {
+  .dd-home-date-field { font-size: 12px; }
+  .dd-home-date-label { margin-bottom: 9px; }
+  .dd-home-date-trigger { padding-inline: 8px; font-size: 12px; }
+  .dd-home-date-left { width: 30px; height: 30px; }
+  .dd-home-date-calendar { padding: 12px; }
+}
