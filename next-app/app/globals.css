@@ -398,3 +398,45 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
   .dd-pay-brand.dd-pay-apple img,
   .dd-pay-brand.dd-pay-google img { width:58px; height:30px; }
 }
+
+
+/* Shared seven-stage Dear Day customer journey. */
+.dd-planning-stepper {
+  background:#fffdfb; border-bottom:1px solid #f0e6e2;
+  width:100%; padding:18px 0 14px;
+}
+.dd-planning-stepper-rail {
+  width:min(1230px,calc(100% - 40px)); margin:0 auto;
+  display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:7px;
+}
+.dd-planning-step {
+  position:relative; min-width:0; display:flex; flex-direction:column;
+  align-items:center; text-align:center; gap:7px; color:#978781;
+  font-size:11px; line-height:1.5;
+}
+.dd-planning-step:not(:last-child)::after {
+  content:""; position:absolute; z-index:0; top:21px;
+  inset-inline-start:63%; width:81%; border-top:1px dashed #dfcec9;
+}
+.dd-planning-step-marker {
+  position:relative; z-index:1; width:44px; height:44px; display:grid;
+  place-items:center; border:1px solid #e6d3ce; border-radius:50%;
+  background:#fffdfb; color:#a79894; font-weight:800; font-size:15px;
+}
+.dd-planning-step.is-current {color:#6B3540; font-weight:800;}
+.dd-planning-step.is-current .dd-planning-step-marker {
+  border:3px solid #6B3540; background:#fff4f1; color:#6B3540;
+  box-shadow:0 0 0 7px rgba(107,53,64,.07);
+}
+.dd-planning-step.is-past .dd-planning-step-marker { color:#6B3540; border-color:#a98587;}
+@media(max-width:860px) {
+  .dd-planning-stepper {padding:12px 0;}
+  .dd-planning-stepper-rail {
+    width:100%; display:flex; gap:0; padding:5px 14px 12px;
+    overflow-x:auto; overscroll-behavior-inline:contain;
+    scroll-snap-type:x proximity;
+    scrollbar-width:thin; scrollbar-color:#cdb9b5 transparent;
+  }
+  .dd-planning-step { flex:0 0 115px; scroll-snap-align:center; font-size:10px; }
+  .dd-planning-step:not(:last-child)::after {width:60%;}
+}

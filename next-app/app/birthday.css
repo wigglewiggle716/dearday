@@ -244,3 +244,46 @@
   .dd-birthday-product-grid .dd-product-buy .dd-cart-quantity { min-height:38px; }
   .dd-birthday-product-grid .dd-product-buy .dd-cart-quantity button { width:27px; height:27px; }
 }
+
+
+/* The selected-items dock follows the visitor, but stops just above the footer.
+   Positioned dynamically on scroll; the corner cart and scroll-to-top stay fixed. */
+.dd-birthday-page {padding-bottom:145px;}
+.dd-birthday-sticky {
+  position:fixed; z-index:260; left:50%; transform:translateX(-50%);
+  width:min(1100px,calc(100% - 196px)); max-width:calc(100vw - 196px);
+  display:flex; align-items:center; justify-content:space-between; gap:15px;
+  min-height:76px; padding:10px 16px; border-radius:20px;
+  background:rgba(255,253,251,.97);
+  border:1px solid rgba(107,53,64,.18);
+  box-shadow:0 13px 43px rgba(76,31,36,.17);
+  backdrop-filter:blur(15px);
+  pointer-events:auto;
+}
+.dd-birthday-sticky-summary {min-width:0; display:flex; align-items:center; gap:12px; flex:1; color:#594d4b; font-size:13px; font-weight:700;}
+.dd-birthday-sticky-summary>span {min-width:0;}
+.dd-birthday-sticky-thumbs {display:flex; flex:0 0 auto; direction:ltr; padding-inline:8px;}
+.dd-birthday-sticky-thumbs img {width:41px; height:41px; object-fit:cover; border:2px solid #fff; border-radius:10px; margin-inline-start:-9px;}
+.dd-birthday-sticky>button {
+  flex:0 0 auto; min-width:250px; min-height:43px; padding:11px 17px;
+  border:0; border-radius:999px; background:#6B3540; color:#fff;
+  font-size:13px; font-weight:800; cursor:pointer;
+}
+.dd-birthday-sticky>button:hover:not(:disabled) {background:#804450;}
+.dd-birthday-sticky>button:disabled {opacity:.48; cursor:not-allowed;}
+.dd-birthday-sticky-button-short {display:none;}
+@media(max-width:860px) {
+  .dd-birthday-sticky { width:calc(100% - 190px); max-width:calc(100vw - 190px); padding:8px 10px; gap:7px; flex-direction:column; min-height:0; border-radius:16px;}
+  .dd-birthday-sticky-summary {width:100%; justify-content:center; font-size:11px; gap:5px; line-height:1.25; flex:none;}
+  .dd-birthday-sticky-thumbs {display:none;}
+  .dd-birthday-sticky>button {width:100%; min-width:0; min-height:36px; padding:8px 6px; font-size:12px;}
+  .dd-birthday-sticky-button-long {display:none;}
+  .dd-birthday-sticky-button-short {display:inline;}
+}
+@media(max-width:640px) {
+  /* Floating cart occupies 17..72px on left; up arrow about 17..73px on right.
+     A 12px clear gap remains on each side of the dock. */
+  .dd-birthday-sticky {width:calc(100% - 168px);max-width:calc(100vw - 168px);padding:8px;}
+  .dd-birthday-sticky-summary {font-size:10px;}
+  .dd-birthday-sticky>button {font-size:12px;}
+}
