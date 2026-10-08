@@ -263,3 +263,8 @@ html[lang=en] .dd-partners-form-section-head h3{
   .dd-partners-set[aria-hidden="true"]{display:none}
   .dd-partners-page *{transition-duration:.01ms!important}
 }
+
+/* Partner intake submit state. Never expose the spam trap visually. */
+.dd-partners-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.dd-partners-page .dd-partners-primary:disabled{opacity:.6;cursor:wait}
+.dd-partners-status.success{background:#eef7ef;border:1px solid #a4cfac;color:#2f6e3a}

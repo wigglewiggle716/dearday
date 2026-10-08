@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 // 5d97cc458910279646ec10a18ffecaca81a6854d.
 // Partner intake is not connected yet. Until a secure backend exists, never
 // persist applicants' personal data locally or pretend to submit it.
+const INTAKE_URL="https://hpffdmldtdtwcaoemyso.supabase.co/functions/v1/partner-apply";
 const partners=[
   ["The Gift Studio","Gifts"],["Luna Silver","Jewelry"],["Maison DD","Gifts"],
   ["Roses & More","Flowers"],["Bloom & Co.","Flowers"],["Velvet Bakery","Cakes"],
@@ -68,7 +69,10 @@ const content={
     productListHelp:"ممكن ترفق قائمة المنتجات أو الخدمات والأسعار لو متاحة.",
     submit:"إرسال طلب الانضمام",
     pdfError:"اختار ملف Company Profile بصيغة PDF.",
-    submitUnavailable:"تعذّر إرسال الطلب حاليًا. برجاء المحاولة في وقت لاحق.",
+    sendSuccess:"تم إرسال طلب الانضمام بنجاح. هنراجع بياناتك ونتواصل معاك.",
+    sendError:"تعذّر إرسال طلب الانضمام. تأكد من الملفات وحاول مرة تانية.",
+    rateLimited:"وصلتنا طلبات كتير من نفس الاتصال. برجاء المحاولة لاحقًا.",
+    sending:"جاري إرسال الطلب…",
     optional:"اختياري"
   },
   en:{
@@ -117,7 +121,10 @@ const content={
     productListHelp:"You may attach a product or service list with prices, if available.",
     submit:"Submit Application",
     pdfError:"Please select a PDF company profile.",
-    submitUnavailable:"Applications cannot be sent at the moment. Please try again later.",
+    sendSuccess:"Your application was submitted successfully. Our team will review it and get in touch.",
+    sendError:"We couldn't submit your application. Please check the attachments and try again.",
+    rateLimited:"Too many applications from this connection. Please try again later.",
+    sending:"Submitting application…",
     optional:"Optional"
   }
 };
@@ -170,11 +177,12 @@ export default function PartnersPage({locale="ar"}){
   const categoryRef=useRef(null);
   const [categoryError,setCategoryError]=useState(false);
   const [status,setStatus]=useState(null);
+  const [sending,setSending]=useState(false);
 
   function categoryChange(){
     setCategoryError(false);setStatus(null);
   }
-  function handleSubmit(event){
+  async function handleSubmit(event){
     event.preventDefault();
     const form=event.currentTarget;
     const chosen=[...form.querySelectorAll('input[name="categories"]:checked')]
@@ -194,9 +202,26 @@ export default function PartnersPage({locale="ar"}){
       setStatus({kind:"error",text:t.pdfError});
       form.elements.namedItem("companyProfile")?.focus();return;
     }
-    // The public application receiver is not enabled yet. Do not retain
-    // contact information in this browser and do not show a false success.
-    setStatus({kind:"error",text:t.submitUnavailable});
+    if(sending)return;
+    setSending(true);
+    try{
+      const payload=new FormData(form);
+      const response=await fetch(INTAKE_URL,{
+        method:"POST",body:payload,mode:"cors",cache:"no-store"
+      });
+      const json=await response.json().catch(()=>({}));
+      if(!response.ok||!json.ok){
+        setStatus({kind:"error",text:response.status===429?t.rateLimited:t.sendError});
+        return;
+      }
+      form.reset();
+      setCategoryError(false);
+      setStatus({kind:"success",text:t.sendSuccess});
+    }catch{
+      setStatus({kind:"error",text:t.sendError});
+    }finally{
+      setSending(false);
+    }
   }
 
   return <main id="main-content" className="dd-partners-page" dir={locale==="ar"?"rtl":"ltr"}>
@@ -339,7 +364,11 @@ export default function PartnersPage({locale="ar"}){
             </FormField>
           </FormSection>
           <div className="dd-partners-submit-row">
-            <button className="dd-partners-primary" type="submit">{t.submit}</button>
+            <input type="text" name="businessWebsiteExtra" tabIndex={-1}
+              autoComplete="off" aria-hidden="true" className="dd-partners-honeypot"/>
+            <button className="dd-partners-primary" type="submit" disabled={sending}>
+              {sending?t.sending:t.submit}
+            </button>
           </div>
           {status&&<div className={"dd-partners-status "+status.kind} role="status" aria-live="polite">
             {status.text}
