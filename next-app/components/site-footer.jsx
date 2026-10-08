@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { dictionaries, pathFor } from "../lib/locales";
 
 const socials = [
@@ -72,6 +72,40 @@ function BackToTop({ label }) {
   );
 }
 
+
+function FooterGroup({ title, ids, t, locale }) {
+  const [expanded, setExpanded] = useState(true);
+  const id = useId();
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 760px)");
+    const onChange = () => setExpanded(!media.matches);
+    onChange();
+    if (media.addEventListener) {
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    }
+    media.addListener(onChange);
+    return () => media.removeListener(onChange);
+  }, []);
+
+  return (
+    <div className="dd-footer-group">
+      <h2>
+        <button type="button" className="dd-footer-section-toggle" aria-expanded={expanded} aria-controls={id} onClick={() => setExpanded(v => !v)}>
+          <span>{title}</span>
+          <svg className={expanded ? "dd-footer-chevron is-open" : "dd-footer-chevron"} viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+      </h2>
+      <div id={id} className="dd-footer-submenu" hidden={!expanded}>
+        {ids.map((item) => <Link href={pathFor(item, locale)} key={item}>{t[item]}</Link>)}
+      </div>
+    </div>
+  );
+}
+
 export default function SiteFooter({ locale }) {
   const t = dictionaries[locale];
   const groups = [
@@ -98,12 +132,7 @@ export default function SiteFooter({ locale }) {
               </Link>
               <p>{t.footerNote}</p>
             </div>
-            {groups.map((group) => (
-              <div className="dd-footer-group" key={group.title}>
-                <h2>{group.title}</h2>
-                {group.ids.map((id) => <Link href={pathFor(id, locale)} key={id}>{t[id]}</Link>)}
-              </div>
-            ))}
+            {groups.map(group => <FooterGroup key={group.title} title={group.title} ids={group.ids} t={t} locale={locale}/>)}
           </div>
 
           <div className="dd-footer-strip dd-footer-socials" aria-label={t.socialTitle}>
