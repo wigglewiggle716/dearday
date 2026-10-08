@@ -9,6 +9,8 @@ import { ProductCard, useCatalog } from "./live-catalog";
 import { useCart, money } from "./cart-provider";
 import { pathFor } from "../lib/locales";
 import { PACKAGES, budgetLabels } from "../lib/planning-packages";
+import PlanningStepper from "./planning-stepper";
+import { getNextPlanningStep } from "../lib/planning-flow";
 
 const media="/approved-pages/assets/media/";
 const occasionMedia="/approved-pages/assets/sections-20261004/";
@@ -51,7 +53,7 @@ const texts={
     suggestionsDesc:"بناءً على نوع المناسبة والخدمات التي اخترتها",noProducts:"لا توجد منتجات منشورة حاليًا.",
     more:"عرض المزيد ←",inspire:"محتاج أفكار أكتر؟",inspireCopy:"استكشف تجارب مناسبة واستوحي منها فكرتك الخاصة.",
     viewExperiences:"شاهد التجارب ←",selectedCount:(n)=>n? n+" "+(n===1?"عنصر مختار":"عناصر مختارة"):"لم تختر أي عناصر بعد",
-    continue:"التالي: كمّل ترتيب مناسبتك",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
+    continue:"التالي: كمّل ترتيب مناسبتك",nextShort:"التالي",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
     serviceImage:"صورة الخدمة",venueDisclaimer:"يمكن استكشاف الأماكن في الخطوة التالية؛ الحجز لسه قيد النقل.",
     packageDisclaimer:"الباقات نماذج تخطيطية من النسخة المعتمدة؛ لا تتم إضافتها تلقائيًا لسلة الشراء.",
     packageItemsNote:"اختيار الباقة يحدد فئات الخدمات فقط؛ تأكيد المنتجات والأسعار في الصفحات التالية."
@@ -69,7 +71,7 @@ const texts={
     suggestionsDesc:"Based on your occasion and selected services",noProducts:"No published products available right now.",
     more:"View more →",inspire:"Need more inspiration?",inspireCopy:"Explore experiences and get inspired for your own celebration.",
     viewExperiences:"See experiences →",selectedCount:(n)=>n?n+" selected "+(n===1?"item":"items"):"No items selected yet",
-    continue:"Next: Build your occasion",choose:"Choose at least one service to continue",
+    continue:"Next: Build your occasion",nextShort:"Next",choose:"Choose at least one service to continue",
     serviceImage:"Service image",venueDisclaimer:"You can browse venues in the next step; booking is still being migrated.",
     packageDisclaimer:"Bundles are example planning packages from the approved site and are not added to the live shopping cart.",
     packageItemsNote:"Choosing a package selects service categories. Confirm products and prices in the next steps."
@@ -100,6 +102,46 @@ function readStoredPlan(){
   try { const p=JSON.parse(localStorage.getItem("dearDayPlan")||"{}"); return p&&typeof p==="object" ? p : {}; } catch { return {}; }
 }
 const writePlan=(obj)=>{try{localStorage.setItem("dearDayPlan",JSON.stringify(obj));}catch{}};
+
+
+function SelectionDock({t,selectedCount,chosenServices,onNext}) {
+  const [bottom,setBottom]=useState(22);
+  useEffect(()=>{
+    // This dock alone stops above the footer. The two floating corner buttons
+    // intentionally remain fixed to the viewport all the way to the bottom.
+    function placeDock(){
+      const footer=document.querySelector(".dd-footer");
+      const standard=window.innerWidth<=760?16:22;
+      if(!footer){setBottom(standard);return;}
+      const gap=14;
+      setBottom(Math.max(standard,Math.ceil(window.innerHeight-footer.getBoundingClientRect().top+gap)));
+    }
+    placeDock();
+    window.addEventListener("scroll",placeDock,{passive:true});
+    window.addEventListener("resize",placeDock);
+    const footer=document.querySelector(".dd-footer");
+    const observer=typeof ResizeObserver!=="undefined"&&footer?new ResizeObserver(placeDock):null;
+    observer?.observe(footer);
+    return ()=>{
+      window.removeEventListener("scroll",placeDock);
+      window.removeEventListener("resize",placeDock);
+      observer?.disconnect();
+    };
+  },[]);
+  const previews=chosenServices.map(x=>serviceDefs.find(s=>s.name===x)).filter(Boolean).slice(0,4);
+  return <div className="dd-birthday-sticky" style={{bottom:bottom+"px"}} aria-label={t.select}>
+    <div className="dd-birthday-sticky-summary">
+      <div className="dd-birthday-sticky-thumbs" aria-hidden="true">
+        {previews.map(service=><img key={service.key} src={media+service.image} alt=""/>)}
+      </div>
+      <span aria-live="polite">{t.selectedCount(selectedCount)}</span>
+    </div>
+    <button type="button" onClick={onNext} disabled={selectedCount===0}>
+      <span className="dd-birthday-sticky-button-long">{t.continue}</span>
+      <span className="dd-birthday-sticky-button-short">{t.nextShort}</span>
+    </button>
+  </div>;
+}
 
 export default function BirthdayPlanning({locale="ar",incoming={}}){
   const router=useRouter();
@@ -168,27 +210,21 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
   function moveNext(){
     if(selectedCount===0){setFeedback(t.choose);return;}
     const names=[...details.services];
-    if(cartItems.some(x=>x.type==="gift"||x.type==="flower")&&!names.includes("هدايا"))names.push("هدايا");
+    if(cartItems.some(x=>x.type==="gift")&&!names.includes("هدايا"))names.push("هدايا");
+    if(cartItems.some(x=>x.type==="flower")&&!names.includes("ورد"))names.push("ورد");
     if(cartItems.some(x=>x.type==="cake")&&!names.includes("شكولاته و كيك"))names.push("شكولاته و كيك");
     if(cartItems.some(x=>x.type==="venue")&&!names.includes("أماكن وتجارب"))names.push("أماكن وتجارب");
-    const targets=[["هدايا","gifts"],["شكولاته و كيك","cake"],["ورد","flowers"],["أماكن وتجارب","venues"]];
-    const match=targets.find(([service])=>names.includes(service));
+    const next=getNextPlanningStep("plan",names);
     const previous=readStoredPlan();
     const name=occasionInfo[details.occasionKey]?.ar.label||"عيد ميلاد";
     writePlan({...previous,...details,services:names,occasion:name,occasionLabel:name,occasionKey:details.occasionKey,budget:details.budgetKey,budgetLabel:budgetLabels[details.budgetKey],
       products:cartItems.map(item=>({name:item.ar||item.name,listing_id:item.listing_id||item.id,type:item.type,quantity:item.quantity,price:item.price}))});
-    if(match)router.push(pathFor(match[1],locale)+"?flow=1");
+    router.push(pathFor(next,locale)+"?flow=1");
   }
   const heroImage=occasionMedia+"occasion-"+(details.occasionKey==="date_night"?"date-night":details.occasionKey)+".jpg";
 
   return <main id="main-content" className="dd-birthday-page" dir={locale==="ar"?"rtl":"ltr"}>
-    {flow&&<div className="dd-birthday-stepper" aria-label={locale==="ar"?"خطوات التخطيط":"Planning steps"}>
-      <div className="dd-birthday-steps">
-        {t.flow.map((step,index)=><div className={"dd-birthday-step "+(index===0?"current":"")} key={step} aria-current={index===0?"step":undefined}>
-          <span className="dd-birthday-step-num">{index===0?"✓":index+1}</span><span>{step}</span>
-        </div>)}
-      </div>
-    </div>}
+    {flow&&<PlanningStepper locale={locale} current="plan"/>}
     <section className="dd-birthday-hero">
       <div className="dd-birthday-hero-copy">
         <span className="dd-birthday-pill">{occasion.pill}</span>
@@ -262,10 +298,6 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
           :suggest.length?<div className="dd-birthday-product-grid">{suggest.map(item=><ProductCard key={item.id} product={item} locale={locale}/>)}</div>
           :<p className="dd-birthday-products-empty">{t.noProducts}</p>}
         </section>
-        <div className="dd-birthday-inline-next">
-          <span aria-live="polite">{t.selectedCount(selectedCount)}</span>
-          <button type="button" onClick={moveNext} disabled={selectedCount===0}>{t.continue}</button>
-        </div>
         <section className="dd-birthday-inspire">
           <div className="dd-birthday-inspire-text">
             <h2>{t.inspire}</h2><p>{t.inspireCopy}</p>
@@ -279,6 +311,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
         </section>
       </div>
     </div>
+    <SelectionDock t={t} selectedCount={selectedCount} chosenServices={details.services} onNext={moveNext}/>
     {feedback&&<div className="dd-birthday-feedback" role="status" ref={feedbackRef}>{feedback}</div>}
   </main>;
 }

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 import { useCatalog } from "./live-catalog";
 import { useCart, QuantityAction, money } from "./cart-provider";
+import PlanningStepper from "./planning-stepper";
+import { getNextPlanningStep } from "../lib/planning-flow";
 
 const copy = {
   ar: {
@@ -181,18 +183,12 @@ export default function GiftsPage({locale="ar",flow=false}){
   function proceed(){
     const plan=readPlan();
     const names=Array.isArray(plan.services)?plan.services:[];
-    const next=names.includes("شكولاته و كيك")?"cake":
-      names.includes("ورد")?"flowers":names.includes("أماكن وتجارب")?"venues":"cart";
+    const next=getNextPlanningStep("gifts",names);
     router.push(pathFor(next,locale)+(flow?"?flow=1":""));
   }
 
   return <main id="main-content" className="dd-gifts-page" dir={locale==="ar"?"rtl":"ltr"}>
-    {flow&&<nav className="dd-gifts-flow" aria-label={locale==="ar"?"خطوات التخطيط":"Planning steps"}>
-      <div className="dd-gifts-flow-rail">
-        {t.flow.map((step,i)=><span key={step} className={i===1?"is-current":i===0?"is-past":""}
-          aria-current={i===1?"step":undefined}><b>{i<1?"✓":i+1}</b>{step}</span>)}
-      </div>
-    </nav>}
+    {flow&&<PlanningStepper locale={locale} current="gifts"/>}
     <section className="dd-gifts-hero">
       <div className="dd-gifts-shell">
         <div className="dd-gifts-hero-box">
