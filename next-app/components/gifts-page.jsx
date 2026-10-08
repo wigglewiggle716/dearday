@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 import { useCatalog } from "./live-catalog";
 import { useCart, QuantityAction, money } from "./cart-provider";
@@ -130,18 +129,15 @@ function FilterSet({name,items,value,onSelect}){
   </section>;
 }
 
-export default function GiftsPage({locale="ar"}){
+export default function GiftsPage({locale="ar",flow=false}){
   const t=copy[locale] || copy.ar;
   const {rows,loading,error}=useCatalog();
-  const {items, count}=useCart();
-  const params=useSearchParams();
+  const {items,isLoaded}=useCart();
   const router=useRouter();
-  const flow=params.get("flow")==="1";
   const [criteria,setCriteria]=useState({category:"all",recipient:"all",price:"all"});
   const [sort,setSort]=useState("recommended");
   const [planBudget,setPlanBudget]=useState("unsure");
   const [mobileFilters,setMobileFilters]=useState(false);
-  const [success,setSuccess]=useState(false);
 
   const gifts=rows.gifts||[];
   useEffect(()=>{
@@ -150,7 +146,7 @@ export default function GiftsPage({locale="ar"}){
   },[]);
   useEffect(()=>{
     // Only persist the choice of this step, not stale demo product data.
-    if(!items.length)return;
+    if(!isLoaded)return;
     const plan=readPlan();
     const selected=items.filter(row=>row?.type==="gift").map(row=>({
       id:row.id,listing_id:row.listing_id||row.id,type:"gift",
@@ -163,7 +159,7 @@ export default function GiftsPage({locale="ar"}){
         ]
       }));
     }catch{}
-  },[items]);
+  },[items,isLoaded]);
 
   const filtered=useMemo(()=>{
     const selected=gifts.filter(item=>{
