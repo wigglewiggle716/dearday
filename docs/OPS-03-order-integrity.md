@@ -18,10 +18,50 @@ paid/amount inserts and staff paid/refunded/owner/amount writes are rejected; un
 confirmation is rejected; valid operational transitions and atomic audit succeed.
 No real order or payment was processed. Database sequences can have test-induced gaps.
 
-Remaining OPS-03: authoritative order creation and catalog pricing, idempotency,
-order-item and partner-order financial write boundaries, and integration into checkout.
-Existing cancellation/refund RPCs and payment verification require OPS-04 review.
-Do not enable payments or declare OPS-03 complete based on this phase.
+## Phase 2 — authoritative checkout
+
+Migration `20261008034640_ops03_authoritative_checkout.sql` adds `prepare_checkout`.
+Only an active customer can quote or create an order. Inputs contain listing IDs,
+integer quantities and event/delivery details. Catalog prices, versions, partner IDs
+and commissions come from locked published records. Quotes expose no commissions.
+The server rejects a stale quote token before creating anything.
+
+Creation stores order/items/partner totals/holds/audit/idempotency result in one
+transaction. Per-customer advisory locks serialize retries; ordered listing row locks
+and existing date advisory locks serialize stock/capacity checks. Duplicate listing
+IDs are aggregated. Keys are customer-scoped, reject payload changes, and cannot
+revive expired orders. Up to three unexpired checkout requests per customer.
+
+Stock reservations use booking_reservations across dates; scheduled capacity uses
+existing availability rules. Holds expire after at most 15 minutes and expire out of
+availability calculations without cron. Order rows remain pending_payment after
+expiry; OPS-04 must implement expiry reconciliation, payment confirmation and failure
+cleanup. Confirmed reservations count against stock: do not also decrement stock
+without updating this contract. No stock was permanently consumed in this phase.
+
+Direct order inserts and all direct writes to order_items/partner_orders are revoked
+from browser roles. Existing audited server RPCs remain separate security boundaries.
+Unpaid partner orders cannot move into fulfillment. Bound holds cannot be resized or
+released through the old customer hold RPCs.
+
+Both payment languages show a current-price review button; creation is wired into
+the payment action after quote review. Network retries retain the same key. Payment
+methods remain disabled and the legacy raw-amount intention endpoint returns 503
+PAYMENTS_NOT_READY, even if integration environment variables exist. OPS-04 must
+replace it with authenticated order lookup, amount verification and signed webhooks.
+No checkout client secret or service key is exposed.
+
+Current totals follow the existing model: no delivery surcharge or promotion engine.
+Neither amount is accepted from the client. Confirm shipping rules before launch.
+Legacy/non-UUID cart items fail closed and must be reselected from the live catalog.
+Services requiring capacity fail closed if scheduling is not configured.
+
+Validation: rollback SQL scenarios before/after migration cover price tampering,
+stale quotes, duplicates, stock and scheduled capacity, expiry, immutable item/commission
+values, two-partner totals and rejection of unpaid fulfillment. Node DOM-boundary mocks
+cover AR/EN quote review, retry keys, failures and the payment gate. These are not
+real customer browser acceptance or a parallel-load test. No real charge was made.
+Full end-to-end payment/cancellation acceptance remains in OPS-04/14.
 
 Rollback: use a reviewed forward migration to revise the two triggers if needed;
 do not restore financial status options without restoring an equivalent server guard.

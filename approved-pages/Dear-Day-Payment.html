@@ -393,40 +393,17 @@ footer{margin-top:25px}
     return true;
   }
 
-  function paymobPayload(){
-    const p=persistPayment('ready');
-    const nameParts=p.billing.fullName.split(/\s+/).filter(Boolean);
-    return {
-      amount:Number(p.amount)||0,
-      currency:'EGP',
-      payment_method:p.method,
-      special_reference:p.orderReference,
-      items:cart.map(x=>({name:x.ar||x.name||'Dear Day item',amount:Number(x.price)||0,quantity:x.type==='venue'?1:Math.max(1,Math.floor(Number(x.quantity)||1))})),
-      billing_data:{
-        first_name:nameParts[0]||p.billing.fullName,
-        last_name:nameParts.slice(1).join(' ')||'-',
-        phone_number:p.billing.phone,
-        email:p.billing.email,
-        street:p.billing.address,
-        city:p.billing.city,
-        country:'EG'
-      },
-      extras:{
-        dear_day_reference:p.orderReference,
-        occasion:plan.occasionKey||plan.occasion||'',
-        celebrant:details.celebrant||''
-      }
-    };
-  }
-
   async function startPaymobCheckout(){
     if(!validate())return;
     const btn=document.getElementById('payNow');
     const original=btn.textContent;
     btn.disabled=true;btn.textContent='جاري تجهيز الدفع...';
-    const payload=paymobPayload();
+    let payload;
 
     try{
+      const order=await window.DDCheckout?.prepare();
+      if(!order){btn.disabled=false;btn.textContent=original;return}
+      payload={order_id:order.order_id,payment_method:selectedMethod()};
       const response=await fetch(PAYMOB_ENDPOINT,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -470,5 +447,5 @@ footer{margin-top:25px}
   syncEnabledPaymentMethods();
 })();
 </script>
-<script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script></body>
+<script src="/approved-pages/dear-day-explore-static.js?v=20261006-mobileExplore1"></script><script type="module" src="/approved-pages/dear-day-checkout.js?v=20261008-1"></script></body>
 </html>
