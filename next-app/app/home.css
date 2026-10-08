@@ -73,14 +73,6 @@
 .dd-home-curated-card h3 { margin: 6px 0 14px; font-size: 15px; }
 .dd-home-curated-card a { display: inline-flex; justify-content: center; align-items: center; background: #6B3540; color: #fff; border-radius: 999px; font-size: 12px; padding: 8px 13px; }
 .dd-home-curated-caveat { margin: 14px 0 0; font-size: 11px; color: #877a78; }
-.dd-home-featured { padding: 0 0 70px; }
-.dd-home-featured-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
-.dd-home-featured-card { display: flex; gap: 15px; background: rgba(255,253,252,.55); border-radius: 16px; overflow: hidden; border: 1px solid rgba(107,53,64,.15); }
-.dd-home-featured-card img { display: block; width: 40%; min-height: 155px; object-fit: cover; }
-.dd-home-featured-card div { flex: 1; padding: 13px 10px; }
-.dd-home-featured-card strong { display: block; font-size: 15px; }
-.dd-home-featured-card small { display: block; font-size: 12px; margin: 6px 0; color: #887675; }
-.dd-home-featured-card b { display: block; font-size: 14px; }
 .dd-home-partners { padding: 64px 0 70px; background: #fffaf6; border-top: 1px solid rgba(107,53,64,.08); overflow: hidden; }
 .dd-home-partner-heading { margin-bottom: 27px; }
 .dd-home-partner-heading > a { background: #6B3540; color: #fff; border-radius: 999px; padding: 12px 20px; font-weight: 800; white-space: nowrap; font-size: 13px; }
@@ -96,7 +88,6 @@
   .dd-home-occasions { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .dd-home-filters { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .dd-home-direct-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .dd-home-featured-grid { grid-template-columns: 1fr; }
   .dd-home-how-grid { grid-template-columns: 1fr; gap: 4px; }
   .dd-home-how-step { border-inline-end: 0; border-block-end: 1px solid rgba(107,53,64,.12); }
   .dd-home-how-step:last-child { border: 0; }
@@ -133,7 +124,6 @@
   .dd-home-curated-card img { height: 138px; }
   .dd-home-curated-card > div { padding: 9px; }
   .dd-home-curated-card h3 { font-size: 13px; }
-  .dd-home-featured-card img { min-height: 135px; }
   .dd-home-partners { padding-block: 50px; }
 }
 @media (prefers-reduced-motion: reduce) {

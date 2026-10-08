@@ -74,12 +74,17 @@ function BackToTop({ label }) {
 
 
 function FooterGroup({ title, ids, t, locale }) {
+  const [isMobile, setIsMobile] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const id = useId();
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 760px)");
-    const onChange = () => setExpanded(!media.matches);
+    const onChange = () => {
+      const mobile = media.matches;
+      setIsMobile(mobile);
+      setExpanded(!mobile);
+    };
     onChange();
     if (media.addEventListener) {
       media.addEventListener("change", onChange);
@@ -91,15 +96,22 @@ function FooterGroup({ title, ids, t, locale }) {
 
   return (
     <div className="dd-footer-group">
-      <h2>
-        <button type="button" className="dd-footer-section-toggle" aria-expanded={expanded} aria-controls={id} onClick={() => setExpanded(v => !v)}>
+      <h2 className="dd-footer-group-heading">
+        <span className="dd-footer-desktop-heading">{title}</span>
+        <button
+          type="button"
+          className="dd-footer-mobile-toggle"
+          aria-expanded={isMobile ? expanded : true}
+          aria-controls={id}
+          onClick={() => setExpanded(value => !value)}
+        >
           <span>{title}</span>
-          <svg className={expanded ? "dd-footer-chevron is-open" : "dd-footer-chevron"} viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg className={expanded ? "dd-footer-chevron is-open" : "dd-footer-chevron"} viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </button>
       </h2>
-      <div id={id} className="dd-footer-submenu" hidden={!expanded}>
+      <div id={id} className="dd-footer-submenu" hidden={isMobile && !expanded}>
         {ids.map((item) => <Link href={pathFor(item, locale)} key={item}>{t[item]}</Link>)}
       </div>
     </div>

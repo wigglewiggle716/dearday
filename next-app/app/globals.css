@@ -219,57 +219,102 @@ html[lang=ar] .dd-hero h1 { font-family: var(--dd-font-ar); }
 }
 
 
-/* Footer parity — darker burgundy, measured room, and expandable submenus */
+/* Footer matched against the approved production footer: desktop static,
+   mobile-only accordions, compact type/spacing, original burgundy color. */
 .dd-footer {
-  background: #4e091b;
-  padding-top: 43px;
-  padding-bottom: 19px;
+  background: #5D0C1D;
+  padding-top: 31px;
+  padding-bottom: 12px;
 }
+.dd-footer-inner { max-width: 1390px; }
 .dd-footer-top {
-  min-height: 262px;
-  padding-bottom: 25px;
+  min-height: 0;
+  padding-bottom: 20px;
+  column-gap: clamp(20px, 4vw, 75px);
 }
-.dd-footer-group h2 {
-  margin: 0 0 14px;
-}
-.dd-footer-section-toggle {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 0;
-  width: 100%;
+.dd-footer-brand img { width: 157px; height: 87px; }
+.dd-footer-brand p { font-size: 12px; line-height: 1.75; margin-top: 3px; }
+.dd-footer-group .dd-footer-group-heading {
+  margin: 0 0 9px;
   color: #fff;
-  font: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
-  text-align: start;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
+  line-height: 1.6;
 }
-.dd-footer-chevron {
-  flex: 0 0 auto;
-  transition: transform .2s ease;
-  opacity: .9;
-}
-.dd-footer-chevron.is-open { transform: rotate(180deg); }
-.dd-footer-submenu[hidden] { display: none; }
+.dd-footer-desktop-heading { display: block; }
+.dd-footer-mobile-toggle { display: none; }
 .dd-footer-submenu { display: block; }
-.dd-footer-group .dd-footer-submenu a { font-size: 15px; line-height: 1.7; margin-block: 9px; }
-.dd-footer-strip { min-height: 74px; }
+.dd-footer-submenu[hidden] { display: none; }
+.dd-footer-group .dd-footer-submenu a {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 6px 0;
+  color: #f5e2e6;
+}
+.dd-footer-strip {
+  min-height: 0;
+  padding: 10px 0;
+  gap: 14px;
+}
+.dd-footer-strip > strong { font-size: 13px; }
+.dd-social-list, .dd-pay-list { gap: 8px; }
+.dd-social-icon { width: 36px; height: 36px; }
+.dd-footer-payments { min-height: 0; }
+.dd-pay-brand { width: 73px; height: 43px; border-radius: 9px; }
+.dd-footer-bottom { min-height: 36px; padding-top: 8px; font-size: 11px; }
+.dd-back-to-top { width: 56px; height: 56px; background: #693641; }
 @media (max-width: 980px) {
   .dd-footer-top { min-height: 0; }
 }
 @media (max-width: 760px) {
-  .dd-footer { padding: 35px 20px 17px; }
-  .dd-footer-top { display: flex; flex-direction: column; gap: 0; padding-bottom: 12px; }
-  .dd-footer-brand { padding-bottom: 18px; max-width: 100%; }
-  .dd-footer-group { width: 100%; border-top: 1px solid rgba(255,255,255,.22); }
-  .dd-footer-group h2 { margin: 0; }
-  .dd-footer-section-toggle { min-height: 53px; font-size: 15px; }
-  .dd-footer-submenu { padding: 1px 6px 14px; }
-  .dd-footer-group .dd-footer-submenu a { padding: 4px 0; margin: 4px 0; font-size: 14px; }
-  .dd-footer-payments { padding-top: 18px; padding-bottom: 18px; }
-  .dd-footer-socials { padding-top: 16px; padding-bottom: 16px; }
+  .dd-footer { padding: 26px 18px 11px; }
+  .dd-footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 8px;
+  }
+  .dd-footer-brand { padding-bottom: 12px; max-width: 100%; }
+  .dd-footer-brand img { width: 119px; height: 68px; }
+  .dd-footer-brand p { font-size: 12px; max-width: 100%; }
+  .dd-footer-group {
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,.2);
+  }
+  .dd-footer-group .dd-footer-group-heading { margin: 0; }
+  .dd-footer-desktop-heading { display: none; }
+  .dd-footer-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 46px;
+    padding: 8px 2px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: start;
+    color: #fff;
+    cursor: pointer;
+  }
+  .dd-footer-chevron {
+    flex: 0 0 auto;
+    transition: transform .2s ease;
+    opacity: .9;
+  }
+  .dd-footer-chevron.is-open { transform: rotate(180deg); }
+  .dd-footer-submenu { padding: 2px 5px 10px; }
+  .dd-footer-group .dd-footer-submenu a {
+    font-size: 12px;
+    padding: 5px 0;
+    margin: 0;
+  }
+  .dd-footer-socials, .dd-footer-payments { padding-top: 11px; padding-bottom: 11px; }
+  .dd-footer-strip { flex-wrap: wrap; gap: 10px; }
+  .dd-footer-strip > strong { font-size: 12px; }
+  .dd-social-icon { width: 35px; height: 35px; }
+  .dd-pay-brand { width: 62px; height: 40px; }
+  .dd-footer-bottom { font-size: 11px; flex-wrap: wrap; }
 }

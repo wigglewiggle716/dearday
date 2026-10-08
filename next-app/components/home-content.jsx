@@ -38,12 +38,6 @@ const copy = {
     curatedNote:"اختيارات من أقسام Dear Day؛ عرض المنتجات الحية وإضافتها للسلة ضمن مرحلة ربط الكتالوج.",
     viewAll:"عرض كل",
     previewNote:"معاينة للمنتجات الموجودة بواجهة الموقع القديم؛ المنتجات الحية والسلة لم يتم نقلهما بعد.",
-    picks:"هدايا وتجارب مختارة",
-    featured:[
-      ["باقة ورد أنيقة","لفتة جميلة ليوم مميز","٩٥٠ جنيه"],
-      ["عشاء خاص على السطح","تجربة لشخصين","٢٬٤٠٠ جنيه"],
-      ["بوكس شوكولاته","تشكيلة حلوة للمشاركة","٦٨٠ جنيه"]
-    ],
     partners:"شركاء بيكمّلوا يومك",
     partnerInfo:"براندات، محلات وأماكن من الفئات الموجودة حاليًا على Dear Day — وكل ما الشبكة تكبر، الاختيارات قدامك بتكبر معاها.",
     join:"انضم كشريك",
@@ -79,12 +73,6 @@ const copy = {
     curatedNote:"Selections from Dear Day categories; live products and cart integration are coming in the catalog migration.",
     viewAll:"View all",
     previewNote:"Preview of products from the current site. Live catalog and cart have not been migrated yet.",
-    picks:"Selected gifts and experiences",
-    featured:[
-      ["Elegant flower bouquet","A thoughtful touch","EGP 950"],
-      ["Private rooftop dinner","An experience for two","EGP 2,400"],
-      ["Chocolate gift box","A sweet selection to share","EGP 680"]
-    ],
     partners:"Partners who complete your day",
     partnerInfo:"Brands, shops and places across Dear Day's current categories. As the network grows, your choices grow with it.",
     join:"Become a partner",
@@ -100,7 +88,6 @@ const occasions = [
 ];
 const categoryIds=["gifts","cake","flowers","venues"];
 const categoryImages=["occasion-gift.jpg","birthday-cake.jpg","flowers-bouquet.jpg","occasion-venue.jpg"];
-const sourceFeaturedImages=["gift-flowers.png","experience-dinner.png","gift-chocolate.png"];
 const partnerNames=[
   ["The Gift Studio","Gifts"],["Luna Silver","Jewelry"],["Maison DD","Gifts"],["Roses & More","Flowers"],
   ["Bloom & Co.","Flowers"],["Velvet Bakery","Cakes"],["Little Whisk","Cakes"],["Bake & Bloom","Cakes"],
@@ -204,18 +191,6 @@ function Curated({locale,t}) {
   </section>;
 }
 
-function Featured({locale,t}) {
-  return <section className="dd-home-container dd-home-featured">
-    <h2>{t.picks}</h2>
-    <div className="dd-home-featured-grid">
-      {t.featured.map(([name,caption,price],i)=><Link href={pathFor(i===1?"venues":i===2?"cake":"flowers",locale)} className="dd-home-featured-card" key={name}>
-        <img src={homeMedia+sourceFeaturedImages[i]} alt={name} loading="lazy"/>
-        <div><strong>{name}</strong><small>{caption}</small><b>{price}</b></div>
-      </Link>)}
-    </div>
-  </section>;
-}
-
 function Partners({locale,t}) {
   return <section className="dd-home-partners" id="partners">
     <div className="dd-home-container">
@@ -254,7 +229,6 @@ export default function HomeContent({locale}) {
     <Planner locale={locale} t={t}/>
     <DirectCategories locale={locale} t={t}/>
     <Curated locale={locale} t={t}/>
-    <Featured locale={locale} t={t}/>
     <Partners locale={locale} t={t}/>
   </main>;
 }
