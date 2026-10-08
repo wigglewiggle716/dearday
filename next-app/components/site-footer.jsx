@@ -55,7 +55,7 @@ function BackToTop({ label }) {
   useEffect(() => {
     const check = () => {
       const available = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      const threshold = Math.min(400, Math.max(140, available * .35));
+      const threshold = available * .5;
       setVisible(available > 100 && window.scrollY >= threshold);
     };
     check();

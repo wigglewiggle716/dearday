@@ -133,14 +133,32 @@ function Planner({ locale, t }) {
         </button>)}
       </div>
       <form className="dd-home-filters" onSubmit={submit}>
-        <label>{t.area}<select value={area} onChange={e=>setArea(e.target.value)} required>
-          <option value="">{t.chooseArea}</option><option value="القاهرة">{t.cairo}</option><option value="الجيزة">{t.giza}</option>
-        </select></label>
+        <label className="dd-home-branded-select-field">{t.area}
+          <span className="dd-home-branded-select-control">
+            <select value={area} onChange={e=>setArea(e.target.value)} required>
+              <option value="">{t.chooseArea}</option><option value="القاهرة">{t.cairo}</option><option value="الجيزة">{t.giza}</option>
+            </select>
+            <span className="dd-home-branded-select-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 21s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/>
+              </svg><span>⌄</span>
+            </span>
+          </span>
+        </label>
         <OccasionDatePicker locale={locale} value={date} onChange={setDate} label={t.date} placeholder={t.chooseDate}/>
-        <label>{t.budget}<select value={budget} onChange={e=>setBudget(e.target.value)} required>
-          <option value="">{t.chooseBudget}</option>
-          {t.budgets.map(([k,v])=><option key={k} value={k}>{v}</option>)}
-        </select></label>
+        <label className="dd-home-branded-select-field">{t.budget}
+          <span className="dd-home-branded-select-control">
+            <select value={budget} onChange={e=>setBudget(e.target.value)} required>
+              <option value="">{t.chooseBudget}</option>
+              {t.budgets.map(([k,v])=><option key={k} value={k}>{v}</option>)}
+            </select>
+            <span className="dd-home-branded-select-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 7.5h18M3 12h18M3 16.5h12"/><path d="M17.5 14.5v5m-2.5-2.5h5"/>
+              </svg><span>⌄</span>
+            </span>
+          </span>
+        </label>
         <button className="dd-home-submit" type="submit" disabled={!ready}>{t.browse}</button>
       </form>
     </section>

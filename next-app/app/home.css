@@ -328,3 +328,38 @@ html[lang=en] .dd-home-date-calendar { font-family: Arial,Helvetica,sans-serif; 
   }
   .dd-venue-preview-meta { font-size:10px; margin-bottom:8px; }
 }
+
+/* Planner: area and budget use the same visual field system as the date picker.
+   Keep native select keyboard/touch interaction and option menus intact. */
+.dd-home-filters .dd-home-branded-select-field {
+  display:block; min-width:0; font-size:14px; font-weight:800; color:#6B3540;
+}
+.dd-home-branded-select-control {
+  position:relative; display:block; width:100%; height:53px; margin-top:9px;
+}
+.dd-home-filters .dd-home-branded-select-control select {
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  display:block; box-sizing:border-box; width:100%; height:53px; min-width:0;
+  margin:0; padding:0 14px; padding-inline-end:55px;
+  border:1px solid #e1d2d0; border-radius:12px;
+  background:#fffaf7; color:#6B3540; font:inherit; font-size:14px;
+  font-weight:600; text-align:start; cursor:pointer;
+}
+.dd-home-filters .dd-home-branded-select-control select:hover { border-color:#A8583D; }
+.dd-home-filters .dd-home-branded-select-control select:focus-visible {
+  outline:3px solid #A8583D; outline-offset:2px;
+}
+.dd-home-branded-select-icon {
+  position:absolute; inset-inline-end:10px; top:50%; transform:translateY(-50%);
+  width:34px; height:34px; border-radius:10px; display:inline-flex;
+  align-items:center; justify-content:center; gap:3px;
+  background:rgba(168,88,61,.09); color:#A8583D; font-size:12px;
+  pointer-events:none;
+}
+@media(max-width:640px) {
+  .dd-home-filters .dd-home-branded-select-field { font-size:12px; }
+  .dd-home-filters .dd-home-branded-select-control select {
+    font-size:12px; padding-inline-start:8px; padding-inline-end:45px;
+  }
+  .dd-home-branded-select-icon { width:30px; height:30px; inset-inline-end:5px; }
+}
