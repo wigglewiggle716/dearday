@@ -440,3 +440,29 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
   .dd-planning-step { flex:0 0 115px; scroll-snap-align:center; font-size:10px; }
   .dd-planning-step:not(:last-child)::after {width:60%;}
 }
+
+
+/* Temporary navigation through steps not yet completely migrated. */
+.dd-planning-continue {
+  margin:28px 0 6px; padding:16px 20px; border-radius:17px;
+  background:#fffaf6; border:1px solid #e9ddd8;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+}
+.dd-planning-continue span {font-size:13px;color:#6B3540;font-weight:700;}
+.dd-planning-continue button,.dd-planning-pending button {
+  border:0; background:#6B3540; color:#fff; padding:12px 20px; min-height:42px;
+  border-radius:999px; font-family:inherit;font-weight:700;font-size:13px;line-height:1.3; cursor:pointer;
+}
+.dd-planning-pending {
+  margin:22px 0 65px; padding:28px 30px; max-width:850px;
+  border-radius:22px; border:1px solid #e9ddd8; background:#fffdfb;
+  color:#6B3540;
+}
+.dd-planning-pending h2 {font-size:clamp(20px,2.6vw,27px);margin:0 0 12px;}
+.dd-planning-pending p {font-size:14px;line-height:1.9;color:#756a68;margin:0 0 21px;max-width:680px;}
+@media(max-width:680px) {
+  .dd-planning-continue {flex-direction:column;align-items:stretch;}
+  .dd-planning-continue span {text-align:center;}
+  .dd-planning-continue button {width:100%;}
+  .dd-planning-pending {padding:22px 18px;}
+}
