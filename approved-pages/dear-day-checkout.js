@@ -7,7 +7,7 @@ function request(){
  const plan=read('dearDayPlan',{}),d=plan.eventDetails||{},cart=window.DDCart?.read()||read('dearDayCart',[]);
  const items=cart.map(x=>({listing_id:x.listing_id||x.listingId||x.id,quantity:x.type==='venue'?1:Number(x.quantity||1)}));
  if(!items.length||items.some(x=>!/^[-0-9a-f]{36}$/i.test(x.listing_id)||!Number.isInteger(x.quantity)||x.quantity<1))throw new Error('INVALID_CART');
- const event={date:d.eventDate||plan.date||'',time:d.eventTime||'',occasion:plan.occasionKey||plan.occasion||'',address:d.address||value('billingAddress'),phone:value('payerPhone'),recipient:d.celebrant||value('payerName'),area:plan.area||value('billingCity'),note:d.notes||d.specialRequests||''};
+ const event={name:value('payerName'),email:value('payerEmail'),date:d.eventDate||plan.date||'',time:d.eventTime||'',occasion:plan.occasionKey||plan.occasion||'',address:d.address||value('billingAddress'),phone:value('payerPhone'),recipient:d.celebrant||value('payerName'),area:plan.area||value('billingCity'),note:d.notes||d.specialRequests||''};
  if(!event.date||!event.time||!event.address||!event.phone)throw new Error('MISSING_DELIVERY_DETAILS');
  return {p_items:items,p_event:event};
 }
@@ -15,14 +15,14 @@ async function client(){
  if(!clientPromise)clientPromise=(async()=>{
   if(!window.DEAR_DAY_SUPABASE)await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='/approved-pages/dear-day-supabase-config.js';s.onload=resolve;s.onerror=reject;document.head.append(s)});
   const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm'),cfg=window.DEAR_DAY_SUPABASE;
-  return createClient(cfg.url,cfg.publishableKey,{auth:{storage:localStorage.getItem('ddAuthRemember')==='0'?sessionStorage:localStorage,persistSession:true,autoRefreshToken:true}});
+  return createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
  })().catch(e=>{clientPromise=null;throw e});
  return clientPromise;
 }
 function message(msg){document.getElementById('ddCheckoutStatus').textContent=msg}
 function friendly(error){
  const m=String(error?.message||'');
- if(m.includes('CUSTOMER_LOGIN_REQUIRED'))return text('سجّل الدخول بحساب عميل لمراجعة السعر وإنشاء الطلب.','Sign in with a customer account to review the price and create an order.');
+ if(m.includes('MISSING_CONTACT_DETAILS'))return text('أكمل الاسم والبريد الإلكتروني بشكل صحيح.','Complete your name and a valid email address.');
  if(m.includes('INVALID_CART'))return text('السلة تحتوي على اختيار قديم أو غير صالح. أعد اختياره من الكتالوج الحالي.','Your cart contains an outdated or invalid selection. Select it again from the current catalog.');
  if(/MISSING_DELIVERY|INVALID_EVENT/.test(m))return text('أكمل تاريخ ووقت المناسبة وعنوان التوصيل ورقم الهاتف أولًا.','Complete the event date, time, delivery address and phone number first.');
  if(m.includes('PRICE_CHANGED'))return text('السعر اتغيّر. راجع السعر المحدّث قبل المتابعة.','The price changed. Review the updated quote before continuing.');
@@ -38,17 +38,18 @@ function showQuote(q){
  for(const line of q.items){const row=document.createElement('div');row.className='mini-item';row.style.gridTemplateColumns='1fr auto';const name=document.createElement('span');name.textContent=(EN?line.name_en:line.name)+' × '+line.quantity;const price=document.createElement('strong');price.textContent=format(line.line_total);row.append(name,price);host.append(row)}
  message(text('ده السعر الحالي المعتمد. الطلب لسه ما اتعملش، ومفيش دفع تم.','This is the current confirmed price. No order has been created and no payment has been made.'));
 }
-async function authenticated(){const s=await client(),{data,error}=await s.auth.getUser();if(error||!data?.user)throw new Error('CUSTOMER_LOGIN_REQUIRED');return {s,user:data.user}}
-async function quote(){const args=request(),{s,user}=await authenticated();const {data,error}=await s.rpc('prepare_checkout',args);if(error)throw error;reviewed={args,signature:JSON.stringify(args),user:user.id,quote:data};showQuote(data);return reviewed}
+async function quote(){const args=request(),s=await client();const {data,error}=await s.rpc('quote_guest_checkout',args);if(error)throw error;reviewed={args,signature:JSON.stringify(args),quote:data};showQuote(data);return reviewed}
 async function prepare(){
  if(busy)return null;busy=true;
  try{
-  const args=request(),{s,user}=await authenticated();
-  const key='ddCheckoutRequest:'+user.id,signature=JSON.stringify(args);let saved=read(key,null);
+  const args=request();
+  if(!args.p_event.name||!/^\S+@\S+\.\S+$/.test(args.p_event.email))throw new Error('MISSING_CONTACT_DETAILS');
+  const key='ddGuestCheckoutRequest',signature=JSON.stringify(args);let saved=read(key,null);
   if(saved?.signature!==signature||saved.expires_at&&Date.parse(saved.expires_at)<=Date.now())saved=null;
-  if(!saved&&(!reviewed||reviewed.user!==user.id||reviewed.signature!==signature)){await quote();return null}
+  if(!saved&&(!reviewed||reviewed.signature!==signature)){await quote();return null}
   if(!saved){saved={signature,key:crypto.randomUUID(),quote_token:reviewed.quote.quote_token};localStorage.setItem(key,JSON.stringify(saved))}
-  const {data,error}=await s.rpc('prepare_checkout',{...args,p_key:saved.key,p_quote_token:saved.quote_token});
+  const response=await fetch('/api/checkout/guest',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({...args,p_key:saved.key,p_quote_token:saved.quote_token})});
+  const body=await response.json(),data=body.data,error=response.ok?null:{message:body.error||'CHECKOUT_UNAVAILABLE'};
   if(error){if(String(error.message).includes('PRICE_CHANGED')){localStorage.removeItem(key);reviewed=null;await quote()}if(String(error.message).includes('ORDER_EXPIRED')){localStorage.removeItem(key);reviewed=null}throw error}
   saved.order_id=data.order_id;saved.expires_at=data.expires_at;localStorage.setItem(key,JSON.stringify(saved));
   message(text('تم إنشاء الطلب بحجز مؤقت. لم يتم الدفع أو تأكيد التنفيذ بعد.','Order created with a temporary reservation. Payment and fulfillment are not yet confirmed.'));return data;

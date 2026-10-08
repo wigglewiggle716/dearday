@@ -5,10 +5,10 @@ async function run(lang){
  const lid='11111111-1111-4111-8111-111111111111';
  storage.set('dearDayCart',JSON.stringify([{id:lid,quantity:2,price:1,name:'Untrusted'}]));
  storage.set('dearDayPlan',JSON.stringify({eventDetails:{eventDate:'2026-11-01',eventTime:'12:00',address:'Fixture'}}));
- el('payerPhone').value='000';
+ el('payerPhone').value='000';el('payerName').value='Guest';el('payerEmail').value='test@example.invalid';
  const quote={items:[{name:'Approved',name_en:'Approved',unit_price:125,quantity:2,line_total:250}],subtotal:250,grand_total:250,quote_token:'server-quote'};
- const s={auth:{getUser:async()=>({data:{user:{id:'customer'}}})},rpc:async(name,args)=>{calls.push(args);if(unavailable)return {error:{message:'INSUFFICIENT_STOCK'}};if(args.p_key){creations++;return {data:{...quote,order_id:'order',expires_at:'2099-01-01'}}}return {data:quote}}};
- const context={document:{documentElement:{lang},readyState:'complete',getElementById:el,createElement:()=>({style:{},append(){},setAttribute(){}})},window:{DEAR_DAY_SUPABASE:{url:'fixture',publishableKey:'fixture'}},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},sessionStorage:{},crypto:{randomUUID:()=> 'fixture-key'},Intl,Date,console,mockModule:{createClient:()=>s}};
+ const s={auth:{getUser:async()=>{throw new Error('Must not authenticate')}},rpc:async(name,args)=>{calls.push(args);if(unavailable)return {error:{message:'INSUFFICIENT_STOCK'}};if(args.p_key){creations++;return {data:{...quote,order_id:'order',expires_at:'2099-01-01'}}}return {data:quote}}};
+ const context={fetch:async(url,opts)=>{assert.equal(url,'/api/checkout/guest');const result=await s.rpc('mock',JSON.parse(opts.body));return {ok:!result.error,json:async()=>result.error?{error:result.error.message}:{data:result.data}}},document:{documentElement:{lang},readyState:'complete',getElementById:el,createElement:()=>({style:{},append(){},setAttribute(){}})},window:{DEAR_DAY_SUPABASE:{url:'fixture',publishableKey:'fixture'}},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},sessionStorage:{},crypto:{randomUUID:()=> 'fixture-key'},Intl,Date,console,mockModule:{createClient:()=>s}};
  const source=fs.readFileSync('approved-pages/dear-day-checkout.js','utf8').replace("import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm')",'Promise.resolve(mockModule)');
  vm.runInNewContext(source,context);
  assert.equal(await context.window.DDCheckout.prepare(),null);
@@ -18,7 +18,7 @@ async function run(lang){
  assert.equal((await context.window.DDCheckout.prepare()).order_id,'order');
  assert.equal((await context.window.DDCheckout.prepare()).order_id,'order');
  assert.equal(calls.at(-1).p_key,calls.at(-2).p_key,'retry keeps key');
- unavailable=true;storage.delete('ddCheckoutRequest:customer');
+ unavailable=true;storage.delete('ddGuestCheckoutRequest');
  assert.equal(await context.window.DDCheckout.prepare(),null);
  assert.ok(el('ddCheckoutStatus').textContent.length>0);
  console.log('PASS checkout',lang);

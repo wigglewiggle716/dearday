@@ -69,11 +69,12 @@
     `;document.head.appendChild(s);
   }
   function menuItems(){
-    return isEn()?[
+    const items=isEn()?[
       ['Home','/en'],['Occasions','/occasions-en'],['How It Works','/how-it-works-en'],['For Partners','/partners-en'],['Log In','/auth-en#login'],['Create Account','/auth-en#signup']
     ]:[
       ['الرئيسية','/'],['المناسبات','/occasions'],['كيف نعمل','/how-it-works'],['للشركاء','/partners'],['تسجيل الدخول','/auth#login'],['إنشاء حساب','/auth#signup']
     ];
+    return document.documentElement.hasAttribute('data-dd-checkout')?items.filter(x=>!x[1].startsWith('/auth')):items;
   }
   function getActions(header){return header.querySelector('.dd-global-actions,.auth-actions,.header-actions,.actions')}
   function patchBrand(header){

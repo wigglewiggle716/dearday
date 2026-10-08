@@ -65,3 +65,25 @@ Full end-to-end payment/cancellation acceptance remains in OPS-04/14.
 
 Rollback: use a reviewed forward migration to revise the two triggers if needed;
 do not restore financial status options without restoring an equivalent server guard.
+
+## Guest checkout — 2026-10-08
+The owner explicitly requires checkout without accounts or account prompts. Details,
+review and payment (AR/EN, desktop/mobile) omit auth links. The checkout client never
+reads or creates an auth session. `quote_guest_checkout` accepts only items and event;
+its fixed null key makes it incapable of creating orders. The service-only guest
+creation RPC preserves catalog pricing, locks, stock checks, policy snapshots and
+partner commission. Guest orders and holds have null customer_id; contact name/email
+is retained in the delivery snapshot. No auth/profile row is created.
+
+The same-origin guest API uses an HttpOnly Secure signed cookie, request idempotency,
+a private 20-attempt/15-minute IP bucket and three active orders per guest. Direct
+anonymous/authenticated creation RPC access is denied, and ordinary visitors cannot
+read guest orders. The API requires the existing server SUPABASE_URL and
+SUPABASE_SERVICE_ROLE_KEY; environment availability has NOT been verified because
+Vercel environment metadata access returned 403 and no CLI is installed.
+
+Database rollback tests cover anonymous quote, denied direct creation, service-only
+creation, null owner, retained email, retry, hidden order and held-stock rejection.
+AR/EN VM tests forbid auth calls and cover quote/create transport and idempotency.
+Payment remains disabled. Secure emailed order tracking, email delivery, payment
+verification and end-to-end guest creation in production remain OPS-04/10 work.

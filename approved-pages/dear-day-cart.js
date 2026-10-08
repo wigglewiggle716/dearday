@@ -28,7 +28,7 @@
     if(!ddMobileNavMedia.matches)return;
     if(document.querySelector('script[data-dd-native-mobile-nav]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261006-mobileExplore1';
+    s.src='/approved-pages/dear-day-mobile-nav.js?v=20261008-guest';
     s.defer=true;
     s.setAttribute('data-dd-native-mobile-nav','');
     (document.head||document.documentElement).appendChild(s);
