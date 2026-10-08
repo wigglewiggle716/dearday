@@ -1,0 +1,357 @@
+/* Payment preview — mirrors the current production payment.html/payment-en.html
+   source commit 5d97cc458910279646ec10a18ffecaca81a6854d.
+   Scoped selectors protect the approved shared header, footer and floating cart.
+   Payment gateway and order creation intentionally NOT connected. */
+.dd-payment-page {
+ --dd-p-wine:#6B3540;--dd-p-terra:#A8583D;--dd-p-paper:#fffdfb;
+ --dd-p-ink:#2f2928;--dd-p-muted:#786b68;--dd-p-line:#eaded9;
+ --dd-p-cream:#faf3ea;--dd-p-shadow:0 18px 55px rgba(78,32,39,.09);
+ color:var(--dd-p-ink);background:linear-gradient(180deg,#fbf6f0 0%,#fffdfb 42%,#fbf5ef 100%);
+ min-height:78vh;padding:24px 0 90px;line-height:1.65;
+}
+.dd-payment-page *{box-sizing:border-box}
+.dd-payment-page button,.dd-payment-page input,.dd-payment-page select{
+ font-family:inherit
+}
+.dd-payment-wrap{width:min(1180px,calc(100% - 40px));margin-inline:auto}
+.dd-payment-steps{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;
+ margin:2px 0 28px;padding:10px 16px;background:#fff;
+ border:1px solid var(--dd-p-line);border-radius:999px;
+}
+.dd-payment-step{
+ display:flex;align-items:center;justify-content:center;gap:8px;
+ min-width:0;color:#9a8b87;font-size:12px;line-height:1.3;
+}
+.dd-payment-step-num{
+ flex:0 0 25px;width:25px;height:25px;border-radius:50%;display:grid;
+ place-items:center;border:1px solid #decfca;font-weight:800;
+}
+.dd-payment-step.is-done{color:#6f5e5b}
+.dd-payment-step.is-done .dd-payment-step-num{
+ background:#f5e9e5;border-color:#f5e9e5;color:var(--dd-p-wine);
+}
+.dd-payment-step.is-active{color:var(--dd-p-wine);font-weight:800}
+.dd-payment-step.is-active .dd-payment-step-num{
+ color:#fff;background:var(--dd-p-wine);border-color:var(--dd-p-wine);
+}
+.dd-payment-hero{
+ background:linear-gradient(120deg,#fffdfb,#f4dfd9);
+ border:1px solid var(--dd-p-line);border-radius:30px;padding:32px 36px;
+ display:flex;align-items:center;justify-content:space-between;gap:26px;
+ box-shadow:0 12px 36px rgba(82,38,44,.04);margin-bottom:28px;
+}
+.dd-payment-hero-copy{flex:1;min-width:0}
+.dd-payment-eyebrow{
+ display:inline-flex;align-items:center;padding:7px 12px;
+ border:1px solid #edd9d2;border-radius:999px;background:#fff;
+ color:var(--dd-p-wine);font-weight:800;font-size:12px;
+}
+.dd-payment-hero h1{
+ font:700 clamp(31px,3.5vw,40px)/1.2 Georgia,'Times New Roman',serif;
+ color:var(--dd-p-wine);margin:10px 0 8px;
+}
+html[lang=en] .dd-payment-hero h1{font-family:Lora,Georgia,serif}
+.dd-payment-hero p{
+ font-size:14px;line-height:1.8;margin:0;color:var(--dd-p-muted);max-width:680px;
+}
+.dd-payment-secure-chip{
+ flex:0 0 auto;display:flex;align-items:center;gap:12px;
+ padding:13px 18px;min-width:198px;background:#fff;
+ border:1px solid #ebddd8;border-radius:20px;
+}
+.dd-payment-lock{
+ flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;
+ background:#f8ebe6;border-radius:12px;font-size:21px;
+}
+.dd-payment-secure-chip strong{
+ display:block;color:var(--dd-p-wine);font-size:13px;font-weight:800;
+}
+.dd-payment-secure-chip small{
+ display:block;color:var(--dd-p-muted);font-size:10px;max-width:145px;
+ line-height:1.5;margin-top:4px;
+}
+.dd-payment-return-warning{
+ padding:13px 16px;margin-bottom:18px;border-radius:16px;
+ background:#fff7df;border:1px solid #ecd999;
+ color:#6e5b22;font-size:12px;line-height:1.7;
+}
+.dd-payment-layout{
+ display:grid;grid-template-columns:minmax(0,1fr) 355px;
+ gap:22px;align-items:start;
+}
+.dd-payment-stack{display:grid;gap:18px;min-width:0}
+.dd-payment-panel{
+ background:rgba(255,255,255,.95);border:1px solid var(--dd-p-line);
+ border-radius:24px;box-shadow:var(--dd-p-shadow);
+ min-width:0;overflow:hidden;
+}
+.dd-payment-panel-head{
+ padding:20px 22px 15px;border-bottom:1px solid #f1e8e4;
+}
+.dd-payment-panel-head h2{
+ font:700 25px/1.3 Georgia,'Times New Roman',serif;
+ color:var(--dd-p-wine);margin:0 0 7px;
+}
+html[lang=en] .dd-payment-panel-head h2{font-family:Lora,Georgia,serif}
+.dd-payment-panel-head p{
+ margin:0;font-size:12px;line-height:1.7;color:var(--dd-p-muted);
+}
+.dd-payment-form{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ padding:20px 22px 24px;gap:14px;min-width:0;
+}
+.dd-payment-field{display:grid;gap:7px;min-width:0}
+.dd-payment-field.is-full{grid-column:1/-1}
+.dd-payment-field label{
+ font-size:12px;font-weight:800;color:#544946;
+}
+.dd-payment-field input,.dd-payment-field select{
+ width:100%;height:48px;min-height:48px;
+ border:1px solid #e7dad5;border-radius:14px;
+ background:#fff;color:var(--dd-p-ink);
+ outline:none;padding-inline:13px;font-size:13px;
+ transition:border-color .18s,box-shadow .18s;
+}
+.dd-payment-field select{cursor:pointer}
+.dd-payment-field input:focus-visible,.dd-payment-field select:focus-visible{
+ outline:0;border-color:rgba(107,53,64,.48);
+ box-shadow:0 0 0 3px rgba(107,53,64,.09);
+}
+.dd-payment-field input[readonly]{
+ background:#fcf7f4;color:#6d5c58;cursor:default;
+}
+.dd-payment-same-address{
+ grid-column:1/-1;display:flex;align-items:center;gap:8px;
+ font-size:12px;color:var(--dd-p-muted);cursor:pointer;
+}
+.dd-payment-same-address input{
+ flex:0 0 16px;width:16px;height:16px;accent-color:var(--dd-p-wine);
+ cursor:pointer;
+}
+.dd-payment-storage-note{
+ font-size:11px;line-height:1.65;margin:0 22px 22px;color:#8a7b77;
+}
+.dd-payment-methods{padding:18px 22px 12px;display:grid;gap:12px}
+.dd-payment-method{
+ position:relative;display:grid;grid-template-columns:54px minmax(0,1fr) auto;
+ gap:13px;align-items:center;
+ border:1px solid var(--dd-p-line);border-radius:17px;
+ padding:15px;background:#fff;cursor:pointer;
+ transition:border-color .18s,background .18s;
+}
+.dd-payment-method:hover:not(.is-selected){border-color:#d9c3bc}
+.dd-payment-method.is-selected{
+ border:2px solid var(--dd-p-wine);padding:14px;background:#fff8f6;
+}
+.dd-payment-method input{
+ position:absolute;width:1px;height:1px;opacity:0;
+ pointer-events:none;
+}
+.dd-payment-method:focus-within{outline:2px solid #A8583D;outline-offset:2px}
+.dd-payment-method-icon{
+ width:54px;height:46px;flex:none;display:grid;place-items:center;
+ border-radius:14px;background:#fff2ee;color:var(--dd-p-wine);
+}
+.dd-payment-method-icon svg{width:36px;height:36px;display:block}
+.dd-payment-card-icons{display:grid;gap:2px;place-items:center}
+.dd-payment-card-icons>strong{
+ font:italic 900 12px/1 Arial,sans-serif;
+ letter-spacing:-.8px;color:#1A1F71;
+}
+.dd-payment-mastercard{display:flex;align-items:center;justify-content:center;height:17px;width:31px}
+.dd-payment-mastercard i{
+ display:block;width:18px;height:18px;border-radius:50%;
+ background:#EB001B;opacity:.96;
+}
+.dd-payment-mastercard i+i{
+ margin-inline-start:-7px;background:#F79E1B;
+ mix-blend-mode:multiply;
+}
+.dd-payment-method-text{min-width:0}
+.dd-payment-method-text>strong{
+ display:block;font-size:14px;color:#3e3332;line-height:1.5;
+}
+.dd-payment-method-text small{
+ display:block;font-size:11px;color:#81716e;line-height:1.55;margin-top:3px;
+}
+.dd-payment-method-note{
+ display:block;color:var(--dd-p-wine);font-size:10px;margin-top:6px;
+}
+.dd-payment-method-check{
+ border:1px solid #d9c5bf;border-radius:50%;color:transparent;
+ flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;
+ font-size:12px;
+}
+.dd-payment-method.is-selected .dd-payment-method-check{
+ color:#fff;background:var(--dd-p-wine);border-color:var(--dd-p-wine);
+}
+.dd-payment-method-status{
+ display:block;margin:0 22px 17px;border:1px solid #ecd999;
+ border-radius:14px;padding:12px 14px;background:#fff7df;
+ color:#6e5b22;font-size:12px;font-weight:700;line-height:1.65;
+}
+.dd-payment-security{
+ display:flex;align-items:flex-start;gap:10px;
+ margin:0 22px 18px;padding:13px 14px;
+ border:1px solid var(--dd-p-line);border-radius:16px;
+ background:#fffaf8;color:#685a56;
+}
+.dd-payment-shield{
+ flex:0 0 28px;width:28px;height:28px;
+ display:grid;place-items:center;border-radius:50%;background:#f5e6e1;
+ color:var(--dd-p-wine);font-size:20px;
+}
+.dd-payment-security>div{min-width:0}
+.dd-payment-security strong{
+ display:block;color:var(--dd-p-wine);font-size:11px;
+}
+.dd-payment-security p{
+ margin:3px 0 0;font-size:11px;line-height:1.7;
+}
+.dd-payment-gateway-note{
+ border:1px solid #eedfd8;border-radius:16px;
+ background:#faf4ef;color:#685a56;line-height:1.75;
+ font-size:11px;margin:0 22px 22px;padding:13px 14px;
+}
+.dd-payment-summary{
+ position:sticky;top:108px;align-self:start;padding:22px;
+}
+.dd-payment-summary h2{
+ font:700 24px/1.3 Georgia,'Times New Roman',serif;
+ color:var(--dd-p-wine);margin:0 0 16px;
+}
+html[lang=en] .dd-payment-summary h2{font-family:Lora,Georgia,serif}
+.dd-payment-event-box{
+ border:1px solid #efe3de;border-radius:16px;
+ padding:13px;background:#fffaf8;margin-bottom:14px;
+ display:grid;gap:4px;
+}
+.dd-payment-event-box small{
+ display:block;color:var(--dd-p-muted);font-size:10px;
+}
+.dd-payment-event-box strong{
+ display:block;margin:2px 0 4px;font-size:13px;line-height:1.5;
+ overflow-wrap:anywhere;
+}
+.dd-payment-venue-note{
+ color:#a56153;font-size:10px;line-height:1.65;
+}
+.dd-payment-mini-items{
+ display:grid;gap:9px;margin:14px 0;
+}
+.dd-payment-mini-item{
+ display:grid;grid-template-columns:42px minmax(0,1fr) auto;
+ gap:9px;align-items:center;
+}
+.dd-payment-mini-thumb{
+ width:42px;height:42px;display:grid;place-items:center;
+ border-radius:11px;background:#f7e6e1;color:var(--dd-p-wine);
+ font-size:18px;overflow:hidden;
+}
+.dd-payment-mini-thumb img{
+ width:100%;height:100%;display:block;object-fit:cover;
+}
+.dd-payment-mini-copy{min-width:0}
+.dd-payment-mini-copy b{
+ display:block;font-size:11px;font-weight:800;
+ overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+.dd-payment-mini-copy small{
+ display:block;font-size:10px;color:var(--dd-p-muted);
+ margin-top:3px;
+}
+.dd-payment-mini-copy small.dd-payment-preview-note{
+ color:#a6634a;white-space:normal;line-height:1.4;
+}
+.dd-payment-mini-qty{
+ font-size:11px;color:#74635e;white-space:nowrap;
+}
+.dd-payment-no-items{
+ margin:0;padding:8px 0;font-size:12px;color:var(--dd-p-muted);
+}
+.dd-payment-sum-row{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:8px 0;color:var(--dd-p-muted);font-size:14px;
+}
+.dd-payment-sum-row b{
+ color:var(--dd-p-ink);font-size:13px;white-space:nowrap;
+}
+.dd-payment-sum-row.is-total{
+ border-top:1px solid var(--dd-p-line);margin-top:8px;padding-top:16px;
+ font-size:19px;font-weight:800;color:var(--dd-p-ink);
+}
+.dd-payment-sum-row.is-total b{
+ color:var(--dd-p-wine);font-size:19px;
+}
+.dd-payment-estimated{
+ color:#975948;background:#fff7f1;border-radius:10px;
+ padding:8px 10px;font-size:11px;line-height:1.6;
+ margin:9px 0;
+}
+.dd-payment-primary,.dd-payment-secondary{
+ display:block;width:100%;min-height:44px;border-radius:999px;
+ padding:12px 16px;font-size:13px;font-weight:800;margin-top:12px;
+}
+.dd-payment-primary{
+ border:0;background:var(--dd-p-wine);color:#fff;
+ cursor:pointer;
+}
+.dd-payment-primary:disabled{
+ cursor:not-allowed;opacity:.5;
+}
+.dd-payment-secondary{
+ border:1px solid var(--dd-p-wine);
+ background:#fff;color:var(--dd-p-wine);cursor:pointer;
+}
+.dd-payment-secondary:hover{background:#fff4ef}
+.dd-payment-unavailable{
+ margin-top:14px;border-radius:14px;
+ border:1px solid #ecd999;background:#fff7df;color:#6e5b22;
+ padding:12px 13px;line-height:1.65;font-size:12px;
+}
+.dd-payment-paymob-ready{
+ display:flex;gap:8px;align-items:flex-start;
+ color:var(--dd-p-muted);font-size:10px;line-height:1.65;margin-top:12px;
+}
+.dd-payment-paymob-ready>span:first-child{color:#1f7a55;font-weight:900}
+@media(max-width:980px){
+ .dd-payment-layout{grid-template-columns:minmax(0,1fr)}
+ .dd-payment-summary{position:static}
+}
+@media(max-width:720px){
+ .dd-payment-page{padding:16px 0 55px}
+ .dd-payment-wrap{width:calc(100% - 24px)}
+ .dd-payment-steps{
+   border-radius:20px;padding:10px 9px;
+   grid-template-columns:repeat(2,minmax(0,1fr));row-gap:13px;
+ }
+ .dd-payment-step{justify-content:flex-start;font-size:11px;gap:6px}
+ .dd-payment-step-num{flex-basis:23px;width:23px;height:23px}
+ .dd-payment-hero{padding:24px 20px;border-radius:24px;flex-direction:column;align-items:flex-start;gap:16px}
+ .dd-payment-hero h1{font-size:31px}
+ .dd-payment-hero p{font-size:13px}
+ .dd-payment-secure-chip{width:100%;min-width:0}
+ .dd-payment-secure-chip small{max-width:none}
+ .dd-payment-layout{gap:16px}
+ .dd-payment-panel-head{padding:18px}
+ .dd-payment-panel-head h2{font-size:22px}
+ .dd-payment-form{grid-template-columns:minmax(0,1fr);padding:18px}
+ .dd-payment-field.is-full,.dd-payment-same-address{grid-column:1}
+ .dd-payment-methods{padding:16px 18px 12px}
+ .dd-payment-method{gap:11px;grid-template-columns:48px minmax(0,1fr) auto;padding:12px}
+ .dd-payment-method.is-selected{padding:11px}
+ .dd-payment-method-icon{width:48px;height:46px}
+ .dd-payment-summary{padding:18px}
+ .dd-payment-method-status,.dd-payment-security,.dd-payment-gateway-note{
+   margin-inline:18px;
+ }
+}
+@media(max-width:390px){
+ .dd-payment-hero h1{font-size:27px}
+ .dd-payment-step{font-size:10px}
+ .dd-payment-method-text>strong{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+ .dd-payment-page *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
