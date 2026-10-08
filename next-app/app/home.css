@@ -363,3 +363,25 @@ html[lang=en] .dd-home-date-calendar { font-family: Arial,Helvetica,sans-serif; 
   }
   .dd-home-branded-select-icon { width:30px; height:30px; inset-inline-end:5px; }
 }
+
+/* Center each of the four hero benefit labels inside its own pill.
+   The decorative plus does not consume layout space or shift the label. */
+.dd-home-benefits > span {
+  position:relative;
+  justify-content:center;
+  text-align:center;
+  padding-inline:24px;
+}
+.dd-home-benefits > span > i {
+  position:absolute;
+  inset-inline-end:9px;
+  top:50%;
+  transform:translateY(-50%);
+  line-height:1;
+  font-style:normal;
+  pointer-events:none;
+}
+@media(max-width:640px) {
+  .dd-home-benefits > span { padding-inline:19px; }
+  .dd-home-benefits > span > i { inset-inline-end:6px; }
+}
