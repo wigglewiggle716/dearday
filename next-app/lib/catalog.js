@@ -58,7 +58,7 @@ export async function loadPublicCatalog() {
       desc_ar:ver.description_ar || "",desc_en:ver.description_en || "",
       vendor_ar:partner.name_ar || partner.name_en || "",vendor_en:partner.name_en || partner.name_ar || "",
       price:Number(ver.price)||0,currency:ver.currency || "EGP",
-      image,meta:ver.metadata?.subcategory || "",metadata:ver.metadata || {},
+      image,meta:ver.metadata?.subcategory || "",metadata:ver.metadata || {},publishedOrder:listings.indexOf(row),
       score:(ver.metadata?.featured?20:0)+(tags.includes("best_seller")?10:0)+(tags.includes("new")?4:0)
     });
   }

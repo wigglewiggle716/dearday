@@ -123,7 +123,7 @@ export function CartProvider({ children, locale }) {
   </CartContext.Provider>;
 }
 
-export function QuantityAction({ product, locale = "ar" }) {
+export function QuantityAction({ product, locale = "ar", addLabel }) {
   const { items, add, change } = useCart();
   if (product?.type === "venue") return null;
   const key = product.type + ":" + String(product.id);
@@ -131,7 +131,7 @@ export function QuantityAction({ product, locale = "ar" }) {
   const q = current ? quantity(current) : 0;
   const t = cartCopy(locale);
   if (!q) return <button className="dd-cart-add" type="button" onClick={() => add(product)}>
-    {locale === "ar" ? "+ أضف للسلة" : "+ Add to cart"}
+    {addLabel ?? (locale === "ar" ? "+ أضف للسلة" : "+ Add to cart")}
   </button>;
   return <div className="dd-cart-quantity" aria-label={t.cart}>
     <button type="button" aria-label={t.decrease} onClick={() => change(key,-1)}>−</button>

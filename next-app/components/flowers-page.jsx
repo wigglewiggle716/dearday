@@ -105,7 +105,7 @@ function FlowerCard({item,locale,t}){
       <p>{description}</p>
       <div className="dd-flowers-product-price">
         <strong>{money(item.price,locale)}</strong>
-        <QuantityAction product={product} locale={locale}/>
+        <QuantityAction product={product} locale={locale} addLabel={locale==="ar"?"أضف للسلة":"Add"}/>
       </div>
     </div>
   </article>;
@@ -123,7 +123,10 @@ export default function FlowersPage({locale="ar",flow=false}){
   const {rows,loading,error}=useCatalog();
   const {items:cartItems}=useCart();
   const router=useRouter();
-  const all=rows.flowers||[];
+  // Preserve the original published database listing order for hero + first six picks.
+  // CatalogProvider ranks other categories for the homepage; Flowers does not.
+  const all=useMemo(()=>[...(rows.flowers||[])].sort((a,b)=>
+    (a.publishedOrder??0)-(b.publishedOrder??0)),[rows.flowers]);
   const [filters,setFilters]=useState({search:"",price:"all",arrangement:"",flower_type:"",color:"",occasions:"",stems:"",same_day:false});
   const [sort,setSort]=useState("featured");
   const [refImage,setRefImage]=useState("");
