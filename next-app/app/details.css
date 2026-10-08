@@ -1,0 +1,242 @@
+/* Occasion Details migrated from the current production files details.html
+ * and details-en.html (live SHA 5d97cc4589).  Every rule is scoped; global
+ * Dear Day header, footer, floating cart and stepper remain unchanged. */
+.dd-details-page {
+  --dd-d-wine:#6B3540;--dd-d-cream:#fffaf7;--dd-d-muted:#81736f;
+  --dd-d-line:#eadbd7;--dd-d-ink:#2e2928;
+  min-height:80vh;background:linear-gradient(180deg,#fffaf7 0%,#fff 62%,#fff9f6 100%);
+  color:var(--dd-d-ink);padding:28px 0 24px;
+}
+.dd-details-page * {box-sizing:border-box}
+.dd-details-page button,.dd-details-page input,.dd-details-page select,.dd-details-page textarea {font-family:inherit}
+.dd-details-shell {width:min(1180px,calc(100% - 40px));margin-inline:auto}
+.dd-details-main {
+  display:grid;grid-template-columns:minmax(370px,.9fr) minmax(520px,1.1fr);
+  gap:18px;align-items:stretch;direction:rtl;
+}
+html[lang=en] .dd-details-main {
+  grid-template-columns:minmax(0,1.05fr) minmax(350px,.95fr);
+  gap:20px;direction:ltr;
+}
+.dd-details-visual {
+  min-height:690px;border-radius:28px;overflow:hidden;position:relative;
+  background:#431b1f;box-shadow:0 18px 50px rgba(74,35,40,.10);
+}
+html[lang=en] .dd-details-visual {min-height:650px}
+.dd-details-visual img {
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  object-fit:cover;filter:saturate(.85) contrast(.98)
+}
+.dd-details-visual::after {
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(33,13,13,.22),rgba(33,13,13,.12) 45%,rgba(33,13,13,.35));
+  pointer-events:none
+}
+.dd-details-visual-copy {
+  position:absolute;z-index:1;top:64px;inset-inline:52px;max-width:520px;
+  color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4)
+}
+.dd-details-visual h1 {font-size:clamp(35px,4vw,52px);line-height:1.22;margin:0 0 18px;font-weight:800}
+html[lang=en] .dd-details-visual h1 {font-family:Lora,Georgia,serif;font-size:48px;line-height:1.18}
+.dd-details-visual p {font-size:19px;line-height:1.85;margin:0;max-width:480px}
+html[lang=en] .dd-details-visual p {font-size:18px;line-height:1.75}
+.dd-details-form {
+  min-width:0;position:relative;overflow:hidden;
+  border:1px solid var(--dd-d-line);border-radius:28px;
+  background:rgba(255,255,255,.9);padding:30px;
+  box-shadow:0 14px 38px rgba(75,32,38,.05)
+}
+.dd-details-form::before {
+  content:"";position:absolute;width:310px;height:310px;border:24px solid #f6d9d3;
+  border-radius:50%;inset-inline-end:-180px;top:150px;opacity:.35;pointer-events:none
+}
+html[lang=en] .dd-details-form::before {display:none}
+.dd-details-section-head {
+  position:relative;z-index:1;display:flex;align-items:flex-start;gap:12px;
+  margin:0 0 22px
+}
+.dd-details-calendar {
+  flex:0 0 44px;width:44px;height:44px;border-radius:14px;
+  background:#f9e8e4;color:var(--dd-d-wine);display:grid;place-items:center
+}
+.dd-details-icon {
+  display:block;width:1.15em;height:1.15em;flex:none;
+  fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round
+}
+.dd-details-calendar .dd-details-icon {width:24px;height:24px}
+.dd-details-section-head h2 {
+  color:var(--dd-d-wine);font-size:25px;margin:0 0 6px;font-weight:800;
+}
+html[lang=en] .dd-details-section-head h2 {font-family:Lora,Georgia,serif}
+.dd-details-section-head p {
+  margin:0;color:var(--dd-d-muted);font-size:14px;line-height:1.6
+}
+.dd-details-fields {
+  position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px
+}
+.dd-details-field {
+  min-width:0;padding:13px;background:#fffdfc;
+  border:1px solid #eee1dd;border-radius:18px
+}
+.dd-details-field.is-full {grid-column:1/-1}
+.dd-details-field>label {
+  display:block;font-size:13px;font-weight:800;margin:0 0 8px;color:#2c2726
+}
+.dd-details-control {
+  display:flex;align-items:center;gap:10px;
+  border:1px solid #e9ddda;border-radius:13px;background:#fff;
+  padding:0 12px;min-height:48px
+}
+.dd-details-control-icon {
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;color:#8a7c78;font-size:17px
+}
+.dd-details-control input,.dd-details-control select,.dd-details-control textarea {
+  flex:1;display:block;min-width:0;width:100%;border:0;outline:none;
+  padding:12px 0;background:transparent;color:var(--dd-d-ink);
+  font-size:13px;line-height:1.5;border-radius:0
+}
+.dd-details-control select {cursor:pointer}
+.dd-details-control input[type=date],.dd-details-control input[type=time] {min-width:0}
+.dd-details-control input[type=date]::-webkit-calendar-picker-indicator,
+.dd-details-control input[type=time]::-webkit-calendar-picker-indicator {cursor:pointer;opacity:.7}
+.dd-details-control textarea {
+  resize:vertical;min-height:78px;line-height:1.65;max-height:320px;overflow-y:auto
+}
+.dd-details-control:focus-within {
+  border-color:#A8583D;box-shadow:0 0 0 2px rgba(168,88,61,.12)
+}
+.dd-details-location {position:relative;z-index:1;margin-top:22px}
+.dd-details-location>h3 {
+  display:flex;align-items:center;gap:9px;color:var(--dd-d-wine);
+  font-weight:800;font-size:19px;margin:0 0 12px
+}
+.dd-details-location-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd-details-location-card {
+  min-width:0;border:1px solid var(--dd-d-line);background:#fff;
+  border-radius:16px;padding:14px;display:flex;align-items:center;
+  gap:12px;cursor:pointer;transition:border-color .18s,background .18s
+}
+.dd-details-location-card.is-selected {
+  border:2px solid var(--dd-d-wine);background:#fff6f4;padding:13px
+}
+.dd-details-location-card input {
+  width:16px;height:16px;flex:0 0 16px;accent-color:var(--dd-d-wine);cursor:pointer
+}
+.dd-details-location-icon {
+  flex:0 0 42px;width:42px;height:42px;border-radius:50%;
+  background:#fae8e4;color:var(--dd-d-wine);display:grid;place-items:center
+}
+.dd-details-location-icon svg {font-size:20px;width:21px;height:21px}
+.dd-details-location-copy {display:block;min-width:0}
+.dd-details-location-copy strong {display:block;font-size:13px;line-height:1.45}
+.dd-details-location-copy small {
+  display:block;color:var(--dd-d-muted);font-size:11px;
+  margin-top:4px;line-height:1.4
+}
+.dd-details-address-wrap {margin-top:12px}
+.dd-details-venue-hint {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-top:12px;padding:12px 15px;
+  border:1px solid var(--dd-d-line);border-radius:14px;background:#fff8f4
+}
+.dd-details-venue-hint>div {min-width:0;display:grid;gap:4px}
+.dd-details-venue-hint strong {font-size:12px;color:var(--dd-d-wine)}
+.dd-details-venue-hint span {font-size:11px;color:var(--dd-d-muted);line-height:1.65}
+.dd-details-venue-hint button {
+  flex:none;border:1px solid var(--dd-d-wine);border-radius:999px;
+  color:var(--dd-d-wine);background:#fff;padding:9px 15px;font-size:12px;
+  font-weight:800;cursor:pointer
+}
+/* The bottom dock is sticky inside its own page wrapper. It stays at the
+   bottom of the viewport but stops before the footer, without scroll handlers
+   or layout-state changes on every pixel of scrolling. */
+.dd-details-action-dock {
+  position:sticky;bottom:16px;z-index:70;
+  margin:22px auto 16px;width:min(100%,calc(100vw - 160px));
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;gap:16px;padding:12px 16px;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(15px);
+  border:1px solid var(--dd-d-line);border-radius:22px;
+  box-shadow:0 16px 48px rgba(68,27,33,.16)
+}
+.dd-details-back,.dd-details-next {
+  min-height:50px;padding:0 21px;border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;font-weight:800;white-space:nowrap
+}
+.dd-details-back {background:#fff;color:var(--dd-d-wine);border:1px solid var(--dd-d-wine)}
+.dd-details-next {background:var(--dd-d-wine);color:#fff;border:0;min-width:223px}
+.dd-details-mini {
+  min-width:0;display:flex;align-items:center;gap:12px;
+  overflow-x:auto;scrollbar-width:thin;color:#6c5c59;font-size:12px
+}
+.dd-details-mini-item {
+  display:grid;grid-template-columns:44px minmax(70px,1fr);
+  align-items:center;gap:8px;min-width:126px;flex:none
+}
+.dd-details-mini-item>span {
+  width:44px;height:44px;border-radius:10px;background:#f9e8e4;
+  display:grid;place-items:center;overflow:hidden;color:var(--dd-d-wine);font-size:20px
+}
+.dd-details-mini-item img {width:100%;height:100%;display:block;object-fit:cover}
+.dd-details-mini-item small {
+  display:block;font-size:10px;color:#5a4e4b;
+  text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:100px
+}
+.dd-details-mini-item strong {
+  display:block;color:var(--dd-d-wine);font-size:12px;margin-top:4px
+}
+.dd-details-total {
+  padding-inline:17px;border-inline-start:1px solid var(--dd-d-line);
+  white-space:nowrap
+}
+.dd-details-total small {display:block;color:#5b504d;font-size:12px;margin-bottom:4px}
+.dd-details-total strong {display:block;font-size:17px;color:var(--dd-d-wine)}
+.dd-details-short {display:none}
+.dd-details-feedback {
+  color:#922738;background:#fff6f4;border:1px solid #e6b8c0;
+  padding:13px 17px;border-radius:14px;margin:0 0 18px;font-size:13px;line-height:1.7
+}
+@media(max-width:1080px) {
+  .dd-details-main,html[lang=en] .dd-details-main {grid-template-columns:1fr}
+  .dd-details-visual,html[lang=en] .dd-details-visual {min-height:390px}
+  .dd-details-visual h1,html[lang=en] .dd-details-visual h1 {font-size:42px}
+  .dd-details-action-dock {grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px}
+  .dd-details-mini {display:none}
+}
+@media(max-width:760px) {
+  .dd-details-page {padding-top:16px}
+  .dd-details-shell {width:calc(100% - 28px)}
+  .dd-details-visual,html[lang=en] .dd-details-visual {min-height:350px}
+  .dd-details-visual-copy {inset-inline:26px;top:40px}
+  .dd-details-visual h1,html[lang=en] .dd-details-visual h1 {font-size:34px}
+  .dd-details-visual p,html[lang=en] .dd-details-visual p {font-size:16px}
+  .dd-details-form {padding:20px}
+  .dd-details-fields,.dd-details-location-grid {grid-template-columns:1fr}
+  .dd-details-field.is-full {grid-column:auto}
+  .dd-details-action-dock {
+    bottom:14px;margin:18px auto 12px;
+    width:calc(100% - 140px);
+    max-width:calc(100vw - 168px);
+    min-width:0;display:grid;grid-template-columns:1fr 1fr;
+    gap:7px;border-radius:17px;padding:8px;
+  }
+  .dd-details-total,.dd-details-mini {display:none}
+  .dd-details-back,.dd-details-next {
+    min-width:0;min-height:38px;padding:0 5px;font-size:12px
+  }
+  .dd-details-long {display:none}
+  .dd-details-short {display:inline}
+}
+@media(max-width:440px) {
+  .dd-details-section-head h2 {font-size:22px}
+  .dd-details-section-head p {font-size:13px}
+  .dd-details-location-card {padding:12px}
+  .dd-details-location-card.is-selected {padding:11px}
+  .dd-details-location-icon {flex-basis:38px;width:38px;height:38px}
+  .dd-details-visual h1,html[lang=en] .dd-details-visual h1 {font-size:31px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .dd-details-page * {transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
