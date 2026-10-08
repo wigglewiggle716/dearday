@@ -469,3 +469,10 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
 
 /* Prototype-only cake samples are never presented as confirmed inventory. */
 .dd-cart-row-preview-label,.dd-cart-preview-label{display:block;color:#a25b47;font-size:11px;line-height:1.55;font-weight:600;}
+
+/* Cart destination is determined by explicit planning context, never by cart contents. */
+.dd-cart-page-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:20px}
+.dd-cart-page .dd-cart-page-actions .dd-cart-goto{margin:0;max-width:none;min-width:210px;padding-inline:22px}
+.dd-cart-back-to-products{min-height:46px;display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border:1px solid #6B3540;border-radius:999px;color:#6B3540;font-size:13px;font-weight:700;background:#fff;text-align:center}
+.dd-cart-back-to-products:hover{background:#fff5f1}
+@media(max-width:480px){.dd-cart-page-actions{flex-direction:column;align-items:stretch}.dd-cart-page .dd-cart-page-actions .dd-cart-goto,.dd-cart-back-to-products{width:100%;min-width:0}}

@@ -221,11 +221,11 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
                 <BillingField name={t.email} id="dd-payer-email" value={form.email} required full
                   placeholder={t.emailPlace} type="email" autoComplete="email" maxLength={254}
                   onChange={v=>update("email",v)}/>
-                <label className="dd-payment-same-address">
+                {flow&&<label className="dd-payment-same-address">
                   <input type="checkbox" checked={form.sameAddress}
                     onChange={e=>sameAddressToggle(e.target.checked)}/>
                   <span>{t.sameAddress}</span>
-                </label>
+                </label>}
                 <BillingField name={t.address} id="dd-billing-address" full required
                   placeholder={t.addressPlace} autoComplete="street-address" maxLength={350}
                   value={form.address} onChange={v=>update("address",v)}/>
@@ -263,13 +263,13 @@ export default function PaymentPage({locale="ar",flow=false,hasReturnParams=fals
           </div>
           <aside className="dd-payment-panel dd-payment-summary" aria-labelledby="dd-payment-summary">
             <h2 id="dd-payment-summary">{t.summary}</h2>
-            <div className="dd-payment-event-box">
+            {flow&&<div className="dd-payment-event-box">
               <small>{t.occasion}</small>
               <strong>{hydrated?occasion+recipient:t.noData}</strong>
               <small>{t.datePlace}</small>
               <strong>{hydrated?[occasionDate,place].filter(Boolean).join(" · "):t.noData}</strong>
               {venue&&<span className="dd-payment-venue-note">{t.venuePreview}</span>}
-            </div>
+            </div>}
             <div className="dd-payment-mini-items">
               {hydrated&&mini.length?mini.map((item,index)=><div key={item.key||index} className="dd-payment-mini-item">
                 <div className="dd-payment-mini-thumb">

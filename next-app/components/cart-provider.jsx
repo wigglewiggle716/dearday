@@ -34,7 +34,8 @@ function cartCopy(locale) {
     viewCart:"Go to cart", decrease:"Decrease quantity",increase:"Increase quantity",
     unavailable:"Checkout will be connected after the remaining booking flow is migrated.",
     title:"Your Cart", note:"Your selected items are saved in this browser.",item:"item",
-    items:"items",back:"Back to products"
+    items:"items",back:"Back to products",
+    continuePlanning:"Occasion Details",reviewNow:"Review & Book"
   } : {
     cart:"سلة مشترياتي", empty:"السلة فارغة حاليًا",browse:"تصفح المنتجات",
     preview:"منتج توضيحي — التوافر والسعر النهائي غير مؤكدين.",
@@ -42,7 +43,8 @@ function cartCopy(locale) {
     viewCart:"الانتقال للسلة",decrease:"تقليل الكمية",increase:"زيادة الكمية",
     unavailable:"إتمام الحجز والدفع هيتربط بعد نقل باقي خطوات الحجز.",
     title:"سلة مشترياتك", note:"المنتجات المختارة محفوظة في المتصفح.",item:"منتج",
-    items:"منتجات",back:"العودة للمنتجات"
+    items:"منتجات",back:"العودة للمنتجات",
+    continuePlanning:"تفاصيل المناسبة",reviewNow:"مراجعة وحجز"
   };
 }
 export function useCart() {
@@ -231,8 +233,13 @@ export function CartPage({ locale,flow=false }) {
         {items.length ? <CartRows locale={locale}/> : <p className="dd-cart-empty-page">{t.empty}</p>}
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
       </div>
-      <p className="dd-cart-notice">{t.unavailable}</p>
-      <Link href={pathFor("gifts",locale)+(flow?"?flow=1":"")} className="dd-cart-goto">{t.back}</Link>
+      <div className="dd-cart-page-actions">
+        <Link href={pathFor("gifts",locale)+(flow?"?flow=1":"")}
+          className="dd-cart-back-to-products">{t.back}</Link>
+        {(flow||items.length>0)&&<Link
+          href={pathFor(flow?"details":"review",locale)+(flow?"?flow=1":"")}
+          className="dd-cart-goto">{flow?t.continuePlanning:t.reviewNow}</Link>}
+      </div>
     </div>
   </main>;
 }

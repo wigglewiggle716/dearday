@@ -14,6 +14,7 @@ const names={
   ar:{
     steps:["الاختيارات","تفاصيل المناسبة","مراجعة الحجز","الدفع"],
     eyebrow:"مراجعة الحجز",title:"راجع يومك قبل الدفع",
+    directTitle:"راجع منتجاتك قبل الدفع",directDescription:"راجع المنتجات والكميات والأسعار قبل المتابعة لبيانات الدفع. مش مطلوب تدخل تفاصيل مناسبة كاملة.",backCart:"الرجوع للسلة",
     description:"تأكد من تفاصيل المناسبة واختياراتك والأسعار. لو محتاج تعدّل أي حاجة، تقدر ترجع لها قبل الانتقال للدفع.",
     fields:"تفاصيل المناسبة",editFields:"تعديل التفاصيل",cart:"اختياراتك",editCart:"تعديل الاختيارات",
     summary:"ملخص الحجز",items:"عدد العناصر",subtotal:"قيمة الاختيارات",fee:"رسوم الخدمة",total:"الإجمالي",
@@ -36,6 +37,7 @@ const names={
   en:{
     steps:["Selections","Occasion Details","Review & Book","Payment"],
     eyebrow:"Review & Book",title:"Review everything before payment",
+    directTitle:"Review your items before payment",directDescription:"Check your products, quantities and prices before entering billing details. A complete occasion plan is not required.",backCart:"Back to Cart",
     description:"Check the occasion details, your selections, note and total. You can still edit anything before continuing to payment.",
     fields:"Occasion details",editFields:"Edit details",cart:"Your selections",editCart:"Edit selections",
     summary:"Booking summary",items:"Items",subtotal:"Selections subtotal",fee:"Service fee",total:"Total",
@@ -157,18 +159,18 @@ export default function ReviewPage({locale="ar",flow=false}){
         <section className="dd-review-hero">
           <div className="dd-review-hero-copy">
             <span className="dd-review-eyebrow">{t.eyebrow}</span>
-            <h1>{t.title}</h1>
-            <p>{t.description}</p>
+            <h1>{flow?t.title:t.directTitle}</h1>
+            <p>{flow?t.description:t.directDescription}</p>
           </div>
-          <div className="dd-review-status">
+          {flow&&<div className="dd-review-status">
             {status.map(([label,value],index)=><div key={index} className="dd-review-status-row">
               <span>{label}</span><b>{ready?value:"—"}</b>
             </div>)}
-          </div>
+          </div>}
         </section>
         <div className="dd-review-layout">
           <div className="dd-review-stack">
-            <section className="dd-review-panel" aria-labelledby="dd-review-details-head">
+            {flow&&<section className="dd-review-panel" aria-labelledby="dd-review-details-head">
               <div className="dd-review-panel-head">
                 <h2 id="dd-review-details-head">{t.fields}</h2>
                 <button type="button" className="dd-review-edit" onClick={()=>go("details")}>
@@ -182,7 +184,7 @@ export default function ReviewPage({locale="ar",flow=false}){
                 {(locale==="en"||details.notes)&&<DetailCell full label={t.detailLabels.notes} value={details.notes||t.noInfo}/>}
               </div>
               {ready&&!hasDetails&&<p className="dd-review-inline-warning" role="status">{t.noDetails}</p>}
-            </section>
+            </section>}
             <section className="dd-review-panel" aria-labelledby="dd-review-selections-head">
               <div className="dd-review-panel-head">
                 <h2 id="dd-review-selections-head">{t.cart}</h2>
@@ -210,12 +212,12 @@ export default function ReviewPage({locale="ar",flow=false}){
                 <p>{t.empty}</p>
                 <button type="button" onClick={()=>go("gifts")}>{t.addProducts}</button>
               </div>}
-              {venue&&<div className="dd-review-planned-venue">
+              {flow&&venue&&<div className="dd-review-planned-venue">
                 <span>📍</span>
                 <div><strong>{venueName}</strong><p>{t.unconfirmedPlace}</p></div>
               </div>}
             </section>
-            {locale==="en"&&<section className="dd-review-panel" aria-labelledby="dd-review-dear-note">
+            {flow&&locale==="en"&&<section className="dd-review-panel" aria-labelledby="dd-review-dear-note">
               <div className="dd-review-panel-head">
                 <h2 id="dd-review-dear-note">Dear note</h2>
                 <button type="button" className="dd-review-edit"
@@ -244,7 +246,7 @@ export default function ReviewPage({locale="ar",flow=false}){
             <div className="dd-review-sum-row"><span>{t.subtotal}</span><b>{money(subtotal,locale)}</b></div>
             <div className="dd-review-sum-row"><span>{t.fee}</span><b>{t.noInfo}</b></div>
             <div className="dd-review-sum-row is-total"><span>{t.total}</span><b>{money(subtotal,locale)}</b></div>
-            {(hasExamples||venue)&&<p className="dd-review-estimated">{t.estimated}</p>}
+            {(hasExamples||(flow&&venue))&&<p className="dd-review-estimated">{t.estimated}</p>}
             <p className="dd-review-fee-note">{t.noCharges}</p>
             <label className="dd-review-consent">
               <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
@@ -257,12 +259,13 @@ export default function ReviewPage({locale="ar",flow=false}){
             </label>
             <p className="dd-review-legal-preview">{t.legalPreview}</p>
             <button className="dd-review-primary" type="button"
-              disabled={!ready||!items.length||!hasDetails||!consent}
-              aria-disabled={!ready||!items.length||!hasDetails||!consent}
+              disabled={!ready||!items.length||(flow&&!hasDetails)||!consent}
+              aria-disabled={!ready||!items.length||(flow&&!hasDetails)||!consent}
               onClick={()=>go("payment")}>{t.pay}</button>
-            <button className="dd-review-secondary" type="button" onClick={()=>go("details")}>{t.back}</button>
+            <button className="dd-review-secondary" type="button"
+              onClick={()=>go(flow?"details":"cart")}>{flow?t.back:t.backCart}</button>
             <div className="dd-review-warning" role="status">
-              {(!ready||!items.length)?t.empty:!hasDetails?t.noDetails:t.paymentPaused}
+              {(!ready||!items.length)?t.empty:(flow&&!hasDetails)?t.noDetails:t.paymentPaused}
             </div>
             <p className="dd-review-secure">{t.secure}</p>
           </aside>
