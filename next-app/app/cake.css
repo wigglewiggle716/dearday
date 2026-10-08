@@ -1,0 +1,289 @@
+/* Dear Day — Cake & Chocolate. Matched against production commit
+ * 5d97cc458910279646ec10a18ffecaca81a6854d (cake.html/cake-en.html).
+ * All selectors are scoped to Cake; shared approved header/footer untouched.
+ */
+.dd-cake-page {
+  --dd-cake-wine:#6B3540;--dd-cake-line:#eaded9;--dd-cake-muted:#81716e;
+  --dd-cake-cream:#fffaf7;--dd-cake-blush:#f8e9e5;
+  background:linear-gradient(180deg,#fffdfb,#fff9f5);
+  color:#2c2221;min-height:70vh;padding-bottom:125px;
+}
+.dd-cake-page * {box-sizing:border-box}
+.dd-cake-page button,.dd-cake-page input,.dd-cake-page select {font-family:inherit}
+.dd-cake-container {width:min(1180px,calc(100% - 40px));margin-inline:auto}
+.dd-cake-hero {padding:22px 0 28px}
+.dd-cake-hero-box {
+  display:grid;grid-template-columns:52% 48%;direction:ltr;
+  height:310px;overflow:hidden;border:1px solid #efe2dc;
+  border-radius:30px;background:linear-gradient(120deg,#fffaf7,#fae6df);
+  box-shadow:0 10px 32px rgba(82,37,43,.06);
+}
+.dd-cake-hero-photo {
+  grid-column:1;grid-row:1;min-width:0;
+  background:url('/approved-pages/assets/media/cake-hero.jpg') center/cover no-repeat;
+}
+.dd-cake-hero-copy {
+  grid-column:2;grid-row:1;position:relative;
+  display:flex;flex-direction:column;justify-content:center;min-width:0;
+  direction:rtl;text-align:start;padding:46px 48px;
+}
+.dd-cake-hero-copy::before {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 15% 20%,rgba(203,113,108,.13),transparent 40%);
+}
+.dd-cake-hero-copy>* {position:relative}
+html[lang=en] .dd-cake-hero-copy {direction:ltr}
+html[lang=en] .dd-cake-hero-copy::before {background:radial-gradient(circle at 85% 20%,rgba(203,113,108,.13),transparent 40%)}
+.dd-cake-eyebrow {color:var(--dd-cake-wine);font-size:13px;font-weight:700;margin-bottom:11px}
+.dd-cake-hero h1 {
+  color:var(--dd-cake-wine);font:700 clamp(32px,3.4vw,44px)/1.15 Georgia,"Noto Sans Arabic",Tahoma,serif;
+  margin:0 0 10px
+}
+.dd-cake-hero p {
+  color:#736663;font-size:16px;line-height:1.8;margin:0;
+}
+.dd-cake-layout {
+  display:grid;grid-template-columns:255px minmax(0,1fr);
+  gap:26px;align-items:start;direction:rtl;
+}
+html[lang=en] .dd-cake-layout {direction:ltr}
+.dd-cake-filters {
+  position:sticky;top:170px;align-self:start;
+  max-height:calc(100dvh - 190px);overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(107,53,64,.32) transparent;
+  min-width:0;padding:18px;background:#fff;
+  border:1px solid var(--dd-cake-line);border-radius:22px;
+  box-shadow:0 8px 24px rgba(70,35,40,.05)
+}
+html[lang=en] .dd-cake-filters {top:108px;max-height:calc(100dvh - 128px)}
+.dd-cake-filters::-webkit-scrollbar {width:6px}
+.dd-cake-filters::-webkit-scrollbar-thumb {background:rgba(107,53,64,.28);border-radius:999px}
+.dd-cake-search {
+  display:flex;align-items:center;gap:8px;padding:0 11px;
+  border:1px solid var(--dd-cake-line);border-radius:12px;background:#fff;
+  margin-bottom:8px
+}
+.dd-cake-search>span {color:var(--dd-cake-wine);font-size:20px;font-weight:800}
+.dd-cake-search input {
+  width:100%;min-width:0;height:41px;border:0;outline:0;
+  padding:0 0 0 2px;color:#3f3433;background:transparent;font-size:12px
+}
+.dd-cake-search:focus-within {outline:2px solid #A8583D;outline-offset:1px}
+.dd-cake-filter-head {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin:10px 0 14px
+}
+.dd-cake-filter-head strong {font-size:15px;color:var(--dd-cake-wine);font-weight:800}
+.dd-cake-filter-head>button:not(.dd-cake-filter-collapse) {
+  font-size:11px;border:0;background:transparent;color:#A8583D;cursor:pointer
+}
+.dd-cake-filter-collapse {display:none}
+.dd-cake-filter-group {padding:15px 0;border-top:1px solid #f0e6e2}
+.dd-cake-filter-group h3 {font-size:13px;font-weight:800;margin:0 0 10px}
+.dd-cake-chips {display:flex;flex-wrap:wrap;gap:7px}
+.dd-cake-chip {
+  border:1px solid var(--dd-cake-line);background:#fff;border-radius:999px;
+  padding:7px 10px;font-size:12px;color:#665957;min-height:32px;
+  line-height:1.3;cursor:pointer
+}
+.dd-cake-chip.is-active {background:var(--dd-cake-wine);color:#fff;border-color:var(--dd-cake-wine)}
+.dd-cake-chip:hover:not(.is-active) {background:#f9ebe7}
+.dd-cake-results {min-width:0;direction:rtl}
+html[lang=en] .dd-cake-results {direction:ltr}
+.dd-cake-top-row {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin:0 0 10px;direction:ltr;min-height:48px
+}
+.dd-cake-top-row>h2 {
+  min-width:0;flex:1;text-align:right;color:var(--dd-cake-wine);
+  font-size:22px;line-height:1.3;font-weight:800;margin:0
+}
+html[lang=en] .dd-cake-top-row {flex-direction:row-reverse}
+html[lang=en] .dd-cake-top-row>h2 {text-align:left}
+.dd-cake-sort {
+  flex:0 1 360px;width:360px;max-width:360px;min-width:0;
+  position:relative;z-index:21;
+}
+.dd-cake-sort .dd-home-dropdown-label,.dd-cake-sort-label {
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;
+}
+.dd-cake-sort .dd-home-dropdown-trigger,.dd-cake-sort-native>select {
+  width:100%;height:48px;min-height:48px;max-width:100%;
+  border:1px solid #d9c7c1;border-radius:14px;
+  background:#fff;color:#3f3332;padding:0 14px;
+  box-shadow:none;font-size:14px;font-weight:500;cursor:pointer
+}
+.dd-cake-sort .dd-home-dropdown-trigger:hover,
+.dd-cake-sort .dd-home-dropdown-trigger[aria-expanded=true],
+.dd-cake-sort-native>select:hover {
+  border-color:#A8583D;box-shadow:0 0 0 2px rgba(168,88,61,.12)
+}
+.dd-cake-sort .dd-home-dropdown-chevron {color:var(--dd-cake-wine)}
+.dd-cake-sort .dd-home-dropdown-menu {
+  width:max-content;min-width:230px;max-width:min(280px,calc(100vw - 40px));
+  inset-inline-start:0;inset-inline-end:auto;
+  z-index:30;background:#fff;border:1px solid #eadfd9;
+  border-radius:14px;box-shadow:0 14px 34px rgba(62,29,33,.14);
+}
+.dd-cake-sort .dd-home-dropdown-option {font-size:14px;min-height:46px;padding:0 14px;white-space:nowrap}
+.dd-cake-curated,.dd-cake-rest-box {
+  border:1px solid rgba(107,53,64,.18);
+  background:rgba(255,250,247,.72);
+  border-radius:22px;padding:18px;margin:4px 0 8px;min-width:0
+}
+.dd-cake-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.dd-cake-rest {margin-top:22px}
+.dd-cake-rest>h2 {
+  color:var(--dd-cake-wine);font-size:22px;font-weight:800;
+  line-height:1.3;text-align:start;margin:0 0 10px
+}
+.dd-cake-card {
+  min-width:0;display:flex;flex-direction:column;
+  border:1px solid var(--dd-cake-line);border-radius:19px;overflow:hidden;
+  background:#fff;box-shadow:0 8px 22px rgba(70,35,40,.05);
+  transition:transform .2s,box-shadow .2s
+}
+.dd-cake-card:hover {transform:translateY(-3px);box-shadow:0 18px 44px rgba(66,27,32,.12)}
+.dd-cake-card.is-selected {
+  border-color:var(--dd-cake-wine);
+  box-shadow:0 0 0 2px rgba(107,53,64,.07),0 8px 22px rgba(70,35,40,.08)
+}
+.dd-cake-card-image {height:205px;position:relative;background:#f8eae6}
+.dd-cake-card-image img {width:100%;height:100%;object-fit:cover;display:block}
+.dd-cake-heart {
+  position:absolute;left:11px;top:11px;width:34px;height:34px;
+  border:0;border-radius:50%;background:rgba(255,255,255,.9);
+  color:var(--dd-cake-wine);font-size:18px;cursor:pointer
+}
+html[lang=en] .dd-cake-heart {left:auto;right:11px}
+.dd-cake-heart.is-favorite {color:#a12b46}
+.dd-cake-card-content {flex:1;display:flex;flex-direction:column;min-width:0;padding:13px}
+.dd-cake-card-content>small {color:#958480;font-size:11px}
+.dd-cake-card-content h3 {
+  color:#32272c;font-weight:700;font-size:15px;min-height:43px;
+  line-height:1.5;margin:2px 0 6px;overflow-wrap:anywhere
+}
+.dd-cake-card-content>p {font-size:12px;color:#8c7d79;margin:0 0 12px;line-height:1.4}
+.dd-cake-buy {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;min-width:0;margin-top:auto
+}
+.dd-cake-buy>strong {color:var(--dd-cake-wine);font-size:13px;font-weight:800;white-space:nowrap}
+.dd-cake-buy .dd-cart-add {
+  border:0;background:var(--dd-cake-wine);color:#fff;border-radius:999px;
+  padding:8px 13px;min-width:89px;min-height:34px;
+  font-size:11px;font-weight:800;line-height:1.3;cursor:pointer
+}
+.dd-cake-buy .dd-cart-quantity {
+  display:inline-flex;align-items:center;justify-content:space-between;
+  height:34px;min-width:108px;border:1px solid rgba(107,53,64,.22);
+  border-radius:999px;overflow:hidden;background:#fff;direction:ltr
+}
+.dd-cake-buy .dd-cart-quantity button {
+  flex:0 0 32px;height:32px;padding:0;border:0;border-radius:0;
+  background:transparent;color:var(--dd-cake-wine);
+  font-size:17px;font-weight:800;cursor:pointer
+}
+.dd-cake-buy .dd-cart-quantity button:hover {background:#f7e9e4}
+.dd-cake-buy .dd-cart-quantity span {flex:1;min-width:26px;font-size:11px;font-weight:800;text-align:center}
+.dd-cake-no-results {
+  text-align:center;background:#fff;border:1px dashed #d7c6c0;
+  border-radius:18px;padding:35px;color:var(--dd-cake-muted);font-size:13px
+}
+.dd-cake-custom {
+  margin-top:24px;display:grid;grid-template-columns:260px minmax(0,1fr) auto;
+  align-items:center;gap:22px;padding:16px;
+  border:1px solid #efddd7;border-radius:22px;
+  background:linear-gradient(100deg,#fff2ed,#fff9f6);direction:ltr
+}
+.dd-cake-custom>img {
+  width:260px;height:115px;border-radius:15px;object-fit:cover
+}
+.dd-cake-custom-copy {direction:rtl;min-width:0}
+html[lang=en] .dd-cake-custom-copy {direction:ltr}
+.dd-cake-custom h2 {
+  font-size:22px;font-weight:800;margin:0 0 4px;color:var(--dd-cake-wine)
+}
+.dd-cake-custom p {margin:0;font-size:13px;color:var(--dd-cake-muted);line-height:1.7}
+.dd-cake-upload {
+  display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  border:1px solid var(--dd-cake-wine);border-radius:999px;
+  background:#fff;color:var(--dd-cake-wine);padding:10px 17px;
+  font-size:12px;font-weight:700;cursor:pointer
+}
+.dd-cake-upload:focus-within {outline:2px solid #A8583D;outline-offset:3px}
+.dd-cake-upload input {
+  position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
+}
+.dd-cake-reference-preview {
+  display:block;width:56px!important;height:56px!important;
+  border-radius:10px!important;object-fit:cover!important;margin-top:8px
+}
+.dd-cake-upload-message {color:var(--dd-cake-wine)!important;margin-top:6px!important;font-size:11px!important}
+.dd-cake-disclaimer {color:#8d7c78;font-size:11px;margin:16px 0;line-height:1.7}
+.dd-cake-continue {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:16px 19px;margin-top:22px;border:1px solid #efddd7;
+  border-radius:18px;background:#fffaf7
+}
+.dd-cake-continue strong {color:var(--dd-cake-wine);font-size:14px}
+.dd-cake-continue p {font-size:12px;color:var(--dd-cake-muted);margin:7px 0 0}
+.dd-cake-continue button {
+  border:0;border-radius:999px;background:var(--dd-cake-wine);color:#fff;
+  padding:12px 20px;font-size:13px;font-weight:800;cursor:pointer
+}
+@media(max-width:1000px) and (min-width:901px) {
+  .dd-cake-layout {grid-template-columns:235px minmax(0,1fr);gap:20px}
+}
+@media(max-width:920px) {
+  .dd-cake-custom {grid-template-columns:180px minmax(0,1fr)}
+  .dd-cake-custom>img {width:180px}
+  .dd-cake-upload {grid-column:1/-1;justify-self:start}
+}
+@media(max-width:900px) {
+  .dd-cake-layout {grid-template-columns:minmax(0,1fr);gap:20px}
+  .dd-cake-filters,html[lang=en] .dd-cake-filters {
+    position:static;max-height:none;overflow:visible
+  }
+  .dd-cake-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px) {
+  .dd-cake-hero {padding:18px 0 22px}
+  .dd-cake-hero .dd-cake-container {width:calc(100% - 24px)}
+  .dd-cake-hero-box {height:auto;grid-template-columns:minmax(0,1fr);border-radius:23px}
+  .dd-cake-hero-copy {grid-column:1;grid-row:1;padding:30px 24px;min-height:165px}
+  .dd-cake-hero-photo {grid-column:1;grid-row:2;height:210px}
+  .dd-cake-hero h1 {font-size:34px}
+  .dd-cake-hero p {font-size:14px}
+}
+@media(max-width:620px) {
+  .dd-cake-container {width:calc(100% - 28px)}
+  .dd-cake-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .dd-cake-card-image {height:150px}
+  .dd-cake-card-content {padding:10px}
+  .dd-cake-card-content h3 {font-size:13px;min-height:42px}
+  .dd-cake-card-content>p {font-size:11px}
+  .dd-cake-buy {flex-direction:column;align-items:stretch;gap:8px}
+  .dd-cake-buy .dd-cart-add,.dd-cake-buy .dd-cart-quantity {width:100%;min-width:0}
+  .dd-cake-curated,.dd-cake-rest-box {padding:14px;border-radius:18px}
+  .dd-cake-rest>h2,.dd-cake-top-row>h2 {font-size:18px}
+  .dd-cake-sort {width:165px;max-width:165px;min-width:165px;flex:0 0 165px}
+  .dd-cake-sort .dd-home-dropdown-trigger,.dd-cake-sort-native>select {font-size:12px;padding-inline:10px}
+  .dd-cake-filters {padding:13px}
+  .dd-cake-chips {gap:6px}
+  .dd-cake-chip {font-size:11px;padding:7px 9px}
+  .dd-cake-custom {grid-template-columns:minmax(0,1fr)}
+  .dd-cake-custom>img {width:100%;height:150px}
+  .dd-cake-continue {flex-direction:column;align-items:stretch;text-align:center}
+  .dd-cake-continue button {width:100%}
+}
+@media(max-width:390px) {
+  .dd-cake-sort {width:150px;max-width:150px;min-width:150px;flex-basis:150px}
+  .dd-cake-top-row>h2 {font-size:15px}
+  .dd-cake-card-image {height:135px}
+  .dd-cake-buy>strong {font-size:12px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .dd-cake-page *, .dd-cake-page *:before,.dd-cake-page *:after {transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
