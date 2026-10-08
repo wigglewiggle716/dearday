@@ -1,0 +1,252 @@
+/* Flowers — reconstructed from production commit 5d97cc4589
+ * Main layout, dynamic live catalogue, filter fields, grouped cards,
+ * custom upload and sort control reflect the published Flowers page.
+ * Scoped; header, footer and cart styles are inherited, not overridden.
+ */
+.dd-flowers-page {
+  --dd-f-wine:#6B3540;--dd-f-ink:#352D2E;--dd-f-muted:#786C69;
+  --dd-f-border:rgba(107,53,64,.14);
+  background:#fbf7f3;color:var(--dd-f-ink);min-height:70vh;padding-bottom:95px;
+}
+.dd-flowers-page * {box-sizing:border-box}
+.dd-flowers-page button,.dd-flowers-page select,.dd-flowers-page input {font-family:inherit}
+.dd-flowers-hero {width:min(1180px,calc(100% - 40px));margin:0 auto;padding:22px 0 28px}
+.dd-flowers-hero-inner {
+  height:310px;min-height:310px;display:grid;grid-template-columns:52% 48%;
+  direction:ltr;overflow:hidden;border:1px solid var(--dd-f-border);
+  border-radius:30px;background:linear-gradient(135deg,#fffdfb,#f6e7e1);
+  box-shadow:0 10px 32px rgba(82,37,43,.06)
+}
+.dd-flowers-hero-photo {
+  grid-row:1;grid-column:1;min-width:0;height:100%;background-size:cover;
+  background-repeat:no-repeat;background-position:center
+}
+.dd-flowers-hero-copy {
+  grid-row:1;grid-column:2;direction:rtl;display:flex;
+  flex-direction:column;justify-content:center;text-align:right;min-width:0;
+  padding:46px 48px;background:linear-gradient(135deg,#fffdfb,#f6e7e1)
+}
+html[lang=en] .dd-flowers-hero-copy {direction:ltr;text-align:left}
+.dd-flowers-hero h1 {
+  margin:0 0 10px;font:700 clamp(33px,3.6vw,44px)/1.15 Georgia,"Noto Sans Arabic",Tahoma,serif;
+  color:var(--dd-f-wine)
+}
+.dd-flowers-hero p {font-size:16px;line-height:1.8;margin:0;color:var(--dd-f-muted)}
+.dd-flowers-wrap {
+  width:min(1180px,100%);margin:0 auto;padding-inline:22px;
+  display:grid;grid-template-columns:minmax(0,1fr) 250px;
+  grid-template-areas:"results filters";gap:24px;direction:ltr;align-items:start
+}
+html[lang=en] .dd-flowers-wrap {
+  grid-template-columns:250px minmax(0,1fr);
+  grid-template-areas:"filters results"
+}
+.dd-flowers-results {grid-area:results;min-width:0;direction:rtl}
+html[lang=en] .dd-flowers-results {direction:ltr}
+.dd-flowers-filters {
+  grid-area:filters;direction:rtl;position:sticky;top:105px;align-self:start;
+  display:grid;gap:13px;min-width:0;padding:18px;background:#fff;
+  border:1px solid var(--dd-f-border);border-radius:20px;
+  max-height:calc(100dvh - 125px);overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(107,53,64,.32) transparent
+}
+html[lang=en] .dd-flowers-filters {direction:ltr}
+.dd-flowers-filters::-webkit-scrollbar {width:6px}
+.dd-flowers-filters::-webkit-scrollbar-thumb {background:rgba(107,53,64,.28);border-radius:999px}
+.dd-flowers-filter-head {display:flex;justify-content:space-between;align-items:center;gap:9px}
+.dd-flowers-filter-head strong {font-size:16px;font-weight:800;color:var(--dd-f-wine)}
+.dd-flowers-filter-head button {
+  border:0;background:none;color:#A8583D;font-size:11px;cursor:pointer
+}
+.dd-flowers-filter-field {display:grid;gap:5px;font-size:11px;color:#6d5e5b;min-width:0}
+.dd-flowers-filter-field>span {display:block}
+.dd-flowers-filter-field input,.dd-flowers-filter-field select {
+  width:100%;height:42px;min-height:42px;max-width:100%;
+  border:1px solid #e6d9d4;border-radius:11px;background:#fff;
+  padding:0 10px;color:var(--dd-f-ink);font-size:12px;
+  outline-offset:2px;cursor:pointer
+}
+.dd-flowers-filter-field input {cursor:text}
+.dd-flowers-filter-field input:focus-visible,.dd-flowers-filter-field select:focus-visible {
+  outline:2px solid #A8583D
+}
+.dd-flowers-check {display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}
+.dd-flowers-check input {width:17px;height:17px;accent-color:var(--dd-f-wine);flex:none}
+.dd-flowers-top-row {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;min-height:48px;margin:0 0 10px;direction:ltr
+}
+.dd-flowers-sort {width:180px;max-width:180px;min-width:180px;flex:0 0 180px;position:relative;z-index:25}
+.dd-flowers-sort .dd-home-dropdown-label {
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap
+}
+.dd-flowers-sort .dd-home-dropdown-trigger {
+  width:100%;height:48px;border:1px solid #d9c7c1;border-radius:14px;
+  background:#fff;color:#3f3332;padding:0 14px;box-shadow:none;
+  font-size:14px;font-weight:500
+}
+.dd-flowers-sort .dd-home-dropdown-trigger:hover,
+.dd-flowers-sort .dd-home-dropdown-trigger[aria-expanded=true] {
+  border-color:#A8583D;box-shadow:0 0 0 2px rgba(168,88,61,.12)
+}
+.dd-flowers-sort .dd-home-dropdown-chevron {color:var(--dd-f-wine)}
+.dd-flowers-sort .dd-home-dropdown-menu {
+  position:absolute;top:calc(100% + 8px);min-width:230px;
+  width:max-content;max-width:min(260px,calc(100vw - 34px));
+  inset-inline-start:0;inset-inline-end:auto;background:#fff;
+  border:1px solid #eadfd9;border-radius:14px;padding:6px;
+  z-index:1000;box-shadow:0 14px 34px rgba(62,29,33,.14)
+}
+.dd-flowers-sort .dd-home-dropdown-option {
+  min-height:46px;padding:0 14px;background:#fff;font-size:14px;
+  color:#5f5553;font-weight:400;white-space:nowrap
+}
+.dd-flowers-sort .dd-home-dropdown-option:hover {color:var(--dd-f-wine);background:#fff6f2}
+.dd-flowers-sort .dd-home-dropdown-option[aria-selected=true] {background:var(--dd-f-wine);color:#fff;font-weight:800}
+.dd-flowers-picks-heading {
+  color:var(--dd-f-wine);font-size:22px;font-weight:800;line-height:1.3;
+  margin:0;min-width:0;flex:1 1 auto;text-align:right;direction:rtl
+}
+html[lang=en] .dd-flowers-top-row {flex-direction:row-reverse}
+html[lang=en] .dd-flowers-picks-heading {direction:ltr;text-align:left}
+.dd-flowers-products-box {
+  border:1px solid rgba(107,53,64,.18);background:rgba(255,250,247,.72);
+  border-radius:22px;padding:18px;margin:4px 0 8px;min-width:0
+}
+.dd-flowers-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.dd-flowers-all-section {margin-top:22px}
+.dd-flowers-all-section>h2 {
+  color:var(--dd-f-wine);font-size:22px;font-weight:800;
+  margin:0 0 10px;text-align:start;line-height:1.3
+}
+.dd-flowers-product {
+  min-width:0;display:flex;flex-direction:column;background:#fff;
+  border:1px solid rgba(107,53,64,.13);border-radius:18px;
+  overflow:hidden;box-shadow:0 8px 22px rgba(70,35,40,.04)
+}
+.dd-flowers-product-image {
+  width:100%;height:205px;position:relative;background:#f7ede8;
+  display:grid;place-items:center;overflow:hidden
+}
+.dd-flowers-product-image>img {width:100%;height:100%;object-fit:cover;display:block}
+.dd-flowers-product-image>span:not(.dd-flowers-product-tag) {color:var(--dd-f-wine)}
+.dd-flowers-product-tag {
+  position:absolute;top:10px;inset-inline-start:10px;background:#fffaf7;
+  color:var(--dd-f-wine);border:1px solid #ead9d3;border-radius:999px;
+  padding:5px 8px;font-size:9px;font-weight:800;line-height:1.3
+}
+.dd-flowers-product-body {display:flex;flex-direction:column;flex:1;min-width:0;padding:13px}
+.dd-flowers-product-body>small {color:#93827e;font-size:11px}
+.dd-flowers-product-body h3 {
+  margin:3px 0 6px;color:#433638;font-size:15px;min-height:46px;
+  line-height:1.5;overflow-wrap:anywhere
+}
+.dd-flowers-product-body>p {
+  margin:0 0 12px;color:#887974;font-size:11px;min-height:35px;line-height:1.55
+}
+.dd-flowers-product-price {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;min-width:0;margin-top:auto;flex-wrap:wrap
+}
+.dd-flowers-product-price>strong {color:var(--dd-f-wine);font-size:13px;font-weight:800}
+.dd-flowers-product-price .dd-cart-add {
+  border:0;background:var(--dd-f-wine);color:#fff;border-radius:999px;
+  padding:8px 13px;min-height:34px;min-width:88px;font-size:11px;font-weight:800;cursor:pointer
+}
+.dd-flowers-product-price .dd-cart-quantity {
+  display:inline-flex;align-items:center;height:34px;min-width:108px;
+  border:1px solid rgba(107,53,64,.22);border-radius:999px;
+  overflow:hidden;background:#fff;direction:ltr
+}
+.dd-flowers-product-price .dd-cart-quantity button {
+  border:0;background:transparent;color:var(--dd-f-wine);
+  width:32px;height:32px;border-radius:0;padding:0;font-size:17px;font-weight:800
+}
+.dd-flowers-product-price .dd-cart-quantity span {
+  flex:1;min-width:25px;text-align:center;font-weight:800;font-size:11px
+}
+.dd-flowers-message {
+  background:#fff;border:1px dashed #d9c7c1;border-radius:18px;
+  padding:36px;text-align:center;color:var(--dd-f-muted);
+  font-size:14px;line-height:1.8;margin:0
+}
+.dd-flowers-custom {
+  margin-top:24px;background:linear-gradient(100deg,#fff2ed,#fff9f6);
+  border:1px solid #efddd7;border-radius:22px;display:grid;
+  grid-template-columns:260px minmax(0,1fr) auto;
+  align-items:center;gap:22px;padding:16px;direction:ltr
+}
+.dd-flowers-custom-photo {width:260px;height:115px;border-radius:15px;object-fit:cover}
+.dd-flowers-custom-copy {min-width:0;direction:rtl}
+html[lang=en] .dd-flowers-custom-copy {direction:ltr}
+.dd-flowers-custom h2 {color:var(--dd-f-wine);font-size:22px;font-weight:800;margin:0 0 4px}
+.dd-flowers-custom p {margin:0;color:var(--dd-f-muted);font-size:13px;line-height:1.7}
+.dd-flowers-upload {
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--dd-f-wine);color:var(--dd-f-wine);
+  background:#fff;border-radius:999px;padding:10px 17px;
+  cursor:pointer;font-weight:700;font-size:12px;white-space:nowrap
+}
+.dd-flowers-upload:focus-within {outline:2px solid #A8583D;outline-offset:3px}
+.dd-flowers-upload input {position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.dd-flowers-ref-preview {display:block;width:56px;height:56px;border-radius:10px;object-fit:cover;margin-top:8px}
+.dd-flowers-file-error {color:#ad354c!important;font-weight:800!important;font-size:12px!important;margin:5px 0!important}
+.dd-flowers-next {
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border:1px solid #efddd7;border-radius:18px;padding:17px 19px;
+  margin-top:25px;background:#fffaf7
+}
+.dd-flowers-next strong {color:var(--dd-f-wine);font-size:14px}
+.dd-flowers-next p {font-size:12px;color:var(--dd-f-muted);margin:7px 0 0}
+.dd-flowers-next button {
+  background:var(--dd-f-wine);color:#fff;border:0;border-radius:999px;
+  padding:12px 20px;font-size:13px;font-weight:800;cursor:pointer
+}
+@media(max-width:920px) {
+  .dd-flowers-custom {grid-template-columns:180px minmax(0,1fr)}
+  .dd-flowers-custom-photo {width:180px}
+  .dd-flowers-upload {grid-column:1/-1;justify-self:start}
+}
+@media(max-width:900px) {
+  .dd-flowers-wrap,html[lang=en] .dd-flowers-wrap {
+    grid-template-columns:minmax(0,1fr);grid-template-areas:"filters" "results"
+  }
+  .dd-flowers-filters {
+    position:static;max-height:none;overflow:visible;grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+  .dd-flowers-filter-head {grid-column:1/-1}
+  .dd-flowers-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px) {
+  .dd-flowers-hero {width:calc(100% - 24px);padding:18px 0 22px}
+  .dd-flowers-hero-inner {grid-template-columns:minmax(0,1fr);height:auto;min-height:0;border-radius:23px}
+  .dd-flowers-hero-photo {grid-column:1;grid-row:1;height:210px}
+  .dd-flowers-hero-copy {grid-column:1;grid-row:2;padding:30px 24px;min-height:120px}
+  .dd-flowers-hero h1 {font-size:34px}
+  .dd-flowers-hero p {font-size:14px}
+}
+@media(max-width:620px) {
+  .dd-flowers-wrap {padding-inline:12px}
+  .dd-flowers-grid {grid-template-columns:minmax(0,1fr);gap:14px}
+  .dd-flowers-products-box {padding:14px;border-radius:18px}
+  .dd-flowers-top-row {gap:9px}
+  .dd-flowers-picks-heading,.dd-flowers-all-section>h2 {font-size:18px}
+  .dd-flowers-sort {width:165px;min-width:165px;max-width:165px;flex-basis:165px}
+  .dd-flowers-sort .dd-home-dropdown-trigger {font-size:12px;padding:0 11px}
+  .dd-flowers-sort .dd-home-dropdown-menu {min-width:215px}
+  .dd-flowers-filters {gap:10px;padding:13px}
+  .dd-flowers-product-image {height:205px}
+  .dd-flowers-custom {grid-template-columns:minmax(0,1fr)}
+  .dd-flowers-custom-photo {width:100%;height:150px}
+  .dd-flowers-next {flex-direction:column;align-items:stretch;text-align:center}
+  .dd-flowers-next button {width:100%}
+}
+@media(max-width:390px) {
+  .dd-flowers-picks-heading {font-size:15px}
+  .dd-flowers-sort {width:148px;min-width:148px;max-width:148px;flex-basis:148px}
+  .dd-flowers-filter-field>span {font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .dd-flowers-page * {transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
