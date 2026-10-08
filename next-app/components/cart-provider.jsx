@@ -210,7 +210,7 @@ function CartDrawer({ locale }) {
         <button type="button" onClick={() => setOpen(false)} className="dd-cart-close" aria-label={t.close}>×</button>
       </header>
       {items.length ? <CartRows locale={locale}/> : <div className="dd-cart-empty">
-        <p>{t.empty}</p><Link href={pathFor("gifts",locale)} onClick={() => setOpen(false)}>{t.browse}</Link>
+        <p>{t.empty}</p><Link href={pathFor("gifts",locale)+(planningFlow?"?flow=1":"")} onClick={() => setOpen(false)}>{t.browse}</Link>
       </div>}
       <div className="dd-cart-drawer-bottom">
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
