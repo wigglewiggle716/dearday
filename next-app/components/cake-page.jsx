@@ -143,7 +143,15 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
   useEffect(()=>{
     let p=standalone?{}:readPlan();
     if(!standalone&&incoming&&typeof incoming==="string"&&incoming.length<20000){
-      try {const inData=JSON.parse(incoming);if(inData&&typeof inData==="object"&&!Array.isArray(inData))p={...p,...inData};}catch{}
+      try {
+        const inData=JSON.parse(incoming);
+        if(inData&&typeof inData==="object"&&!Array.isArray(inData)){
+          p={...p,...inData};
+          // Keep the journey context when coming from Birthday Planning.
+          // Do not change the shared cart here: it has its own persistence.
+          localStorage.setItem("dearDayPlan",JSON.stringify(p));
+        }
+      }catch{}
     }
     setBudget(p.budgetKey||p.budget||"unsure");
     try {
@@ -155,7 +163,7 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
   },[standalone,incoming]);
 
   useEffect(()=>{
-    if(!isLoaded)return;
+    if(!isLoaded||standalone)return;
     // Shared cart is the single source of truth for quantities. Avoid removing
     // unrelated products saved by the Gifts/Flowers pages.
     const plan=readPlan();
@@ -164,7 +172,7 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
       price:item.price,quantity:item.quantity,previewOnly:!!item.previewOnly
     }));
     try{localStorage.setItem("dearDayPlan",JSON.stringify({...plan,cakeSelections}));}catch{}
-  },[items,isLoaded]);
+  },[items,isLoaded,standalone]);
 
   function selectFilter(key,value){setFilters(current=>({...current,[key]:value}));}
   function reset(){setFilters(defaultFilters);setSort("featured");}
