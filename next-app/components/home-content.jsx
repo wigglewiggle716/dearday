@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CuratedCatalog } from "./live-catalog";
 import OccasionDatePicker from "./occasion-date-picker";
 import { useRouter } from "next/navigation";
@@ -109,6 +109,44 @@ const showcases=[
    {src:media+"venue-02.jpg",labelAr:"مكان وتجربة",labelEn:"Venue & experience"}]
 ];
 
+function BrandedDropdown({ label, placeholder, value, onChange, options, locale }) {
+  const [open,setOpen]=useState(false);
+  const root=useRef(null);
+  const listId=useId();
+  useEffect(()=>{
+    if(!open)return;
+    function outside(event){ if(root.current && !root.current.contains(event.target))setOpen(false); }
+    function escape(event){ if(event.key==="Escape"){setOpen(false);root.current?.querySelector(".dd-home-dropdown-trigger")?.focus();} }
+    document.addEventListener("pointerdown",outside);
+    document.addEventListener("keydown",escape);
+    return ()=>{document.removeEventListener("pointerdown",outside);document.removeEventListener("keydown",escape);};
+  },[open]);
+  const chosen=options.find(([key])=>key===value);
+  function select(key){onChange(key);setOpen(false);root.current?.querySelector(".dd-home-dropdown-trigger")?.focus();}
+  return <div className="dd-home-dropdown-field" ref={root}>
+    <span className="dd-home-dropdown-label">{label}</span>
+    <button type="button" className="dd-home-dropdown-trigger" aria-haspopup="listbox"
+      aria-expanded={open} aria-controls={listId} onClick={()=>setOpen(v=>!v)}
+      onKeyDown={e=>{if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();setOpen(true);requestAnimationFrame(()=>root.current?.querySelector(".dd-home-dropdown-menu [role=option]")?.focus());}}}>
+      <span>{chosen?chosen[1]:placeholder}</span>
+      <svg className="dd-home-dropdown-chevron" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    {open&&<div className="dd-home-dropdown-menu" id={listId} role="listbox" aria-label={label}
+      onKeyDown={e=>{
+        const items=[...e.currentTarget.querySelectorAll("[role=option]")];
+        const i=items.indexOf(document.activeElement);
+        if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();items[(i+(e.key==="ArrowDown"?1:-1)+items.length)%items.length]?.focus();}
+        if(e.key==="Home"){e.preventDefault();items[0]?.focus();}
+        if(e.key==="End"){e.preventDefault();items[items.length-1]?.focus();}
+      }}>
+      {options.map(([key,text])=><button type="button" role="option" aria-selected={value===key} key={key}
+        className="dd-home-dropdown-option" onClick={()=>select(key)}>
+        <span>{text}</span><span className="dd-home-dropdown-check" aria-hidden="true">{value===key?"✓":""}</span>
+      </button>)}
+    </div>}
+  </div>;
+}
+
 function Planner({ locale, t }) {
   const router=useRouter();
   const [occasion,setOccasion]=useState("");
@@ -133,32 +171,11 @@ function Planner({ locale, t }) {
         </button>)}
       </div>
       <form className="dd-home-filters" onSubmit={submit}>
-        <label className="dd-home-branded-select-field">{t.area}
-          <span className="dd-home-branded-select-control">
-            <select value={area} onChange={e=>setArea(e.target.value)} required>
-              <option value="">{t.chooseArea}</option><option value="القاهرة">{t.cairo}</option><option value="الجيزة">{t.giza}</option>
-            </select>
-            <span className="dd-home-branded-select-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 21s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/>
-              </svg><span>⌄</span>
-            </span>
-          </span>
-        </label>
+        <BrandedDropdown locale={locale} label={t.area} placeholder={t.chooseArea}
+          value={area} onChange={setArea} options={[[ "القاهرة", t.cairo ],[ "الجيزة", t.giza ]]}/>
         <OccasionDatePicker locale={locale} value={date} onChange={setDate} label={t.date} placeholder={t.chooseDate}/>
-        <label className="dd-home-branded-select-field">{t.budget}
-          <span className="dd-home-branded-select-control">
-            <select value={budget} onChange={e=>setBudget(e.target.value)} required>
-              <option value="">{t.chooseBudget}</option>
-              {t.budgets.map(([k,v])=><option key={k} value={k}>{v}</option>)}
-            </select>
-            <span className="dd-home-branded-select-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 7.5h18M3 12h18M3 16.5h12"/><path d="M17.5 14.5v5m-2.5-2.5h5"/>
-              </svg><span>⌄</span>
-            </span>
-          </span>
-        </label>
+        <BrandedDropdown locale={locale} label={t.budget} placeholder={t.chooseBudget}
+          value={budget} onChange={setBudget} options={[[ "", t.chooseBudget ], ...t.budgets ]}/>
         <button className="dd-home-submit" type="submit" disabled={!ready}>{t.browse}</button>
       </form>
     </section>
@@ -206,7 +223,7 @@ export default function HomeContent({locale}) {
         <img className="dd-home-hero-logo" src="/assets/dear-day-wordmark.svg" alt="Dear Day" width="430" height="250" />
         <h1 id="dd-home-intro">{t.heading}</h1>
         <p>{t.intro}</p>
-        <div className="dd-home-benefits">{t.benefits.map((x,i)=><span key={x}>{i>0&&<i aria-hidden="true">+</i>}{x}</span>)}</div>
+        <div className="dd-home-benefits">{t.benefits.map((x,i)=><span className="dd-home-benefit-item" key={x}>{i>0&&<i className="dd-home-benefit-plus" aria-hidden="true">+</i>}<span className="dd-home-benefit-pill">{x}</span></span>)}</div>
         <div className="dd-home-how">
           <h2>{t.howTitle}</h2>
           <div className="dd-home-how-grid">{t.how.map(([title,desc],i)=><div key={title} className="dd-home-how-step"><b>{String(i+1).padStart(2,"0")}</b><strong>{title}</strong><span>{desc}</span></div>)}</div>
