@@ -1,3 +1,4 @@
+import "../../home.css";
 import { MigrationPlaceholder } from "../../../components/migration-preview";
 import { CartPage } from "../../../components/cart-provider";
 import { CategoryCatalogPage } from "../../../components/live-catalog";
