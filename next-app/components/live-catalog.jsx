@@ -2,9 +2,12 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 import { loadPublicCatalog } from "../lib/catalog";
 import { money, QuantityAction } from "./cart-provider";
+import PlanningStepper from "./planning-stepper";
+import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 
 const CatalogContext = createContext({ rows: {gifts:[],"cakes-sweets":[],flowers:[]}, loading:true, error:null });
 export function CatalogProvider({ children }) {
@@ -181,7 +184,8 @@ export function CuratedCatalog({locale,t}) {
   </section>;
 }
 
-export function CategoryCatalogPage({locale,slug}) {
+export function CategoryCatalogPage({locale,slug,flow=false}) {
+  const router=useRouter();
   const {rows,loading,error}=useCatalog();
   const key=slug==="cake"?"cakes-sweets":slug;
   const displayName={
@@ -190,13 +194,47 @@ export function CategoryCatalogPage({locale,slug}) {
     flowers:locale==="ar"?"الورد":"Flowers"
   }[slug];
   const selected=rows[key]||[];
-  return <main id="main-content" className="dd-main dd-catalog-page">
+  const goNext=()=>router.push(pathFor(getNextPlanningStep(slug,readPlanningServices()),locale)+"?flow=1");
+  return <>
+    {flow&&<PlanningStepper locale={locale} current={slug}/>}
+    <main id="main-content" className="dd-main dd-catalog-page">
     <div className="dd-home-container">
       <h1>{displayName}</h1>
       {loading ? <p className="dd-catalog-message">{locale==="ar"?"جاري تحميل المنتجات...":"Loading products…"}</p>
       :error ? <p className="dd-catalog-message">{locale==="ar"?"تعذر تحميل المنتجات.":"Products are currently unavailable."}</p>
       : selected.length===0 ? <p className="dd-catalog-message">{locale==="ar"?"لا توجد منتجات متاحة حاليًا.":"No products available."}</p>
       : <div className="dd-catalog-grid">{selected.map(item=><ProductCard key={item.id} product={item} locale={locale}/>)}</div>}
+      {flow&&<div className="dd-planning-continue">
+        <span>{locale==="ar"?"اختياراتك محفوظة في السلة":"Your selections stay in the cart"}</span>
+        <button type="button" onClick={goNext}>{locale==="ar"?"حفظ ومتابعة":"Save & continue"}</button>
+      </div>}
     </div>
-  </main>;
+  </main>
+  </>;
+}
+
+
+// Venue booking is not migrated yet: keep the journey navigable without
+// implying that the sample venue cards are bookable or reservable.
+export function VenuePlanningStep({locale="ar"}) {
+  const router=useRouter();
+  const next=()=>{
+    const target=getNextPlanningStep("venues",readPlanningServices());
+    router.push(pathFor(target,locale)+"?flow=1");
+  };
+  return <>
+    <PlanningStepper locale={locale} current="venues"/>
+    <main id="main-content" className="dd-main dd-catalog-page">
+      <div className="dd-home-container">
+        <h1>{locale==="ar"?"أماكن وتجارب":"Places & Experiences"}</h1>
+        <div className="dd-planning-pending">
+          <h2>{locale==="ar"?"تجهيز خطوة الأماكن والتجارب":"Places & experiences are being migrated"}</h2>
+          <p>{locale==="ar"
+            ?"صفحة الأماكن والتجارب المعتمدة لسه قيد النقل لنسخة React. تقدر تكمل باقي اختيارات المناسبة دلوقتي، من غير ما نحجز مكان أو نضيف حاجة غير مؤكدة للسلة."
+            :"The approved venues page is still being migrated to React. You can continue choosing other services without making an unconfirmed booking."}</p>
+          <button type="button" onClick={next}>{locale==="ar"?"التالي: أكمل اختياراتي":"Next: Continue planning"}</button>
+        </div>
+      </div>
+    </main>
+  </>;
 }
