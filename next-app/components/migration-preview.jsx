@@ -6,9 +6,7 @@ export function MigrationLanding({ locale }) {
   return (
     <main id="main-content" className="dd-main">
       <section className="dd-hero" aria-labelledby="dd-hero-title">
-        <div className="dd-hero-ornament dd-ornament-first" aria-hidden="true">∿</div>
         <div className="dd-hero-content">
-          <span className="dd-eyebrow">{t.previewKicker}</span>
           <img className="dd-hero-logo" src="/assets/dear-day-wordmark.svg" alt="Dear Day" width="360" height="209" />
           <h1 id="dd-hero-title">{t.homepageTitle}<span>{t.homepageSubtitle}</span></h1>
           <p>{t.homepageDescription}</p>
@@ -17,10 +15,6 @@ export function MigrationLanding({ locale }) {
             <Link href={pathFor("howItWorks", locale)} className="dd-secondary-button">{t.howItWorks}</Link>
           </div>
         </div>
-        <div className="dd-hero-ornament dd-ornament-second" aria-hidden="true">✦</div>
-      </section>
-      <section className="dd-preview-info">
-        <p>{t.previewInfo}</p>
       </section>
     </main>
   );
@@ -36,7 +30,6 @@ export function MigrationPlaceholder({ locale, slug }) {
   return (
     <main id="main-content" className="dd-main dd-placeholder">
       <div className="dd-placeholder-card">
-        <p className="dd-eyebrow">{t.previewKicker}</p>
         <h1>{title && t[title] ? t[title] : t.previewSection}</h1>
         <h2>{t.previewSection}</h2>
         <p>{t.previewSectionInfo}</p>

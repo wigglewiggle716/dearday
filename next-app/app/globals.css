@@ -67,32 +67,109 @@ html[lang=ar] .dd-hero h1 { font-family: var(--dd-font-ar); }
 .dd-primary-button, .dd-secondary-button { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; padding: 10px 23px; border-radius: 999px; font-weight: 700; font-size: 13px; }
 .dd-primary-button { color: #fff; background: var(--dd-burgundy); }
 .dd-secondary-button { border: 1px solid var(--dd-burgundy); color: var(--dd-burgundy); }
-.dd-hero-ornament { position: absolute; color: var(--dd-terracotta); font-family: "Alex Brush", Georgia, serif; font-size: 180px; pointer-events: none; opacity: .25; line-height: 1; }
-.dd-ornament-first { inset-inline-start: 2%; top: 20%; transform: rotate(-15deg); }
-.dd-ornament-second { inset-inline-end: 8%; bottom: 11%; font-size: 90px; }
-.dd-preview-info { background: #fffaf6; border-block: 1px solid var(--dd-line); text-align: center; padding: 25px 20px; }
-.dd-preview-info p { margin: 0 auto; max-width: 800px; font-size: 13px; color: var(--dd-muted); line-height: 1.8; }
 .dd-placeholder { display: grid; place-items: center; padding: 80px 20px; min-height: 55vh; }
 .dd-placeholder-card { max-width: 670px; text-align: center; }
 .dd-placeholder-card h1 { font-size: clamp(30px,4vw,46px); font-weight: 800; color: var(--dd-burgundy); margin: 20px 0; }
 .dd-placeholder-card h2 { font-size: 17px; color: var(--dd-terracotta); }
 .dd-placeholder-card p { max-width: 600px; line-height: 2; color: var(--dd-muted); margin: 20px auto 28px; }
 
-/* Approved compact burgundy footer, shared between AR/EN */
-.dd-footer { background: var(--dd-burgundy); color: #f7edf0; padding: 36px 0 20px; }
-.dd-footer-inner { margin-inline: auto; width: min(100% - 48px, 1340px); }
-.dd-footer-top { display: grid; grid-template-columns: 1.15fr repeat(3,1fr); gap: clamp(18px,3vw,48px); }
-.dd-footer-brand { max-width: 340px; }
+/* Footer rebuilt to visually match the currently approved Dear Day footer. */
+.dd-footer {
+  background: #540b20;
+  color: #f8e8ec;
+  width: calc(100% - clamp(32px, 5.5vw, 100px));
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 32px clamp(20px, 5vw, 80px) 14px;
+}
+.dd-footer-inner { width: 100%; max-width: 1390px; margin: 0 auto; }
+.dd-footer-top {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr 1fr;
+  column-gap: clamp(24px, 5vw, 90px);
+  min-height: 245px;
+  padding: 0 0 19px;
+}
+.dd-footer-brand { max-width: 330px; }
 .dd-footer-brand a { display: inline-block; }
-.dd-footer-brand img { display: block; width: 150px; height: 86px; object-fit: contain; filter: brightness(0) invert(1); }
-.dd-footer-brand p { font-size: 13px; line-height: 1.9; opacity: .91; max-width: 310px; margin: 2px 0; }
-.dd-footer-group h2 { margin: 9px 0 13px; font-size: 15px; font-weight: 800; color: #fff; }
-.dd-footer-group a { display: block; margin-block: 9px; font-size: 15px; line-height: 1.65; color: #f1dce1; transition: color .15s; }
-.dd-footer-group a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
-.dd-footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.22); font-size: 12px; color: #ead1d7; }
-.dd-footer-legal { display: flex; gap: 10px; flex-wrap: wrap; }
-.dd-footer-legal a:hover { text-decoration: underline; }
-.dd-footer-preview { font-size: 11px; padding: 6px 10px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; }
+.dd-footer-brand img {
+  display: block;
+  width: 164px;
+  height: 92px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+.dd-footer-brand p { font-size: 13px; line-height: 1.9; margin: 7px 0 0; color: #eed5db; max-width: 300px; }
+.dd-footer-group h2 { margin: 4px 0 12px; color: #fff; font-size: 15px; font-weight: 800; }
+.dd-footer-group a { display: block; width: max-content; max-width: 100%; margin: 8px 0; font-size: 14px; line-height: 1.6; color: #f6e5e8; }
+.dd-footer-group a:hover { text-decoration: underline; text-underline-offset: 4px; color: #fff; }
+.dd-footer-strip {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  min-height: 68px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(255,255,255,.23);
+}
+.dd-footer-strip > strong { color: #fff; font-size: 14px; white-space: nowrap; }
+.dd-social-list, .dd-pay-list { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dd-social-icon {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.33);
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(255,255,255,.03);
+}
+.dd-social-letter { font: 700 17px/1 Arial,Helvetica,sans-serif; }
+.dd-social-x { font-size: 20px; font-weight: 500; }
+.dd-footer-payments { min-height: 76px; }
+.dd-pay-brand {
+  width: 76px;
+  height: 46px;
+  background: #fff;
+  border-radius: 9px;
+  color: #201c23;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.dd-pay-visa { font: italic 800 22px/1 Arial,Helvetica,sans-serif; color: #19337e; letter-spacing: -1.5px; }
+.dd-pay-text { font: 800 15px/1 Arial,Helvetica,sans-serif; }
+.dd-pay-google-g { color: #4285f4; font-size: 20px; }
+.dd-footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.23);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  min-height: 43px;
+  padding-top: 9px;
+  font-size: 12px;
+  color: #e7cad2;
+}
+.dd-footer-legal { display: flex; gap: 6px; flex-wrap: wrap; }
+.dd-footer-legal a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.dd-back-to-top {
+  position: fixed;
+  z-index: 90;
+  bottom: 28px;
+  right: clamp(16px, 3vw, 54px);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  color: #fff;
+  background: #693641;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 7px 22px rgba(44,9,18,.18);
+}
+.dd-back-to-top:hover { background: #540b20; }
 
 @media (max-width: 1250px) {
   .dd-header { grid-template-columns: minmax(125px,.7fr) minmax(345px,2fr) minmax(255px,1fr); gap: 12px; padding-inline: 22px; }
@@ -113,21 +190,25 @@ html[lang=ar] .dd-hero h1 { font-family: var(--dd-font-ar); }
   .dd-explore-mobile .dd-explore-menu { position: static; display: none; box-shadow: none; border: 1px solid var(--dd-line); background: #fbf4f0; min-width: 0; width: 100%; transform: none !important; margin-bottom: 8px; }
   .dd-explore-mobile[open] .dd-explore-menu { display: grid; }
   .dd-mobile-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid var(--dd-line); }
-  .dd-footer-top { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 28px; }
+  .dd-footer-top { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 24px; min-height: 0; }
 }
 @media (max-width: 620px) {
   .dd-hero { min-height: 510px; padding: 46px 16px; }
   .dd-hero-logo { height: 175px; max-height: 46vw; }
   .dd-hero h1 { font-size: 30px; }
-  .dd-hero-ornament { display: none; }
-  .dd-footer-inner { width: calc(100% - 36px); }
-  .dd-footer-top { grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 18px; row-gap: 21px; }
-  .dd-footer-brand { grid-column: 1/-1; }
+  .dd-footer { width: calc(100% - 24px); padding: 28px 18px 12px; }
+  .dd-footer-inner { width: 100%; }
+  .dd-footer-top { grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 20px; row-gap: 21px; }
+  .dd-footer-brand { grid-column: 1/-1; max-width: 100%; }
   .dd-footer-brand img { width: 120px; height: 68px; }
   .dd-footer-brand p { max-width: 100%; }
   .dd-footer-group h2 { font-size: 13px; }
   .dd-footer-group a { font-size: 13px; }
-  .dd-footer-bottom { flex-direction: column; align-items: flex-start; }
+  .dd-footer-strip { flex-wrap: wrap; gap: 10px; min-height: 0; padding: 14px 0; }
+  .dd-pay-list { gap: 6px; }
+  .dd-pay-brand { width: 60px; height: 40px; }
+  .dd-footer-bottom { flex-wrap: wrap; }
+  .dd-back-to-top { bottom: 22px; width: 48px; height: 48px; }
 }
 @media (max-width: 400px) {
   .dd-header { padding-inline: 15px; }
