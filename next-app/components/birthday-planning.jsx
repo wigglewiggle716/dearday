@@ -105,31 +105,11 @@ const writePlan=(obj)=>{try{localStorage.setItem("dearDayPlan",JSON.stringify(ob
 
 
 function SelectionDock({t,selectedCount,chosenServices,onNext}) {
-  const [bottom,setBottom]=useState(22);
-  useEffect(()=>{
-    // This dock alone stops above the footer. The two floating corner buttons
-    // intentionally remain fixed to the viewport all the way to the bottom.
-    function placeDock(){
-      const footer=document.querySelector(".dd-footer");
-      const standard=window.innerWidth<=760?16:22;
-      if(!footer){setBottom(standard);return;}
-      const gap=14;
-      setBottom(Math.max(standard,Math.ceil(window.innerHeight-footer.getBoundingClientRect().top+gap)));
-    }
-    placeDock();
-    window.addEventListener("scroll",placeDock,{passive:true});
-    window.addEventListener("resize",placeDock);
-    const footer=document.querySelector(".dd-footer");
-    const observer=typeof ResizeObserver!=="undefined"&&footer?new ResizeObserver(placeDock):null;
-    observer?.observe(footer);
-    return ()=>{
-      window.removeEventListener("scroll",placeDock);
-      window.removeEventListener("resize",placeDock);
-      observer?.disconnect();
-    };
-  },[]);
+  // Place the bar in normal document flow and use CSS bottom-sticky positioning.
+  // It settles naturally before the footer and does not recalculate position on
+  // every scroll event (which caused the jitter when scrolling back upwards).
   const previews=chosenServices.map(x=>serviceDefs.find(s=>s.name===x)).filter(Boolean).slice(0,4);
-  return <div className="dd-birthday-sticky" style={{bottom:bottom+"px"}} aria-label={t.select}>
+  return <div className="dd-birthday-sticky" aria-label={t.select}>
     <div className="dd-birthday-sticky-summary">
       <div className="dd-birthday-sticky-thumbs" aria-hidden="true">
         {previews.map(service=><img key={service.key} src={media+service.image} alt=""/>)}

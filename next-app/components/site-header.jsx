@@ -53,7 +53,15 @@ export default function SiteHeader({ locale }) {
     return (
       <>
         <Link className={"dd-nav-link" + (pathname === pathFor("home", locale) ? " is-active" : "")} href={pathFor("home", locale)}>{t.home}</Link>
-        <details className={"dd-explore" + (activeExplore ? " is-active" : "") + (mobile ? " dd-explore-mobile" : "")} ref={mobile ? mobileExploreRef : exploreRef}>
+        <details className={"dd-explore" + (activeExplore ? " is-active" : "") + (mobile ? " dd-explore-mobile" : "")} ref={mobile ? mobileExploreRef : exploreRef}
+          onPointerEnter={event=>{
+            if (!mobile && window.matchMedia("(hover:hover) and (pointer:fine) and (min-width:981px)").matches)
+              event.currentTarget.open = true;
+          }}
+          onPointerLeave={event=>{
+            if (!mobile && window.matchMedia("(hover:hover) and (pointer:fine) and (min-width:981px)").matches)
+              event.currentTarget.open = false;
+          }}>
           <summary aria-label={t.explore}>{t.explore}<span className="dd-chevron" aria-hidden="true">⌄</span></summary>
           <div className="dd-explore-menu">
             {exploreIds.map((id) => (

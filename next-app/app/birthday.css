@@ -287,3 +287,26 @@
   .dd-birthday-sticky-summary {font-size:10px;}
   .dd-birthday-sticky>button {font-size:12px;}
 }
+
+
+/* Native bottom-sticky dock. No per-scroll React state: eliminates footer jitter.
+   Its normal placement is the end of Birthday Planning, before the shared footer. */
+.dd-birthday-page {padding-bottom:16px;}
+.dd-birthday-page .dd-birthday-sticky {
+  position:sticky;bottom:16px;left:auto;right:auto;top:auto;
+  transform:none; margin:22px auto 16px;
+  width:min(1100px,calc(100% - 196px));
+  max-width:calc(100vw - 196px);
+}
+@media (max-width:860px){
+  .dd-birthday-page .dd-birthday-sticky {
+    width:calc(100% - 190px);max-width:calc(100vw - 190px);
+    margin:16px auto 14px;bottom:15px;
+  }
+}
+@media (max-width:640px){
+  .dd-birthday-page .dd-birthday-sticky {
+    width:calc(100% - 168px);max-width:calc(100vw - 168px);
+    bottom:14px;
+  }
+}
