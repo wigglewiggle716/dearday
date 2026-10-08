@@ -164,7 +164,7 @@ export default function SiteFooter({ locale }) {
 
           <div className="dd-footer-strip dd-footer-payments" aria-label={t.paymentTitle}>
             <strong>{t.paymentTitle}</strong>
-            <div className="dd-pay-list" title={t.paymentDisplayNote}>
+            <div className="dd-pay-list">
               {["visa", "mastercard", "apple", "google", "card"].map(id => <PaymentBrand id={id} key={id}/>)}
             </div>
           </div>

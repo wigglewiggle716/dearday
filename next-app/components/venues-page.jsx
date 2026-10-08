@@ -34,7 +34,6 @@ const labels={
     save:"حفظ التجربة",cancel:"إلغاء",customSaved:"تم حفظ التجربة المخصصة",
     selected:"تم اختيار المكان",removed:"تم إزالة المكان",selectedSummary:"مكان مختار في الخطة",
     customSummary:"عندك طلب تجربة مخصصة محفوظ",next:"حفظ ومتابعة التخطيط",continue:"الانتقال للسلة",
-    note:"المكان هنا اختيار تخطيطي فقط، مش حجز مؤكد. السعر والتوافر يتم تأكيدهم قبل أي حجز."
   },
   en:{
     title:"Find the right setting for the moment",
@@ -60,7 +59,6 @@ const labels={
     save:"Save experience",cancel:"Cancel",customSaved:"Custom experience saved",
     selected:"Place selected",removed:"Place removed",selectedSummary:"Selected place in your plan",
     customSummary:"Custom experience request saved",next:"Save & continue planning",continue:"Go to cart",
-    note:"This is a planning selection, not a confirmed reservation. Final price and availability must be confirmed."
   }
 };
 function readPlan() {
@@ -287,7 +285,6 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
               {(selected||custom)&&<div className="dd-venues-plan-summary" aria-live="polite">
                 <span>{selected? t.selectedSummary+": "+selected.name : t.customSummary}</span>
                 {custom?.idea&&<small>{t.customSummary}: {custom.idea}</small>}
-                <p>{t.note}</p>
               </div>}
               <div className="dd-venues-continue">
                 <button type="button" onClick={continuePlanning} disabled={!selected&&!custom}>

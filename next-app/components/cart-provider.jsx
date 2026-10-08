@@ -31,16 +31,14 @@ function cartCopy(locale) {
     cart:"My Cart", empty:"Your cart is empty",browse:"Browse products",
     total:"Subtotal",details:"Cart details",close:"Close",remove:"Remove",
     viewCart:"Go to cart", decrease:"Decrease quantity",increase:"Increase quantity",
-    unavailable:"Checkout will be connected after the remaining booking flow is migrated.",
-    title:"Your Cart", note:"Your selected items are saved in this browser.",item:"item",
+    title:"Your Cart",item:"item",
     items:"items",back:"Back to products",
     continuePlanning:"Occasion Details",reviewNow:"Review & Book"
   } : {
     cart:"سلة مشترياتي", empty:"السلة فارغة حاليًا",browse:"تصفح المنتجات",
     total:"الإجمالي",details:"تفاصيل السلة",close:"إغلاق",remove:"حذف",
     viewCart:"الانتقال للسلة",decrease:"تقليل الكمية",increase:"زيادة الكمية",
-    unavailable:"إتمام الحجز والدفع هيتربط بعد نقل باقي خطوات الحجز.",
-    title:"سلة مشترياتك", note:"المنتجات المختارة محفوظة في المتصفح.",item:"منتج",
+    title:"سلة مشترياتك",item:"منتج",
     items:"منتجات",back:"العودة للمنتجات",
     continuePlanning:"تفاصيل المناسبة",reviewNow:"مراجعة وحجز"
   };
@@ -225,7 +223,6 @@ export function CartPage({ locale,flow=false }) {
   return <main id="main-content" className="dd-cart-page dd-main">
     <div className="dd-cart-page-inner">
       <h1>{t.title}</h1>
-      <p>{t.note}</p>
       <div className="dd-cart-page-box">
         {items.length ? <CartRows locale={locale}/> : <p className="dd-cart-empty-page">{t.empty}</p>}
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
