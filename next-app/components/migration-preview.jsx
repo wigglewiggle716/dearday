@@ -23,7 +23,7 @@ export function MigrationLanding({ locale }) {
 export function MigrationPlaceholder({ locale, slug }) {
   const t = dictionaries[locale];
   const title = Object.entries({
-    gifts:"gifts", cake:"cake",venues:"venues",flowers:"flowers",occasions:"occasions",birthday:"occasions",
+    gifts:"gifts", cake:"cake",venues:"venues",flowers:"flowers",occasions:"occasions",
     "how-it-works":"howItWorks", partners:"partners",about:"about",faq:"faq",contact:"contact",
     privacy:"privacy",terms:"terms",refunds:"refunds",auth:"login",cart:"cart"
   }).find(([url]) => url === slug)?.[1];
