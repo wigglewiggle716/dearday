@@ -466,3 +466,6 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
   .dd-planning-continue button {width:100%;}
   .dd-planning-pending {padding:22px 18px;}
 }
+
+/* Prototype-only cake samples are never presented as confirmed inventory. */
+.dd-cart-row-preview-label,.dd-cart-preview-label{display:block;color:#a25b47;font-size:11px;line-height:1.55;font-weight:600;}
