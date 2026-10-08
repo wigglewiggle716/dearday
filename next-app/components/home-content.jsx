@@ -36,7 +36,7 @@ const copy = {
       ["أماكن وتجارب","أماكن وتجارب لليوم نفسه"]
     ],
     curated:"مختارات من Dear Day جاهزة ليومك",
-    curatedNote:"اختيارات من أقسام Dear Day؛ عرض المنتجات الحية وإضافتها للسلة ضمن مرحلة ربط الكتالوج.",
+    curatedNote:"اختيارات من كل قسم تقدر تضيفها للسلة مباشرة.",
     viewAll:"عرض كل",
     previewNote:"معاينة للمنتجات الموجودة بواجهة الموقع القديم؛ المنتجات الحية والسلة لم يتم نقلهما بعد.",
     partners:"شركاء بيكمّلوا يومك",
@@ -71,7 +71,7 @@ const copy = {
       ["Places & Experiences","Places and experiences for your day"]
     ],
     curated:"Dear Day picks ready for your day",
-    curatedNote:"Selections from Dear Day categories; live products and cart integration are coming in the catalog migration.",
+    curatedNote:"Handpicked options from every category, ready to add to your cart.",
     viewAll:"View all",
     previewNote:"Preview of products from the current site. Live catalog and cart have not been migrated yet.",
     partners:"Partners who complete your day",
