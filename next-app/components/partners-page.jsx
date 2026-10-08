@@ -4,9 +4,8 @@ import { useRef, useState } from "react";
 
 // Mirrors production partners.html / partners-en.html, SHA
 // 5d97cc458910279646ec10a18ffecaca81a6854d.
-// The original form never posts to a server: only text and filenames are saved
-// to localStorage. Never claim a partner application was actually submitted.
-const PARTNER_DRAFT_KEY="dearDayPartnerApplication";
+// Partner intake is not connected yet. Until a secure backend exists, never
+// persist applicants' personal data locally or pretend to submit it.
 const partners=[
   ["The Gift Studio","Gifts"],["Luna Silver","Jewelry"],["Maison DD","Gifts"],
   ["Roses & More","Flowers"],["Bloom & Co.","Flowers"],["Velvet Bakery","Cakes"],
@@ -37,7 +36,6 @@ const content={
     heroButton:"انضم كشريك",
     networkTitle:"براندات وأماكن موجودة في اختيارات Dear Day",
     networkLabel:"شبكة شركاء Dear Day",
-    networkNote:"الأسماء المعروضة أمثلة من محتوى المعاينة، وليست تأكيدًا على وجود اتفاقيات شراكة فعّالة.",
     benefitTitle:"الشراكة معمولة عشان تسهّل البيع، مش تعقّده",
     benefits:[
       ["طلبات بنية شراء واضحة","العميل داخل وهو محدد المناسبة والميزانية والتاريخ، فاختياراتك بتظهر في سياق أقرب للشراء."],
@@ -65,14 +63,12 @@ const content={
     currentPartnerships:"شراكات حالية",
     currentPlaceholder:"اكتب أسماء المنصات أو البراندات اللي بتتعاون معاها حاليًا، لو موجودة.",
     companyProfile:"Company Profile (PDF) *",
-    companyProfileHelp:"ارفع ملف PDF يعرّف بالشركة أو البراند. الملف مش هيتبعت قبل ربط نظام استقبال الطلبات.",
+    companyProfileHelp:"ارفق ملف PDF يعرّف بالشركة أو البراند.",
     productList:"قائمة المنتجات أو الخدمات (اختياري)",
-    productListHelp:"ممكن تختار قائمة المنتجات أو الخدمات والأسعار لو متاحة. بيُحفظ اسم الملف فقط حاليًا.",
+    productListHelp:"ممكن ترفق قائمة المنتجات أو الخدمات والأسعار لو متاحة.",
     submit:"إرسال طلب الانضمام",
     pdfError:"اختار ملف Company Profile بصيغة PDF.",
-    storageSuccess:"تم حفظ بيانات الطلب مبدئيًا على الجهاز فقط. لم يُرسل الطلب أو الملفات إلى Dear Day؛ استقبال الطلبات هيتفعّل بعد ربط النظام.",
-    storageFailed:"تعذّر حفظ البيانات على الجهاز. لم يُرسل الطلب؛ جرّب تفعيل تخزين المتصفح أو احتفظ بنسخة من بياناتك.",
-    formDisclosure:"في المرحلة الحالية النموذج للمعاينة والحفظ المحلي فقط، وليس لاستقبال طلبات شراكة فعلية.",
+    submitUnavailable:"تعذّر إرسال الطلب حاليًا. برجاء المحاولة في وقت لاحق.",
     optional:"اختياري"
   },
   en:{
@@ -84,7 +80,6 @@ const content={
     networkTitle:"Brands and places featured across the Dear Day experience",
     networkText:"We are building a curated network of businesses that can come together to create more complete occasions.",
     networkLabel:"Dear Day partner network",
-    networkNote:"These are illustrative names from the preview catalogue, not confirmation of active partnership agreements.",
     benefitEyebrow:"Why Dear Day",
     benefitTitle:"A partnership designed to make selling simpler",
     benefits:[
@@ -117,14 +112,12 @@ const content={
     currentPartnerships:"Current Partnerships",
     currentPlaceholder:"List any platforms or brands you currently work with, if applicable.",
     companyProfile:"Company Profile (PDF) *",
-    companyProfileHelp:"Select a PDF introducing your brand. The actual file cannot be uploaded until the partner intake system is connected.",
+    companyProfileHelp:"Attach a PDF introducing your brand.",
     productList:"Product List (Optional)",
-    productListHelp:"You can choose a product or service list and prices, if available. Only the filename is saved in this preview.",
+    productListHelp:"You may attach a product or service list with prices, if available.",
     submit:"Submit Application",
     pdfError:"Please select a PDF company profile.",
-    storageSuccess:"Your application details have been saved on this device only. Neither the application nor its files were sent to Dear Day. Online intake will be enabled later.",
-    storageFailed:"The details could not be saved on this device. Nothing was submitted; please check browser storage or retain a copy of your information.",
-    formDisclosure:"This is a local preview form, not yet an active partner application submission.",
+    submitUnavailable:"Applications cannot be sent at the moment. Please try again later.",
     optional:"Optional"
   }
 };
@@ -174,7 +167,6 @@ function FormSection({title,eyebrow,children}){
 
 export default function PartnersPage({locale="ar"}){
   const t=content[locale]||content.ar;
-  const formRef=useRef(null);
   const categoryRef=useRef(null);
   const [categoryError,setCategoryError]=useState(false);
   const [status,setStatus]=useState(null);
@@ -202,24 +194,9 @@ export default function PartnersPage({locale="ar"}){
       setStatus({kind:"error",text:t.pdfError});
       form.elements.namedItem("companyProfile")?.focus();return;
     }
-    const data={};
-    new FormData(form).forEach((value,key)=>{
-      if(value instanceof File){
-        data[key]=value.name||"";
-        return;
-      }
-      if(key!=="categories")data[key]=String(value);
-    });
-    data.categories=chosen;
-    data.createdAt=new Date().toISOString();
-    // Exactly as on the original site: save strings and selected file names,
-    // never file bytes, and do not send PII or files to a remote endpoint.
-    try{
-      localStorage.setItem(PARTNER_DRAFT_KEY,JSON.stringify(data));
-      setStatus({kind:"pending",text:t.storageSuccess});
-    }catch{
-      setStatus({kind:"error",text:t.storageFailed});
-    }
+    // The public application receiver is not enabled yet. Do not retain
+    // contact information in this browser and do not show a false success.
+    setStatus({kind:"error",text:t.submitUnavailable});
   }
 
   return <main id="main-content" className="dd-partners-page" dir={locale==="ar"?"rtl":"ltr"}>
@@ -243,7 +220,6 @@ export default function PartnersPage({locale="ar"}){
         </div>
       </div>
       <PartnerMarquee t={t}/>
-      <p className="dd-partners-network-note">{t.networkNote}</p>
     </section>
     <section className="dd-partners-benefits">
       <div className="dd-partners-wrap">
@@ -271,7 +247,7 @@ export default function PartnersPage({locale="ar"}){
     </section>
     <section className="dd-partners-apply" id="partnerForm">
       <div className="dd-partners-wrap dd-partners-apply-grid">
-        <form ref={formRef} className="dd-partners-form" id="partnerApplication"
+        <form className="dd-partners-form" id="partnerApplication"
           noValidate encType="multipart/form-data" onSubmit={handleSubmit}>
           <h2>{t.applicationTitle}</h2><p>{t.applicationIntro}</p>
           <FormSection title={t.sectionBusiness} eyebrow={t.sectionBusinessEyebrow}>
@@ -362,7 +338,6 @@ export default function PartnersPage({locale="ar"}){
                 accept="application/pdf,.pdf,.xlsx,.xls,.csv"/>
             </FormField>
           </FormSection>
-          <p className="dd-partners-disclosure">{t.formDisclosure}</p>
           <div className="dd-partners-submit-row">
             <button className="dd-partners-primary" type="submit">{t.submit}</button>
           </div>
