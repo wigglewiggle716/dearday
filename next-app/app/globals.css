@@ -386,3 +386,15 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
   .dd-cart-page { padding: 36px 16px; }
   .dd-back-to-top { z-index: 305; }
 }
+
+/* Footer logos: render the approved site's actual vector glyphs, not text approximations. */
+.dd-pay-brand.dd-pay-apple img,
+.dd-pay-brand.dd-pay-google img {
+  display:block; width:64px; height:34px;
+  max-width:calc(100% - 9px); max-height:calc(100% - 6px);
+  object-fit:contain; margin:0 auto;
+}
+@media (max-width:760px) {
+  .dd-pay-brand.dd-pay-apple img,
+  .dd-pay-brand.dd-pay-google img { width:58px; height:30px; }
+}

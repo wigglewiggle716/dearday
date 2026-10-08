@@ -34,14 +34,14 @@ function PaymentBrand({ id }) {
     </span>
   );
   if (id === "apple") return (
-    <span className="dd-pay-brand dd-pay-text" role="img" aria-label="Apple Pay">
-      <svg viewBox="0 0 20 24" width="15" height="19" fill="currentColor" aria-hidden="true">
-        <path d="M14.3 4.4c.9-1 1.5-2.4 1.4-3.8-1.3.1-2.8.9-3.7 1.9-.9.9-1.6 2.4-1.4 3.7 1.5.1 2.8-.7 3.7-1.8ZM17.6 17.7c-.5 1.2-.8 1.7-1.5 2.8-.9 1.2-2.1 2.7-3.5 2.7-1.2 0-1.6-.8-3.5-.8s-2.4.8-3.6.8c-1.3.1-2.3-1.3-3.2-2.6C.6 18.1-.6 13.4 1.7 9.8c1.1-1.8 3-2.9 5-2.9 1.5 0 2.7.8 3.5.8.7 0 2.2-1 4- .9 1.6.1 3.1.9 4.1 2.2-3.6 2-3.1 6.8-.7 8.7Z"/>
-      </svg>Pay
+    <span className="dd-pay-brand dd-pay-apple" role="img" aria-label="Apple Pay">
+      <img src="/assets/payment-apple-pay.svg" alt="" width="64" height="36" />
     </span>
   );
   if (id === "google") return (
-    <span className="dd-pay-brand dd-pay-text" role="img" aria-label="Google Pay"><strong className="dd-pay-google-g">G</strong> Pay</span>
+    <span className="dd-pay-brand dd-pay-google" role="img" aria-label="Google Pay">
+      <img src="/assets/payment-google-pay.svg" alt="" width="64" height="36" />
+    </span>
   );
   return (
     <span className="dd-pay-brand" role="img" aria-label="Bank card">

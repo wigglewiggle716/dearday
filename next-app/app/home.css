@@ -295,3 +295,37 @@ html[lang=en] .dd-home-date-calendar { font-family: Arial,Helvetica,sans-serif; 
   .dd-home-date-left { width: 30px; height: 30px; }
   .dd-home-date-calendar { padding: 12px; }
 }
+
+/* 2026-10-08: desktop arrows are centered buttons, disabled arrow stays dim. */
+.dd-live-carousel > .dd-carousel-desktop-arrow {
+  width:42px; height:42px; padding:0;
+  display:grid; place-items:center;
+  line-height:1; box-sizing:border-box;
+  border-radius:50%; border:1px solid rgba(107,53,64,.24);
+  background:#FFFDFC; color:#6B3540; cursor:pointer;
+  opacity:1; transition:opacity .16s ease,color .16s ease,background .16s ease;
+}
+.dd-live-carousel > .dd-carousel-desktop-arrow svg { display:block; margin:0; flex:none; }
+.dd-live-carousel > .dd-carousel-desktop-arrow:not(:disabled):hover { background:#6B3540; color:#fff; }
+.dd-live-carousel > .dd-carousel-desktop-arrow:disabled {
+  opacity:.23; filter:grayscale(.4); cursor:not-allowed; box-shadow:none;
+}
+.dd-live-carousel .dd-product-card.dd-venue-preview { position:relative; }
+.dd-venue-preview .dd-product-media { position:relative; }
+.dd-venue-preview-tag {
+  position:absolute; inset-inline-start:9px; top:9px; border-radius:999px;
+  font-size:10px; font-weight:700; color:#6B3540; background:#fff9f4;
+  border:1px solid #ead9d3; padding:5px 9px;
+}
+.dd-venue-preview-meta { font-size:11px; color:#887974; line-height:1.6; margin:0 0 12px; }
+.dd-venue-preview .dd-product-buy .dd-cart-add { display:inline-flex; align-items:center; justify-content:center; }
+/* Swipe indicator uses a fixed-size thumb that MOVES, rather than an extending fill. */
+@media (max-width:679px) {
+  .dd-curated-mobile-progress { position:relative; direction:ltr; overflow:hidden; }
+  .dd-curated-mobile-progress > span {
+    position:absolute; top:0; inset-inline-start:0; height:100%; min-width:6px;
+    will-change:transform; transition:transform .09s linear;
+  }
+  .dd-curated-mobile-progress > span { left:0; right:auto; }
+  .dd-venue-preview-meta { font-size:10px; margin-bottom:8px; }
+}
