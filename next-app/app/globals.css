@@ -318,3 +318,71 @@ html[lang=ar] .dd-hero h1 { font-family: var(--dd-font-ar); }
   .dd-pay-brand { width: 62px; height: 40px; }
   .dd-footer-bottom { font-size: 11px; flex-wrap: wrap; }
 }
+
+
+/* React cart — persistent floating trigger, drawer and native cart page */
+.dd-floating-cart {
+  position: fixed; z-index: 310; inset-inline-end: auto; left: 27px; bottom: 28px;
+  width: 59px; height: 59px; border-radius: 50%; border: 2px solid white;
+  background: #6B3540; color: #fff; cursor: pointer;
+  box-shadow: 0 8px 30px rgba(60,24,31,.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.dd-floating-count {
+  position: absolute; top: -9px; right: -8px; width: 25px; height: 25px;
+  border-radius: 50%; color: #6B3540; background: #ffdb60; border: 2px solid #fff;
+  font: 700 11px/1 Arial,sans-serif; display: grid; place-items: center;
+}
+.dd-back-to-top { z-index: 305; }
+.dd-drawer-root { position: fixed; z-index: 650; inset: 0; }
+.dd-drawer-backdrop { position: absolute; inset: 0; background: rgba(40,15,23,.55); cursor: pointer; border: 0; }
+.dd-cart-drawer {
+  position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: min(440px, 100%);
+  background: #FFFDFC; color: #6B3540; display: flex; flex-direction: column;
+  box-shadow: 0 0 45px rgba(40,15,23,.23); animation: ddDrawerIn .2s ease both;
+}
+@keyframes ddDrawerIn { from { opacity:.7; transform: translateX(20px); } to { opacity:1; transform: none; } }
+html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
+@keyframes ddDrawerInRtl { from { opacity:.7; transform: translateX(-20px); } to { opacity:1; transform: none; } }
+.dd-cart-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 23px; min-height: 87px; background: #FAF3EA; border-bottom: 1px solid rgba(107,53,64,.14); }
+.dd-cart-drawer-header h2 { font-size: 21px; margin: 0 0 2px; color: #6B3540; }
+.dd-cart-drawer-header small { color: #826f70; }
+.dd-cart-close { border: 1px solid rgba(107,53,64,.23); border-radius: 50%; background: #fff; width: 39px; height: 39px; font-size: 27px; line-height:1; cursor: pointer; }
+.dd-cart-rows { padding: 15px 20px; overflow-y: auto; flex: 1; min-height: 0; }
+.dd-cart-row { display: flex; gap: 13px; padding: 14px 0; border-bottom: 1px solid #eedfe0; align-items: start; }
+.dd-cart-row-img { display: block; flex: 0 0 83px; width: 83px; height: 83px; border-radius: 11px; object-fit: cover; background: #faede6; }
+.dd-cart-row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+.dd-cart-row-body > strong { color: #6B3540; font-size: 13px; line-height: 1.6; }
+.dd-cart-row-body small { font-size: 11px; color: #88787a; }
+.dd-cart-row-body b { font-size: 13px; color: #6B3540; }
+.dd-cart-row-controls { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.dd-cart-quantity { display: inline-flex; gap: 6px; align-items: center; justify-content: center; background: #6B3540; border-radius: 999px; padding: 4px; color: #fff; min-height: 32px; }
+.dd-cart-quantity button { border: 0; background: #fff; color: #6B3540; width: 27px; height: 27px; border-radius: 50%; cursor: pointer; font-size: 18px; display: grid; place-items: center; line-height: 1; }
+.dd-cart-quantity button:disabled { opacity: .5; cursor: default; }
+.dd-cart-quantity span { min-width: 18px; text-align: center; font-size: 12px; font-weight: 700; }
+.dd-cart-add { appearance: none; border: 0; border-radius: 999px; background: #6B3540; color: #fff; padding: 9px 12px; cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.dd-cart-add:hover, .dd-cart-goto:hover { background: #874653; }
+.dd-cart-remove { background: none; border: 0; text-decoration: underline; color: #92535a; cursor: pointer; font-size: 11px; padding: 6px 0; }
+.dd-cart-drawer-bottom { padding: 16px 22px 22px; box-shadow: 0 -8px 24px rgba(85,38,45,.07); background: #fff; }
+.dd-cart-total { display: flex; justify-content: space-between; align-items: center; gap: 13px; font-size: 16px; margin-bottom: 13px; color: #6B3540; }
+.dd-cart-goto { display: flex; align-items: center; justify-content: center; min-height: 46px; background: #6B3540; color: #fff; border-radius: 999px; text-align: center; padding: 10px 18px; font-weight: 700; font-size: 13px; }
+.dd-cart-empty { flex: 1; display: grid; align-content: center; justify-items: center; gap: 12px; color: #706065; }
+.dd-cart-empty a { border-radius: 999px; padding: 10px 17px; border: 1px solid #6B3540; color: #6B3540; }
+.dd-cart-page { background: #FAF3EA; min-height: 65vh; padding: 60px 20px; }
+.dd-cart-page-inner { max-width: 880px; margin: auto; }
+.dd-cart-page h1 { color: #6B3540; margin: 0 0 10px; }
+.dd-cart-page-inner > p { font-size: 13px; line-height: 1.9; }
+.dd-cart-page-box { margin: 27px auto; border: 1px solid rgba(107,53,64,.17); border-radius: 17px; background: #fff; padding: 16px 20px; }
+.dd-cart-page-box .dd-cart-rows { max-height: none; padding: 4px 0; }
+.dd-cart-page-box .dd-cart-total { margin-top: 17px; border-top: 1px solid #eedfe0; padding-top: 18px; }
+.dd-cart-empty-page { padding: 32px 0; text-align: center; }
+.dd-cart-page .dd-cart-goto { max-width: 230px; }
+.dd-cart-notice { padding: 14px; border: 1px dashed rgba(107,53,64,.3); border-radius: 11px; }
+@media (max-width: 640px) {
+  .dd-floating-cart { width: 55px; height: 55px; left: 17px; bottom: 20px; }
+  .dd-cart-drawer-header { padding: 15px 19px; }
+  .dd-cart-rows { padding: 10px 15px; }
+  .dd-cart-row-img { width: 74px; height: 74px; flex-basis: 74px; }
+  .dd-cart-page { padding: 36px 16px; }
+  .dd-back-to-top { z-index: 305; }
+}

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { CuratedCatalog } from "./live-catalog";
 import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 
@@ -159,38 +160,6 @@ function DirectCategories({locale,t}) {
   </section>;
 }
 
-function Curated({locale,t}) {
-  const [active,setActive]=useState(0);
-  const [index,setIndex]=useState(0);
-  const cards=showcases[active];
-  return <section className="dd-home-curated" id="curated-picks">
-    <div className="dd-home-container">
-      <div className="dd-home-curated-heading">
-        <div><h2>{t.curated}</h2><p>{t.curatedNote}</p></div>
-        <Link href={pathFor(categoryIds[active],locale)}>{t.viewAll} {t.categoriesShort[active]} {locale==="ar"?"←":"→"}</Link>
-      </div>
-      <div className="dd-home-tabs" role="tablist" aria-label={t.curated}>
-        {categoryIds.map((id,i)=><button key={id} type="button" role="tab" aria-selected={i===active} onClick={()=>{setActive(i);setIndex(0);}}>{t.categoriesShort[i]}</button>)}
-      </div>
-      <div className="dd-home-carousel">
-        <button type="button" aria-label={locale==="ar"?"السابق":"Previous"} disabled={index===0} onClick={()=>setIndex(x=>Math.max(0,x-1))}>‹</button>
-        <div className="dd-home-carousel-cards">
-          {cards.slice(index,index+3).map((x,i)=><article className="dd-home-curated-card" key={x.src+i}>
-            <img src={x.src} alt={locale==="ar"?x.labelAr:x.labelEn} loading="lazy"/>
-            <div>
-              <small>Dear Day</small>
-              <h3>{locale==="ar"?x.labelAr:x.labelEn}</h3>
-              <Link href={pathFor(categoryIds[active],locale)}>{t.view}</Link>
-            </div>
-          </article>)}
-        </div>
-        <button type="button" aria-label={locale==="ar"?"التالي":"Next"} disabled={index+3>=cards.length} onClick={()=>setIndex(x=>Math.min(cards.length-1,x+1))}>›</button>
-      </div>
-      <p className="dd-home-curated-caveat">{t.previewNote}</p>
-    </div>
-  </section>;
-}
-
 function Partners({locale,t}) {
   return <section className="dd-home-partners" id="partners">
     <div className="dd-home-container">
@@ -228,7 +197,7 @@ export default function HomeContent({locale}) {
     </section>
     <Planner locale={locale} t={t}/>
     <DirectCategories locale={locale} t={t}/>
-    <Curated locale={locale} t={t}/>
+    <CuratedCatalog locale={locale} t={t}/>
     <Partners locale={locale} t={t}/>
   </main>;
 }

@@ -69,13 +69,13 @@ export function CartProvider({ children, locale }) {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const commit = useCallback((updater) => {
-    setItems(prev => {
-      // Read storage at mutation time; don't overwrite another tab's updates.
-      const next = normalizeRows(updater(loadRows()));
-      try { localStorage.setItem(KEY, JSON.stringify(next)); } catch {}
-      window.dispatchEvent(new CustomEvent("ddcartchange", { detail: { count: next.reduce((n,x) => n + quantity(x), 0) } }));
-      return next;
-    });
+    // Re-read storage on every mutation, then notify listeners AFTER updating state.
+    const next = normalizeRows(updater(loadRows()));
+    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch {}
+    setItems(next);
+    window.dispatchEvent(new CustomEvent("ddcartchange", {
+      detail: { count: next.reduce((n,x) => n + quantity(x), 0) }
+    }));
   }, []);
 
   const add = useCallback((product) => {
