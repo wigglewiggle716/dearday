@@ -1,0 +1,163 @@
+
+/* Dear Day — Birthday Planning from the approved layout.
+   Every rule is scoped to the planning page; shared header/footer/cart unaffected. */
+.dd-birthday-page {
+  --dd-bp-wine:#6B3540; --dd-bp-ink:#2b2323; --dd-bp-muted:#756a68;
+  --dd-bp-paper:#fffdfb; --dd-bp-cream:#fbf7f3;
+  --dd-bp-line:#e9ddd8; --dd-bp-shadow:0 18px 50px rgba(87,38,45,.1);
+  padding-bottom:96px; background:var(--dd-bp-cream); color:var(--dd-bp-ink);
+  flex:1; min-height:70vh;
+}
+.dd-birthday-page * {box-sizing:border-box}
+.dd-birthday-page button {font:inherit}
+.dd-birthday-page h1,.dd-birthday-page h2,.dd-birthday-page h3 {margin-top:0}
+.dd-birthday-stepper {background:var(--dd-bp-paper);border-bottom:1px solid #f0e6e2;padding:18px 0 14px}
+.dd-birthday-steps {width:min(1190px,calc(100% - 40px));margin:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.dd-birthday-step {position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:#8f817e;font-size:11px;line-height:1.45}
+.dd-birthday-step:not(:last-child):after {content:"";position:absolute;top:21px;inset-inline-start:60%;width:85%;border-top:1px dashed #d8c8c2}
+.dd-birthday-step-num {width:44px;height:44px;display:grid;place-items:center;border-radius:50%;border:1px solid #dfd0cc;background:#fff;position:relative;z-index:1;color:#9e8f8b;font-weight:800;font-size:15px}
+.dd-birthday-step.current {font-weight:800;color:var(--dd-bp-wine)}
+.dd-birthday-step.current .dd-birthday-step-num {border:3px solid var(--dd-bp-wine);background:#fff4f1;box-shadow:0 0 0 7px rgba(107,53,64,.08);color:var(--dd-bp-wine)}
+.dd-birthday-hero {
+  width:min(1180px,calc(100% - 64px));margin:24px auto 0;border-radius:28px;
+  background:var(--dd-bp-paper);overflow:hidden;display:grid;
+  grid-template-columns:1.05fr .95fr;min-height:420px;
+}
+.dd-birthday-hero-copy {min-width:0;display:flex;flex-direction:column;justify-content:center;position:relative;padding:48px clamp(28px,5vw,70px) 48px 36px}
+.dd-birthday-hero-copy:before {content:"";position:absolute;pointer-events:none;width:360px;height:180px;border:24px solid transparent;border-top-color:rgba(226,165,151,.25);border-radius:50%;transform:rotate(-18deg);inset-inline-start:12%;bottom:-90px}
+.dd-birthday-pill {position:relative;width:max-content;max-width:100%;border-radius:999px;background:#fbefeb;color:var(--dd-bp-wine);padding:7px 13px;font-size:13px;font-weight:800;margin-bottom:17px}
+.dd-birthday-hero h1 {position:relative;font:800 clamp(36px,4.1vw,61px)/1.19 Georgia,"Noto Sans Arabic",Tahoma,serif;letter-spacing:-.3px;margin:0 0 18px;color:#2b2323}
+.dd-birthday-hero h1 strong {color:var(--dd-bp-wine);font-weight:800;display:block}
+.dd-birthday-hero h1 span {display:block}
+.dd-birthday-hero-copy p {position:relative;max-width:545px;margin:0;color:var(--dd-bp-muted);font-size:17px;line-height:1.85}
+.dd-birthday-hero-photo {min-height:420px;background-size:cover;background-position:center}
+.dd-birthday-context {width:min(1200px,calc(100% - 64px));margin:22px auto 0;padding-inline:8px}
+.dd-birthday-context-card {display:grid;grid-template-columns:minmax(170px,1.1fr) repeat(3,minmax(155px,1fr));gap:14px;align-items:end;border:1px solid #dccdc5;background:#fffaf6;border-radius:14px;padding:18px 20px;box-shadow:0 8px 26px rgba(107,53,64,.06)}
+.dd-birthday-context-title {align-self:center}
+.dd-birthday-context-title span {display:block;font-size:13px;opacity:.7;margin-bottom:3px}
+.dd-birthday-context-title strong {font-size:19px;color:var(--dd-bp-wine)}
+.dd-birthday-context-card label,.dd-birthday-context-card .dd-home-date-label {display:block;font-size:13px;color:var(--dd-bp-wine);font-weight:700}
+.dd-birthday-context-card select {
+  margin-top:5px;width:100%;height:46px;padding-inline:12px;border:1px solid #dccdc5;
+  border-radius:12px;background:#fffdfb;color:var(--dd-bp-wine);font:inherit;font-size:13px;cursor:pointer
+}
+.dd-birthday-context-card .dd-home-date-field {font-size:13px}
+.dd-birthday-context-card .dd-home-date-label {margin-bottom:5px}
+.dd-birthday-context-card .dd-home-date-control,.dd-birthday-context-card .dd-home-date-trigger {height:46px}
+.dd-birthday-context-card .dd-home-date-trigger {border-radius:12px;font-size:12px}
+.dd-birthday-main {position:relative;width:min(1180px,calc(100% - 64px));margin:18px auto 0;background:var(--dd-bp-paper);border-radius:34px;padding:36px 28px 26px;box-shadow:0 -10px 30px rgba(110,60,64,.04)}
+.dd-birthday-shell {width:100%;margin:0 auto}
+.dd-birthday-main h2 {font:700 clamp(24px,2.5vw,34px)/1.45 Georgia,"Noto Sans Arabic",Tahoma,serif;color:var(--dd-bp-wine);margin:0 0 5px}
+.dd-birthday-main p {line-height:1.75}
+.dd-birthday-rec {margin:0 0 34px;padding:24px;border:1px solid var(--dd-bp-line);border-radius:24px;background:linear-gradient(135deg,#fffdfb,#fbefeb)}
+.dd-birthday-rec-head,.dd-birthday-section-head {display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:20px}
+.dd-birthday-rec-head p,.dd-birthday-section-head p {margin:0;color:var(--dd-bp-muted);font-size:14px}
+.dd-birthday-budget-tag {flex:none;background:#fff;border:1px solid #eadfd9;border-radius:999px;padding:8px 13px;color:var(--dd-bp-wine);font-size:12px;font-weight:800}
+.dd-birthday-rec-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.dd-birthday-rec-card {background:#fff;border:1px solid #eadfd9;border-radius:18px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:12px;box-shadow:0 7px 18px rgba(48,28,29,.035)}
+.dd-birthday-rec-card:hover {box-shadow:var(--dd-bp-shadow)}
+.dd-birthday-rec-card.selected {border-color:var(--dd-bp-wine);box-shadow:0 0 0 2px rgba(107,53,64,.06),var(--dd-bp-shadow)}
+.dd-birthday-rec-top {display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.dd-birthday-rec-top h3 {margin:0;font-size:17px;color:#34282a}
+.dd-birthday-rec-top>span {background:#f9ebe7;color:var(--dd-bp-wine);border-radius:999px;padding:5px 9px;font-size:10px;font-weight:800;white-space:nowrap}
+.dd-birthday-rec-items {display:flex;flex-direction:column;gap:7px;flex:1}
+.dd-birthday-rec-item {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:11px;background:#fcf8f6;font-size:12px}
+.dd-birthday-rec-item span:first-child {min-width:0;line-height:1.6}
+.dd-birthday-rec-item span:last-child {white-space:nowrap;color:#766a67;font-size:11px}
+.dd-birthday-rec-bottom {display:flex;justify-content:space-between;align-items:center;gap:12px}
+.dd-birthday-rec-bottom small {display:block;color:var(--dd-bp-muted);font-size:10px}
+.dd-birthday-rec-bottom strong {display:block;color:var(--dd-bp-wine);font-size:17px}
+.dd-birthday-rec-btn {border:0;background:var(--dd-bp-wine);color:#fff;border-radius:999px;padding:9px 14px;font-weight:800;font-size:12px;white-space:nowrap;cursor:pointer}
+.dd-birthday-rec-btn[aria-pressed=true] {background:#f7e5e0;color:var(--dd-bp-wine)}
+.dd-birthday-packages-note {margin:17px 0 0!important;font-size:12px;color:var(--dd-bp-muted)}
+.dd-birthday-services {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.dd-birthday-service {
+  position:relative;min-width:0;display:flex;flex-direction:column;align-items:stretch;
+  text-align:start;border:1px solid var(--dd-bp-line);background:#fff;border-radius:18px;
+  padding:20px 18px 14px;cursor:pointer;transition:transform .2s,box-shadow .2s;
+  box-shadow:0 7px 18px rgba(48,28,29,.035);color:var(--dd-bp-ink)
+}
+.dd-birthday-service:hover {transform:translateY(-3px);box-shadow:var(--dd-bp-shadow)}
+.dd-birthday-service.selected {border-color:var(--dd-bp-wine);box-shadow:0 0 0 2px rgba(107,53,64,.05),var(--dd-bp-shadow)}
+.dd-birthday-service-check {position:absolute;inset-inline-end:14px;top:14px;width:25px;height:25px;border:1px solid #d9ceca;border-radius:50%;background:#fff;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:900}
+.dd-birthday-service.selected .dd-birthday-service-check {background:var(--dd-bp-wine);border-color:var(--dd-bp-wine)}
+.dd-birthday-service-icon {width:42px;height:42px;border-radius:14px;background:#fbefeb;color:var(--dd-bp-wine);display:grid;place-items:center;font-size:23px;margin-bottom:12px}
+.dd-birthday-service-copy {display:block;flex:1}
+.dd-birthday-service-copy strong {display:block;font-size:18px;line-height:1.5}
+.dd-birthday-service-copy small {display:block;margin:4px 0 15px;color:var(--dd-bp-muted);font-size:13px;line-height:1.75;min-height:44px}
+.dd-birthday-service>img {width:100%;height:118px;object-fit:cover;border-radius:12px;display:block}
+.dd-birthday-suggestions {padding:38px 0 20px}
+.dd-birthday-section-head>button {border:0;color:var(--dd-bp-wine);background:transparent;cursor:pointer;font-weight:800}
+.dd-birthday-product-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.dd-birthday-products-empty {background:#f9efec;border:1px dashed #decac6;border-radius:14px;padding:18px;color:var(--dd-bp-muted)}
+.dd-birthday-inspire {
+  margin:24px 0 36px;background:linear-gradient(90deg,#f7e3dc,#fbeeea);
+  border-radius:22px;padding:22px;display:grid;grid-template-columns:.8fr 1.2fr;
+  gap:26px;align-items:center;overflow:hidden
+}
+.dd-birthday-inspire-text h2 {font-size:29px}
+.dd-birthday-inspire-text p {margin:0 0 18px;color:var(--dd-bp-muted);font-size:14px}
+.dd-birthday-inspire-text a {border:1px solid var(--dd-bp-wine);color:var(--dd-bp-wine);border-radius:999px;padding:10px 20px;font-size:13px;font-weight:800;display:inline-flex}
+.dd-birthday-inspire-photos {display:grid;grid-template-columns:repeat(3,1fr);align-items:center;direction:ltr}
+.dd-birthday-inspire-photos img {width:108%;height:170px;object-fit:cover;border:8px solid white;border-radius:10px;box-shadow:0 10px 22px rgba(78,38,40,.12)}
+.dd-birthday-inspire-photos img:nth-child(1) {transform:rotate(-5deg)}
+.dd-birthday-inspire-photos img:nth-child(2) {transform:rotate(4deg);z-index:2}
+.dd-birthday-inspire-photos img:nth-child(3) {transform:rotate(-3deg)}
+.dd-birthday-sticky {
+  position:fixed;z-index:260;bottom:16px;left:50%;transform:translateX(-50%);
+  width:min(1100px,calc(100% - 172px));background:rgba(255,255,255,.97);
+  backdrop-filter:blur(18px);border:1px solid rgba(107,53,64,.10);
+  box-shadow:0 18px 55px rgba(76,31,36,.18);border-radius:23px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;direction:inherit
+}
+.dd-birthday-sticky-summary {display:flex;align-items:center;gap:13px;color:#594d4b;font-size:13px;font-weight:700}
+.dd-birthday-sticky-thumbs {display:flex;direction:ltr}
+.dd-birthday-sticky-thumbs img {width:44px;height:44px;border-radius:10px;border:3px solid #fff;object-fit:cover;margin-inline-end:-8px;box-shadow:0 3px 8px rgba(0,0,0,.1)}
+.dd-birthday-sticky>button {border:0;background:var(--dd-bp-wine);color:#fff;border-radius:999px;padding:14px 28px;min-width:270px;cursor:pointer;font-weight:800;font-size:13px}
+.dd-birthday-sticky>button:disabled {opacity:.45;cursor:not-allowed}
+.dd-birthday-feedback {position:fixed;z-index:330;bottom:112px;inset-inline-end:25px;max-width:min(420px,calc(100% - 50px));background:var(--dd-bp-wine);color:#fff;padding:12px 17px;border-radius:12px;box-shadow:0 10px 28px rgba(60,27,35,.19);font-size:13px}
+@media(max-width:1000px) {
+  .dd-birthday-hero {grid-template-columns:1fr}
+  .dd-birthday-hero-copy {order:2;padding:34px 24px 42px}
+  .dd-birthday-hero-photo {min-height:360px}
+  .dd-birthday-context-card {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dd-birthday-rec-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dd-birthday-services {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dd-birthday-product-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dd-birthday-inspire {grid-template-columns:1fr}
+}
+@media(max-width:760px) {
+  .dd-birthday-steps {grid-template-columns:repeat(6,112px);overflow:auto;width:100%;padding:0 17px 9px}
+  .dd-birthday-step:not(:last-child):after {width:80%;inset-inline-start:65%}
+  .dd-birthday-hero,.dd-birthday-main {width:calc(100% - 28px)}
+  .dd-birthday-context {width:calc(100% - 28px);padding:0}
+  .dd-birthday-context-card {grid-template-columns:1fr}
+  .dd-birthday-sticky {width:calc(100% - 115px);bottom:15px;padding:9px 12px;flex-wrap:wrap;border-radius:18px;gap:6px}
+  .dd-birthday-sticky-summary {width:100%;justify-content:center;font-size:12px}
+  .dd-birthday-sticky-thumbs img {width:31px;height:31px}
+  .dd-birthday-sticky>button {width:100%;min-width:0;padding:11px 12px;font-size:12px}
+  .dd-birthday-feedback {bottom:110px}
+}
+@media(max-width:620px) {
+  .dd-birthday-hero-photo {min-height:280px}
+  .dd-birthday-hero h1 {font-size:36px}
+  .dd-birthday-hero-copy p {font-size:15px}
+  .dd-birthday-main {padding:26px 16px 20px}
+  .dd-birthday-rec {padding:16px;margin-bottom:24px}
+  .dd-birthday-rec-head,.dd-birthday-section-head {flex-direction:column;align-items:flex-start;gap:10px}
+  .dd-birthday-rec-grid {grid-template-columns:1fr}
+  .dd-birthday-services {grid-template-columns:1fr;gap:12px}
+  .dd-birthday-service {display:grid;grid-template-columns:42px minmax(0,1fr) 100px;gap:11px;align-items:center;padding:13px}
+  .dd-birthday-service-icon {margin:0;grid-row:1}
+  .dd-birthday-service-copy {grid-column:2}
+  .dd-birthday-service-copy strong {font-size:14px}
+  .dd-birthday-service-copy small {min-height:0;margin:4px 0;font-size:12px}
+  .dd-birthday-service>img {grid-column:3;grid-row:1;height:78px}
+  .dd-birthday-service-check {inset-inline-end:7px;top:7px;width:21px;height:21px}
+  .dd-birthday-product-grid {gap:9px}
+  .dd-birthday-inspire-photos img {height:110px;border-width:5px}
+  .dd-birthday-sticky {width:calc(100% - 115px);bottom:16px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .dd-birthday-page *, .dd-birthday-page *:before,.dd-birthday-page *:after {animation-duration:.01ms!important;scroll-behavior:auto!important}
+}
