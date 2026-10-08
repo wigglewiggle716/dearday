@@ -321,11 +321,10 @@ html[lang=en] .dd-home-date-calendar { font-family: Arial,Helvetica,sans-serif; 
 .dd-venue-preview .dd-product-buy .dd-cart-add { display:inline-flex; align-items:center; justify-content:center; }
 /* Swipe indicator uses a fixed-size thumb that MOVES, rather than an extending fill. */
 @media (max-width:679px) {
-  .dd-curated-mobile-progress { position:relative; direction:ltr; overflow:hidden; }
+  .dd-curated-mobile-progress { position:relative; direction:inherit; overflow:hidden; }
   .dd-curated-mobile-progress > span {
     position:absolute; top:0; inset-inline-start:0; height:100%; min-width:6px;
     will-change:transform; transition:transform .09s linear;
   }
-  .dd-curated-mobile-progress > span { left:0; right:auto; }
   .dd-venue-preview-meta { font-size:10px; margin-bottom:8px; }
 }

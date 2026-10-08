@@ -173,7 +173,7 @@ export function CuratedCatalog({locale,t}) {
         <div className="dd-curated-mobile-progress" aria-hidden="true">
           <span style={{
             width:(progress.thumb*100).toFixed(2)+"%",
-            transform:"translate3d("+(84*(1-progress.thumb)*progress.fraction).toFixed(2)+"px,0,0)"
+            transform:"translate3d("+((locale==="ar"?-1:1)*84*(1-progress.thumb)*progress.fraction).toFixed(2)+"px,0,0)"
           }}/>
         </div>
       </>}
