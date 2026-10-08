@@ -1,0 +1,162 @@
+/* Based on current production cake.html and cake-en.html from commit 5d97cc458910279646ec10a18ffecaca81a6854d.
+   These are 12 visual prototype cards (six picks + six other products);
+   names, photos and indicative prices are not live partner availability.
+   Keep them out of any real checkout until partner inventory is validated. */
+export const cakePrototypeCards = [
+  {
+    "id": "berry",
+    "name": "Chocolate Berry Cake",
+    "ar": "كيك شوكولاتة بالتوت",
+    "category": "cake",
+    "people": "8-10",
+    "flavor": "chocolate",
+    "design": "premium",
+    "price": 1100,
+    "vendor": "Sugar Mood",
+    "img": "/approved-pages/assets/media/cake-chocolate-premium.jpg",
+    "isPick": true
+  },
+  {
+    "id": "pink",
+    "name": "Pink Celebration Cake",
+    "ar": "كيك احتفال وردي",
+    "category": "cake",
+    "people": "6-8",
+    "flavor": "vanilla",
+    "design": "classic",
+    "price": 950,
+    "vendor": "The Cake Studio",
+    "img": "/approved-pages/assets/media/cake-vanilla-classic.jpg",
+    "isPick": true
+  },
+  {
+    "id": "lotus",
+    "name": "Lotus Dream Cake",
+    "ar": "كيك لوتس",
+    "category": "cake",
+    "people": "8-10",
+    "flavor": "lotus",
+    "design": "minimal",
+    "price": 1000,
+    "vendor": "Sweet House",
+    "img": "/approved-pages/assets/media/cake-lotus-minimal.jpg",
+    "isPick": true
+  },
+  {
+    "id": "cupcakes",
+    "name": "Signature Cupcakes Box",
+    "ar": "بوكس كب كيك سيجنتشر",
+    "category": "cupcakes",
+    "people": "12",
+    "flavor": "mixed",
+    "design": "floral",
+    "price": 750,
+    "vendor": "Bake Room",
+    "img": "/approved-pages/assets/media/cupcakes-mixed.jpg",
+    "isPick": true
+  },
+  {
+    "id": "dessert",
+    "name": "Premium Dessert Box",
+    "ar": "بوكس شوكولاته",
+    "category": "dessert",
+    "people": "9",
+    "flavor": "mixed",
+    "design": "premium",
+    "price": 800,
+    "vendor": "Crumb & Co.",
+    "img": "/approved-pages/assets/media/dessert-box.jpg",
+    "isPick": true
+  },
+  {
+    "id": "cookies",
+    "name": "Chocolate Cookies Box",
+    "ar": "بوكس كوكيز شوكولاتة",
+    "category": "cookies",
+    "people": "12",
+    "flavor": "chocolate",
+    "design": "classic",
+    "price": 650,
+    "vendor": "Cookie Lab",
+    "img": "/approved-pages/assets/media/cookies.jpg",
+    "isPick": true
+  },
+  {
+    "id": "dummy-redvelvet",
+    "name": "Red Velvet Celebration Cake",
+    "ar": "كيك ريد فيلفت للاحتفال",
+    "category": "cake",
+    "people": "8-10",
+    "flavor": "chocolate",
+    "design": "premium",
+    "price": 1250,
+    "vendor": "Velvet Bakery",
+    "img": "/approved-pages/assets/media/cake-chocolate-premium.jpg",
+    "isPick": false
+  },
+  {
+    "id": "dummy-vanilla-heart",
+    "name": "Vanilla Heart Cake",
+    "ar": "كيك فانيليا بشكل قلب",
+    "category": "cake",
+    "people": "6-8",
+    "flavor": "vanilla",
+    "design": "classic",
+    "price": 980,
+    "vendor": "Little Whisk",
+    "img": "/approved-pages/assets/media/cake-vanilla-classic.jpg",
+    "isPick": false
+  },
+  {
+    "id": "dummy-lotus-mini",
+    "name": "Mini Lotus Cake",
+    "ar": "كيك لوتس ميني",
+    "category": "cake",
+    "people": "6-8",
+    "flavor": "lotus",
+    "design": "minimal",
+    "price": 850,
+    "vendor": "Sweet Spot",
+    "img": "/approved-pages/assets/media/cake-lotus-minimal.jpg",
+    "isPick": false
+  },
+  {
+    "id": "dummy-cupcakes-floral",
+    "name": "Floral Cupcakes Set",
+    "ar": "بوكس كب كيك بديكور ورد",
+    "category": "cupcakes",
+    "people": "12",
+    "flavor": "mixed",
+    "design": "floral",
+    "price": 820,
+    "vendor": "Bake & Bloom",
+    "img": "/approved-pages/assets/media/cupcakes-mixed.jpg",
+    "isPick": false
+  },
+  {
+    "id": "dummy-dessert-date",
+    "name": "Date Night Dessert Box",
+    "ar": "بوكس حلويات ديت نايت",
+    "category": "dessert",
+    "people": "9",
+    "flavor": "mixed",
+    "design": "premium",
+    "price": 900,
+    "vendor": "Crème Corner",
+    "img": "/approved-pages/assets/media/dessert-box.jpg",
+    "isPick": false
+  },
+  {
+    "id": "dummy-cookies-name",
+    "name": "Personalized Cookies Box",
+    "ar": "بوكس كوكيز بالاسم",
+    "category": "cookies",
+    "people": "12",
+    "flavor": "chocolate",
+    "design": "classic",
+    "price": 720,
+    "vendor": "Cookie Story",
+    "img": "/approved-pages/assets/media/cookies.jpg",
+    "isPick": false
+  }
+];
