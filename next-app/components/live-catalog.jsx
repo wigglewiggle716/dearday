@@ -212,29 +212,3 @@ export function CategoryCatalogPage({locale,slug,flow=false}) {
   </main>
   </>;
 }
-
-
-// Venue booking is not migrated yet: keep the journey navigable without
-// implying that the sample venue cards are bookable or reservable.
-export function VenuePlanningStep({locale="ar"}) {
-  const router=useRouter();
-  const next=()=>{
-    const target=getNextPlanningStep("venues",readPlanningServices());
-    router.push(pathFor(target,locale)+"?flow=1");
-  };
-  return <>
-    <PlanningStepper locale={locale} current="venues"/>
-    <main id="main-content" className="dd-main dd-catalog-page">
-      <div className="dd-home-container">
-        <h1>{locale==="ar"?"أماكن وتجارب":"Places & Experiences"}</h1>
-        <div className="dd-planning-pending">
-          <h2>{locale==="ar"?"تجهيز خطوة الأماكن والتجارب":"Places & experiences are being migrated"}</h2>
-          <p>{locale==="ar"
-            ?"صفحة الأماكن والتجارب المعتمدة لسه قيد النقل لنسخة React. تقدر تكمل باقي اختيارات المناسبة دلوقتي، من غير ما نحجز مكان أو نضيف حاجة غير مؤكدة للسلة."
-            :"The approved venues page is still being migrated to React. You can continue choosing other services without making an unconfirmed booking."}</p>
-          <button type="button" onClick={next}>{locale==="ar"?"التالي: أكمل اختياراتي":"Next: Continue planning"}</button>
-        </div>
-      </div>
-    </main>
-  </>;
-}

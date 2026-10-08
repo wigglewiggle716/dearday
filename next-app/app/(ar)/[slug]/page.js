@@ -1,7 +1,7 @@
 import "../../home.css";
 import { MigrationPlaceholder } from "../../../components/migration-preview";
 import { CartPage } from "../../../components/cart-provider";
-import { CategoryCatalogPage, VenuePlanningStep } from "../../../components/live-catalog";
+import { CategoryCatalogPage } from "../../../components/live-catalog";
 import OccasionsPage from "../../../components/occasions-page";
 import "../../occasions.css";
 
@@ -12,6 +12,5 @@ export default async function ArabicPreviewPage({ params, searchParams }) {
   if (slug === "occasions") return <OccasionsPage locale="ar" />;
   if (slug === "cart") return <CartPage locale="ar" />;
   if (["gifts","cake","flowers"].includes(slug)) return <CategoryCatalogPage locale="ar" slug={slug} flow={flow} />;
-  if (slug === "venues" && flow) return <VenuePlanningStep locale="ar" />;
   return <MigrationPlaceholder locale="ar" slug={slug} />;
 }

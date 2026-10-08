@@ -1,3 +1,4 @@
+import "../../../home.css";
 import "../../../venues.css";
 import VenuesPage from "../../../../components/venues-page";
 
