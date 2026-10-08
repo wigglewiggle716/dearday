@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import OccasionDatePicker from "./occasion-date-picker";
+import BrandedDropdown from "./branded-dropdown";
 import { ProductCard, useCatalog } from "./live-catalog";
 import { useCart, money } from "./cart-provider";
 import { pathFor } from "../lib/locales";
@@ -200,20 +201,15 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     <section className="dd-birthday-context" aria-label={t.chosen}>
       <div className="dd-birthday-context-card">
         <div className="dd-birthday-context-title"><span>{t.chosen}</span><strong>{occasion.label}</strong></div>
-        <label>{t.area}
-          <select value={details.area} onChange={e=>updateDetails({area:e.target.value})}>
-            <option value="">{t.areaPlace}</option>
-            <option value="القاهرة">{locale==="ar"?"القاهرة":"Cairo"}</option>
-            <option value="الجيزة">{locale==="ar"?"الجيزة":"Giza"}</option>
-          </select>
-        </label>
+        <BrandedDropdown locale={locale} label={t.area} placeholder={t.areaPlace}
+          value={details.area} onChange={value=>updateDetails({area:value})}
+          options={[[ "القاهرة",locale==="ar"?"القاهرة":"Cairo" ],[ "الجيزة",locale==="ar"?"الجيزة":"Giza" ]]}/>
         <OccasionDatePicker locale={locale} value={details.date} onChange={v=>updateDetails({date:v})}
           label={t.date} placeholder={t.datePlace}/>
-        <label>{t.budget}
-          <select value={details.budgetKey} onChange={e=>updateDetails({budgetKey:e.target.value,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]})}>
-            {knownBudgets.map(key=><option value={key} key={key}>{budgetTitle(key,locale)}</option>)}
-          </select>
-        </label>
+        <BrandedDropdown locale={locale} label={t.budget} placeholder={t.budgetAll}
+          value={details.budgetKey}
+          onChange={value=>updateDetails({budgetKey:value,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]})}
+          options={knownBudgets.map(key=>[key,budgetTitle(key,locale)])}/>
       </div>
     </section>
     <div className="dd-birthday-main">
@@ -266,6 +262,10 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
           :suggest.length?<div className="dd-birthday-product-grid">{suggest.map(item=><ProductCard key={item.id} product={item} locale={locale}/>)}</div>
           :<p className="dd-birthday-products-empty">{t.noProducts}</p>}
         </section>
+        <div className="dd-birthday-inline-next">
+          <span aria-live="polite">{t.selectedCount(selectedCount)}</span>
+          <button type="button" onClick={moveNext} disabled={selectedCount===0}>{t.continue}</button>
+        </div>
         <section className="dd-birthday-inspire">
           <div className="dd-birthday-inspire-text">
             <h2>{t.inspire}</h2><p>{t.inspireCopy}</p>
@@ -278,17 +278,6 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
           </div>
         </section>
       </div>
-    </div>
-    <div className="dd-birthday-sticky" aria-label={t.select}>
-      <div className="dd-birthday-sticky-summary">
-        <div className="dd-birthday-sticky-thumbs">
-          {details.services.slice(0,4).map(name=>{
-            const def=serviceDefs.find(s=>s.name===name);
-            return def?<img key={name} src={media+def.image} alt="" />:null;
-          })}
-        </div><span>{t.selectedCount(selectedCount)}</span>
-      </div>
-      <button type="button" onClick={moveNext} disabled={selectedCount===0}>{t.continue}</button>
     </div>
     {feedback&&<div className="dd-birthday-feedback" role="status" ref={feedbackRef}>{feedback}</div>}
   </main>;

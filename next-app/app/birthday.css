@@ -103,18 +103,12 @@
 .dd-birthday-inspire-photos img:nth-child(1) {transform:rotate(-5deg)}
 .dd-birthday-inspire-photos img:nth-child(2) {transform:rotate(4deg);z-index:2}
 .dd-birthday-inspire-photos img:nth-child(3) {transform:rotate(-3deg)}
-.dd-birthday-sticky {
-  position:fixed;z-index:260;bottom:16px;left:50%;transform:translateX(-50%);
-  width:min(1100px,calc(100% - 172px));background:rgba(255,255,255,.97);
-  backdrop-filter:blur(18px);border:1px solid rgba(107,53,64,.10);
-  box-shadow:0 18px 55px rgba(76,31,36,.18);border-radius:23px;padding:12px 16px;
-  display:flex;align-items:center;justify-content:space-between;gap:18px;direction:inherit
-}
-.dd-birthday-sticky-summary {display:flex;align-items:center;gap:13px;color:#594d4b;font-size:13px;font-weight:700}
-.dd-birthday-sticky-thumbs {display:flex;direction:ltr}
-.dd-birthday-sticky-thumbs img {width:44px;height:44px;border-radius:10px;border:3px solid #fff;object-fit:cover;margin-inline-end:-8px;box-shadow:0 3px 8px rgba(0,0,0,.1)}
-.dd-birthday-sticky>button {border:0;background:var(--dd-bp-wine);color:#fff;border-radius:999px;padding:14px 28px;min-width:270px;cursor:pointer;font-weight:800;font-size:13px}
-.dd-birthday-sticky>button:disabled {opacity:.45;cursor:not-allowed}
+
+
+
+
+
+
 .dd-birthday-feedback {position:fixed;z-index:330;bottom:112px;inset-inline-end:25px;max-width:min(420px,calc(100% - 50px));background:var(--dd-bp-wine);color:#fff;padding:12px 17px;border-radius:12px;box-shadow:0 10px 28px rgba(60,27,35,.19);font-size:13px}
 @media(max-width:1000px) {
   .dd-birthday-hero {grid-template-columns:1fr}
@@ -132,10 +126,10 @@
   .dd-birthday-hero,.dd-birthday-main {width:calc(100% - 28px)}
   .dd-birthday-context {width:calc(100% - 28px);padding:0}
   .dd-birthday-context-card {grid-template-columns:1fr}
-  .dd-birthday-sticky {width:calc(100% - 115px);bottom:15px;padding:9px 12px;flex-wrap:wrap;border-radius:18px;gap:6px}
-  .dd-birthday-sticky-summary {width:100%;justify-content:center;font-size:12px}
-  .dd-birthday-sticky-thumbs img {width:31px;height:31px}
-  .dd-birthday-sticky>button {width:100%;min-width:0;padding:11px 12px;font-size:12px}
+  
+  
+  
+  
   .dd-birthday-feedback {bottom:110px}
 }
 @media(max-width:620px) {
@@ -156,8 +150,97 @@
   .dd-birthday-service-check {inset-inline-end:7px;top:7px;width:21px;height:21px}
   .dd-birthday-product-grid {gap:9px}
   .dd-birthday-inspire-photos img {height:110px;border-width:5px}
-  .dd-birthday-sticky {width:calc(100% - 115px);bottom:16px}
+  
 }
 @media(prefers-reduced-motion:reduce) {
   .dd-birthday-page *, .dd-birthday-page *:before,.dd-birthday-page *:after {animation-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* Birthday Planning: all three context controls use the same Dear Day field system. */
+.dd-birthday-context-card { align-items:end; }
+.dd-birthday-context-card .dd-home-dropdown-field,
+.dd-birthday-context-card .dd-home-date-field { min-width:0; font-size:13px; color:var(--dd-bp-wine); }
+.dd-birthday-context-card .dd-home-dropdown-label,
+.dd-birthday-context-card .dd-home-date-label {
+  display:block; color:var(--dd-bp-wine); font-size:13px;
+  font-weight:800; line-height:1.6; margin:0 0 7px;
+}
+.dd-birthday-context-card .dd-home-dropdown-trigger,
+.dd-birthday-context-card .dd-home-date-trigger {
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  height:48px; min-height:48px; margin:0;
+  padding-inline:13px; border:1px solid rgba(107,53,64,.19); border-radius:13px;
+  background:linear-gradient(180deg,#fff,#fffdfb); color:#6B3540;
+  box-shadow:0 5px 14px rgba(76,31,36,.025); font-size:13px; font-weight:700;
+  font-family:inherit; cursor:pointer;
+}
+.dd-birthday-context-card .dd-home-date-control { height:48px; }
+.dd-birthday-context-card .dd-home-dropdown-trigger:hover,
+.dd-birthday-context-card .dd-home-date-trigger:hover { border-color:#A8583D; }
+.dd-birthday-context-card .dd-home-dropdown-trigger:focus-visible,
+.dd-birthday-context-card .dd-home-date-trigger:focus-visible { outline:3px solid rgba(168,88,61,.23); outline-offset:2px; }
+.dd-birthday-context-card .dd-home-date-left {
+  flex:none; width:32px; height:32px; border-radius:9px;
+  color:#A8583D; background:rgba(168,88,61,.09);
+}
+.dd-birthday-context-card .dd-home-dropdown-menu {
+  z-index:25; border-color:#e7d5d3; border-radius:14px;
+  background:#fffdfc; box-shadow:0 14px 38px rgba(68,28,36,.16);
+}
+.dd-birthday-context-card .dd-home-dropdown-option[aria-selected=true] {background:#6B3540;color:#fff;}
+.dd-birthday-context-card .dd-home-date-label { margin-bottom:7px; }
+
+/* In the suggested-products grid, a clear full-width add button becomes +/- quantity controls. */
+.dd-birthday-product-grid .dd-product-card { min-width:0; display:flex; flex-direction:column; }
+.dd-birthday-product-grid .dd-product-body { flex:1; display:flex; flex-direction:column; }
+.dd-birthday-product-grid .dd-product-buy { 
+  display:flex; flex-direction:column; align-items:stretch; gap:11px;
+  margin-top:auto; flex-wrap:nowrap;
+}
+.dd-birthday-product-grid .dd-product-buy > strong {
+  color:#6B3540; font-size:14px; font-weight:800; text-align:start;
+}
+.dd-birthday-product-grid .dd-product-buy .dd-cart-add {
+  width:100%; min-height:39px; display:flex; align-items:center; justify-content:center;
+  padding:9px 12px; background:#6B3540; color:#fff; border:0;
+  border-radius:999px; font-family:inherit; font-weight:700; font-size:12px; line-height:1.35; cursor:pointer;
+}
+.dd-birthday-product-grid .dd-product-buy .dd-cart-add:hover { background:#854651; }
+.dd-birthday-product-grid .dd-product-buy .dd-cart-quantity {
+  display:flex; align-items:center; justify-content:space-between;
+  width:100%; min-height:39px; gap:9px; padding:5px;
+  border-radius:999px; background:#6B3540;
+}
+.dd-birthday-product-grid .dd-product-buy .dd-cart-quantity button {
+  flex:0 0 auto; width:29px; height:29px;
+  display:grid; place-items:center; font-size:19px;
+  background:#fff; color:#6B3540; border:0; border-radius:50%;
+  cursor:pointer;
+}
+.dd-birthday-product-grid .dd-product-buy .dd-cart-quantity span { color:#fff; font-weight:800; font-size:13px; }
+
+/* "Next" remains part of the document, never follows the visitor while scrolling. */
+.dd-birthday-inline-next {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:18px; margin:18px 0 30px; padding:18px 22px;
+  background:#fffaf6; border:1px solid #e9ddd8; border-radius:17px;
+}
+.dd-birthday-inline-next span { font-size:13px; font-weight:700; color:#594d4b; }
+.dd-birthday-inline-next button {
+  padding:13px 22px; border-radius:999px; border:0;
+  background:#6B3540; color:#fff; font-size:13px; font-weight:800;
+  cursor:pointer; min-width:220px;
+}
+.dd-birthday-inline-next button:disabled { opacity:.43; cursor:not-allowed; }
+@media(max-width:760px) {
+  .dd-birthday-context-card .dd-home-dropdown-trigger,
+  .dd-birthday-context-card .dd-home-date-trigger { font-size:13px; }
+  .dd-birthday-inline-next { flex-direction:column; align-items:stretch; gap:12px; }
+  .dd-birthday-inline-next span { text-align:center; }
+  .dd-birthday-inline-next button { min-width:0; width:100%; }
+}
+@media(max-width:620px) {
+  .dd-birthday-product-grid .dd-product-buy .dd-cart-add { font-size:12px; min-height:38px; }
+  .dd-birthday-product-grid .dd-product-buy .dd-cart-quantity { min-height:38px; }
+  .dd-birthday-product-grid .dd-product-buy .dd-cart-quantity button { width:27px; height:27px; }
 }
