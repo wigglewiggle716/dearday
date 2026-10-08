@@ -39,7 +39,7 @@
   function ensureCustomerAvailability(){
     if(document.querySelector('script[data-dd-customer-availability]'))return;
     const s=document.createElement('script');
-    s.src='/approved-pages/dear-day-customer-availability.js?v=20261002-1';
+    s.src='/approved-pages/dear-day-customer-availability.js?v=20261008-checkout';
     s.defer=true;
     s.setAttribute('data-dd-customer-availability','');
     (document.head||document.documentElement).appendChild(s);
