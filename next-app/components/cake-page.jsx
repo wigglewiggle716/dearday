@@ -33,7 +33,6 @@ const textByLocale={
     uploadStorage:"ماقدرناش نحفظ الصورة في المتصفح؛ جرب صورة أصغر.",
     favorites:"إضافة للمفضلة",removeFavorite:"إزالة من المفضلة",
     people:"أشخاص",add:"أضف للسلة",noCake:"مفيش منتجات معروضة حاليًا.",
-    note:"المنتجات والأسعار المعروضة أمثلة للتصميم، مش مخزون أو أسعار تعاقدية مؤكدة.",
     selected:"منتجات كيك أو حلويات في السلة",continue:"حفظ ومتابعة التخطيط",continuation:"الاختيارات محفوظة في السلة المشتركة.",
     titleSection:"شكولاته و كيك"
   },
@@ -58,7 +57,6 @@ const textByLocale={
     uploadStorage:"Could not save the image in this browser. Try a smaller one.",
     favorites:"Add to favorites",removeFavorite:"Remove from favorites",
     people:"guests",add:"Add",noCake:"No products available yet.",
-    note:"Products and prices are design examples, not confirmed stock or contracted prices.",
     selected:"Cake & sweets in cart",continue:"Save & continue planning",continuation:"Selections stay in the shared cart.",
     titleSection:"Chocolate & Cakes"
   }
@@ -289,7 +287,6 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
               <input ref={fileInput} type="file" accept="image/*" onChange={upload}/>
             </label>
           </div>
-          <p className="dd-cake-disclaimer">{t.note}</p>
           {flow&&<div className="dd-cake-continue">
             <div><strong>{t.selected}: {previewCount}</strong><p>{t.continuation}</p></div>
             <button type="button" onClick={continuePlanning}>{t.continue}</button>

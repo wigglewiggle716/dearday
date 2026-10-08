@@ -29,7 +29,6 @@ export function money(value, locale = "ar") {
 function cartCopy(locale) {
   return locale === "en" ? {
     cart:"My Cart", empty:"Your cart is empty",browse:"Browse products",
-    preview:"Illustrative item — availability and final price are not confirmed.",
     total:"Subtotal",details:"Cart details",close:"Close",remove:"Remove",
     viewCart:"Go to cart", decrease:"Decrease quantity",increase:"Increase quantity",
     unavailable:"Checkout will be connected after the remaining booking flow is migrated.",
@@ -38,7 +37,6 @@ function cartCopy(locale) {
     continuePlanning:"Occasion Details",reviewNow:"Review & Book"
   } : {
     cart:"سلة مشترياتي", empty:"السلة فارغة حاليًا",browse:"تصفح المنتجات",
-    preview:"منتج توضيحي — التوافر والسعر النهائي غير مؤكدين.",
     total:"الإجمالي",details:"تفاصيل السلة",close:"إغلاق",remove:"حذف",
     viewCart:"الانتقال للسلة",decrease:"تقليل الكمية",increase:"زيادة الكمية",
     unavailable:"إتمام الحجز والدفع هيتربط بعد نقل باقي خطوات الحجز.",
@@ -154,7 +152,6 @@ function CartRows({ locale }) {
       <div className="dd-cart-row-body">
         <strong>{locale === "ar" ? item.ar || item.name : item.name || item.ar}</strong>
         {item.vendor && <small>{item.vendor}</small>}
-        {item.previewOnly&&<small className="dd-cart-preview-label">{t.preview}</small>}
         <b>{money(item.price * quantity(item),locale)}</b>
         <div className="dd-cart-row-controls">
           {item.type !== "venue" && <div className="dd-cart-quantity">

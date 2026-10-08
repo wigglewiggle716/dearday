@@ -22,7 +22,6 @@ const labels={
     sort:"ترتيب الأماكن",sortChoices:[["recommended","الأكثر مناسبة"],["asc","السعر: الأقل أولًا"],["desc","السعر: الأعلى أولًا"]],
     results:"اكتشف أماكن وتجارب أكثر",picks:"مختارات Dear Day",more:"كل الأماكن والتجارب",
     noResults:"لا توجد نتائج لهذه الفلاتر. جرّب مسح الفلاتر أو تغيير الاختيارات.",
-    prototype:"* الأسماء والأسعار والتوافر في هذه النسخة بيانات توضيحية للـprototype وليست حجوزات فعلية.",
     current:"اختيارك الحالي",emptyCurrent:"لسه ما اخترتش مكان أو تجربة. اختار من النتائج تحت.",
     people:"أشخاص",change:"تغيير",remove:"حذف",choose:"اختيار المكان",removeChoice:"إلغاء اختيار المكان",
     favorite:"أضف للمفضلة",unfavorite:"إزالة من المفضلة",
@@ -49,7 +48,6 @@ const labels={
     sort:"Sort places",sortChoices:[["recommended","Recommended"],["asc","Price: low to high"],["desc","Price: high to low"]],
     results:"Explore more places & experiences",picks:"Dear Day Picks",more:"All Places & Experiences",
     noResults:"No places match these filters. Try changing or clearing the filters.",
-    prototype:"* Names, prices and availability on this prototype are illustrative and do not represent confirmed bookings.",
     current:"Your current choice",emptyCurrent:"You haven't selected a place or experience yet. Choose one from the results below.",
     people:"guests",change:"Change",remove:"Remove",choose:"Choose place",removeChoice:"Remove selection",
     favorite:"Add to favorites",unfavorite:"Remove from favorites",
@@ -279,7 +277,6 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                 </div>
               </section>}
               {filtered.length===0&&<p className="dd-venues-no-results">{t.noResults}</p>}
-              <p className="dd-venues-prototype">{t.prototype}</p>
               <section className="dd-venues-custom">
                 <img src="/approved-pages/assets/media/custom-venue.jpg" alt="" loading="lazy"/>
                 <div className="dd-venues-custom-copy">

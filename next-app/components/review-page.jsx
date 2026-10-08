@@ -20,17 +20,15 @@ const names={
     summary:"ملخص الحجز",items:"عدد العناصر",subtotal:"قيمة الاختيارات",fee:"رسوم الخدمة",total:"الإجمالي",
     pay:"متابعة لصفحة الدفع",back:"الرجوع لتفاصيل المناسبة",
     secure:"لن يتم خصم أي مبلغ قبل خطوة الدفع وتأكيد الطلب.",
-    paymentPaused:"تقدر تراجع صفحة الدفع والبيانات، لكن الدفع الإلكتروني وإنشاء الحجز لسه غير مفعّلين في نسخة React.",
+    paymentPaused:"الدفع الإلكتروني غير متاح حاليًا.",
     consentBefore:"أوافق على ",terms:"الشروط والأحكام",consentMiddle:" و",refunds:"سياسة الإلغاء والاسترداد",consentAfter:" قبل المتابعة للدفع.",
     detailLabels:{occasion:"المناسبة",name:"الاسم أو اللقب",date:"التاريخ",time:"الوقت",budget:"الميزانية التقريبية",location:"المكان / العنوان",notes:"ملاحظات خاصة"},
     empty:"لا توجد عناصر في السلة حاليًا. ارجع إلى My Cart وأضف اختياراتك.",
     addProducts:"تصفح المنتجات",noDetails:"تفاصيل المناسبة لسه ناقصة. كمّل الاسم والتاريخ والوقت قبل المراجعة.",
-    example:"عنصر توضيحي — التوافر والسعر النهائي غير مؤكدين.",unconfirmedPlace:"المكان في الخطة فقط — الحجز غير مؤكد.",
     locationFallback:"مكان مختار",noInfo:"—",
     kinds:{gift:"هدية",cake:"شكولاته و كيك",flower:"ورد",venue:"مكان وتجربة"},
-    estimated:"قيمة توضيحية غير نهائية",noCharges:"رسوم الخدمة النهائية لم تُحدَّد بعد.",
+    noCharges:"رسوم الخدمة النهائية لم تُحدَّد بعد.",
     progress:"مراحل الحجز",
-    legalPreview:"الموافقة دي للمعاينة فقط؛ مش هتتسجل كموافقة حجز قبل تفعيل الدفع.",
     budgetLabels:{"under-1000":"أقل من 1,000","1000-2500":"1,000–2,500","2500-5000":"2,500–5,000","5000-plus":"5,000+","unsure":"لسه مش محدد"},
     occasionLabels:{birthday:"عيد ميلاد",anniversary:"ذكرى سنوية",engagement:"خطوبة",proposal:"طلب زواج"}
   },
@@ -41,19 +39,17 @@ const names={
     description:"Check the occasion details, your selections, note and total. You can still edit anything before continuing to payment.",
     fields:"Occasion details",editFields:"Edit details",cart:"Your selections",editCart:"Edit selections",
     summary:"Booking summary",items:"Items",subtotal:"Selections subtotal",fee:"Service fee",total:"Total",
-    pay:"Preview Payment Step",back:"Back to Occasion Details",
+    pay:"Continue to Payment",back:"Back to Occasion Details",
     secure:"No payment will be taken until the payment step and final order confirmation.",
-    paymentPaused:"You can preview the payment page, but online payment and order creation are not enabled in this React version.",
+    paymentPaused:"Online payment is currently unavailable.",
     consentBefore:"I agree to the ",terms:"Terms & Conditions",consentMiddle:" and ",refunds:"Cancellation & Refunds Policy",consentAfter:" before proceeding to payment.",
     detailLabels:{occasion:"Occasion",name:"Name or nickname",date:"Date",time:"Time",location:"Location",budget:"Budget",notes:"Special notes"},
     empty:"There are no items in your cart yet. Go back to My Cart and add your selections.",
     addProducts:"Browse products",noDetails:"Your occasion details are incomplete. Add the name, date and time before review.",
-    example:"Illustrative item — availability and final price are not confirmed.",unconfirmedPlace:"Planned venue only — booking not confirmed.",
     locationFallback:"Selected Dear Day place",noInfo:"—",
     kinds:{gift:"Gift",cake:"Chocolate & Cakes",flower:"Flowers",venue:"Place & Experience"},
-    estimated:"Illustrative amount, not a final quote",noCharges:"The final service fee has not been determined.",
+    noCharges:"The final service fee has not been determined.",
     progress:"Booking progress",
-    legalPreview:"This is a preview checkbox; legal consent will only be recorded as part of a future enabled booking flow.",
     budgetLabels:{"under-1000":"Under EGP 1,000","1000-2500":"EGP 1,000–2,500","2500-5000":"EGP 2,500–5,000","5000-plus":"EGP 5,000+","unsure":"Not sure yet"},
     occasionLabels:{birthday:"Birthday",anniversary:"Anniversary",engagement:"Engagement",proposal:"Marriage Proposal"}
   }
@@ -119,7 +115,6 @@ export default function ReviewPage({locale="ar",flow=false}){
   const location=details.locationMode==="selected"
     ?venueName||t.locationFallback:details.address||plan.area||t.noInfo;
   const hasDetails=!!(occKey&&details.celebrant&&details.eventDate&&details.eventTime);
-  const hasExamples=items.some(x=>x.previewOnly);
   const previewTotal=items.reduce((sum,x)=>sum+
     (Number(x.price)||0)*(x.type==="venue"?1:Math.max(1,Number(x.quantity)||1)),0);
   const subtotal=Number.isFinite(total)?total:previewTotal;
@@ -180,7 +175,7 @@ export default function ReviewPage({locale="ar",flow=false}){
               <div className="dd-review-details-grid">
                 {cells.map(([key,value])=><DetailCell key={key} label={t.detailLabels[key]}
                   value={ready?value:t.noInfo}
-                  alert={key==="location"&&details.locationMode==="selected"&&venue?t.unconfirmedPlace:false}/>)}
+                  />)}
                 {(locale==="en"||details.notes)&&<DetailCell full label={t.detailLabels.notes} value={details.notes||t.noInfo}/>}
               </div>
               {ready&&!hasDetails&&<p className="dd-review-inline-warning" role="status">{t.noDetails}</p>}
@@ -202,7 +197,6 @@ export default function ReviewPage({locale="ar",flow=false}){
                     <h3>{locale==="ar"?item.ar||item.name:item.name||item.ar}</h3>
                     <p>{[item.vendor,item.area,item.people,item.meta].filter(Boolean).join(" · ")}</p>
                     <small>{locale==="ar"?"الكمية: ":"Quantity: "}{item.quantity||1}</small>
-                    {item.previewOnly&&<p className="dd-review-example">{t.example}</p>}
                   </div>
                   <div className="dd-review-item-price">
                     {money((Number(item.price)||0)*Math.max(1,Number(item.quantity)||1),locale)}
@@ -214,7 +208,7 @@ export default function ReviewPage({locale="ar",flow=false}){
               </div>}
               {flow&&venue&&<div className="dd-review-planned-venue">
                 <span>📍</span>
-                <div><strong>{venueName}</strong><p>{t.unconfirmedPlace}</p></div>
+                <div><strong>{venueName}</strong></div>
               </div>}
             </section>
             {flow&&locale==="en"&&<section className="dd-review-panel" aria-labelledby="dd-review-dear-note">
@@ -246,7 +240,6 @@ export default function ReviewPage({locale="ar",flow=false}){
             <div className="dd-review-sum-row"><span>{t.subtotal}</span><b>{money(subtotal,locale)}</b></div>
             <div className="dd-review-sum-row"><span>{t.fee}</span><b>{t.noInfo}</b></div>
             <div className="dd-review-sum-row is-total"><span>{t.total}</span><b>{money(subtotal,locale)}</b></div>
-            {(hasExamples||(flow&&venue))&&<p className="dd-review-estimated">{t.estimated}</p>}
             <p className="dd-review-fee-note">{t.noCharges}</p>
             <label className="dd-review-consent">
               <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
@@ -257,7 +250,6 @@ export default function ReviewPage({locale="ar",flow=false}){
                 {t.consentAfter}
               </span>
             </label>
-            <p className="dd-review-legal-preview">{t.legalPreview}</p>
             <button className="dd-review-primary" type="button"
               disabled={!ready||!items.length||(flow&&!hasDetails)||!consent}
               aria-disabled={!ready||!items.length||(flow&&!hasDetails)||!consent}

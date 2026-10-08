@@ -24,7 +24,7 @@ const strings={
     picks:"مختارات",allProducts:"كل المنتجات",notFound:"مفيش نتائج مطابقة للفلاتر دي.",
     loading:"جاري تحميل اختيارات الورد…",loadError:"تعذر تحميل الورد المنشور. حاول مرة تانية لاحقًا.",
     emptyCatalog:"لا توجد منتجات ورد منشورة حاليًا.",
-    tags:{best:"الأكثر طلبًا",new:"جديد",other:"تجريبي"},
+    tags:{best:"الأكثر طلبًا",new:"جديد"},
     arrangementMap:{bouquet:"بوكيه",box:"بوكس",vase:"فازة",bridal:"بوكيه عروسة"},
     typeMap:{roses:"روز",mixed:"مشكل",sunflower:"دوار شمس",gypsophila:"جيبسوفيلا"},
     colorMap:{red:"أحمر",pink:"وردي",white:"أبيض",yellow:"أصفر",purple:"موف",pastel:"باستيل",mixed:"مشكل"},
@@ -46,7 +46,7 @@ const strings={
     picks:"Dear Day Picks",allProducts:"All Products",notFound:"No products match these filters.",
     loading:"Loading flowers…",loadError:"Published flowers could not be loaded. Please try again.",
     emptyCatalog:"There are no published flower products at the moment.",
-    tags:{best:"Best seller",new:"New",other:"Demo"},
+    tags:{best:"Best seller",new:"New"},
     arrangementMap:{bouquet:"Bouquet",box:"Box",vase:"Vase",bridal:"Bridal Bouquet"},
     typeMap:{roses:"Roses",mixed:"Mixed",sunflower:"Sunflower",gypsophila:"Gypsophila"},
     colorMap:{red:"Red",pink:"Pink",white:"White",yellow:"Yellow",purple:"Purple",pastel:"Pastel",mixed:"Mixed"},
@@ -85,7 +85,7 @@ function stemsMatch(item,value){
 function FlowerCard({item,locale,t}){
   const meta=getMeta(item);
   const tags=metaValues(meta,"tags");
-  const tag=tags.includes("best_seller")?t.tags.best:tags.includes("new")?t.tags.new:t.tags.other;
+  const tag=tags.includes("best_seller")?t.tags.best:tags.includes("new")?t.tags.new:null;
   const text=locale==="ar"?item.name_ar:item.name_en;
   const vendor=locale==="ar"?item.vendor_ar:item.vendor_en;
   const description=[
@@ -97,7 +97,7 @@ function FlowerCard({item,locale,t}){
   return <article className="dd-flowers-product" aria-label={text}>
     <div className="dd-flowers-product-image">
       {item.image?<img src={item.image} alt={text} loading="lazy"/>:<span aria-hidden="true">Dear Day</span>}
-      <span className="dd-flowers-product-tag">{tag}</span>
+      {tag&&<span className="dd-flowers-product-tag">{tag}</span>}
     </div>
     <div className="dd-flowers-product-body">
       <small>{vendor||t.brand}</small>
