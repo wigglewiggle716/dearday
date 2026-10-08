@@ -17,9 +17,9 @@ const names={
     description:"تأكد من تفاصيل المناسبة واختياراتك والأسعار. لو محتاج تعدّل أي حاجة، تقدر ترجع لها قبل الانتقال للدفع.",
     fields:"تفاصيل المناسبة",editFields:"تعديل التفاصيل",cart:"اختياراتك",editCart:"تعديل الاختيارات",
     summary:"ملخص الحجز",items:"عدد العناصر",subtotal:"قيمة الاختيارات",fee:"رسوم الخدمة",total:"الإجمالي",
-    pay:"متابعة للدفع",back:"الرجوع لتفاصيل المناسبة",
+    pay:"متابعة لصفحة الدفع",back:"الرجوع لتفاصيل المناسبة",
     secure:"لن يتم خصم أي مبلغ قبل خطوة الدفع وتأكيد الطلب.",
-    paymentPaused:"الدفع الإلكتروني غير متاح حاليًا على نسخة React التجريبية. لا يمكن إنشاء حجز أو دفع من هذه الصفحة.",
+    paymentPaused:"تقدر تراجع صفحة الدفع والبيانات، لكن الدفع الإلكتروني وإنشاء الحجز لسه غير مفعّلين في نسخة React.",
     consentBefore:"أوافق على ",terms:"الشروط والأحكام",consentMiddle:" و",refunds:"سياسة الإلغاء والاسترداد",consentAfter:" قبل المتابعة للدفع.",
     detailLabels:{occasion:"المناسبة",name:"الاسم أو اللقب",date:"التاريخ",time:"الوقت",budget:"الميزانية التقريبية",location:"المكان / العنوان",notes:"ملاحظات خاصة"},
     empty:"لا توجد عناصر في السلة حاليًا. ارجع إلى My Cart وأضف اختياراتك.",
@@ -39,9 +39,9 @@ const names={
     description:"Check the occasion details, your selections, note and total. You can still edit anything before continuing to payment.",
     fields:"Occasion details",editFields:"Edit details",cart:"Your selections",editCart:"Edit selections",
     summary:"Booking summary",items:"Items",subtotal:"Selections subtotal",fee:"Service fee",total:"Total",
-    pay:"Continue to Payment",back:"Back to Occasion Details",
+    pay:"Preview Payment Step",back:"Back to Occasion Details",
     secure:"No payment will be taken until the payment step and final order confirmation.",
-    paymentPaused:"Online payment is not available yet in this React preview. This page cannot place or confirm an order.",
+    paymentPaused:"You can preview the payment page, but online payment and order creation are not enabled in this React version.",
     consentBefore:"I agree to the ",terms:"Terms & Conditions",consentMiddle:" and ",refunds:"Cancellation & Refunds Policy",consentAfter:" before proceeding to payment.",
     detailLabels:{occasion:"Occasion",name:"Name or nickname",date:"Date",time:"Time",location:"Location",budget:"Budget",notes:"Special notes"},
     empty:"There are no items in your cart yet. Go back to My Cart and add your selections.",
@@ -256,7 +256,10 @@ export default function ReviewPage({locale="ar",flow=false}){
               </span>
             </label>
             <p className="dd-review-legal-preview">{t.legalPreview}</p>
-            <button className="dd-review-primary" type="button" disabled aria-disabled="true">{t.pay}</button>
+            <button className="dd-review-primary" type="button"
+              disabled={!ready||!items.length||!hasDetails||!consent}
+              aria-disabled={!ready||!items.length||!hasDetails||!consent}
+              onClick={()=>go("payment")}>{t.pay}</button>
             <button className="dd-review-secondary" type="button" onClick={()=>go("details")}>{t.back}</button>
             <div className="dd-review-warning" role="status">
               {(!ready||!items.length)?t.empty:!hasDetails?t.noDetails:t.paymentPaused}

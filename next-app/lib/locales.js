@@ -8,6 +8,7 @@ export const sections = [
   ["birthday", "birthday"],
   ["details","details"],
   ["review","review"],
+  ["payment","payment"],
   ["howItWorks", "how-it-works"],
   ["partners", "partners"],
   ["about", "about"],

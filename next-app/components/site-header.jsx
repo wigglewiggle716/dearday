@@ -11,6 +11,7 @@ const primaryIds = ["home", "occasions", "howItWorks", "partners"];
 export default function SiteHeader({ locale }) {
   const t = dictionaries[locale];
   const pathname = usePathname();
+  const isCheckout = pathname === pathFor("payment",locale);
   const [mobileOpen, setMobileOpen] = useState(false);
   const exploreRef = useRef(null);
   const mobileExploreRef = useRef(null);
@@ -91,8 +92,10 @@ export default function SiteHeader({ locale }) {
         </Link>
         <nav aria-label={t.navigation} className="dd-desktop-nav"><NavLinks /></nav>
         <div className="dd-header-actions">
-          <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
-          <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+          {!isCheckout&&<>
+            <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
+            <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+          </>}
           <Link href={alternatePath(pathname, locale)} onClick={changeLanguage} className="dd-language" aria-label={t.languageLabel} hrefLang={locale === "ar" ? "en" : "ar"}>{t.language}</Link>
         </div>
         <button
@@ -109,8 +112,10 @@ export default function SiteHeader({ locale }) {
       <nav id="dd-mobile-navigation" aria-label={t.navigation} className={"dd-mobile-navigation" + (mobileOpen ? " is-open" : "")} hidden={!mobileOpen}>
         <NavLinks mobile />
         <div className="dd-mobile-actions">
-          <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
-          <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+          {!isCheckout&&<>
+            <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
+            <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+          </>}
           <Link href={alternatePath(pathname, locale)} onClick={changeLanguage} className="dd-language">{t.language}</Link>
         </div>
       </nav>
