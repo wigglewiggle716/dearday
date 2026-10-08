@@ -1,5 +1,4 @@
-import { MigrationLanding } from "../../components/migration-preview";
+import "../home.css";
+import HomeContent from "../../components/home-content";
 
-export default function Home() {
-  return <MigrationLanding locale="ar" />;
-}
+export default function Home() { return <HomeContent locale="ar"/>; }
