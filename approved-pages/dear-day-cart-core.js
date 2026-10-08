@@ -623,30 +623,45 @@
     const types=[['gift','giftSelections'],['cake','cakeSelections'],['venue','venueSelections']];
     const hasSelectionState=types.some(([,key])=>Array.isArray(plan[key]))||Array.isArray(plan.products);
     if(!hasSelectionState)return read();
-    let a=[];
+
+    // Never let stale/empty plan data erase items already added directly to the cart.
+    // Start from the live cart, then merge plan selections into it.
+    const current=read();
+    const merged=current.slice();
+
+    function mergeItem(n){
+      if(!n)return;
+      const nName=String(n.name||n.ar||'').trim().toLowerCase();
+      const idx=merged.findIndex(x=>
+        x.key===n.key ||
+        (x.type===n.type && String(x.name||x.ar||'').trim().toLowerCase()===nName)
+      );
+      if(idx>=0){
+        const prev=merged[idx];
+        if(n.type!=='venue')n.quantity=quantityOf(prev);
+        merged[idx]={...prev,...n,quantity:n.type==='venue'?1:(n.quantity||quantityOf(prev))};
+      }else{
+        merged.push(n);
+      }
+    }
+
     types.forEach(([type,key])=>{
       const items=Array.isArray(plan[key])?plan[key]:[];
-      a=a.concat(items.filter(Boolean).map(x=>normalize(type,x,plan)));
+      items.filter(Boolean).forEach(x=>mergeItem(normalize(type,x,plan)));
     });
+
     const extras=Array.isArray(plan.products)?plan.products:[];
-    extras.forEach(item=>{
-      if(!item)return;
+    extras.filter(Boolean).forEach(item=>{
       const type=inferPlanProductType(item);
-      const n=normalize(type,item,plan);
-      const nName=String(n.name||n.ar||'').trim().toLowerCase();
-      const exists=a.some(x=>x.key===n.key||(x.type===n.type&&String(x.name||x.ar||'').trim().toLowerCase()===nName));
-      if(!exists)a.push(n);
+      mergeItem(normalize(type,item,plan));
     });
-    const current=read();
-    current.filter(x=>!['gift','cake','venue'].includes(x.type)).forEach(x=>{
-      if(!a.some(y=>y.key===x.key))a.push(x);
-    });
-    a=a.map(n=>{
-      const prev=current.find(x=>x.key===n.key);
-      if(prev&&n.type!=='venue')n.quantity=quantityOf(prev);
-      return n;
-    });
-    return write(a);
+
+    // If the plan carries no actual selections, preserve the cart exactly as-is.
+    const hasActualSelections=types.some(([,key])=>Array.isArray(plan[key])&&plan[key].filter(Boolean).length>0)
+      || extras.filter(Boolean).length>0;
+    if(!hasActualSelections)return current;
+
+    return write(merged);
   }
   window.DDCart={read,write,syncType,upsert,setQuantity,adjustQuantity,remove,clear,count,total,paint,importPlan,price,quantityOf,normalizeHeader:normalizeGlobalHeader};
   function boot(){

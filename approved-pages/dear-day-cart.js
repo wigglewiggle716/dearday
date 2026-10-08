@@ -606,8 +606,8 @@ el.classList.add('dd-legal-links');el.innerHTML='<a href="/privacy">سياسة �
   window.addEventListener('storage',e=>{if(!e.key||e.key===KEY){mount();updateCart();}});
   window.addEventListener('ddcartchange',()=>{mount();updateCart();});
 
-  const core='/approved-pages/dear-day-cart-core.js?v=20261007-qty1';
-  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261007-qty1';
+  const core='/approved-pages/dear-day-cart-core.js?v=20261008-sync2';
+  const drawer='/approved-pages/dear-day-cart-drawer.js?v=20261008-sync2';
   function loadCartDrawer(){
     if(document.querySelector('script[data-dd-cart-drawer]'))return;
     const d=document.createElement('script');
