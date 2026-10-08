@@ -1,0 +1,295 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import OccasionDatePicker from "./occasion-date-picker";
+import { ProductCard, useCatalog } from "./live-catalog";
+import { useCart, money } from "./cart-provider";
+import { pathFor } from "../lib/locales";
+import { PACKAGES, budgetLabels } from "../lib/planning-packages";
+
+const media="/approved-pages/assets/media/";
+const occasionMedia="/approved-pages/assets/sections-20261004/";
+
+const serviceDefs=[
+  {key:"gifts",name:"هدايا",image:"occasion-gift.jpg",icon:"🎁",ar:"هدايا مميزة تناسب شخصيتهم وذوقهم",en:"Thoughtful gifts chosen for the occasion."},
+  {key:"cake",name:"شكولاته و كيك",image:"cake-service.jpg",icon:"🎂",ar:"تصاميم لذيذة ومخصصة لكل الأذواق",en:"Cakes, sweets and celebration ideas."},
+  {key:"flowers",name:"ورد",image:"flowers-bouquet.jpg",icon:"🌷",ar:"بوكيهات وتنسيقات ورد تناسب المناسبة والذوق",en:"Bouquets and flower arrangements for the day."},
+  {key:"venues",name:"أماكن وتجارب",image:"venue-service.jpg",icon:"⌖",ar:"أماكن مختارة وتجارب لا تُنسى",en:"Places and memorable experiences."}
+];
+const occasionInfo={
+  birthday:{
+    ar:{label:"عيد ميلاد",pill:"🎂 عيد ميلاد",title1:"خلّي يوم ميلادهم",title2:"أجمل من أي سنة",description:"من الهدية والكيك للمكان وكل التفاصيل، نساعدك تصمم تجربة مميزة تعبّر عنهم فعلًا."},
+    en:{label:"Birthday",pill:"🎂 Birthday",title1:"Make their birthday",title2:"truly special",description:"From the gift and cake to the place and every little detail, make their celebration feel personal."}
+  },
+  anniversary:{
+    ar:{label:"ذكرى سنوية",pill:"♡ ذكرى سنوية",title1:"خلّي ذكراكم السنوية",title2:"يوم يتكرر في الذاكرة",description:"من الهدية والتجربة للمكان والتفاصيل الصغيرة، رتّب ذكرى سنوية تعبّر عن قصتكم."},
+    en:{label:"Anniversary",pill:"♡ Anniversary",title1:"Make your anniversary",title2:"a day to remember",description:"Plan the gift, experience and meaningful details around your story."}
+  },
+  date_night:{
+    ar:{label:"Date Night",pill:"🌙 Date Night",title1:"خلّي الـ Date Night",title2:"وقت معمول ليكم",description:"اختار المكان أو التجربة، وأضف الهدية والورد والحلويات لو حابب، وخلي كل تفاصيل الوقت ده في خطة واحدة."},
+    en:{label:"Date Night",pill:"🌙 Date Night",title1:"Make date night",title2:"all about you two",description:"Choose a place or experience, then add flowers, gifts or sweets as you like."}
+  },
+  proposal:{
+    ar:{label:"طلب زواج",pill:"💍 طلب زواج",title1:"خلّي طلب الزواج",title2:"لحظة ما تتنسيش",description:"خطّط للمفاجأة والمكان والهدية وكل التفاصيل في تجربة واحدة شخصية ومميزة."},
+    en:{label:"Proposal",pill:"💍 Proposal",title1:"Make your proposal",title2:"unforgettable",description:"Plan a memorable surprise, venue and every thoughtful detail in one place."}
+  }
+};
+const texts={
+  ar:{
+    select:"اختيار الخدمات",flow:["اختيار الخدمات","الهدايا","شكولاته و كيك","الأماكن والتجارب","تفاصيل المناسبة","مراجعة وحجز"],
+    chosen:"المناسبة المختارة",area:"المنطقة",areaPlace:"اختر المنطقة",date:"تاريخ المناسبة",datePlace:"اختر التاريخ",
+    budget:"الميزانية التقريبية",budgetAll:"غير محدد",budgetNote:"حسب ميزانيتك",
+    recHeading:"باقات مقترحة ليومك",recIntro:"اختر باقة جاهزة من نفس المنتجات الحالية، وتقدر تعدّل أي عنصر بعدين.",
+    recAll:"اختر من كل الباقات المقترحة، وتقدر تعدّل أي عنصر بعدين.",
+    selectPackage:"اختيار الباقة",selectedPackage:"✓ تم الاختيار",packageTotal:"إجمالي الباقة",emptyPackages:"مفيش باقات في النطاق ده حاليًا.",
+    packageTypes:{gift:"هدية",cake:"شكولاته و كيك",venue:"مكان أو تجربة"},
+    services:"اختر ما تحتاجه",serviceHint:"يمكنك اختيار خدمة واحدة أو أكثر",
+    titles:["هدايا","شكولاته و كيك","ورد","أماكن وتجارب"],suggestions:"اقتراحات مناسبة لك",
+    suggestionsDesc:"بناءً على نوع المناسبة والخدمات التي اخترتها",noProducts:"لا توجد منتجات منشورة حاليًا.",
+    more:"عرض المزيد ←",inspire:"محتاج أفكار أكتر؟",inspireCopy:"استكشف تجارب مناسبة واستوحي منها فكرتك الخاصة.",
+    viewExperiences:"شاهد التجارب ←",selectedCount:(n)=>n? n+" "+(n===1?"عنصر مختار":"عناصر مختارة"):"لم تختر أي عناصر بعد",
+    continue:"التالي: كمّل ترتيب مناسبتك",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
+    serviceImage:"صورة الخدمة",venueDisclaimer:"يمكن استكشاف الأماكن في الخطوة التالية؛ الحجز لسه قيد النقل.",
+    packageDisclaimer:"الباقات نماذج تخطيطية من النسخة المعتمدة؛ لا تتم إضافتها تلقائيًا لسلة الشراء.",
+    packageItemsNote:"اختيار الباقة يحدد فئات الخدمات فقط؛ تأكيد المنتجات والأسعار في الصفحات التالية."
+  },
+  en:{
+    select:"Choose services",flow:["Choose services","Gifts","Chocolate & Cakes","Places & Experiences","Occasion Details","Review & Booking"],
+    chosen:"Selected occasion",area:"Area",areaPlace:"Choose an area",date:"Occasion date",datePlace:"Choose the date",
+    budget:"Estimated budget",budgetAll:"Not sure yet",budgetNote:"Based on your budget",
+    recHeading:"Suggested packages for your day",recIntro:"Start with an example bundle and personalize every item in the next steps.",
+    recAll:"Browse all suggested packages and customize them later.",
+    selectPackage:"Choose package",selectedPackage:"✓ Selected",packageTotal:"Bundle total",emptyPackages:"No suggested packages for this budget yet.",
+    packageTypes:{gift:"Gift",cake:"Chocolate & Cakes",venue:"Place or experience"},
+    services:"What would you like to include?",serviceHint:"Select one or more services. You can change your choices later.",
+    titles:["Gifts","Chocolate & Cakes","Flowers","Places & Experiences"],suggestions:"Suggested for you",
+    suggestionsDesc:"Based on your occasion and selected services",noProducts:"No published products available right now.",
+    more:"View more →",inspire:"Need more inspiration?",inspireCopy:"Explore experiences and get inspired for your own celebration.",
+    viewExperiences:"See experiences →",selectedCount:(n)=>n?n+" selected "+(n===1?"item":"items"):"No items selected yet",
+    continue:"Next: Build your occasion",choose:"Choose at least one service to continue",
+    serviceImage:"Service image",venueDisclaimer:"You can browse venues in the next step; booking is still being migrated.",
+    packageDisclaimer:"Bundles are example planning packages from the approved site and are not added to the live shopping cart.",
+    packageItemsNote:"Choosing a package selects service categories. Confirm products and prices in the next steps."
+  }
+};
+
+const knownBudgets=["under-1000","1000-2500","2500-5000","5000-plus","unsure"];
+const validOccasions=["birthday","anniversary","date_night","proposal"];
+const normOccasion = value => {
+  const v=String(value||"").trim();
+  if(validOccasions.includes(v))return v;
+  if(v==="date-night"||v==="Date Night")return "date_night";
+  if(v==="ذكرى سنوية"||v==="الذكرى السنوية")return "anniversary";
+  if(v==="طلب الزواج"||v==="طلب زواج")return "proposal";
+  return "birthday";
+};
+const budgetPrice=(price,budget)=>{
+  const p=Number(price)||0, bands={"under-1000":[0,1000,700],"1000-2500":[1000,2500,1750],"2500-5000":[2500,5000,3750],"5000-plus":[5000,Infinity,6000]};
+  const band=bands[budget];if(!band)return 0;
+  const [min,max,target]=band;
+  return p>=min&&p<=max?Math.abs(p-target):p<min?100000+min-p:100000+p-max;
+};
+function budgetTitle(key,locale){
+  if(locale==="ar")return budgetLabels[key]||budgetLabels.unsure;
+  return ({"under-1000":"Under 1,000","1000-2500":"1,000–2,500","2500-5000":"2,500–5,000","5000-plus":"5,000+","unsure":"Not sure yet"})[key]||"Not sure yet";
+}
+function readStoredPlan(){
+  try { const p=JSON.parse(localStorage.getItem("dearDayPlan")||"{}"); return p&&typeof p==="object" ? p : {}; } catch { return {}; }
+}
+const writePlan=(obj)=>{try{localStorage.setItem("dearDayPlan",JSON.stringify(obj));}catch{}};
+
+export default function BirthdayPlanning({locale="ar",incoming={}}){
+  const router=useRouter();
+  const t=texts[locale];
+  const {items:cartItems,count:cartCount}=useCart();
+  const {rows:catalog,loading:catalogLoading}=useCatalog();
+  const [loaded,setLoaded]=useState(false);
+  const [details,setDetails]=useState({occasionKey:normOccasion(incoming.occasion),area:"",date:"",budgetKey:"unsure",services:[],recommendedPackage:null});
+  const [showAllSuggestions,setShowAllSuggestions]=useState(false);
+  const [feedback,setFeedback]=useState("");
+  const feedbackRef=useRef(null);
+  const flow=incoming.flow==="1";
+  const occasion=occasionInfo[details.occasionKey]?.[locale]||occasionInfo.birthday[locale];
+  const packageList=useMemo(()=>details.budgetKey==="unsure"?PACKAGES:PACKAGES.filter(p=>p.budget===details.budgetKey),[details.budgetKey]);
+  const selectedCount=details.services.length+cartCount;
+  const preferred = useMemo(()=>{
+    const candidates=[...(catalog.gifts||[]),...(catalog["cakes-sweets"]||[]),...(catalog.flowers||[])];
+    candidates.sort((a,b)=>budgetPrice(a.price,details.budgetKey)-budgetPrice(b.price,details.budgetKey));
+    return candidates;
+  },[catalog,details.budgetKey]);
+  const suggest=showAllSuggestions?preferred:preferred.slice(0,4);
+
+  useEffect(()=>{
+    const stored=readStoredPlan();
+    let fromUrl={};
+    if(typeof incoming.dd==="string"&&incoming.dd.length<50000) {
+      try{const p=JSON.parse(incoming.dd);if(p&&typeof p==="object")fromUrl=p;}catch{}
+    }
+    const merged={...stored,...fromUrl};
+    const occasionKey=normOccasion(incoming.occasion||merged.occasionKey||merged.occasion);
+    const area=incoming.area||merged.area||"";
+    const date=incoming.date||merged.date||"";
+    const rawBudget=incoming.budget||merged.budgetKey||merged.budget||"unsure";
+    const budgetKey=knownBudgets.includes(rawBudget)?rawBudget:"unsure";
+    const services=Array.isArray(merged.services)?merged.services.filter(s=>serviceDefs.some(item=>item.name===s)): [];
+    setDetails({occasionKey,area,date,budgetKey,services,recommendedPackage:merged.recommendedPackage||null});
+    setLoaded(true);
+  },[incoming.dd,incoming.occasion,incoming.area,incoming.date,incoming.budget]);
+
+  useEffect(()=>{
+    if(!loaded)return;
+    const previous=readStoredPlan();
+    const name=occasionInfo[details.occasionKey]?.ar.label||"عيد ميلاد";
+    writePlan({...previous,...details,occasion:name,occasionLabel:name,budget:details.budgetKey,budgetLabel:budgetLabels[details.budgetKey]||budgetLabels.unsure});
+  },[loaded,details]);
+
+  function updateDetails(change){
+    setDetails(old=>({...old,...change}));
+    setFeedback("");
+  }
+  function switchService(name){
+    setDetails(prev=>{
+      const before=prev.services;
+      const services=before.includes(name)?before.filter(s=>s!==name):[...before,name];
+      return {...prev,services,recommendedPackage:null};
+    });
+    setFeedback("");
+  }
+  function pickPackage(pkg){
+    const needed=[...new Set(pkg.items.map(x=>x.type))];
+    const serviceMap={gift:"هدايا",cake:"شكولاته و كيك",venue:"أماكن وتجارب"};
+    const services=needed.map(type=>serviceMap[type]).filter(Boolean);
+    setDetails(prev=>({...prev,services,recommendedPackage:{id:pkg.id,name:pkg.name,budget:pkg.budget,total:pkg.total,items:pkg.items},packageSelections:pkg.items, giftSelections:pkg.items.filter(x=>x.type==="gift"),cakeSelections:pkg.items.filter(x=>x.type==="cake"),venueSelections:pkg.items.filter(x=>x.type==="venue")}));
+    setFeedback(t.packageItemsNote);
+  }
+  function moveNext(){
+    if(selectedCount===0){setFeedback(t.choose);return;}
+    const names=[...details.services];
+    if(cartItems.some(x=>x.type==="gift"||x.type==="flower")&&!names.includes("هدايا"))names.push("هدايا");
+    if(cartItems.some(x=>x.type==="cake")&&!names.includes("شكولاته و كيك"))names.push("شكولاته و كيك");
+    if(cartItems.some(x=>x.type==="venue")&&!names.includes("أماكن وتجارب"))names.push("أماكن وتجارب");
+    const targets=[["هدايا","gifts"],["شكولاته و كيك","cake"],["ورد","flowers"],["أماكن وتجارب","venues"]];
+    const match=targets.find(([service])=>names.includes(service));
+    const previous=readStoredPlan();
+    const name=occasionInfo[details.occasionKey]?.ar.label||"عيد ميلاد";
+    writePlan({...previous,...details,services:names,occasion:name,occasionLabel:name,occasionKey:details.occasionKey,budget:details.budgetKey,budgetLabel:budgetLabels[details.budgetKey],
+      products:cartItems.map(item=>({name:item.ar||item.name,listing_id:item.listing_id||item.id,type:item.type,quantity:item.quantity,price:item.price}))});
+    if(match)router.push(pathFor(match[1],locale)+"?flow=1");
+  }
+  const heroImage=occasionMedia+"occasion-"+(details.occasionKey==="date_night"?"date-night":details.occasionKey)+".jpg";
+
+  return <main id="main-content" className="dd-birthday-page" dir={locale==="ar"?"rtl":"ltr"}>
+    {flow&&<div className="dd-birthday-stepper" aria-label={locale==="ar"?"خطوات التخطيط":"Planning steps"}>
+      <div className="dd-birthday-steps">
+        {t.flow.map((step,index)=><div className={"dd-birthday-step "+(index===0?"current":"")} key={step} aria-current={index===0?"step":undefined}>
+          <span className="dd-birthday-step-num">{index===0?"✓":index+1}</span><span>{step}</span>
+        </div>)}
+      </div>
+    </div>}
+    <section className="dd-birthday-hero">
+      <div className="dd-birthday-hero-copy">
+        <span className="dd-birthday-pill">{occasion.pill}</span>
+        <h1><strong>{occasion.title1}</strong><span>{occasion.title2}</span></h1>
+        <p>{occasion.description}</p>
+      </div>
+      <div className="dd-birthday-hero-photo" role="img" aria-label={occasion.label}
+        style={{backgroundImage:"linear-gradient(90deg,rgba(255,253,251,.12),transparent 22%),url('"+heroImage+"')"}}/>
+    </section>
+    <section className="dd-birthday-context" aria-label={t.chosen}>
+      <div className="dd-birthday-context-card">
+        <div className="dd-birthday-context-title"><span>{t.chosen}</span><strong>{occasion.label}</strong></div>
+        <label>{t.area}
+          <select value={details.area} onChange={e=>updateDetails({area:e.target.value})}>
+            <option value="">{t.areaPlace}</option>
+            <option value="القاهرة">{locale==="ar"?"القاهرة":"Cairo"}</option>
+            <option value="الجيزة">{locale==="ar"?"الجيزة":"Giza"}</option>
+          </select>
+        </label>
+        <OccasionDatePicker locale={locale} value={details.date} onChange={v=>updateDetails({date:v})}
+          label={t.date} placeholder={t.datePlace}/>
+        <label>{t.budget}
+          <select value={details.budgetKey} onChange={e=>updateDetails({budgetKey:e.target.value,recommendedPackage:null})}>
+            {knownBudgets.map(key=><option value={key} key={key}>{budgetTitle(key,locale)}</option>)}
+          </select>
+        </label>
+      </div>
+    </section>
+    <div className="dd-birthday-main">
+      <div className="dd-birthday-shell">
+        <section className="dd-birthday-rec" aria-labelledby="dd-rec-title">
+          <div className="dd-birthday-rec-head">
+            <div><h2 id="dd-rec-title">{t.recHeading}</h2><p>{details.budgetKey==="unsure"?t.recAll:t.recIntro}</p></div>
+            <span className="dd-birthday-budget-tag">{budgetTitle(details.budgetKey,locale)}</span>
+          </div>
+          <div className="dd-birthday-rec-grid">
+            {packageList.length?packageList.map(pkg=>{
+              const chosen=details.recommendedPackage?.id===pkg.id;
+              return <article key={pkg.id} className={"dd-birthday-rec-card"+(chosen?" selected":"")}>
+                <div className="dd-birthday-rec-top"><h3>{pkg.name}</h3><span>{budgetTitle(pkg.budget,locale)}</span></div>
+                <div className="dd-birthday-rec-items">
+                  {pkg.items.map(item=><div key={item.type+":"+item.id} className="dd-birthday-rec-item">
+                    <span>{t.packageTypes[item.type]} · {item.name}</span><span>{money(item.price,locale)}</span>
+                  </div>)}
+                </div>
+                <div className="dd-birthday-rec-bottom"><div><small>{t.packageTotal}</small><strong>{money(pkg.total,locale)}</strong></div>
+                  <button type="button" className="dd-birthday-rec-btn" onClick={()=>chosen?updateDetails({recommendedPackage:null}):pickPackage(pkg)}
+                    aria-pressed={chosen}>{chosen?t.selectedPackage:t.selectPackage}</button>
+                </div>
+              </article>;
+            }):<p>{t.emptyPackages}</p>}
+          </div>
+          <p className="dd-birthday-packages-note">{t.packageDisclaimer}</p>
+        </section>
+        <section className="dd-birthday-services-section" aria-labelledby="dd-birthday-services">
+          <div className="dd-birthday-section-head"><div><h2 id="dd-birthday-services">{t.services}</h2><p>{t.serviceHint}</p></div></div>
+          <div className="dd-birthday-services">
+            {serviceDefs.map((service,index)=>{
+              const selected=details.services.includes(service.name);
+              return <button className={"dd-birthday-service"+(selected?" selected":"")} type="button"
+                aria-pressed={selected} key={service.key} onClick={()=>switchService(service.name)}>
+                <span className="dd-birthday-service-check">{selected?"✓":""}</span>
+                <span className="dd-birthday-service-icon">{service.icon}</span>
+                <span className="dd-birthday-service-copy"><strong>{t.titles[index]}</strong><small>{locale==="ar"?service.ar:service.en}</small></span>
+                <img src={media+service.image} alt={t.titles[index]} loading="lazy"/>
+              </button>;
+            })}
+          </div>
+        </section>
+        <section className="dd-birthday-suggestions" aria-labelledby="dd-birthday-suggestions-title">
+          <div className="dd-birthday-section-head">
+            <div><h2 id="dd-birthday-suggestions-title">{t.suggestions}</h2><p>{t.suggestionsDesc}</p></div>
+            {preferred.length>4&&<button type="button" onClick={()=>setShowAllSuggestions(v=>!v)}>{showAllSuggestions?t.services:t.more}</button>}
+          </div>
+          {catalogLoading?<p className="dd-birthday-products-empty">{locale==="ar"?"جاري تحميل المنتجات...":"Loading products..."}</p>
+          :suggest.length?<div className="dd-birthday-product-grid">{suggest.map(item=><ProductCard key={item.id} product={item} locale={locale}/>)}</div>
+          :<p className="dd-birthday-products-empty">{t.noProducts}</p>}
+        </section>
+        <section className="dd-birthday-inspire">
+          <div className="dd-birthday-inspire-text">
+            <h2>{t.inspire}</h2><p>{t.inspireCopy}</p>
+            <Link href={pathFor("venues",locale)}>{t.viewExperiences}</Link>
+          </div>
+          <div className="dd-birthday-inspire-photos">
+            <img src={media+"birthday-experience.jpg"} alt="" loading="lazy"/>
+            <img src={media+"dinner-experience.jpg"} alt="" loading="lazy"/>
+            <img src={media+"birthday-cake.jpg"} alt="" loading="lazy"/>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div className="dd-birthday-sticky" aria-label={t.select}>
+      <div className="dd-birthday-sticky-summary">
+        <div className="dd-birthday-sticky-thumbs">
+          {details.services.slice(0,4).map(name=>{
+            const def=serviceDefs.find(s=>s.name===name);
+            return def?<img key={name} src={media+def.image} alt="" />:null;
+          })}
+        </div><span>{t.selectedCount(selectedCount)}</span>
+      </div>
+      <button type="button" onClick={moveNext} disabled={selectedCount===0}>{t.continue}</button>
+    </div>
+    {feedback&&<div className="dd-birthday-feedback" role="status" ref={feedbackRef}>{feedback}</div>}
+  </main>;
+}
