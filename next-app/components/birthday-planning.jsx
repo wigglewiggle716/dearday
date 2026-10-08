@@ -153,7 +153,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     setDetails(prev=>{
       const before=prev.services;
       const services=before.includes(name)?before.filter(s=>s!==name):[...before,name];
-      return {...prev,services,recommendedPackage:null};
+      return {...prev,services,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]};
     });
     setFeedback("");
   }
@@ -210,7 +210,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
         <OccasionDatePicker locale={locale} value={details.date} onChange={v=>updateDetails({date:v})}
           label={t.date} placeholder={t.datePlace}/>
         <label>{t.budget}
-          <select value={details.budgetKey} onChange={e=>updateDetails({budgetKey:e.target.value,recommendedPackage:null})}>
+          <select value={details.budgetKey} onChange={e=>updateDetails({budgetKey:e.target.value,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]})}>
             {knownBudgets.map(key=><option value={key} key={key}>{budgetTitle(key,locale)}</option>)}
           </select>
         </label>
@@ -234,7 +234,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
                   </div>)}
                 </div>
                 <div className="dd-birthday-rec-bottom"><div><small>{t.packageTotal}</small><strong>{money(pkg.total,locale)}</strong></div>
-                  <button type="button" className="dd-birthday-rec-btn" onClick={()=>chosen?updateDetails({recommendedPackage:null}):pickPackage(pkg)}
+                  <button type="button" className="dd-birthday-rec-btn" onClick={()=>chosen?updateDetails({recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]}):pickPackage(pkg)}
                     aria-pressed={chosen}>{chosen?t.selectedPackage:t.selectPackage}</button>
                 </div>
               </article>;
