@@ -116,7 +116,7 @@ function FooterGroup({ title, ids, t, locale }) {
         </button>
       </h2>
       <div id={id} className="dd-footer-submenu" hidden={isMobile && !expanded}>
-        {ids.map((item) => <Link href={pathFor(item, locale)} key={item}>{t[item]}</Link>)}
+        {ids.map((item) => item === "occasions" ? <a href={pathFor(item, locale)} key={item}>{t[item]}</a> : <Link href={pathFor(item, locale)} key={item}>{t[item]}</Link>)}
       </div>
     </div>
   );

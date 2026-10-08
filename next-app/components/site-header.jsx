@@ -61,9 +61,15 @@ export default function SiteHeader({ locale }) {
             ))}
           </div>
         </details>
-        {primaryIds.slice(1).map((id) => (
-          <Link key={id} className={"dd-nav-link" + (pathname === pathFor(id, locale) ? " is-active" : "")} href={pathFor(id, locale)}>{t[id]}</Link>
-        ))}
+        {primaryIds.slice(1).map((id) => {
+          const href = pathFor(id, locale);
+          const className = "dd-nav-link" + (pathname === href ? " is-active" : "");
+          // Full page navigation for the dedicated Occasions route.
+          // Avoid relying on an RSC client transition for this key link.
+          return id === "occasions"
+            ? <a key={id} href={href} className={className}>{t[id]}</a>
+            : <Link key={id} className={className} href={href}>{t[id]}</Link>;
+        })}
       </>
     );
   }
