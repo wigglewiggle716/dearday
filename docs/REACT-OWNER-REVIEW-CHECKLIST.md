@@ -98,7 +98,7 @@
 - [ ] المستخدم `catalog.manage` يقدر يحفظ مسودة أو يقدم مقترحًا، لكن لا ينشر مباشرة بهذه الشاشة.
 - [ ] التحقق من عدم عرض بيانات مالية تخص الشركاء بدون صلاحية مناسبة.
 - [ ] رسالة نجاح أو خطأ واضحة؛ اختبار تعطل الإنترنت أو سحب الصلاحية أثناء الحفظ.
-- [ ] **حدود حالية:** هذه المرحلة تعرض آخر 500 عنصر وآخر 2000 نسخة كحد أقصى؛ يجب اختبار حجم الكتالوج واستكمال pagination أو التحميل المجزأ لو الأعداد أكبر.
+- [ ] **حدود حالية:** هذه المرحلة تعرض أحدث 500 عنصر، وتحمّل سجل النسخ على دفعات كل 60 عنصر (حتى 1000 نسخة لكل دفعة). يجب اختبار حجم الكتالوج واستكمال التصفح والبحث على السيرفر لو الأعداد أكبر.
 
 ## 8 — الموافقات على React [CODE؛ المرحلة الثالثة]
 - [ ] `/staff/approvals`،`/en/staff/approvals`: متاحة فقط مع `approvals.review`.
@@ -144,6 +144,6 @@
 |---|---|---|---|---|---|
 | — | — | — | لم تبدأ المراجعة | — | — |
 
-**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
+**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Catalog & Approvals](./REACT-STAFF-CATALOG-MIGRATION.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
 
 **سياسة متابعة:** أي تطوير جديد أو إصلاح Bug على `react-migration` يجب إضافة اختبار له هنا قبل أن يطلب من المالك اعتماده.
