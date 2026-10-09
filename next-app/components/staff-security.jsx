@@ -19,7 +19,7 @@ const texts={
  success:"تم تأكيد التطبيق بنجاح. احفظ نسخة احتياطية مستقلة.",
  invalid:"رمز غير صحيح أو منتهي الصلاحية. تأكد من توقيت جهازك.",
  recovery:"لو فقدت كل التطبيقات",recoverText:"استخدم التطبيق الاحتياطي المؤكد، أو تواصل مع مسؤول النظام عبر قناة مستقلة للتحقق من هويتك. استعادة كلمة المرور لا تلغي MFA، ومفيش أكواد استرداد تلقائية.",
- staged:"إلزام كل الموظفين بالـMFA خطوة منفصلة بعد التأكد من إعداد التطبيقات ومسار الاستعادة.",
+ staged:"التحقق بخطوتين مطلوب لكل موظف. لو لسه معندكش تطبيق مصادقة، لازم تفعّله علشان تفتح لوحة العمل.",
  back:"العودة لبوابة الحساب",perms:"صلاحياتي",retry:"إعادة المحاولة"
  },
  en:{
@@ -35,13 +35,13 @@ const texts={
  success:"Authenticator verified. Keep an independent backup.",
  invalid:"Incorrect or expired code. Check your device clock.",
  recovery:"Lost your authenticators?",recoverText:"Use a verified backup authenticator, or contact an authorized administrator through an independent identity-verification channel. Password resets never bypass MFA; no automatic recovery codes are issued.",
- staged:"Universal staff MFA enforcement is a separate step after enrollment and recovery are tested.",
+ staged:"Two-step verification is required for all staff. Set up your authenticator before accessing the work portal.",
  back:"Back to account access",perms:"My permissions",retry:"Try again"
  }
 };
 export default function StaffSecurity({locale="ar"}){
  const t=texts[locale]||texts.ar,session=useAuthSession();
- const staff=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role);
+ const staff=["authenticated","mfa_setup_required"].includes(session.status)&&EMPLOYEE_ROLES.has(session.role);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
  const [factors,setFactors]=useState([]),[pending,setPending]=useState(null),[code,setCode]=useState("");
  const [loading,setLoading]=useState(true),[loadFailed,setLoadFailed]=useState(false),[busy,setBusy]=useState(false),[notice,setNotice]=useState("");
