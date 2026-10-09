@@ -129,7 +129,7 @@ export default function AuthPage({locale="ar",page="login"}){
      return;
    }
    if(access.status==="inactive"){
-     await client.auth.signOut();
+     await client.auth.signOut({scope:"local"});
      setStatus({error:true,message:t.inactive});return;
    }
    if(access.status!=="authenticated"){
@@ -156,7 +156,7 @@ export default function AuthPage({locale="ar",page="login"}){
  }
  async function abortMfa(){
    setBusy(true);
-   try{await authClient(rememberPreference()).auth.signOut();}
+   try{await authClient(rememberPreference()).auth.signOut({scope:"local"});}
    finally{window.location.assign(loginPath);}
  }
 
