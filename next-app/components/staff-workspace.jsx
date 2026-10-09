@@ -271,7 +271,7 @@ export default function StaffWorkspace({locale="ar"}){
         </tr>)}</tbody>
        </table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptyApprovals}</p>}
       </Panel>}
-     {perms.has("finance.view")&&<Panel title={t.financeTitle} external href="https://dear-day.com/Dear-Day-Finance.html" hrefLabel={t.openFinance}>
+     {perms.has("finance.view")&&<Panel title={t.financeTitle} href={pathFor("staffFinance",locale)} hrefLabel={t.openFinance}>
        <div className="dd-work-finance-summary">
         {[["draft",t.draft],["approved",t.approved],["paid",t.paid],["unsettled",t.unsettled]].map(([key,label])=>
          <div className="dd-work-finance-box" key={key}><span>{label}</span>
@@ -280,7 +280,7 @@ export default function StaffWorkspace({locale="ar"}){
        </div>
       </Panel>}
     </div>}
-    {accountant&&perms.has("finance.view")&&<Panel title={t.latestSettlements} external href="https://dear-day.com/Dear-Day-Finance.html" hrefLabel={t.openFinance}>
+    {accountant&&perms.has("finance.view")&&<Panel title={t.latestSettlements} href={pathFor("staffFinance",locale)} hrefLabel={t.openFinance}>
      {result.settlements.length?<div className="dd-work-table-scroll"><table>
       <thead><tr><th>{t.partner}</th><th>{t.period}</th><th>Partner Net</th><th>{t.status}</th><th>{t.reference}</th></tr></thead>
       <tbody>{result.settlements.map(s=><tr key={s.id}>
