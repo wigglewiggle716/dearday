@@ -62,6 +62,7 @@ export default function PartnerOrdersPanel({section="overview"}){
   })();
   return()=>{live=false;};
  },[client,partner?.id,section,revision,partners.length]);
+ useEffect(()=>{setDetail({id:null,stage:"idle",data:null});setError("");},[partner?.id]);
  const rows=state.orders.filter(o=>(!status||o.status===status)&&(!search.trim()||
    [o.order_number,o.occasion_type,o.delivery_area].join(" ").toLowerCase().includes(search.trim().toLowerCase())));
  async function open(o){
