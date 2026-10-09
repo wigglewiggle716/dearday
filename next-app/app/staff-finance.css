@@ -1,0 +1,64 @@
+/* Dear Day staff finance and partner settlements */
+.dd-staff-finance{flex:1;min-height:70vh;background:linear-gradient(145deg,#FAF3EA,#fff9f5);padding:35px clamp(14px,5vw,65px) 75px;color:#352D2E;font-size:13px}
+.dd-staff-finance *{box-sizing:border-box}
+.dd-fin-wrap{max-width:1400px;margin-inline:auto}
+.dd-fin-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:22px}
+.dd-fin-head a:first-child{font-size:12px;color:#A8583D;font-weight:750}
+.dd-fin-head h1{font-size:clamp(25px,3vw,35px);margin:10px 0 6px;color:#6B3540}
+.dd-fin-head p{margin:0;line-height:1.8;color:#7a6b6c}
+.dd-fin-primary,.dd-fin-secondary{border:1px solid #6B3540;border-radius:11px;padding:10px 14px;min-height:42px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font:700 12px/1.3 inherit;gap:8px}
+.dd-fin-primary{background:#6B3540;color:#fff}.dd-fin-secondary{background:#fff;color:#6B3540;border-color:#dac7cb}
+.dd-fin-primary:hover{background:#552832}.dd-fin-secondary:hover{background:#f8eeeb}
+.dd-fin-primary:disabled,.dd-fin-secondary:disabled{opacity:.52;cursor:not-allowed}
+.dd-fin-secondary.small{padding:7px 10px;min-height:34px;font-size:11px}
+.dd-fin-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dd-fin-panel{background:#fff;border-radius:18px;border:1px solid rgba(107,53,64,.15);overflow:hidden;box-shadow:0 9px 27px rgba(55,28,35,.04)}
+.dd-fin-gate{min-height:230px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:25px;text-align:center}
+.dd-fin-gate p{margin:0}
+.dd-fin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:14px 0 17px}
+.dd-fin-stats article{background:#fff;border:1px solid #e8dad7;border-radius:16px;padding:16px;min-width:0}
+.dd-fin-stats article span{display:block;font-size:11px;color:#77696b;font-weight:750}
+.dd-fin-stats article strong{display:block;color:#6B3540;font-size:23px;margin-top:7px;overflow-wrap:anywhere}
+.dd-fin-hint{font-size:12px;color:#79696d;line-height:1.8;margin:12px 0}
+.dd-fin-warning,.dd-fin-error,.dd-fin-success{font-size:12px;line-height:1.85;border-radius:12px;padding:12px 15px;margin:14px 0}
+.dd-fin-warning{border:1px solid #ead8b1;background:#fff8e7;color:#815f28}
+.dd-fin-error{border:1px solid #e9b9bf;background:#fff1ef;color:#a03e4a}
+.dd-fin-success{border:1px solid #bedfc4;background:#eef9ef;color:#366b46}
+.dd-fin-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:21px 0 12px}
+.dd-fin-toolbar h2{font-size:20px;color:#6B3540;margin:0}
+.dd-fin-toolbar>span{font-size:12px;color:#73676a}
+.dd-fin-filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.dd-fin-filters input,.dd-fin-filters select,.dd-fin-form input,.dd-fin-form select,.dd-fin-form textarea,.dd-fin-reference input{background:#fff;color:#352D2E;min-width:0;min-height:43px;padding:9px 12px;border:1px solid #dfd0d0;border-radius:11px;font:inherit;font-size:13px}
+.dd-fin-filters input{flex:2 1 245px}.dd-fin-filters select{flex:1 1 175px}
+.dd-fin-scroll{overflow-x:auto;max-width:100%}
+.dd-fin-scroll table{width:100%;min-width:890px;border-collapse:collapse}
+.dd-fin-scroll th,.dd-fin-scroll td{text-align:start;vertical-align:middle;padding:12px;border-bottom:1px solid #f0e7e3;font-size:12px;line-height:1.6}
+.dd-fin-scroll th{background:#fcf7f5;color:#6B3540;font-weight:800;white-space:nowrap}
+.dd-fin-scroll td strong{font-weight:800}
+.dd-fin-scroll tr:last-child td{border-bottom:0}
+.dd-fin-status{display:inline-flex;border-radius:50px;background:#f1e9e4;color:#6B3540;padding:6px 10px;font-size:11px;font-weight:800}
+.dd-fin-status.s-approved{background:#f8f1de;color:#8b6324}
+.dd-fin-status.s-paid{background:#e9f4ea;color:#356f46}
+.dd-fin-status.s-cancelled{background:#f9e6e6;color:#aa4444}
+.dd-fin-empty{padding:40px 15px;text-align:center;color:#786a6a}
+.dd-fin-pages{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #f0e7e1;padding:14px;font-size:12px;color:#726468}
+.dd-fin-pages>div{display:flex;gap:9px}
+.dd-fin-overlay{position:fixed;inset:0;background:rgba(33,20,24,.55);z-index:270;display:flex;align-items:center;justify-content:center;padding:12px}
+.dd-fin-dialog{width:min(800px,100%);max-height:94dvh;overflow-y:auto;background:#fffdfa;border-radius:20px;box-shadow:0 20px 50px rgba(34,15,20,.22);outline:0}
+.dd-fin-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:17px;padding:18px 21px;border-bottom:1px solid #f0e7e1}
+.dd-fin-dialog>header h2{color:#6B3540;font-size:21px;margin:0}
+.dd-fin-dialog>header button{background:#f7ece9;color:#6B3540;border:none;border-radius:50%;width:38px;height:38px;flex:0 0 38px;cursor:pointer;font-size:24px}
+.dd-fin-form,.dd-fin-detail{padding:18px 21px 23px}
+.dd-fin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.dd-fin-grid label,.dd-fin-reference{display:grid;gap:7px;font-weight:800;font-size:12px;color:#635358;min-width:0}
+.dd-fin-grid label.wide{grid-column:1/-1}
+.dd-fin-grid textarea{resize:vertical;min-height:82px}
+.dd-fin-form footer,.dd-fin-detail footer{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:20px}
+.dd-fin-fact{min-width:0;border:1px solid #e7dcd9;background:#fff;border-radius:12px;padding:13px}
+.dd-fin-fact span{display:block;font-size:11px;color:#897678;font-weight:750;margin-bottom:6px}
+.dd-fin-fact strong{font-size:13px;color:#403538;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.dd-fin-detail h3{color:#6B3540;font-size:18px;margin:23px 0 14px}
+.dd-fin-detail .dd-fin-scroll{border:1px solid #eee3df;border-radius:12px}
+.dd-fin-reference{margin:18px 0}
+@media(max-width:1030px){.dd-fin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:610px){.dd-staff-finance{padding:24px 13px 54px}.dd-fin-head h1{font-size:26px}.dd-fin-grid{grid-template-columns:1fr}.dd-fin-grid label.wide{grid-column:auto}.dd-fin-stats article{padding:13px}.dd-fin-stats strong{font-size:20px!important}.dd-fin-form,.dd-fin-detail{padding:14px}.dd-fin-dialog>header{padding:14px}.dd-fin-filters>*{flex:1 1 100%}}
