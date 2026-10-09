@@ -28,6 +28,7 @@ export const sections = [
   ["staffOrders", "staff/orders"],
   ["staffCatalog", "staff/catalog"],
   ["staffApprovals", "staff/approvals"],
+  ["staffPartners", "staff/partners"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
