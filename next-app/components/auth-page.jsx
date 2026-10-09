@@ -181,7 +181,8 @@ export default function AuthPage({locale="ar",page="login"}){
    if(recovery)setMode("recover");
    else if(forgot)setMode("forgot");
    else if(params.get("mode")==="mfa")setMode("mfa");
-   if(params.has("error")||params.has("error_code"))
+   const callbackFragment=new URLSearchParams(hash.startsWith("#")?hash.slice(1):hash);
+   if(params.has("error")||params.has("error_code")||callbackFragment.has("error")||callbackFragment.has("error_code"))
      setStatus({error:true,message:t.providerError});
    let active=true,redirecting=false;
    const client=authClient(rememberPreference());
@@ -300,7 +301,7 @@ export default function AuthPage({locale="ar",page="login"}){
      rememberSession(true);
      const client=authClient(true);
      const {error}=await client.auth.signInWithOAuth({
-       provider,options:{redirectTo:window.location.origin+loginPath+"?oauth=1"}
+       provider,options:{redirectTo:window.location.origin+loginPath}
      });
      if(error)throw error;
    }catch(error){
