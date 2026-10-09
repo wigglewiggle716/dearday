@@ -517,3 +517,6 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
 @media(max-width:650px){
  .dd-account-menu{position:fixed;top:80px;inset-inline-start:14px;inset-inline-end:14px;width:auto}
 }
+
+/* Logged-in notifications counter, shared by RTL/LTR account menus. */
+.dd-notification-badge{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;margin-inline-start:8px;border-radius:999px;background:#A8583D;color:#fff;font-size:11px;font-weight:800;line-height:1;vertical-align:middle}
