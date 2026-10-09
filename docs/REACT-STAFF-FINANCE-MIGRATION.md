@@ -25,8 +25,11 @@ Date: 2026-10-10. Implementation remains confined to `react-migration`, under `n
 - **No payment is actually sent by this app or RPC.** Mark Paid only records an already completed external transfer. Evidence, payment-provider/bank reconciliation and audit verification remain required before go-live.
 - Do not use live partner money or real settlements for QA. No new migration or role grant applied to live Supabase.
 
-## Financial controls requiring an explicit owner decision
-1. The current backend permits the **same employee** with `finance.manage` to create, approve and mark a settlement paid. It does NOT enforce maker/checker segregation or a second approver. Frontend separation alone cannot fix this; a separate approved database-side RPC policy is needed if maker/checker is adopted.
+## Finance permission decision — owner-confirmed (2026-10-10)
+The owner explicitly confirmed **keep existing finance permissions unchanged**. A staff member with `finance.manage` may create, approve and record a partner settlement as paid. No maker/checker split or second approver will be introduced in this migration, and **no Supabase grants, roles, RPCs or policies were changed**. This decision covers *partner settlement authority*; it does not change the separate customer refund-completion permissions or provide proof of external payment.
+
+## Financial controls still requiring validation
+1. The same `finance.manage` employee can perform all three settlement actions, as explicitly accepted by the owner. Keep audit logs, payment reference, transaction-state checks and manual reconciliation mandatory. Do not treat accepting this permission model as approval of untested financial transactions.
 2. A nonempty external transfer reference proves neither that the transfer occurred nor the settled amount. Bank/Paymob reconciliation needs a verified process and (if possible) server-side evidence checking.
 3. The accountant role has `finance.view` and `finance.manage` but **not** `orders.manage`, and therefore cannot call the separate customer-refund completion RPC. This is intentionally left unchanged until an approved change to the refund-permission model.
 4. `finance_update_settlement_status` currently permits same-status re-entry, although React only exposes forward transitions. Backend idempotency/repeated audit policies should be reviewed for real financial use.
@@ -39,5 +42,5 @@ Date: 2026-10-10. Implementation remains confined to `react-migration`, under `n
 - All tests are **unchecked** in [master owner review checklist](./REACT-OWNER-REVIEW-CHECKLIST.md), section **9ز** (22 new tests). Testing requires synthetic designated partner orders/settlements with owner approval before any DB mutation.
 
 ## Further work
-- Controlled read-only audit history of individual settlements with identity/time, CSV export if approved, maker/checker policy, reconciliation with actual payment rails and payout evidence.
+- Controlled read-only audit history of individual settlements with identity/time, CSV export if approved, reconciliation with actual payment rails and payout evidence. Do not add maker/checker segregation unless the owner requests a later policy change.
 - Finish remaining staff notification and partner self-service modules, then full regression and controlled domain cutover under the main checklist.
