@@ -73,6 +73,7 @@ function giftInRange(item,price){
   if(price==="high")return val>2500;
   return true;
 }
+function compareGiftId(a,b){return String(a.id).localeCompare(String(b.id));}
 function budgetDifference(item,key) {
   const p=Number(item.price)||0;
   const bands={"under-1000":[0,1000,700],"1000-2500":[1000,2500,1750],
@@ -221,10 +222,10 @@ export default function GiftsPage({locale="ar",flow=false}){
         isRecipientMatch(item,criteria.recipient)&&giftInRange(item,criteria.price);
     });
     selected.sort((a,b)=>{
-      if(sort==="priceAsc")return a.price-b.price;
-      if(sort==="priceDesc")return b.price-a.price;
+      if(sort==="priceAsc")return a.price-b.price||compareGiftId(a,b);
+      if(sort==="priceDesc")return b.price-a.price||compareGiftId(a,b);
       return budgetDifference(a,planBudget)-budgetDifference(b,planBudget)||
-        (b.score||0)-(a.score||0);
+        (b.score||0)-(a.score||0)||a.price-b.price||compareGiftId(a,b);
     });
     return selected;
   },[gifts,criteria,sort,planBudget]);
