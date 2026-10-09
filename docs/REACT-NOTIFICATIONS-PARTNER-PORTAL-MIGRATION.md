@@ -8,7 +8,7 @@ Date: 2026-10-10. Prepared on `react-migration` only. Live site `dear-day.com`, 
 - `mark_notification_read` and `mark_all_notifications_read` RPCs update **only the authenticated recipient** and require an active account (verified read-only against existing private SQL definitions).
 - AR/EN title/body fallback, Cairo timestamps, 30-record incremental loading, unread view, role-specific React deep links for supported entity types.
 - Linked from authenticated web account menu, staff administration modules, and the React partner portal sidebar.
-- The legacy notification unread badge/real-time count is **not migrated** yet. Owner checklist tracks this explicitly. Click-through to a specific ticket/application currently opens the correct React section, not the individual detail anchored at the ID; test deep-link expectation before release.
+- The signed-in React header includes a recipient-scoped unread count badge (desktop/mobile) and refreshes on route/user change. **Live push / realtime while remaining on the same page is not implemented**; verify count after mark-read/navigation during owner acceptance. Click-through to a specific ticket/application currently opens the correct React section, not the individual detail anchored at the ID; test deep-link expectation before release.
 - No notifications sent, marked read or modified during coding.
 
 ## Partner portal — new bilingual routes
