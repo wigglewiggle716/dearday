@@ -21,7 +21,8 @@ const copy={
  ar:{
   welcome:"حسابك في Dear Day",access:"الوصول لبوابة العمل",
   intro:"أهلًا بعودتك! حسابك متصل بنظام Dear Day.",
-  accessIntro:"تم التحقق من حسابك ودورك. بوابة العمل القديمة على دومين مختلف، وبالتالي تسجيل الدخول فيها منفصل حاليًا.",
+  accessIntro:"تم التحقق من حسابك ودورك. بوابة الشركاء القديمة ما زالت تتطلب تسجيل دخول منفصل حاليًا.",
+  staffIntro:"دي بوابة دخول فريق Dear Day الجديدة على React، وبتعتمد على جلسة حسابك وصلاحياته والتحقق بخطوتين.",
   loading:"جاري التحقق من حسابك…",
   signedOut:"سجّل الدخول علشان تقدر تشوف بيانات حسابك.",
   verify:"أكمل التحقق الثنائي من حسابك قبل المتابعة.",
@@ -31,7 +32,7 @@ const copy={
   name:"الاسم",email:"البريد الإلكتروني",role:"نوع الحساب",
   accountUpcoming:"بيانات الحساب والعناوين والطلبات والحجوزات موجودة دلوقتي في حسابي.",
   securityPage:"تأمين الحساب والتحقق بخطوتين",permissionsPage:"صلاحيات الفريق",setup:"لازم تفعّل التحقق بخطوتين قبل دخول بوابة العمل.",activate:"تفعيل تطبيق المصادقة",
-  staffPortal:"فتح بوابة الموظفين الحالية",partnerPortal:"فتح بوابة الشركاء الحالية",
+  staffPortal:"فتح لوحة الفريق الجديدة على React",legacyStaff:"فتح أقسام الموظفين على الموقع القديم",partnerPortal:"فتح بوابة الشركاء الحالية",
   separateSession:"الرابط هيفتح الموقع الأساسي، وممكن يطلب تسجيل الدخول مرة تانية. مش بننقل جلسة React أو كلمة المرور بين الدومينين.",
   back:"العودة للرئيسية",logout:"تسجيل الخروج",waiting:"جاري الخروج…",
   logoutError:"تعذر تسجيل الخروج. جرّب مرة تانية.",
@@ -40,7 +41,8 @@ const copy={
  en:{
   welcome:"Your Dear Day Account",access:"Work portal access",
   intro:"Welcome back! Your account is connected to Dear Day.",
-  accessIntro:"Your account and role have been verified. The existing work portal is hosted on another domain, so it currently requires a separate sign-in.",
+  accessIntro:"Your account and role have been verified. The existing partner portal still needs a separate sign-in.",
+  staffIntro:"This is the new Dear Day React team workspace, protected by your existing sign-in, permissions and two-step verification.",
   loading:"Checking account access…",
   signedOut:"Sign in to view your account.",
   verify:"Complete two-step verification before continuing.",
@@ -50,7 +52,7 @@ const copy={
   name:"Name",email:"Email",role:"Account type",
   accountUpcoming:"Your profile, addresses, orders and bookings are now available in My Account.",
   securityPage:"Account security & two-step verification",permissionsPage:"Staff permissions",setup:"Two-step verification is required before opening the work portal.",activate:"Set up your authenticator",
-  staffPortal:"Open existing staff portal",partnerPortal:"Open existing partner portal",
+  staffPortal:"Open new React staff workspace",legacyStaff:"Open legacy staff sections",partnerPortal:"Open existing partner portal",
   separateSession:"This opens the existing website, which may ask you to sign in again. React sessions and passwords aren't transferred between domains.",
   back:"Back to homepage",logout:"Log out",waiting:"Signing out…",
   logoutError:"Couldn't log out. Try again.",
@@ -87,7 +89,7 @@ export default function AccountGateway({locale="ar",kind="customer"}){
           <p>{t.wrongRole}</p><Link className="dd-gateway-primary" href={myTarget}>{locale==="ar"?"الانتقال لحسابك":"Go to your account"}</Link>
         </div>:
         <>
-          <p className="dd-account-intro">{kind==="work"?t.accessIntro:t.intro}</p>
+          <p className="dd-account-intro">{kind==="work"?(isEmployee?t.staffIntro:t.accessIntro):t.intro}</p>
           <div className="dd-gateway-identity">
             <div><small>{t.name}</small><strong>{session.profile?.full_name||"—"}</strong></div>
             <div><small>{t.email}</small><strong dir="ltr">{session.user?.email||"—"}</strong></div>
@@ -98,8 +100,9 @@ export default function AccountGateway({locale="ar",kind="customer"}){
               <Link className="dd-gateway-primary" href={pathFor("security",locale)}>{t.securityPage}</Link>
               <Link className="dd-gateway-secondary" href={pathFor("staffPermissions",locale)}>{t.permissionsPage}</Link>
             </div>}
+            {isEmployee&&<Link className="dd-gateway-primary" href={pathFor("staffPortal",locale)}>{t.staffPortal}</Link>}
             <a className="dd-gateway-secondary" href={staffUrl} target="_blank" rel="noopener noreferrer">
-              {isEmployee?t.staffPortal:t.partnerPortal}
+              {isEmployee?t.legacyStaff:t.partnerPortal}
             </a>
             <p className="dd-gateway-notice">{t.separateSession}</p>
           </>:<p className="dd-gateway-notice">{t.accountUpcoming}</p>}
