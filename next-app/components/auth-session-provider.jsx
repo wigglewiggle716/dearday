@@ -48,7 +48,7 @@ export function AuthSessionProvider({children}){
   },[refresh]);
   const signOut=useCallback(async()=>{
     const client=authClient(rememberPreference());
-    const {error}=await client.auth.signOut();
+    const {error}=await client.auth.signOut({scope:"local"});
     if(error)throw error;
     // Clear unused storage tier to avoid a stale session returning.
     window.localStorage.removeItem("sb-hpffdmldtdtwcaoemyso-auth-token");
