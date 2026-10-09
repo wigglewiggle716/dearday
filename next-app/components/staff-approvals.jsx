@@ -118,27 +118,32 @@ export default function StaffApprovals({locale="ar"}){
     const pending=(pv.data||[]).slice(0,200),ids=[...new Set(pending.map(x=>x.listing_id).filter(Boolean))];
     let listings={},live={},partners={},categories={};
     if(ids.length){
-     const ls=await client.from("listings").select(listingColumns).in("id",ids);
-     if(ls.error)throw ls.error;
-     listings=Object.fromEntries((ls.data||[]).map(x=>[x.id,x]));
-     const publishedIds=[...new Set((ls.data||[]).map(x=>x.published_version_id).filter(Boolean))];
+     const lookup=async(table,columns,idsToFetch)=>{
+      const groups=[];
+      for(let i=0;i<idsToFetch.length;i+=60)groups.push(idsToFetch.slice(i,i+60));
+      const replies=await Promise.all(groups.map(group=>client.from(table).select(columns).in("id",group)));
+      if(replies.some(r=>r.error))throw replies.find(r=>r.error).error;
+      return replies.flatMap(r=>r.data||[]);
+     };
+     const source=await lookup("listings",listingColumns,ids);
+     listings=Object.fromEntries(source.map(x=>[x.id,x]));
+     const publishedIds=[...new Set(source.map(x=>x.published_version_id).filter(Boolean))];
      const pp=[...new Set([
-      ...(ls.data||[]).map(x=>x.partner_id).filter(Boolean),
+      ...source.map(x=>x.partner_id).filter(Boolean),
       ...pending.map(x=>proposedOf(x).partner_id).filter(Boolean)
      ])];
      const cc=[...new Set([
-      ...(ls.data||[]).map(x=>x.category_id).filter(Boolean),
+      ...source.map(x=>x.category_id).filter(Boolean),
       ...pending.map(x=>proposedOf(x).category_id).filter(Boolean)
      ])];
      const [lv,ps,cs]=await Promise.all([
-      publishedIds.length?client.from("listing_versions").select(liveColumns).in("id",publishedIds):Promise.resolve({data:[],error:null}),
-      pp.length?client.from("partner_directory").select("id,name_ar,name_en").in("id",pp):Promise.resolve({data:[],error:null}),
-      cc.length?client.from("categories").select("id,name_ar,name_en").in("id",cc):Promise.resolve({data:[],error:null})
+      lookup("listing_versions",liveColumns,publishedIds),
+      lookup("partner_directory","id,name_ar,name_en",pp),
+      lookup("categories","id,name_ar,name_en",cc)
      ]);
-     for(const r of [lv,ps,cs])if(r.error)throw r.error;
-     live=Object.fromEntries((lv.data||[]).map(x=>[x.id,x]));
-     partners=Object.fromEntries((ps.data||[]).map(x=>[x.id,x]));
-     categories=Object.fromEntries((cs.data||[]).map(x=>[x.id,x]));
+     live=Object.fromEntries(lv.map(x=>[x.id,x]));
+     partners=Object.fromEntries(ps.map(x=>[x.id,x]));
+     categories=Object.fromEntries(cs.map(x=>[x.id,x]));
     }
     if(requestId===req.current)setData({stage:"ready",permissions:granted,pending,listings,live,partners,categories,overflow:(pv.data||[]).length>200});
    }catch{if(requestId===req.current)setData({...blank,stage:"error"});}
