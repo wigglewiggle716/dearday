@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { alternatePath, dictionaries, pathFor } from "../lib/locales";
 import { useAuthSession } from "./auth-session-provider";
-import { destinationFor } from "../lib/auth-client";
+import { destinationFor,authClient,rememberPreference } from "../lib/auth-client";
 
 const exploreIds = ["gifts", "cake", "venues", "flowers"];
 const primaryIds = ["home", "occasions", "howItWorks", "partners"];
@@ -21,6 +21,18 @@ export default function SiteHeader({ locale }) {
   const accountRef=useRef(null);
   const userLabel=session.profile?.full_name?.trim()||session.user?.email||"";
   const accountHref=destinationFor(session.role,locale);
+  const [unreadCount,setUnreadCount]=useState(0);
+  useEffect(()=>{
+   const id=session.status==="authenticated"?session.user?.id:null;
+   if(!id){setUnreadCount(0);return;}
+   let alive=true;
+   const client=authClient(rememberPreference());
+   void client.from("notifications").select("id",{head:true,count:"exact"})
+     .eq("recipient_user_id",id).eq("is_read",false).then(({count,error})=>{
+      if(alive&&!error)setUnreadCount(count||0);
+     });
+   return()=>{alive=false;};
+  },[session.status,session.user?.id,pathname]);
   async function logout(){
     if(signoutBusy)return;
     setSignoutBusy(true);setSignoutError(false);
@@ -91,7 +103,7 @@ export default function SiteHeader({ locale }) {
     if(mobile)return <div className="dd-mobile-account">
       <strong title={userLabel}>{userLabel}</strong>
       <Link href={accountHref}>{linkText}</Link>
-      <Link href={pathFor("notifications",locale)}>{locale==="ar"?"الإشعارات":"Notifications"}</Link>
+      <Link href={pathFor("notifications",locale)}>{locale==="ar"?"الإشعارات":"Notifications"}{unreadCount>0&&<span className="dd-notification-badge" aria-label={locale==="ar"?unreadCount+" غير مقروء":unreadCount+" unread"}>{unreadCount>99?"99+":unreadCount}</span>}</Link>
       {session.role==="customer"&&<Link href={pathFor("bookings",locale)}>{locale==="ar"?"حجوزاتي":"My Bookings"}</Link>}
       <button type="button" disabled={signoutBusy} onClick={logout}>
         {signoutBusy?(locale==="ar"?"جاري الخروج…":"Signing out…"):(locale==="ar"?"تسجيل الخروج":"Log out")}
@@ -109,7 +121,7 @@ export default function SiteHeader({ locale }) {
       {accountOpen&&<div className="dd-account-menu" role="menu">
         <div className="dd-account-menu-head" title={userLabel}>{userLabel}</div>
         <Link href={accountHref} role="menuitem" onClick={()=>setAccountOpen(false)}>{linkText}</Link>
-        <Link href={pathFor("notifications",locale)} role="menuitem" onClick={()=>setAccountOpen(false)}>{locale==="ar"?"الإشعارات":"Notifications"}</Link>
+        <Link href={pathFor("notifications",locale)} role="menuitem" onClick={()=>setAccountOpen(false)}>{locale==="ar"?"الإشعارات":"Notifications"}{unreadCount>0&&<span className="dd-notification-badge" aria-label={locale==="ar"?unreadCount+" غير مقروء":unreadCount+" unread"}>{unreadCount>99?"99+":unreadCount}</span>}</Link>
         {session.role==="customer"&&<Link href={pathFor("bookings",locale)} role="menuitem"
           onClick={()=>setAccountOpen(false)}>{locale==="ar"?"حجوزاتي":"My Bookings"}</Link>}
         <button type="button" role="menuitem" disabled={signoutBusy} onClick={logout}>
