@@ -52,7 +52,9 @@ export function safeNext(raw,fallback){
 }
 export function destinationFor(role,locale="ar"){
   const prefix=locale==="en"?"/en":"";
-  return role==="customer"?prefix+"/account":prefix+"/access";
+  if(role==="customer")return prefix+"/account";
+  if(EMPLOYEE_ROLES.has(role))return prefix+"/staff";
+  return prefix+"/access";
 }
 // Always verify the auth user, AAL and active role in Supabase. Never trust
 // role values from localStorage, OAuth metadata or query parameters.
