@@ -1,0 +1,71 @@
+/* Dear Day employee-only cancellation queue and policy management */
+.dd-cancellations-staff{flex:1;min-height:70vh;background:linear-gradient(145deg,#FAF3EA,#fff9f5);color:#352D2E;padding:36px clamp(14px,5vw,65px) 72px;font-size:13px}
+.dd-cancellations-staff *{box-sizing:border-box}
+.dd-ca-wrap{width:min(1320px,100%);margin:auto}
+.dd-ca-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.dd-ca-head a{color:#A8583D;font-weight:750;font-size:13px}
+.dd-ca-head h1{font-size:clamp(26px,3vw,35px);margin:9px 0 6px;color:#6B3540}
+.dd-ca-head p{color:#786b6d;margin:0;line-height:1.85}
+.dd-ca-primary,.dd-ca-outline,.dd-ca-danger{border-radius:11px;padding:10px 15px;min-height:42px;display:inline-flex;justify-content:center;align-items:center;font:700 13px/1.25 inherit;cursor:pointer;gap:7px;text-align:center}
+.dd-ca-primary{background:#6B3540;color:white;border:1px solid #6B3540}
+.dd-ca-outline{background:#fff;color:#6B3540;border:1px solid #d7bdc2}
+.dd-ca-danger{background:#fceeea;color:#9a4545;border:1px solid #e2bfc0}
+.dd-ca-primary:hover,.dd-ca-outline:hover,.dd-ca-danger:hover{filter:brightness(.96)}
+.dd-ca-primary:disabled,.dd-ca-outline:disabled,.dd-ca-danger:disabled{opacity:.55;cursor:not-allowed}
+.dd-ca-outline.small{min-height:35px;padding:8px 11px;font-size:12px}
+.dd-ca-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.dd-ca-panel{background:#fff;border:1px solid rgba(107,53,64,.16);border-radius:19px;overflow:hidden;box-shadow:0 10px 27px rgba(50,24,31,.04)}
+.dd-ca-guard{padding:35px;text-align:center;min-height:200px;display:flex;align-items:center;justify-content:center;gap:15px;flex-direction:column}
+.dd-ca-warning,.dd-ca-error,.dd-ca-success{padding:13px 16px;border-radius:12px;font-size:12px;line-height:1.8;margin:12px 0}
+.dd-ca-warning{color:#805e26;background:#fff8e7;border:1px solid #e9d8b5}
+.dd-ca-error{color:#a23a44;background:#fff0ef;border:1px solid #ecc5c5}
+.dd-ca-success{color:#2e6e43;background:#eaf7ed;border:1px solid #c0e0c7}
+.dd-ca-count{display:flex;flex-wrap:wrap;gap:15px;margin:17px 0;font-size:13px;color:#6a585b}
+.dd-ca-count strong{color:#6B3540}
+.dd-ca-filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.dd-ca-filters button{border:1px solid #e0cdd0;background:#fff;color:#6B3540;border-radius:999px;padding:9px 13px;font:700 12px/1.25 inherit;cursor:pointer}
+.dd-ca-filters button.active{background:#6B3540;color:#fff;border-color:#6B3540}
+.dd-ca-requests{display:grid;gap:15px}
+.dd-ca-request-head{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:10px;padding:19px 21px;border-bottom:1px solid #f0e4de}
+.dd-ca-request-head h2{font-size:17px;color:#6B3540;margin:0 0 7px}
+.dd-ca-request-head p{font-size:12px;color:#807171;margin:0}
+.dd-ca-tag{display:inline-flex;align-items:center;white-space:nowrap;padding:5px 10px;background:#f5e9e5;color:#6B3540;border-radius:999px;font-size:11px;font-weight:750}
+.dd-ca-reason{padding:13px 21px;background:#fff8f5;color:#6b565a;font-size:12px;line-height:1.7;margin:0}
+.dd-ca-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,360px);gap:15px;padding:18px 21px;border-top:1px solid #f0e6e1}
+.dd-ca-item h3{color:#514043;font-size:15px;margin:0 0 12px;line-height:1.8}
+.dd-ca-item h3 .dd-ca-tag{margin-inline-start:10px}
+.dd-ca-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.dd-ca-facts>div{background:#fcf7f4;border:1px solid #f3e9e4;border-radius:12px;padding:11px;min-width:0}
+.dd-ca-facts small{color:#7d6b6b;font-size:11px;display:block;margin-bottom:5px}
+.dd-ca-facts strong{color:#47393c;font-size:12px;overflow-wrap:anywhere}
+.dd-ca-muted{font-size:12px;color:#816f73;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.dd-ca-form{display:grid;gap:10px;align-content:start}
+.dd-ca-form label,.dd-ca-grid label,.dd-ca-tier label,.dd-ca-note{display:grid;gap:7px;font-size:12px;font-weight:750;color:#645156;min-width:0}
+.dd-ca-form input,.dd-ca-form textarea,.dd-ca-grid input:not([type=checkbox]),.dd-ca-grid select,.dd-ca-grid textarea,.dd-ca-tier input,.dd-ca-note textarea,.dd-ca-policy-filter input,.dd-ca-policy-filter select{
+ border:1px solid #e6d6d2;background:white;border-radius:11px;padding:10px 12px;min-height:44px;width:100%;min-width:0;color:#453438;font:inherit;font-size:13px}
+.dd-ca-form textarea,.dd-ca-grid textarea,.dd-ca-note textarea{min-height:80px;resize:vertical}
+.dd-ca-form .dd-ca-warning{margin:0}
+.dd-ca-policy-filter{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0}
+.dd-ca-policy-filter input{flex:2 1 250px}.dd-ca-policy-filter select{flex:1 1 175px}
+.dd-ca-scroll{max-width:100%;overflow-x:auto}
+.dd-ca-scroll table{border-collapse:collapse;width:100%;min-width:950px}
+.dd-ca-scroll th,.dd-ca-scroll td{text-align:start;vertical-align:middle;padding:13px 12px;border-bottom:1px solid #eee5e0;font-size:12px}
+.dd-ca-scroll th{background:#fbf7f4;color:#6B3540;font-weight:800}
+.dd-ca-scroll tr:last-child td{border-bottom:none}
+.dd-ca-scroll td small{display:block;color:#817275;margin-top:5px}
+.dd-ca-empty{padding:36px;text-align:center}
+.dd-ca-overlay{position:fixed;z-index:270;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(28,17,23,.55);padding:12px}
+.dd-ca-dialog{width:min(840px,100%);max-height:95dvh;overflow-y:auto;background:#fffdfa;border-radius:20px;box-shadow:0 19px 60px rgba(35,18,24,.2);outline:none}
+.dd-ca-dialog>header{display:flex;align-items:start;justify-content:space-between;gap:14px;padding:18px 21px;border-bottom:1px solid #f0e5df}
+.dd-ca-dialog>header h2{font-size:20px;color:#6B3540;margin:0}
+.dd-ca-dialog>header button{background:#f6eae5;color:#6B3540;border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:24px}
+.dd-ca-modal-body{padding:17px 20px 24px}
+.dd-ca-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.dd-ca-check{display:flex!important;align-items:center;gap:10px}
+.dd-ca-check input{width:18px;height:18px;accent-color:#6B3540}
+.dd-ca-tiers{margin:21px 0}
+.dd-ca-tiers h3{color:#6B3540}
+.dd-ca-tier{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:11px;margin:10px 0}
+.dd-ca-modal-body footer{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px}
+@media(max-width:830px){.dd-ca-item{grid-template-columns:1fr}.dd-ca-facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.dd-cancellations-staff{padding:24px 13px 55px}.dd-ca-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-ca-grid{grid-template-columns:1fr}.dd-ca-tier{grid-template-columns:1fr 1fr}.dd-ca-tier button{grid-column:1/-1}.dd-ca-item{padding:14px}.dd-ca-policy-filter>*{flex-basis:100%}.dd-ca-request-head{padding:14px}}
