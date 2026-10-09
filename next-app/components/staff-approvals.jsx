@@ -85,8 +85,8 @@ function trMeta(ver,listing,partners,categories,locale,t,live){
  row(t.category,localeName(categories[listing?.category_id],locale),localeName(categories[proposedCategory],locale)),
  row(t.kind,t.kindLabel[listing?.kind],t.kindLabel[effectiveKind]),
  row(t.available,listing?yes(listing.is_available):null,yes(proposed.is_available??listing?.is_available)),
- row(t.stock,listing?.stock_qty,proposed.stock_qty??listing?.stock_qty),
- row(t.capacity,listing?.capacity_per_day,proposed.capacity_per_day??listing?.capacity_per_day),
+ row(t.stock,listing?.stock_qty,Object.prototype.hasOwnProperty.call(proposed,"stock_qty")?proposed.stock_qty:listing?.stock_qty),
+ row(t.capacity,listing?.capacity_per_day,Object.prototype.hasOwnProperty.call(proposed,"capacity_per_day")?proposed.capacity_per_day:listing?.capacity_per_day),
  row(t.media,live?mediaLength(live.media):null,mediaLength(ver.media))
  ];
 }
