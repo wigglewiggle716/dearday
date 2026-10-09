@@ -29,7 +29,8 @@ const copy={
   error:"تعذر التأكد من صلاحية الحساب مؤقتًا. حاول مجددًا.",
   signIn:"تسجيل الدخول",continueMfa:"التحقق بخطوتين",
   name:"الاسم",email:"البريد الإلكتروني",role:"نوع الحساب",
-  accountUpcoming:"تعديل بيانات الحساب والعناوين والطلبات هيكون ضمن الخطوة الجاية من تحويل الموقع إلى React.",
+  accountUpcoming:"بيانات الحساب والعناوين والطلبات والحجوزات موجودة دلوقتي في حسابي.",
+  securityPage:"تأمين الحساب والتحقق بخطوتين",permissionsPage:"صلاحيات الفريق",
   staffPortal:"فتح بوابة الموظفين الحالية",partnerPortal:"فتح بوابة الشركاء الحالية",
   separateSession:"الرابط هيفتح الموقع الأساسي، وممكن يطلب تسجيل الدخول مرة تانية. مش بننقل جلسة React أو كلمة المرور بين الدومينين.",
   back:"العودة للرئيسية",logout:"تسجيل الخروج",waiting:"جاري الخروج…",
@@ -47,7 +48,8 @@ const copy={
   error:"Unable to check account access. Please try again.",
   signIn:"Log in",continueMfa:"Two-step verification",
   name:"Name",email:"Email",role:"Account type",
-  accountUpcoming:"Profile editing, addresses and order history will be migrated to React in the next step.",
+  accountUpcoming:"Your profile, addresses, orders and bookings are now available in My Account.",
+  securityPage:"Account security & two-step verification",permissionsPage:"Staff permissions",
   staffPortal:"Open existing staff portal",partnerPortal:"Open existing partner portal",
   separateSession:"This opens the existing website, which may ask you to sign in again. React sessions and passwords aren't transferred between domains.",
   back:"Back to homepage",logout:"Log out",waiting:"Signing out…",
@@ -64,7 +66,7 @@ export default function AccountGateway({locale="ar",kind="customer"}){
  const home=pathFor("home",locale);
  const login=pathFor("auth",locale);
  const myTarget=destinationFor(session.role,locale);
- const staffUrl="https://dear-day.com/auth";
+ const staffUrl=isEmployee?"https://dear-day.com/Dear-Day-Staff-Login.html":"https://dear-day.com/Dear-Day-Partner.html";
  return <main id="main-content" className="dd-account-auth dd-account-hub" dir={locale==="ar"?"rtl":"ltr"}>
    <section className="dd-account-shell" aria-labelledby="dd-gateway-title">
      <div className="dd-account-card">
@@ -91,7 +93,11 @@ export default function AccountGateway({locale="ar",kind="customer"}){
             <div><small>{t.role}</small><strong>{roles[session.role]?.[locale]||session.role}</strong></div>
           </div>
           {kind==="work"?<>
-            <a className="dd-gateway-primary" href={staffUrl} target="_blank" rel="noopener noreferrer">
+            {isEmployee&&<div className="dd-gateway-work-links">
+              <Link className="dd-gateway-primary" href={pathFor("security",locale)}>{t.securityPage}</Link>
+              <Link className="dd-gateway-secondary" href={pathFor("staffPermissions",locale)}>{t.permissionsPage}</Link>
+            </div>}
+            <a className="dd-gateway-secondary" href={staffUrl} target="_blank" rel="noopener noreferrer">
               {isEmployee?t.staffPortal:t.partnerPortal}
             </a>
             <p className="dd-gateway-notice">{t.separateSession}</p>
