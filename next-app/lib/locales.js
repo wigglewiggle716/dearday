@@ -24,6 +24,7 @@ export const sections = [
   ["access", "access"],
   ["security","security"],
   ["staffPermissions","staff-permissions"],
+  ["staffPortal", "staff"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
