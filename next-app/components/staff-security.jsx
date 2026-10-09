@@ -44,17 +44,20 @@ export default function StaffSecurity({locale="ar"}){
  const staff=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
  const [factors,setFactors]=useState([]),[pending,setPending]=useState(null),[code,setCode]=useState("");
- const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[notice,setNotice]=useState("");
+ const [loading,setLoading]=useState(true),[loadFailed,setLoadFailed]=useState(false),[busy,setBusy]=useState(false),[notice,setNotice]=useState("");
  const load=useCallback(async()=>{
   if(!staff||!client)return;
-  setLoading(true);
+  setLoading(true);setLoadFailed(false);
   try{
    const {data,error}=await client.auth.mfa.listFactors();
    if(error)throw error;
    setFactors((data?.totp||[]).filter(x=>x.status==="verified"));
-  }catch{setNotice(t.error);}finally{setLoading(false);}
+  }catch{setNotice(t.error);setLoadFailed(true);}finally{setLoading(false);}
  },[staff,client,t.error]);
- useEffect(()=>{if(staff)void load();},[staff,load]);
+ useEffect(()=>{
+  if(staff)void load();
+  else{setPending(null);setCode("");setFactors([]);setNotice("");}
+ },[staff,load]);
  async function enroll(){
   if(!staff||!client||busy||pending)return;
   setBusy(true);setNotice("");
@@ -100,7 +103,9 @@ export default function StaffSecurity({locale="ar"}){
    <h1>{t.title}</h1><p className="dd-security-muted">{t.intro}</p>
    {!staff?<div className="dd-security-guard"><p>{session.status==="loading"?t.loading:session.status==="mfa_required"?t.mfa:t.restricted}</p>
     {session.status!=="loading"&&<Link className="dd-security-primary" href={login+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.mfa:t.signin}</Link>}
-   </div>:loading?<p role="status">{t.loading}</p>:<>
+   </div>:loading?<p role="status">{t.loading}</p>:loadFailed?<div className="dd-security-guard">
+    <p role="alert">{t.error}</p><button type="button" className="dd-security-secondary" onClick={load}>{t.retry}</button>
+   </div>:<>
     <div className="dd-security-state"><span className={factors.length?"dd-security-dot active":"dd-security-dot"}/>
      <strong>{factors.length?t.enabled:t.disabled}</strong>
     </div>
