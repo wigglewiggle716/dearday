@@ -209,6 +209,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
   }
   function reset(){setFilters(filtersEmpty);setSearch("");}
   function openCustom(){
+    if(closeTimer.current){clearTimeout(closeTimer.current);closeTimer.current=null;}
     setRequestResult(null);
     setIdeaError(false);
     dialog.current?.showModal();
@@ -299,6 +300,13 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
               <button className="dd-venues-reset" type="button" onClick={reset}>{t.reset}</button>
             </aside>
             <section className="dd-venues-results" aria-label={t.results}>
+              <div className="dd-venues-section-title">
+                <h2>{locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.picks}</h2>
+                <div className="dd-venues-sort">
+                  <BrandedDropdown locale={locale} label={t.sort} placeholder={t.sort}
+                    value={sort} onChange={setSort} options={t.sortChoices}/>
+                </div>
+              </div>
               {selected&&<div className="dd-venues-current">
                 <h2>{t.current}</h2>
                 <div className="dd-venues-current-card">
@@ -312,13 +320,6 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                   </div>
                 </div>
               </div>}
-              <div className="dd-venues-section-title">
-                <h2>{locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.picks}</h2>
-                <div className="dd-venues-sort">
-                  <BrandedDropdown locale={locale} label={t.sort} placeholder={t.sort}
-                    value={sort} onChange={setSort} options={t.sortChoices}/>
-                </div>
-              </div>
               {picks.length>0&&<section className="dd-venues-group dd-venues-picks">
                 <div className="dd-venues-group-box">
                   <div className="dd-venues-grid">{renderCards(picks)}</div>
@@ -351,7 +352,11 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
       </main>
     </div>
     <dialog className="dd-venues-dialog" ref={dialog} dir={locale==="ar"?"rtl":"ltr"}
-      onCancel={event=>{if(requestPending)event.preventDefault();else setRequestResult(null);}}>
+      onCancel={event=>{
+        if(requestPending){event.preventDefault();return;}
+        if(closeTimer.current){clearTimeout(closeTimer.current);closeTimer.current=null;}
+        setRequestResult(null);
+      }}>
       <form onSubmit={saveCustom}>
         <div className="dd-venues-dialog-top">
           <h2>{t.dialogTitle}</h2>
