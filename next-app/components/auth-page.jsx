@@ -121,6 +121,12 @@ export default function AuthPage({locale="ar",page="login"}){
  const [mfaNext,setMfaNext]=useState(null);
  async function finishSignIn(client, requested){
    const access=await readCurrentAccount(client);
+   if(access.status==="mfa_setup_required"){
+     // Staff without TOTP must enroll before accessing finance/admin.
+     window.localStorage.removeItem("ddPostAuthNext");
+     window.location.assign(pathFor("security",locale));
+     return;
+   }
    if(access.status==="mfa_required"){
      const factors=await client.auth.mfa.listFactors();
      if(factors.error)throw factors.error;
