@@ -26,6 +26,7 @@ export const sections = [
   ["staffPermissions","staff-permissions"],
   ["staffPortal", "staff"],
   ["staffOrders", "staff/orders"],
+  ["staffOrderEmails", "staff/order-emails"],
   ["staffCatalog", "staff/catalog"],
   ["staffApprovals", "staff/approvals"],
   ["staffPartners", "staff/partners"],

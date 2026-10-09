@@ -23,7 +23,7 @@ const words={
   security:"أمان الحساب",permissions:"الموظفون والصلاحيات",website:"عرض موقع Dear Day",
   role:"دور الحساب",email:"بريد الموظف",source:"يتم التحقق من الصلاحيات على سيرفر Supabase لكل عملية؛ القائمة ليست وسيلة لمنح صلاحيات.",
   directory:"العملاء",catalog:"المنتجات والخدمات",partnerMenu:"الشركاء",review:"الموافقات",
-  financial:"المالية والتسويات",ordersMenu:"الطلبات",availability:"التوفر والمواعيد",
+  financial:"المالية والتسويات",ordersMenu:"الطلبات",orderEmailsMenu:"إشعارات الطلبات",availability:"التوفر والمواعيد",
   cancellations:"الإلغاءات والاستردادات",support:"رسائل العملاء",overview:"لوحة التحكم",
   emptySections:"ليس لهذا الحساب أي أقسام إضافية متاحة.",back:"بوابة الوصول",
   denied:"هذه الإحصائية غير متاحة لهذا الدور."
@@ -44,7 +44,7 @@ const words={
   security:"Account security",permissions:"Staff access & permissions",website:"View Dear Day website",
   role:"Account role",email:"Staff email",source:"Every action is authorized by Supabase server-side. This menu does not grant permissions.",
   directory:"Customers",catalog:"Products & services",partnerMenu:"Partners",review:"Approvals",
-  financial:"Finance & settlements",ordersMenu:"Orders",availability:"Availability",
+  financial:"Finance & settlements",ordersMenu:"Orders",orderEmailsMenu:"Order Emails",availability:"Availability",
   cancellations:"Cancellations & refunds",support:"Customer messages",overview:"Dashboard",
   emptySections:"No other work areas are available for this account.",back:"Access hub",
   denied:"This metric is unavailable for this role."
@@ -204,6 +204,7 @@ export default function StaffWorkspace({locale="ar"}){
        <Link href={work}>{t.overview}</Link>
        <Link href={secure}>{t.security}</Link>
        {perms.has("orders.view")&&<Link href={pathFor("staffOrders",locale)}>{t.ordersMenu}</Link>}
+        {perms.has("orders.manage")&&<Link href={pathFor("staffOrderEmails",locale)}>{t.orderEmailsMenu}</Link>}
        {(perms.has("catalog.view")||perms.has("catalog.manage"))&&<Link href={pathFor("staffCatalog",locale)}>{t.catalog}</Link>}
        {perms.has("approvals.review")&&<Link href={pathFor("staffApprovals",locale)}>{t.review}</Link>}
        {(perms.has("partners.view")||perms.has("partners.manage"))&&<Link href={pathFor("staffPartners",locale)}>{t.partnerMenu}</Link>}

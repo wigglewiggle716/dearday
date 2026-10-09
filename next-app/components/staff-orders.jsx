@@ -245,7 +245,10 @@ export default function StaffOrders({locale="ar"}){
       <div><Link className="dd-orders-back" href={pathFor("staffPortal",locale)}>← {t.back}</Link>
        <h1>{t.title}</h1><p>{t.subtitle}</p>
       </div>
-      {active&&canView&&<button type="button" className="dd-orders-btn secondary" onClick={reload}>{t.refresh}</button>}
+      {active&&canView&&<div style={{display:"flex",gap:"9px",flexWrap:"wrap"}}>
+        {canManage&&<Link className="dd-orders-btn secondary" href={pathFor("staffOrderEmails",locale)}>{locale==="ar"?"إشعارات الطلبات":"Order Emails"}</Link>}
+        <button type="button" className="dd-orders-btn secondary" onClick={reload}>{t.refresh}</button>
+       </div>}
     </header>
     {!active?<section className="dd-orders-panel dd-orders-guard">
       <p role="status">{session.status==="loading"?t.loading:t.blocked}</p>
