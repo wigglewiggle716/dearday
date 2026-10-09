@@ -1,8 +1,7 @@
 import "../globals.css";
 import SiteHeader from "../../components/site-header";
 import SiteFooter from "../../components/site-footer";
-import { CartProvider } from "../../components/cart-provider";
-import { CatalogProvider } from "../../components/live-catalog";
+import { CatalogProvider, CatalogCartProvider } from "../../components/live-catalog";
 
 export const metadata = {
   title: "Dear Day — مناسبتك بكل تفاصيلها",
@@ -15,11 +14,11 @@ export default function ArabicLayout({ children }) {
     <html lang="ar" dir="rtl">
       <body>
         <CatalogProvider>
-          <CartProvider locale="ar">
+          <CatalogCartProvider locale="ar">
             <SiteHeader locale="ar" />
         {children}
             <SiteFooter locale="ar" />
-          </CartProvider>
+          </CatalogCartProvider>
         </CatalogProvider>
       </body>
     </html>
