@@ -29,9 +29,8 @@ const strings={
     typeMap:{roses:"روز",mixed:"مشكل",sunflower:"دوار شمس",gypsophila:"جيبسوفيلا"},
     colorMap:{red:"أحمر",pink:"وردي",white:"أبيض",yellow:"أصفر",purple:"موف",pastel:"باستيل",mixed:"مشكل"},
     occasionsMap:{birthday:"عيد ميلاد",anniversary:"ذكرى",engagement:"خطوبة",graduation:"تخرج",thank_you:"شكر",get_well:"سلامتك",housewarming:"منزل جديد",wedding:"زفاف",promotion:"ترقية",proposal:"طلب زواج",baby_shower:"Baby Shower"},
-    stemsLabel:"وردة",customTitle:"تصميم مخصص؟",customCopy:"شارك معنا فكرتك أو صورة مرجعية وسنحتفظ بها مع تفاصيل المناسبة.",
-    customUpload:"رفع صورة مرجعية",preview:"معاينة",fileError:"الصورة كبيرة جدًا. اختار صورة أقل من 2 ميجابايت.",
-    fileSaveError:"تعذر حفظ الصورة المرجعية في المتصفح. جرّب صورة أصغر.",
+    stemsLabel:"وردة",customTitle:"تصميم ورد مخصص؟",customCopy:"شاركنا صورة التصميم وملاحظاتك، وفريق Dear Day هيراجع طلبك ويتواصل معاك.",
+    customUpload:"ارفع تصميمك",
     next:"حفظ ومتابعة التخطيط",nextNote:"الورد اللي اخترته محفوظ في السلة المشتركة.",
     selectedLabel:"ورد في السلة",countLabel:"منتجات ورد",brand:"Dear Day"
   },
@@ -51,15 +50,13 @@ const strings={
     typeMap:{roses:"Roses",mixed:"Mixed",sunflower:"Sunflower",gypsophila:"Gypsophila"},
     colorMap:{red:"Red",pink:"Pink",white:"White",yellow:"Yellow",purple:"Purple",pastel:"Pastel",mixed:"Mixed"},
     occasionsMap:{birthday:"Birthday",anniversary:"Anniversary",engagement:"Engagement",graduation:"Graduation",thank_you:"Thank You",get_well:"Get Well",housewarming:"Housewarming",wedding:"Wedding",promotion:"Promotion",proposal:"Proposal",baby_shower:"Baby Shower"},
-    stemsLabel:"stems",customTitle:"Custom design?",customCopy:"Share your idea or a reference image and we will keep it with your occasion details.",
-    customUpload:"Upload reference image",preview:"Preview",fileError:"This image is too large. Please choose one under 2 MB.",
-    fileSaveError:"Could not save that image in the browser. Try a smaller image.",
+    stemsLabel:"stems",customTitle:"Custom flower design?",customCopy:"Share your reference image and notes. The Dear Day team will review your request and get in touch.",
+    customUpload:"Send your design",
     next:"Save & continue planning",nextNote:"Your selected flowers are saved in the shared cart.",
     selectedLabel:"Flowers in cart",countLabel:"Flower products",brand:"Dear Day"
   }
 };
 const names=["arrangement","flower_type","color","occasions"];
-const refStorage="dearDayFlowerReferenceImage";
 function getMeta(product){return product?.metadata||{};}
 function metaValues(meta,key){const v=meta[key];return Array.isArray(v)?v.map(String):v==null||v===""?[]:[String(v)];}
 function getOptions(items,key,t) {
@@ -118,6 +115,136 @@ function FilterSelect({name,choices,value,onChange}) {
     </select>
   </label>;
 }
+const FLOWER_DESIGN_ENDPOINT="https://hpffdmldtdtwcaoemyso.supabase.co/functions/v1/flower-design-submit";
+const designCopy={
+  ar:{
+    title:"طلب تصميم ورد مخصص",subtitle:"ارفع صورة التصميم وبيانات التواصل، واكتب أي تفاصيل تحب فريقنا يعرفها.",
+    name:"اسمك",email:"البريد الإلكتروني",phone:"رقم الموبايل",file:"صورة التصميم",notes:"ملاحظات على التصميم",
+    notesHint:"مثال: لون الورد، نوع البوكيه أو البوكس، المناسبة، تاريخ التوصيل، أو أي تعديلات.",
+    choose:"اختار صورة (JPG أو PNG أو WebP — بحد أقصى 5 ميجابايت)",send:"إرسال الطلب",
+    sending:"جاري إرسال الطلب...",cancel:"إلغاء",close:"إغلاق",
+    required:"لازم تختار صورة واضحة حجمها أقل من 5 ميجابايت.",
+    invalid:"من فضلك راجع البيانات المدخلة.",
+    rate:"تم إرسال عدد كبير من الطلبات. جرّب لاحقًا.",
+    error:"حصلت مشكلة أثناء إرسال الطلب. حاول مرة تانية؛ الطلب لم يتسجل.",
+    success:"استلمنا صورة تصميم الورد وملاحظاتك بنجاح. فريق خدمة العملاء هيراجع الطلب ويتواصل معاك.",
+    ticket:"رقم طلبك",returning:"هنرجعك للصفحة تلقائيًا خلال ثوانٍ."
+  },
+  en:{
+    title:"Custom flower design request",subtitle:"Attach your reference design, leave any notes, and share contact details so our team can follow up.",
+    name:"Your name",email:"Email address",phone:"Mobile number",file:"Design photo",notes:"Design notes",
+    notesHint:"e.g. flower colours, bouquet or box style, occasion, delivery date, or other requests.",
+    choose:"Choose an image (JPG, PNG or WebP — max 5 MB)",send:"Send request",
+    sending:"Sending request...",cancel:"Cancel",close:"Close",
+    required:"Choose a clear JPG, PNG or WebP image smaller than 5 MB.",
+    invalid:"Please check the information provided.",
+    rate:"Too many requests have been submitted. Please try again later.",
+    error:"We couldn't send the request. Please try again; nothing was submitted.",
+    success:"We received your flower design photo and notes. Our customer care team will review your request and get in touch.",
+    ticket:"Your request number",returning:"Returning you to the page in a few seconds."
+  }
+};
+function FlowerDesignDialog({locale,onClose}){
+  const t=designCopy[locale]||designCopy.ar;
+  const [file,setFile]=useState(null);
+  const [imageUrl,setImageUrl]=useState("");
+  const [pending,setPending]=useState(false);
+  const [result,setResult]=useState(null);
+  const closeRef=useRef(null);
+  useEffect(()=>{
+    if(!file){setImageUrl("");return;}
+    const url=URL.createObjectURL(file);
+    setImageUrl(url);
+    return ()=>URL.revokeObjectURL(url);
+  },[file]);
+  useEffect(()=>{
+    const previous=document.activeElement;
+    const oldOverflow=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    closeRef.current?.focus();
+    function handleKey(event){if(event.key==="Escape"&&!pending)onClose();}
+    document.addEventListener("keydown",handleKey);
+    return ()=>{
+      document.body.style.overflow=oldOverflow;
+      document.removeEventListener("keydown",handleKey);
+      if(previous?.isConnected&&typeof previous.focus==="function")previous.focus();
+    };
+  },[onClose,pending]);
+  useEffect(()=>{
+    if(result?.type!=="success")return;
+    const timer=window.setTimeout(onClose,5500);
+    return ()=>window.clearTimeout(timer);
+  },[result,onClose]);
+  function chooseImage(event){
+    const selected=event.target.files?.[0]||null;
+    setResult(null);
+    if(!selected){setFile(null);return;}
+    if(!["image/jpeg","image/png","image/webp"].includes(selected.type)||selected.size>5*1024*1024||selected.size===0){
+      setFile(null);setResult({type:"error",text:t.required});
+      event.target.value="";return;
+    }
+    setFile(selected);
+  }
+  async function submit(event){
+    event.preventDefault();
+    if(pending||result?.type==="success")return;
+    if(!file){setResult({type:"error",text:t.required});return;}
+    const form=event.currentTarget;
+    if(!form.reportValidity())return;
+    const body=new FormData(form);
+    body.set("image",file,file.name);
+    body.set("locale",locale);
+    setPending(true);setResult(null);
+    try{
+      const response=await fetch(FLOWER_DESIGN_ENDPOINT,{method:"POST",body,cache:"no-store"});
+      const payload=await response.json().catch(()=>({}));
+      if(!response.ok||payload.ok!==true||!payload.ticket_reference){
+        setResult({type:"error",text:response.status===429?t.rate:response.status===400?t.invalid:t.error});
+        return;
+      }
+      setResult({type:"success",text:t.success,reference:payload.ticket_reference});
+    }catch{setResult({type:"error",text:t.error});}
+    finally{setPending(false);}
+  }
+  return <div className="dd-flowers-dialog-overlay" dir={locale==="ar"?"rtl":"ltr"}
+    onMouseDown={event=>{if(event.target===event.currentTarget&&!pending)onClose();}}>
+    <section className="dd-flowers-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-flowers-dialog-title">
+      <div className="dd-flowers-dialog-head">
+        <h2 id="dd-flowers-dialog-title">{t.title}</h2>
+        <button ref={closeRef} className="dd-flowers-dialog-close" type="button" disabled={pending}
+          onClick={onClose} aria-label={t.close}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+      </div>
+      {result?.type==="success"?<div className="dd-flowers-dialog-success" role="status" aria-live="polite">
+        <span className="dd-flowers-dialog-success-icon" aria-hidden="true">✓</span>
+        <p>{t.success}</p><strong>{t.ticket}: <bdi dir="ltr">{result.reference}</bdi></strong>
+        <small>{t.returning}</small>
+        <button className="dd-flowers-dialog-submit" type="button" onClick={onClose}>{t.close}</button>
+      </div>:<form onSubmit={submit}>
+        <p className="dd-flowers-dialog-intro">{t.subtitle}</p>
+        <div className="dd-flowers-dialog-fields">
+          <label>{t.name}<input name="name" required minLength={2} maxLength={160} autoComplete="name"/></label>
+          <label>{t.phone}<input name="phone" type="tel" required minLength={6} maxLength={40} autoComplete="tel" inputMode="tel"/></label>
+          <label className="dd-flowers-dialog-full">{t.email}<input name="email" type="email" required maxLength={254} autoComplete="email"/></label>
+          <label className="dd-flowers-dialog-full">{t.file}
+            <input type="file" accept="image/jpeg,image/png,image/webp" required onChange={chooseImage}/>
+            <small>{t.choose}</small>
+          </label>
+          {imageUrl&&<img className="dd-flowers-dialog-preview" alt={t.file} src={imageUrl}/>}
+          <label className="dd-flowers-dialog-full">{t.notes}
+            <textarea name="notes" maxLength={2000} rows={4} placeholder={t.notesHint}/>
+          </label>
+        </div>
+        <input name="websiteExtra" className="dd-flowers-honeypot" tabIndex={-1} autoComplete="off" aria-hidden="true"/>
+        {result?.type==="error"&&<p className="dd-flowers-dialog-error" role="alert">{result.text}</p>}
+        <div className="dd-flowers-dialog-actions">
+          <button type="button" className="dd-flowers-dialog-cancel" onClick={onClose} disabled={pending}>{t.cancel}</button>
+          <button className="dd-flowers-dialog-submit" type="submit" disabled={pending||!file}>{pending?t.sending:t.send}</button>
+        </div>
+      </form>}
+    </section>
+  </div>;
+}
+
 export default function FlowersPage({locale="ar",flow=false}){
   const t=strings[locale]||strings.ar;
   const {rows,loading,error}=useCatalog();
@@ -129,11 +256,8 @@ export default function FlowersPage({locale="ar",flow=false}){
     (a.publishedOrder??0)-(b.publishedOrder??0)),[rows.flowers]);
   const [filters,setFilters]=useState({search:"",price:"all",arrangement:"",flower_type:"",color:"",occasions:"",stems:"",same_day:false});
   const [sort,setSort]=useState("featured");
-  const [refImage,setRefImage]=useState("");
-  const [fileError,setFileError]=useState("");
-  const inputRef=useRef(null);
+  const [designDialogOpen,setDesignDialogOpen]=useState(false);
   const flowerCount=cartItems.filter(x=>x.type==="flower").reduce((n,x)=>n+Math.max(1,Number(x.quantity)||1),0);
-  useEffect(()=>{try{const stored=localStorage.getItem(refStorage);if(stored)setRefImage(stored);}catch{}},[]);
   const options=useMemo(()=>Object.fromEntries(names.map(k=>[k,getOptions(all,k,t)])),[all,locale]);
   const filtered=useMemo(()=>{
     const q=filters.search.trim().toLowerCase();
@@ -159,22 +283,6 @@ export default function FlowersPage({locale="ar",flow=false}){
 
   function update(key,value){setFilters(current=>({...current,[key]:value}));}
   function reset(){setFilters({search:"",price:"all",arrangement:"",flower_type:"",color:"",occasions:"",stems:"",same_day:false});setSort("featured");}
-  function upload(event){
-    const file=event.target.files?.[0];
-    if(!file)return;
-    if(!file.type.startsWith("image/")||file.size>2*1024*1024){setFileError(t.fileError);event.target.value="";return;}
-    const reader=new FileReader();
-    reader.onload=()=>{try{
-      if(typeof reader.result!=="string")throw new Error("Invalid image data");
-      localStorage.setItem(refStorage,reader.result);
-      setRefImage(reader.result);setFileError("");
-      const plan=JSON.parse(localStorage.getItem("dearDayPlan")||"{}");
-      localStorage.setItem("dearDayPlan",JSON.stringify({...plan,hasFlowerReference:true}));
-    }catch{setFileError(t.fileSaveError);} };
-    reader.onerror=()=>setFileError(t.fileSaveError);
-    reader.readAsDataURL(file);
-    event.target.value="";
-  }
   function next(){
     // QuantityAction persists flower products in dearDayCart; never write an
     // independent list that would desynchronize across navigation or devices.
@@ -250,13 +358,10 @@ export default function FlowersPage({locale="ar",flow=false}){
               src="/approved-pages/assets/media/flowers-bouquet.jpg" alt="" loading="lazy"/>
             <div className="dd-flowers-custom-copy">
               <h2>{t.customTitle}</h2><p>{t.customCopy}</p>
-              {refImage&&<img className="dd-flowers-ref-preview" src={refImage} alt={t.preview}/>}
-              {fileError&&<p role="alert" className="dd-flowers-file-error">{fileError}</p>}
             </div>
-            <label className="dd-flowers-upload">
+            <button className="dd-flowers-upload" type="button" onClick={()=>setDesignDialogOpen(true)}>
               <span aria-hidden="true">⇧</span> {t.customUpload}
-              <input ref={inputRef} type="file" accept="image/*" onChange={upload}/>
-            </label>
+            </button>
           </section>
           {flow&&<div className="dd-flowers-next">
             <div><strong>{t.selectedLabel}: {flowerCount}</strong><p>{t.nextNote}</p></div>
@@ -265,5 +370,6 @@ export default function FlowersPage({locale="ar",flow=false}){
         </section>
       </div>
     </main>
+    {designDialogOpen&&<FlowerDesignDialog locale={locale} onClose={()=>setDesignDialogOpen(false)}/>}
   </>;
 }
