@@ -217,12 +217,12 @@ html[lang=en] .dd-gifts-toolbar .dd-gifts-sort select {direction:ltr;}
 .dd-gifts-sort-value{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .dd-gifts-sort-chevron{
   width:10px;height:10px;flex:0 0 10px;
-  border-inline-end:2px solid #6B3540;border-bottom:2px solid #6B3540;
+  border-right:2px solid #6B3540;border-bottom:2px solid #6B3540;
   transform:translateY(-3px) rotate(45deg);transition:transform .15s;
 }
 .dd-gifts-sort.is-open .dd-gifts-sort-chevron{transform:translateY(2px) rotate(225deg)}
 .dd-gifts-page .dd-gifts-sort-menu{
-  position:absolute;z-index:15;top:calc(100% + 7px);inset-inline-start:0;
+  position:absolute;z-index:15;top:calc(100% + 7px);left:0;right:auto;
   width:clamp(220px,22vw,260px);max-width:calc(100vw - 38px);
   display:grid;gap:3px;padding:7px;background:#fffdfc;
   border:1px solid rgba(107,53,64,.16);border-radius:16px;
