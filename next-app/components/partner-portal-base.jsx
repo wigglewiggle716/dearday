@@ -7,6 +7,7 @@ import {pathFor} from "../lib/locales";
 
 const PortalContext=createContext(null);
 export function usePartnerPortal(){const ctx=useContext(PortalContext);if(!ctx)throw Error("PartnerPortalProvider required");return ctx;}
+export function usePartnerPortalOptional(){return useContext(PortalContext);}
 const labels={
  ar:{title:"بوابة الشريك",pick:"الشريك",loading:"جاري التحقق من حساب الشريك…",denied:"هذه البوابة مخصصة لحساب شريك نشط مرتبط ببراند فعّال.",error:"تعذر تحميل بيانات الشريك.",login:"تسجيل الدخول",refresh:"تحديث الحساب",signout:"تسجيل الخروج",
  overview:"نظرة عامة",orders:"طلباتي",products:"منتجاتي وخدماتي",availability:"التوفر والمواعيد",policies:"سياسات الاسترداد",cancellations:"الإلغاءات والاسترداد",notifications:"الإشعارات"},
