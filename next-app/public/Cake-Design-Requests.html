@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#6B3540">
+<title>طلبات تصميم الكيك | Dear Day Staff</title>
+<style>
+@font-face{font-family:'Noto Sans Arabic';src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Noto Sans Arabic';src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2');font-weight:700;font-display:swap}
+:root{font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif;color:#352D2E;background:#faf3ea;font-size:14px}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}h1,h2,h3{color:#6B3540;margin:0 0 12px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}a{color:#6B3540}
+.shell{width:min(1080px,calc(100% - 32px));margin:32px auto 60px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.brand{font-family:Georgia,serif;font-style:italic;color:#6B3540;font-size:28px}
+.back{font-size:12px;text-decoration:none}
+.panel{background:#fff;border:1px solid #eadfd9;border-radius:20px;padding:22px;box-shadow:0 9px 32px rgba(107,53,64,.045)}
+.auth-panel{max-width:490px;margin:55px auto}
+.field{display:grid;gap:6px;margin:13px 0}
+.field label{font-size:12px;color:#6B3540;font-weight:700}
+.field input,.field select,.field textarea{width:100%;border:1px solid #eadfd9;border-radius:12px;padding:12px;background:#fffdfb;min-height:45px}
+.field textarea{min-height:110px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.primary,.secondary{border-radius:999px;padding:10px 20px;min-height:44px;font-weight:700;font-size:13px}
+.primary{color:#fff;background:#6B3540;border:1px solid #6B3540}
+.secondary{color:#6B3540;background:#fff;border:1px solid #dfc9c1}
+.muted{color:#8a7875;font-size:12px;line-height:1.8}.message{padding:12px;border-radius:11px;background:#fff5f2;color:#8e3f39;margin:12px 0;font-size:12px}
+.message.success{background:#eff7f0;color:#2e7443}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.status{color:#6B3540;font-weight:700;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.ticket{border:1px solid #eadfd9;padding:16px;border-radius:16px;background:#fffdfb}
+.ticket p{margin:8px 0;font-size:12px;color:#71615e;line-height:1.7}
+.ticket h3{margin:4px 0;font-size:15px}
+.ticket .ref{color:#8b6d65;font-size:11px}
+.ticket button{margin-top:9px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(31,15,19,.58);display:grid;place-items:center;z-index:200;padding:15px}
+.dialog{background:#fff;width:min(670px,100%);max-height:95vh;overflow-y:auto;border-radius:20px;padding:22px}
+.dialog-head{display:flex;justify-content:space-between;gap:20px;align-items:start}
+.line{padding:10px 0;border-bottom:1px solid #f0e7e3}
+.line small{display:block;color:#8c7b77;font-size:11px}
+.line strong,.line p{display:block;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0}
+.image{max-width:100%;max-height:320px;object-fit:contain;border-radius:13px;border:1px solid #eadfd9}
+[hidden]{display:none!important}
+@media(max-width:620px){.shell{margin-top:16px}.panel,.dialog{padding:16px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="header">
+<div><div class="brand">Dear Day</div><h1>طلبات تصميم الكيك</h1><p class="muted">لوحة متابعة طلبات تصميمات الكيك المخصصة — للموظفين المصرح لهم فقط.</p></div>
+<a class="back" href="/cake">← صفحة الكيك</a>
+</header>
+<div id="busy" class="panel" role="status">جاري التحقق من صلاحيات الدخول…</div>
+<section id="auth" class="panel auth-panel" hidden>
+<h2>دخول فريق خدمة العملاء</h2>
+<p class="muted">استخدم حساب الموظف المخوّل بعرض رسائل العملاء.</p>
+<form id="loginForm">
+<div class="field"><label for="email">البريد الإلكتروني</label><input id="email" type="email" required autocomplete="username"></div>
+<div class="field"><label for="password">كلمة المرور</label><input id="password" type="password" required autocomplete="current-password"></div>
+<div class="actions"><button class="primary" type="submit" id="loginBtn">تسجيل الدخول</button></div>
+</form>
+</section>
+<section id="mfa" class="panel auth-panel" hidden>
+<h2>التحقق الثنائي</h2><p class="muted">للاطلاع على طلبات العملاء، أدخل رمز تطبيق المصادقة المرتبط بحسابك.</p>
+<form id="mfaForm"><div class="field"><label for="otp">رمز التحقق</label><input id="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></div><button class="primary" type="submit">تأكيد الرمز</button></form>
+</section>
+<section id="workspace" hidden>
+<div class="top">
+<p class="status" id="summary">—</p>
+<div class="actions"><button class="secondary" id="refresh" type="button">تحديث الطلبات</button><button class="secondary" id="signout" type="button">تسجيل الخروج</button></div>
+</div>
+<div class="cards" id="tickets"></div>
+<div id="empty" class="panel" hidden>لا توجد طلبات تصميم كيك حتى الآن.</div>
+</section>
+<div id="alert" class="message" hidden role="alert"></div>
+</main>
+<div id="overlay" class="modal-backdrop" hidden>
+<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+<div class="dialog-head"><h2 id="detailTitle">تفاصيل الطلب</h2><button id="close" class="secondary" type="button">إغلاق</button></div>
+<div id="detail"></div>
+<div class="field"><label for="status">حالة الطلب</label><select id="status">
+<option value="new">جديد</option><option value="in_progress">قيد المتابعة</option>
+<option value="awaiting_customer">في انتظار العميل</option><option value="resolved">تم الحل</option><option value="closed">مغلق</option>
+</select></div>
+<div class="field"><label for="internalNotes">ملاحظات خدمة العملاء (داخلية)</label><textarea id="internalNotes" maxlength="4000"></textarea></div>
+<button id="save" class="primary" type="button">حفظ حالة الطلب</button>
+</section>
+</div>
+<script type="module">
+const SB_URL="https://hpffdmldtdtwcaoemyso.supabase.co";
+const SB_KEY="sb_publishable_10ZXpBIQH2bG-iseG7jpdw_DfmEUT_C";
+const BUCKET="cake-design-references";
+const ALLOWED_ROLES=new Set(["super_admin","admin","customer_support"]);
+const $=id=>document.getElementById(id);
+let sb,selected=null,tickets=[],factorId=null,authorized=false;
+function show(section){for(const id of ["busy","auth","mfa","workspace"])$(id).hidden=id!==section;}
+function message(text,success=false){$("alert").hidden=!text;$("alert").textContent=text||"";$("alert").classList.toggle("success",success);}
+function fmt(x){try{return new Intl.DateTimeFormat("ar-EG",{dateStyle:"medium",timeStyle:"short"}).format(new Date(x));}catch{return "—";}}
+function ref(x){return "DD-CS-"+String(x.ticket_no).padStart(6,"0");}
+function line(parent,label,value){
+ const wrap=document.createElement("div");wrap.className="line";
+ const small=document.createElement("small");small.textContent=label;wrap.append(small);
+ const text=document.createElement("strong");text.textContent=String(value||"—");wrap.append(text);parent.append(wrap);
+}
+async function authorize(){
+ authorized=false;
+ const userResult=await sb.auth.getUser();
+ if(userResult.error||!userResult.data?.user){show("auth");return;}
+ const id=userResult.data.user.id;
+ const [p,r,a]=await Promise.all([
+  sb.from("profiles").select("role,is_active").eq("id",id).single(),
+  sb.rpc("get_my_permissions"),
+  sb.auth.mfa.getAuthenticatorAssuranceLevel()
+ ]);
+ if(p.error||r.error||a.error||!p.data?.is_active||!ALLOWED_ROLES.has(p.data.role)||
+    !(r.data||[]).some(x=>x.permission_code==="customers.view")){
+   await sb.auth.signOut();show("auth");message("الحساب غير مخوّل بعرض طلبات العملاء.");return;
+ }
+ if(a.data.nextLevel==="aal2"&&a.data.currentLevel!=="aal2"){
+   const factors=await sb.auth.mfa.listFactors();
+   const verified=factors.data?.totp?.find(x=>x.status==="verified");
+   if(!verified){show("auth");message("أكمل تفعيل التحقق الثنائي في بوابة الموظفين أولًا.");return;}
+   factorId=verified.id;show("mfa");return;
+ }
+ authorized=true;show("workspace");await refresh();
+}
+async function refresh(){
+ if(!authorized)return;
+ const {data,error}=await sb.from("support_tickets")
+  .select("id,ticket_no,name,email,phone,message,locale,status,created_at,reference_image_path,reference_image_name,request_kind,internal_notes")
+  .eq("request_kind","cake_design").order("created_at",{ascending:false}).limit(200);
+ if(error){message("تعذر تحميل الطلبات. تحقق من الصلاحيات والاتصال.");return;}
+ tickets=data||[];$("tickets").replaceChildren();$("summary").textContent="طلبات التصميم: "+tickets.length;
+ $("empty").hidden=tickets.length!==0;
+ for(const ticket of tickets){
+  const card=document.createElement("article");card.className="ticket";
+  const a=document.createElement("small");a.className="ref";a.textContent=ref(ticket)+" · "+fmt(ticket.created_at);
+  const title=document.createElement("h3");title.textContent=ticket.name;
+  const phone=document.createElement("p");phone.textContent="☎ "+(ticket.phone||"—");
+  const note=document.createElement("p");note.textContent=(ticket.message||"").slice(0,200);
+  const status=document.createElement("p");status.textContent="الحالة: "+ticket.status;
+  const button=document.createElement("button");button.type="button";button.className="secondary";
+  button.textContent="عرض الصورة والتفاصيل";button.addEventListener("click",()=>open(ticket.id));
+  card.append(a,title,phone,note,status,button);$("tickets").append(card);
+ }
+}
+async function open(id){
+ const t=tickets.find(x=>x.id===id);if(!t)return;
+ selected=t;$("detailTitle").textContent="طلب "+ref(t);$("detail").replaceChildren();
+ line($("detail"),"تاريخ الطلب",fmt(t.created_at));
+ line($("detail"),"الاسم",t.name);line($("detail"),"الهاتف",t.phone);
+ line($("detail"),"البريد الإلكتروني",t.email);
+ line($("detail"),"الملاحظات على التصميم",t.message);
+ $("status").value=t.status;$("internalNotes").value=t.internal_notes||"";
+ $("overlay").hidden=false;$("close").focus();
+ if(t.reference_image_path){
+  const holder=document.createElement("div");holder.className="line";
+  const heading=document.createElement("h3");heading.textContent="صورة التصميم (خاصة)";
+  const preview=document.createElement("p");preview.textContent="جاري تحميل الصورة الآمنة…";
+  holder.append(heading,preview);$("detail").append(holder);
+  const response=await sb.storage.from(BUCKET).createSignedUrl(t.reference_image_path,180);
+  if(selected?.id!==id||$("overlay").hidden)return;
+  preview.remove();
+  if(response.error||!response.data?.signedUrl){
+    line(holder,"الصورة","تعذر عرض الصورة؛ تأكد من صلاحيات حسابك.");return;
+  }
+  const signed=response.data.signedUrl;
+  if(!signed.startsWith(SB_URL+"/storage/v1/")){line(holder,"الصورة","رابط غير صالح.");return;}
+  const img=document.createElement("img");img.className="image";img.src=signed;img.alt="الصورة المرجعية للكيك";
+  const link=document.createElement("a");link.href=signed;link.target="_blank";link.rel="noopener noreferrer";
+  link.textContent="فتح الصورة بحجم كامل (رابط مؤقت)";
+  holder.append(img,document.createElement("div"),link);
+ }
+}
+async function save(){
+ if(!selected||!authorized)return;
+ $("save").disabled=true;
+ const {error}=await sb.rpc("review_support_ticket",{
+  p_ticket_id:selected.id,p_status:$("status").value,
+  p_internal_notes:$("internalNotes").value.trim()||null
+ });
+ $("save").disabled=false;
+ if(error){message("تعذر حفظ حالة الطلب، راجع الصلاحيات.");return;}
+ $("overlay").hidden=true;selected=null;message("تم تحديث حالة الطلب.",true);await refresh();
+}
+$("close").addEventListener("click",()=>{$("overlay").hidden=true;selected=null;});
+$("overlay").addEventListener("mousedown",e=>{if(e.target===$("overlay")){$("overlay").hidden=true;selected=null;}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("overlay").hidden){$("overlay").hidden=true;selected=null;}});
+$("refresh").addEventListener("click",refresh);
+$("signout").addEventListener("click",async()=>{await sb.auth.signOut();authorized=false;show("auth");message("");});
+$("save").addEventListener("click",save);
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();const btn=$("loginBtn");btn.disabled=true;message("");
+ try{
+  const {error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  if(error)throw error;$("password").value="";await authorize();
+ }catch(error){message("تعذر تسجيل الدخول. تأكد من بيانات الحساب.");}
+ finally{btn.disabled=false;}
+});
+$("mfaForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!factorId)return;
+ const {error}=await sb.auth.mfa.challengeAndVerify({factorId,code:$("otp").value.trim()});
+ if(error){message("رمز التحقق غير صحيح.");return;}
+ $("otp").value="";message("");await authorize();
+});
+try{
+ const mod=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm");
+ sb=mod.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+ await authorize();
+}catch(error){show("auth");message("تعذر الاتصال بخدمة تسجيل الدخول. حاول لاحقًا.");}
+</script>
+</body>
+</html>
