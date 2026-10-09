@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback,useEffect,useMemo,useState} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
 import {useAuthSession} from "./auth-session-provider";
 import {authClient,rememberPreference,destinationFor} from "../lib/auth-client";
@@ -119,6 +119,8 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
  const [reservations,setReservations]=useState([]);
  const [deletion,setDeletion]=useState(null);
  const [loaded,setLoaded]=useState(false);
+ const [loadedFor,setLoadedFor]=useState(null);
+ const requestSeq=useRef(0);
  const [loadError,setLoadError]=useState(false);
  const [loadingKey,setLoadingKey]=useState("");
  const [notice,setNotice]=useState(null);
@@ -131,7 +133,8 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
 
  const load=useCallback(async()=>{
   if(!uid||!client)return;
-  setLoaded(false);setLoadError(false);
+  const requestId=++requestSeq.current;
+  setLoaded(false);setLoadedFor(null);setLoadError(false);
   try{
    // Every read is scoped to the authenticated user; Supabase RLS enforces
    // ownership independently of this browser filter.
@@ -144,15 +147,20 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
    ];
    const results=await Promise.all(requests);
    for(const result of results)if(result.error)throw result.error;
+   if(requestId!==requestSeq.current)return;
    setProfile(results[0].data);
    setAddresses(results[1].data||[]);
    setOrders(results[2].data||[]);
    setReservations(results[3].data||[]);
    setDeletion(Array.isArray(results[4].data)?results[4].data[0]||null:results[4].data||null);
-  }catch{setLoadError(true);}
-  finally{setLoaded(true);}
+   setLoadedFor(uid);
+  }catch{if(requestId===requestSeq.current)setLoadError(true);}
+  finally{if(requestId===requestSeq.current)setLoaded(true);}
  },[uid,client]);
- useEffect(()=>{if(uid)void load();},[uid,load]);
+ useEffect(()=>{
+   if(uid)void load();
+   else{requestSeq.current++;setLoaded(false);setLoadedFor(null);}
+ },[uid,load]);
  useEffect(()=>{setTab(initialTab);},[initialTab]);
  async function work(key,operation){
   if(loadingKey)return;
@@ -274,10 +282,11 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
     password=String(form.get("password")||""),confirm=String(form.get("confirm")||"");
   if(password.length<8){setNotice({error:true,text:t.passwordLength});return;}
   if(password!==confirm){setNotice({error:true,text:t.passwordMatch});return;}
+  const formElement=event.currentTarget;
   await work("password",async()=>{
    const {error}=await client.auth.updateUser({password,nonce});
    if(error){setNotice({error:true,text:t.passwordError});return;}
-   event.currentTarget?.reset?.();
+   formElement.reset();
    setPasswordNonce("");setPasswordStep("request");
    setNotice({error:false,text:t.passwordSuccess});
   });
@@ -320,7 +329,7 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
        {t[name]}
       </button>)}</nav>
     <section className="dd-my-panel">
-      {!loaded?<p role="status">{t.loading}</p>:
+      {!loaded||loadedFor!==uid?<p role="status">{t.loading}</p>:
        loadError?<div><p role="alert">{t.loadError}</p><button type="button" className="dd-my-primary" onClick={load}>{t.refresh}</button></div>:
        <>
         {tab==="profile"&&<div>
