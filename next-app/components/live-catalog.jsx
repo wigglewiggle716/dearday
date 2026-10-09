@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { pathFor } from "../lib/locales";
 import { loadPublicCatalog } from "../lib/catalog";
-import { money, QuantityAction } from "./cart-provider";
+import { CartProvider, money, QuantityAction } from "./cart-provider";
 import PlanningStepper from "./planning-stepper";
 import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 
@@ -25,6 +25,13 @@ export function CatalogProvider({ children }) {
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;
 }
 export function useCatalog() { return useContext(CatalogContext); }
+
+// Cart state is stored only in the cart provider. The shared published catalog
+// supplies localized labels at render time without replacing stored products.
+export function CatalogCartProvider({children,locale}) {
+  const {rows}=useCatalog();
+  return <CartProvider locale={locale} catalogRows={rows}>{children}</CartProvider>;
+}
 
 export function ProductCard({product,locale}) {
   const name=locale==="ar"?product.name_ar:product.name_en;
