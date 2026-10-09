@@ -36,7 +36,7 @@ const copy={
   redirectError:"تعذر إكمال عملية تسجيل الدخول. جرّب من جديد.",
   inactive:"الحساب غير مفعّل أو تم إيقافه. تواصل مع خدمة العملاء.",
   mfaTitle:"التحقق بخطوتين",mfaIntro:"افتح تطبيق المصادقة واكتب الرمز المكوّن من 6 أرقام.",
-  mfaLabel:"رمز تطبيق المصادقة",mfaSubmit:"تأكيد ومتابعة الدخول",
+  mfaLabel:"رمز تطبيق المصادقة",mfaSubmit:"تأكيد ومتابعة الدخول",mfaFactor:"تطبيق المصادقة",mfaFactorOption:"الوسيلة",
   mfaInvalid:"رمز التحقق غير صحيح أو انتهت صلاحيته.",mfaUnavailable:"ماقدرناش نكمل التحقق الثنائي. تواصل مع مسؤول النظام.",
   mfaSignOut:"إلغاء وتسجيل الخروج",profileError:"تعذر تأكيد صلاحية الحساب حاليًا. حاول لاحقًا."
  },
@@ -70,7 +70,7 @@ const copy={
   redirectError:"We couldn't complete sign-in. Please try again.",
   inactive:"This account is inactive or suspended. Please contact support.",
   mfaTitle:"Two-step verification",mfaIntro:"Enter the six-digit code from your authenticator app.",
-  mfaLabel:"Authenticator code",mfaSubmit:"Verify and continue",
+  mfaLabel:"Authenticator code",mfaSubmit:"Verify and continue",mfaFactor:"Authenticator app",mfaFactorOption:"Authenticator",
   mfaInvalid:"The verification code is incorrect or expired.",mfaUnavailable:"We couldn't complete two-step verification. Please contact your administrator.",
   mfaSignOut:"Cancel and sign out",profileError:"We couldn't confirm account access. Try again later."
  }
@@ -117,15 +117,18 @@ export default function AuthPage({locale="ar",page="login"}){
  const [oauthPending,setOauthPending]=useState(false);
  const activeSubmit=useRef(false);
  const [mfaFactorId,setMfaFactorId]=useState("");
+ const [mfaFactors,setMfaFactors]=useState([]);
  const [mfaNext,setMfaNext]=useState(null);
  async function finishSignIn(client, requested){
    const access=await readCurrentAccount(client);
    if(access.status==="mfa_required"){
      const factors=await client.auth.mfa.listFactors();
      if(factors.error)throw factors.error;
-     const verified=factors.data?.totp?.find(f=>f.status==="verified");
-     if(!verified){setMode("mfa");setStatus({error:true,message:t.mfaUnavailable});return;}
-     setMfaFactorId(verified.id);setMfaNext(requested||null);setMode("mfa");setStatus(null);
+     const verified=(factors.data?.totp||[]).filter(f=>f.status==="verified");
+     if(!verified.length){setMode("mfa");setStatus({error:true,message:t.mfaUnavailable});return;}
+     setMfaFactors(verified.map((factor,i)=>({id:factor.id,label:factor.friendly_name||
+       t.mfaFactorOption+" "+(i+1)})));
+     setMfaFactorId(verified[0].id);setMfaNext(requested||null);setMode("mfa");setStatus(null);
      return;
    }
    if(access.status==="inactive"){
@@ -312,6 +315,13 @@ export default function AuthPage({locale="ar",page="login"}){
        <h1 id="dd-account-title">{title}</h1>
        <p className="dd-account-intro">{intro}</p>
        {isMfa?<form className="dd-account-form" onSubmit={verifyMfa}>
+         {mfaFactors.length>1&&<div className="dd-account-field">
+           <label htmlFor="dd-mfa-factor">{t.mfaFactor}</label>
+           <select id="dd-mfa-factor" className="dd-account-select" value={mfaFactorId}
+             onChange={event=>setMfaFactorId(event.target.value)}>
+             {mfaFactors.map(f=><option key={f.id} value={f.id}>{f.label}</option>)}
+           </select>
+         </div>}
          <div className="dd-account-field">
            <label htmlFor="dd-mfa-code">{t.mfaLabel}</label>
            <input id="dd-mfa-code" name="otp" inputMode="numeric" autoComplete="one-time-code"
