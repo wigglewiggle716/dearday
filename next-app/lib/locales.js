@@ -31,6 +31,7 @@ export const sections = [
   ["staffPartners", "staff/partners"],
   ["staffCustomers", "staff/customers"],
   ["staffSupport", "staff/support"],
+  ["staffAvailability", "staff/availability"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
