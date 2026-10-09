@@ -26,7 +26,7 @@ const languages={
   profile:"Company Profile",productsFile:"قائمة المنتجات",download:"فتح مستند خاص",opening:"جاري تجهيز الرابط الخاص…",
   review:"تحديث حالة الطلب",createHint:"قبول طلب الانضمام لا يضيف شريكًا أو يفعّله تلقائيًا.",statusHint:"تفعيل شريك حالي أو إيقافه قد يؤثر على ظهور خدماته في الموقع.",
   selectStatus:"الحالة",rejectReason:"سبب الرفض / ملاحظة داخلية",readonly:"لديك صلاحية عرض فقط.",saving:"جاري الحفظ…",
-  saved:"تم حفظ التعديل.",statusSaved:"تم حفظ حالة طلب الانضمام.",downloadError:"تعذر فتح الملف الخاص. تحقق من الصلاحية.",
+  saved:"تم حفظ التعديل.",auditWarning:"تم تحديث الشريك، لكن تسجيل العملية في سجل المراجعة فشل. يلزم فحص السجل قبل اعتماد التعديل.",statusSaved:"تم حفظ حالة طلب الانضمام.",downloadError:"تعذر فتح الملف الخاص. تحقق من الصلاحية.",
   invalid:"راجع الحقول: الاسم، الاسم المختصر (slug)، والعمولة بين 0 و100%.",errorSave:"تعذر حفظ التعديل. قد تكون الصلاحيات أو البيانات تغيّرت؛ حدّث الصفحة.",
   confirmPartner:"تأكيد حفظ بيانات الشريك في قاعدة Dear Day الفعلية؟",confirmReview:"تأكيد حفظ حالة طلب الانضمام والملاحظات؟",
   duplicate:"اسم رابط الشريك (slug) مستخدم بالفعل.",report:"عرض",previous:"السابق",next:"التالي",page:"صفحة",of:"من",
@@ -53,7 +53,7 @@ const languages={
   review:"Update application status",createHint:"Accepting an application does not automatically create or activate a partner.",
   statusHint:"Activating or suspending an existing partner can affect their public listings.",
   selectStatus:"Status",rejectReason:"Rejection reason / internal notes",readonly:"Your access is read only.",saving:"Saving…",
-  saved:"Changes saved.",statusSaved:"Application status saved.",downloadError:"Could not open the private file. Check your permissions.",
+  saved:"Changes saved.",auditWarning:"The partner was updated, but the separate audit event failed. Check the audit log before approval.",statusSaved:"Application status saved.",downloadError:"Could not open the private file. Check your permissions.",
   invalid:"Check the partner name, slug and commission between 0 and 100%.",errorSave:"Could not save. Permissions or data may have changed; refresh.",
   confirmPartner:"Confirm saving this partner to the live Dear Day database?",confirmReview:"Confirm saving the application status and internal notes?",
   duplicate:"This partner slug is already in use.",report:"View",previous:"Previous",next:"Next",page:"Page",of:"of",
@@ -190,7 +190,7 @@ export default function StaffPartners({locale="ar"}){
     entity_id:saved.id,before_data:null,
     after_data:{status:saved.status,slug:saved.slug,operation:editing.id?"edit":"create",source:"staff_react"}
    });
-   setEditing(null);setNotice(log.error?t.saved+" ("+t.errorSave+")":t.saved);refresh();
+   setEditing(null);setNotice(log.error?t.auditWarning:t.saved);refresh();
   }catch(e){setErr(extractError(e)==="validation"?t.invalid:t.errorSave);}finally{setBusy(false);}
  }
  async function saveApplication(){
