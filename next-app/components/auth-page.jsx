@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import {useRouter} from "next/navigation";
 import {authClient,rememberPreference,safeNext} from "../lib/auth-client";
 import {pathFor} from "../lib/locales";
 
@@ -98,7 +97,6 @@ function PasswordField({label,name,placeholder,autoComplete,minLength=6,show,hid
 }
 export default function AuthPage({locale="ar",page="login"}){
  const t=copy[locale]||copy.ar;
- const router=useRouter();
  const [mode,setMode]=useState(page);
  const [remember,setRemember]=useState(true);
  const [busy,setBusy]=useState(false);
@@ -120,6 +118,9 @@ export default function AuthPage({locale="ar",page="login"}){
    const auth=authClient(rememberPreference());
    const code=params.get("code");
    const isOAuth=params.get("oauth")==="1";
+   if(params.has("error")||params.has("error_code")){
+     setStatus({error:true,message:t.providerError});
+   }
    const isRecovery=params.get("mode")==="recover"||hash.includes("type=recovery");
    const {data:sub}=auth.auth.onAuthStateChange((event,session)=>{
      if(!active)return;
@@ -258,7 +259,7 @@ export default function AuthPage({locale="ar",page="login"}){
          {isSignup&&<div className="dd-account-field">
            <label htmlFor="dd-phone">{t.phone}</label>
            <input id="dd-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required
-             pattern="[+0-9()\\s-]{6,40}" minLength={6} maxLength={40} placeholder="01xxxxxxxxx" dir="ltr"/>
+             pattern="[+0-9() -]{6,40}" minLength={6} maxLength={40} placeholder="01xxxxxxxxx" dir="ltr"/>
          </div>}
          {!isForgot&&<PasswordField name="password" label={isRecover?t.password:t.password} placeholder={isSignup||isRecover?t.passwordHint:t.passwordPlaceholder}
            autoComplete={isSignup||isRecover?"new-password":"current-password"}
