@@ -72,6 +72,7 @@ export default function PartnerPoliciesPanel(){
   })();
   return()=>{live=false;};
  },[client,partner?.id,revision]);
+ useEffect(()=>{setDraft(null);setError("");},[partner?.id]);
  const name=x=>(locale==="en"?x?.name_en||x?.name_ar:x?.name_ar||x?.name_en)||"—";
  const target=p=>p.scope==="platform"?t.platform:p.scope==="partner"?(locale==="en"?partner?.name_en||partner?.name_ar:partner?.name_ar||partner?.name_en):
   name(data.names[data.listings.find(x=>x.id===p.listing_id)?.published_version_id]);
