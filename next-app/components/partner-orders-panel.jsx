@@ -57,7 +57,7 @@ export default function PartnerOrdersPanel({section="overview"}){
      const r=await client.rpc("partner_list_cancellations");if(r.error)throw r.error;
      cancellations=r.data||[];
     }
-    if(live)setState({stage:"ready",orders:(Array.isArray(orders.data)?orders.data:[]).filter(o=>o.partner_id===partner.id),cancellations});
+    if(live)setState({stage:"ready",partnerId:partner.id,orders:(Array.isArray(orders.data)?orders.data:[]).filter(o=>o.partner_id===partner.id),cancellations});
    }catch{if(live)setState({stage:"error",orders:[],cancellations:[]});}
   })();
   return()=>{live=false;};
@@ -89,7 +89,7 @@ export default function PartnerOrdersPanel({section="overview"}){
  const header=section==="overview"?t.overview:section==="cancellations"?t.cancellations:t.orders;
  return <div className="dd-pp-page"><div className="dd-pp-heading"><h1>{header}</h1><button type="button" onClick={()=>setRevision(v=>v+1)}>{t.refresh}</button></div>
   {error&&<p role="alert" className="dd-pp-error">{error}</p>}{notice&&<p role="status" className="dd-pp-success">{notice}</p>}
-  {state.stage==="loading"?<p role="status">{t.loading}</p>:state.stage==="error"?<p role="alert">{t.error}</p>:section==="cancellations"?<>
+  {(state.stage==="ready"&&state.partnerId!==partner?.id||state.stage==="loading")?<p role="status">{t.loading}</p>:state.stage==="error"?<p role="alert">{t.error}</p>:section==="cancellations"?<>
    <p className="dd-pp-warning">{t.cancellationHint}</p>
    {partners.length>1?<p className="dd-pp-warning">{t.multiPartnerCancellations}</p>:state.cancellations.length?
     <div className="dd-pp-cards">{state.cancellations.map(x=><article className="dd-pp-card" key={x.request_item_id}>
