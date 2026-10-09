@@ -33,6 +33,9 @@ const c={
   updatePassword:"تغيير كلمة المرور",passwordSuccess:"تم تغيير كلمة المرور بنجاح.",
   passwordMatch:"كلمتا المرور مش متطابقتين.",passwordLength:"كلمة المرور لازم تكون 8 أحرف على الأقل.",
   passwordError:"تعذر تغيير كلمة المرور. تأكد من رمز التحقق وحاول مرة تانية.",
+  changePhone:"تغيير رقم الموبايل",phoneInfo:"تغيير رقم الموبايل محتاج تأكيد الهوية برمز تحقق.",
+  newPhone:"رقم الموبايل الجديد",phoneSuccess:"تم تحديث رقم الموبايل بعد التحقق.",
+  phoneError:"تعذر تغيير رقم الموبايل. تأكد من رمز التحقق وحاول مرة تانية.",
   securityHelp:"لو دخلت عن طريق Google أو Apple فقط، تقدر تستخدم «نسيت كلمة السر» لإعداد كلمة مرور.",
   noOrders:"مفيش طلبات مؤكدة أو بانتظار الدفع حاليًا.",noBookings:"مفيش حجوزات مسجلة على حسابك.",
   order:"طلب",date:"التاريخ",occasion:"المناسبة",total:"الإجمالي",status:"الحالة",
@@ -77,6 +80,9 @@ const c={
   updatePassword:"Update password",passwordSuccess:"Your password has been updated.",
   passwordMatch:"Passwords do not match.",passwordLength:"Password must be at least 8 characters.",
   passwordError:"Couldn't update your password. Verify the code and try again.",
+  changePhone:"Change mobile number",phoneInfo:"Changing your mobile number requires an identity verification code.",
+  newPhone:"New mobile number",phoneSuccess:"Your mobile number was updated after verification.",
+  phoneError:"Couldn't update your mobile number. Check your code and try again.",
   securityHelp:"If you only use social login, you can set up a password using 'Forgot password'.",
   noOrders:"You don't have any placed orders yet.",noBookings:"You don't have any recorded bookings.",
   order:"Order",date:"Date",occasion:"Occasion",total:"Total",status:"Status",
@@ -128,6 +134,7 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
  const [addressForm,setAddressForm]=useState(EMPTY_ADDRESS);
  const [passwordStep,setPasswordStep]=useState("request");
  const [passwordNonce,setPasswordNonce]=useState("");
+ const [phoneStep,setPhoneStep]=useState("request");
  const [emailFormOpen,setEmailFormOpen]=useState(false);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
 
@@ -176,7 +183,6 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
   if(!first||!last){setNotice({error:true,text:t.required});return;}
   await work("profile",async()=>{
    const row={first_name:first,last_name:last,full_name:first+" "+last,
-     phone:String(data.get("phone")||"").trim()||null,
      birth_date:String(data.get("birth_date")||"")||null,
      area:String(data.get("area")||"").trim()||null};
    const result=await client.from("profiles").update(row).eq("id",uid)
@@ -184,7 +190,7 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
    if(result.error)throw result.error;
    setProfile(result.data);
    const metadata={...session.user.user_metadata,first_name:first,last_name:last,
-     full_name:row.full_name,phone:row.phone,birth_date:row.birth_date,area:row.area,
+     full_name:row.full_name,birth_date:row.birth_date,area:row.area,
      profile_complete:true};
    const authResult=await client.auth.updateUser({data:metadata});
    if(authResult.error){setNotice({error:true,text:t.commonError});return;}
@@ -291,6 +297,35 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
    setNotice({error:false,text:t.passwordSuccess});
   });
  }
+ async function sendPhoneVerification(){
+  await work("phone",async()=>{
+   const {error}=await client.auth.reauthenticate();
+   if(error)throw error;
+   setPhoneStep("confirm");setNotice({error:false,text:t.codeSent});
+  });
+ }
+ async function changePhone(event){
+  event.preventDefault();
+  const data=new FormData(event.currentTarget);
+  const nonce=String(data.get("nonce")||"").trim();
+  const newPhone=String(data.get("phone")||"").trim();
+  if(!/^[+0-9() -]{6,40}$/.test(newPhone)){
+   setNotice({error:true,text:t.phoneError});return;
+  }
+  await work("phone",async()=>{
+   // Supabase enforces a valid reauthentication nonce before accepting
+   // the Auth metadata update; update the profile only if that succeeds.
+   const check=await client.auth.updateUser({data:{...session.user.user_metadata,phone:newPhone},nonce});
+   if(check.error){setNotice({error:true,text:t.phoneError});return;}
+   const updated=await client.from("profiles").update({phone:newPhone}).eq("id",uid)
+    .select("id,first_name,last_name,full_name,phone,birth_date,area").single();
+   if(updated.error)throw updated.error;
+   setProfile(updated.data);
+   setPhoneStep("request");
+   await session.refresh();
+   setNotice({error:false,text:t.phoneSuccess});
+  });
+ }
  async function deleteAccount(){
   if(!window.confirm(t.deletionConfirm))return;
   await work("deletion",async()=>{
@@ -306,7 +341,7 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
  const field=(key,label,value,optional=false,type="text",extra={})=><label className="dd-my-field" key={key}>
    <span>{label}</span><input key={String(value??"")} type={type} name={key} defaultValue={value||""}
      required={!optional} maxLength={type==="date"?undefined:extra.max||160}
-     autoComplete={extra.autoComplete} dir={extra.dir}/>
+     autoComplete={extra.autoComplete} dir={extra.dir} readOnly={extra.readOnly||false}/>
  </label>;
  if(session.status!=="authenticated"||!uid)return <main id="main-content" className="dd-my-account" dir={locale==="ar"?"rtl":"ltr"}>
    <section className="dd-my-guard">
@@ -338,7 +373,7 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
           <div className="dd-my-fields">
            {field("first_name",t.first,profile?.first_name||session.user.user_metadata?.first_name)}
            {field("last_name",t.last,profile?.last_name||session.user.user_metadata?.last_name)}
-           {field("phone",t.phone,profile?.phone,true,"tel",{max:40,autoComplete:"tel",dir:"ltr"})}
+           {field("phone",t.phone,profile?.phone,true,"tel",{max:40,autoComplete:"tel",dir:"ltr",readOnly:true})}
            {field("birth_date",t.birth,profile?.birth_date,true,"date")}
            {field("area",t.area,profile?.area,true)}
           </div>
@@ -400,6 +435,27 @@ export default function MyAccount({locale="ar",initialTab="profile"}){
            <div className="dd-my-actions"><button type="submit" disabled={Boolean(loadingKey)} className="dd-my-primary">{loadingKey==="password"?t.processing:t.updatePassword}</button>
             <button type="button" className="dd-my-secondary" onClick={()=>{setPasswordStep("request");setPasswordNonce("");}}>{t.cancel}</button></div>
           </form>}
+         <div className="dd-my-subsection">
+          <h3>{t.changePhone}</h3>
+          <p className="dd-my-muted">{t.phoneInfo}</p>
+          {phoneStep==="request"?
+            <button type="button" className="dd-my-secondary" disabled={Boolean(loadingKey)}
+              onClick={sendPhoneVerification}>{loadingKey==="phone"?t.processing:t.sendCode}</button>:
+            <form className="dd-my-form" onSubmit={changePhone}>
+              <div className="dd-my-fields">
+                <label className="dd-my-field"><span>{t.code}</span>
+                  <input name="nonce" autoComplete="one-time-code" inputMode="numeric" required maxLength={12} dir="ltr"/>
+                </label>
+                <label className="dd-my-field"><span>{t.newPhone}</span>
+                  <input name="phone" type="tel" inputMode="tel" required maxLength={40} minLength={6} dir="ltr"/>
+                </label>
+              </div>
+              <div className="dd-my-actions">
+                <button type="submit" className="dd-my-primary" disabled={Boolean(loadingKey)}>{loadingKey==="phone"?t.processing:t.changePhone}</button>
+                <button type="button" className="dd-my-secondary" onClick={()=>setPhoneStep("request")}>{t.cancel}</button>
+              </div>
+            </form>}
+         </div>
          <p className="dd-my-muted">{t.securityHelp}</p>
         </div>}
         {tab==="orders"&&<div>
