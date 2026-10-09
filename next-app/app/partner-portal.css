@@ -69,7 +69,7 @@
 .dd-pp-tiers{display:grid;gap:10px;margin:15px 0}
 .dd-pp-tier{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
 .dd-pp-tier button{align-self:end}
-.dd-pp-page .dd-staff-availability{padding:0!important;background:transparent!important;min-height:0}
-.dd-pp-page .dd-av-wrap{max-width:100%}
+.dd-pp-content>.dd-staff-availability{padding:0!important;background:transparent!important;min-height:0}
+.dd-pp-content>.dd-staff-availability .dd-av-wrap{max-width:100%}
 @media(max-width:950px){.dd-pp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-pp-body{grid-template-columns:185px minmax(0,1fr)}}
 @media(max-width:720px){.dd-pp-body{grid-template-columns:1fr}.dd-pp-aside{position:static}.dd-pp-mobile-toggle{display:block;width:100%;text-align:start;border:0;border-radius:0;background:#6B3540;color:#fff}.dd-pp-aside nav{display:none}.dd-pp-aside nav.open{display:grid}.dd-pp-top{padding:14px}.dd-pp-page h1{font-size:24px}.dd-pp-form{grid-template-columns:1fr}.dd-pp-modal-body{padding:14px}.dd-pp-tier{grid-template-columns:1fr 1fr}.dd-pp-tier button{grid-column:1/-1}}
