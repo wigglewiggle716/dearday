@@ -1,7 +1,7 @@
 /* Approved gifts layout migrated into scoped React styles. */
 .dd-gifts-page {--dd-gifts-wine:#6B3540;--dd-gifts-cream:#fbf7f3;--dd-gifts-paper:#fffdfb;--dd-gifts-muted:#746865;--dd-gifts-line:#eadfd9;background:var(--dd-gifts-cream);color:#2b2323;min-height:65vh}
 .dd-gifts-page *{box-sizing:border-box}
-.dd-gifts-page button,.dd-gifts-page select{font:inherit}
+.dd-gifts-page button,.dd-gifts-page select{font-family:inherit}
 .dd-gifts-shell{width:min(1180px,calc(100% - 40px));margin-inline:auto}
 .dd-gifts-flow{background:#fffdfb;border-bottom:1px solid #f0e6e2;padding:17px 0}
 .dd-gifts-flow-rail{width:min(1180px,calc(100% - 40px));margin:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
@@ -177,4 +177,74 @@ html[lang=en] .dd-gifts-toolbar .dd-gifts-sort select {direction:ltr;}
 }
 @media(max-width:620px) {
   .dd-gifts-grid {grid-template-columns:1fr;gap:14px;}
+}
+
+/* Match the original Arabic gifts filters and branded sorting control. */
+.dd-gifts-page .dd-gifts-filters{
+  top:94px;max-height:calc(100dvh - 114px);padding:20px;
+  scrollbar-gutter:stable;scrollbar-color:rgba(107,53,64,.28) transparent;
+}
+.dd-gifts-page .dd-gifts-filter-head strong{font-size:18px;font-weight:800}
+.dd-gifts-page .dd-gifts-filter-head button{font-size:12px;color:#A8583D;font-weight:800}
+.dd-gifts-page .dd-gifts-filter-section{padding:16px 0}
+.dd-gifts-page .dd-gifts-filter-section:first-of-type{border-top:0}
+.dd-gifts-page .dd-gifts-filter-section h3{font-size:14px;margin:0 0 10px;color:#6B3540;font-weight:800}
+.dd-gifts-page .dd-gifts-filter-chips{gap:7px}
+.dd-gifts-page .dd-gifts-chip{
+  min-height:34px;padding:7px 12px;font-size:12px;line-height:1.45;
+  font-weight:700;color:#6B3540;background:#fffdfc;
+  border:1px solid rgba(107,53,64,.16);
+}
+.dd-gifts-page .dd-gifts-chip.is-active{
+  color:#fff;background:#6B3540;border-color:#6B3540;
+  box-shadow:0 6px 16px rgba(107,53,64,.16);
+}
+.dd-gifts-page .dd-gifts-chip:hover:not(.is-active){background:#fff7f3;border-color:rgba(168,88,61,.48)}
+.dd-gifts-toolbar{position:relative;z-index:5}
+.dd-gifts-page .dd-gifts-sort{position:relative;width:180px;flex:0 0 180px}
+.dd-gifts-page .dd-gifts-sort-trigger{
+  width:100%;min-height:48px;padding:10px 13px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:linear-gradient(180deg,#fff,#fffdfb);color:#352D2E;
+  border:1px solid rgba(107,53,64,.18);border-radius:14px;
+  box-shadow:0 5px 14px rgba(76,31,36,.025);
+  text-align:start;font-size:13px;font-weight:700;line-height:1.45;cursor:pointer;
+}
+.dd-gifts-page .dd-gifts-sort-trigger:hover{border-color:rgba(107,53,64,.35)}
+.dd-gifts-page .dd-gifts-sort.is-open .dd-gifts-sort-trigger{
+  border-color:#A8583D;box-shadow:0 0 0 4px rgba(168,88,61,.09),0 8px 20px rgba(76,31,36,.05);
+}
+.dd-gifts-sort-value{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.dd-gifts-sort-chevron{
+  width:10px;height:10px;flex:0 0 10px;
+  border-inline-end:2px solid #6B3540;border-bottom:2px solid #6B3540;
+  transform:translateY(-3px) rotate(45deg);transition:transform .15s;
+}
+.dd-gifts-sort.is-open .dd-gifts-sort-chevron{transform:translateY(2px) rotate(225deg)}
+.dd-gifts-page .dd-gifts-sort-menu{
+  position:absolute;z-index:15;top:calc(100% + 7px);inset-inline-start:0;
+  width:clamp(220px,22vw,260px);max-width:calc(100vw - 38px);
+  display:grid;gap:3px;padding:7px;background:#fffdfc;
+  border:1px solid rgba(107,53,64,.16);border-radius:16px;
+  box-shadow:0 18px 45px rgba(76,31,36,.16);
+}
+.dd-gifts-page .dd-gifts-sort-option{
+  min-height:40px;width:100%;padding:8px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border:0;border-radius:10px;background:transparent;color:#352D2E;
+  text-align:start;font-size:12px;font-weight:500;cursor:pointer;
+}
+.dd-gifts-page .dd-gifts-sort-option:hover,.dd-gifts-page .dd-gifts-sort-option:focus-visible{
+  background:#f8ebe6;color:#6B3540;
+}
+.dd-gifts-page .dd-gifts-sort-option[aria-selected=true]{
+  background:#6B3540;color:#fff;font-weight:800;
+}
+.dd-gifts-sort-option[aria-selected=true]::after{content:"✓";font:800 11px/1 Arial,sans-serif}
+@media(max-width:760px){
+  .dd-gifts-page .dd-gifts-filters{position:static;max-height:none;overflow:visible;scrollbar-gutter:auto}
+}
+@media(max-width:500px){
+  .dd-gifts-page .dd-gifts-sort{width:165px;flex-basis:165px}
+  .dd-gifts-page .dd-gifts-chip{font-size:12px}
 }
