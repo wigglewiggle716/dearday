@@ -254,6 +254,6 @@
 |---|---|---|---|---|---|
 | — | — | — | لم تبدأ المراجعة | — | — |
 
-**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Catalog & Approvals](./REACT-STAFF-CATALOG-MIGRATION.md) · [Partners](./REACT-STAFF-PARTNERS-MIGRATION.md) · [Customers & Support](./REACT-STAFF-CUSTOMER-SUPPORT-MIGRATION.md) · [Availability](./REACT-STAFF-AVAILABILITY-MIGRATION.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
+**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Catalog & Approvals](./REACT-STAFF-CATALOG-MIGRATION.md) · [Partners](./REACT-STAFF-PARTNERS-MIGRATION.md) · [Customers & Support](./REACT-STAFF-CUSTOMER-SUPPORT-MIGRATION.md) · [Availability](./REACT-STAFF-AVAILABILITY-MIGRATION.md) · [Cancellations & Refund Policies](./REACT-STAFF-CANCELLATIONS-MIGRATION.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
 
 **سياسة متابعة:** أي تطوير جديد أو إصلاح Bug على `react-migration` يجب إضافة اختبار له هنا قبل أن يطلب من المالك اعتماده.
