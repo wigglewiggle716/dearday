@@ -27,10 +27,8 @@ const textByLocale={
     },
     sort:"الترتيب",sortList:[["featured","الترتيب المقترح"],["asc","السعر: الأقل أولًا"],["desc","السعر: الأعلى أولًا"]],
     featured:"مختارات Dear Day",allProducts:"كل المنتجات",none:"مفيش منتجات مطابقة للفلاتر الحالية.",
-    customTitle:"تصميم مخصص؟",customCopy:"شارك معنا فكرتك أو صورة مرجعية وسنحتفظ بها مع تفاصيل المناسبة.",
-    customButton:"رفع صورة مرجعية",customPreview:"المعاينة",
-    uploadSaved:"تم حفظ الصورة المرجعية",uploadError:"اختار صورة حجمها أقل من 2 ميجابايت.",
-    uploadStorage:"ماقدرناش نحفظ الصورة في المتصفح؛ جرب صورة أصغر.",
+    customTitle:"عندك تصميم كيك في بالك؟",customCopy:"ارفع صورة للتصميم مع ملاحظاتك، وفريق Dear Day هيراجع طلبك ويتواصل معاك.",
+    customButton:"ارفع تصميمك",
     favorites:"إضافة للمفضلة",removeFavorite:"إزالة من المفضلة",
     people:"أشخاص",add:"أضف للسلة",noCake:"مفيش منتجات معروضة حاليًا.",
     selected:"منتجات كيك أو حلويات في السلة",continue:"حفظ ومتابعة التخطيط",continuation:"الاختيارات محفوظة في السلة المشتركة.",
@@ -51,10 +49,8 @@ const textByLocale={
     },
     sort:"Sort",sortList:[["featured","Recommended"],["asc","Price: Low to High"],["desc","Price: High to Low"]],
     featured:"Dear Day Picks",allProducts:"All Products",none:"No products match the current filters.",
-    customTitle:"Have a custom design in mind?",customCopy:"Share your idea or upload a reference image and we will keep it with your occasion details.",
-    customButton:"Upload reference image",customPreview:"Reference preview",
-    uploadSaved:"Reference image saved",uploadError:"Choose an image smaller than 2 MB.",
-    uploadStorage:"Could not save the image in this browser. Try a smaller one.",
+    customTitle:"Have a custom cake design in mind?",customCopy:"Upload a design photo with your notes and the Dear Day team will review your request and get in touch.",
+    customButton:"Send your design",
     favorites:"Add to favorites",removeFavorite:"Remove from favorites",
     people:"guests",add:"Add",noCake:"No products available yet.",
     selected:"Cake & sweets in cart",continue:"Save & continue planning",continuation:"Selections stay in the shared cart.",
@@ -63,7 +59,7 @@ const textByLocale={
 };
 const filterOrder=["category","people","flavor","design","budget"];
 const defaultFilters={q:"",category:"all",people:"all",flavor:"all",design:"all",budget:"all"};
-const favoriteKey="dearDayCakeFavorites",imageKey="dearDayCakeReferenceImage";
+const favoriteKey="dearDayCakeFavorites";
 function readPlan(){
   try {const p=JSON.parse(localStorage.getItem("dearDayPlan")||"{}");return p&&typeof p==="object"&&!Array.isArray(p)?p:{};}catch{return {};}
 }
@@ -122,6 +118,136 @@ function FilterGroup({name,choices,value,onChange}){
     </div>
   </section>;
 }
+const CAKE_DESIGN_ENDPOINT="https://hpffdmldtdtwcaoemyso.supabase.co/functions/v1/cake-design-submit";
+const designCopy={
+  ar:{
+    title:"طلب تصميم كيك مخصص",subtitle:"ارفع صورة التصميم وبيانات التواصل، واكتب أي تفاصيل تحب فريقنا يعرفها.",
+    name:"اسمك",email:"البريد الإلكتروني",phone:"رقم الموبايل",file:"صورة التصميم",notes:"ملاحظات على التصميم",
+    notesHint:"مثال: عدد الأشخاص، الألوان، النكهة، تاريخ المناسبة، أو التعديلات المطلوبة.",
+    choose:"اختار صورة (JPG أو PNG أو WebP — بحد أقصى 5 ميجابايت)",send:"إرسال الطلب",
+    sending:"جاري إرسال الطلب...",cancel:"إلغاء",close:"إغلاق",
+    required:"لازم تختار صورة واضحة حجمها أقل من 5 ميجابايت.",
+    invalid:"من فضلك راجع البيانات المدخلة.",
+    rate:"تم إرسال عدد كبير من الطلبات. جرّب لاحقًا.",
+    error:"حصلت مشكلة أثناء إرسال الطلب. حاول مرة تانية؛ الطلب لم يتسجل.",
+    success:"تم استلام صورة التصميم وملاحظاتك بنجاح. فريق خدمة العملاء هيراجع الطلب ويتواصل معاك.",
+    ticket:"رقم طلبك",returning:"هنرجعك للصفحة تلقائيًا خلال ثوانٍ."
+  },
+  en:{
+    title:"Custom cake design request",subtitle:"Attach your reference design, leave any notes, and share contact details so our team can follow up.",
+    name:"Your name",email:"Email address",phone:"Mobile number",file:"Design photo",notes:"Design notes",
+    notesHint:"e.g. servings, colours, flavour, occasion date or requested changes.",
+    choose:"Choose an image (JPG, PNG or WebP — max 5 MB)",send:"Send request",
+    sending:"Sending request...",cancel:"Cancel",close:"Close",
+    required:"Choose a clear JPG, PNG or WebP image smaller than 5 MB.",
+    invalid:"Please check the information provided.",
+    rate:"Too many requests have been submitted. Please try again later.",
+    error:"We couldn't send the request. Please try again; nothing was submitted.",
+    success:"Your image and notes were received. Our customer care team will review the request and get in touch.",
+    ticket:"Your request number",returning:"Returning you to the page in a few seconds."
+  }
+};
+function CakeDesignDialog({locale,onClose}){
+  const t=designCopy[locale]||designCopy.ar;
+  const [file,setFile]=useState(null);
+  const [imageUrl,setImageUrl]=useState("");
+  const [pending,setPending]=useState(false);
+  const [result,setResult]=useState(null);
+  const closeRef=useRef(null);
+  useEffect(()=>{
+    if(!file){setImageUrl("");return;}
+    const url=URL.createObjectURL(file);
+    setImageUrl(url);
+    return ()=>URL.revokeObjectURL(url);
+  },[file]);
+  useEffect(()=>{
+    const previous=document.activeElement;
+    const oldOverflow=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    closeRef.current?.focus();
+    function handleKey(event){if(event.key==="Escape"&&!pending)onClose();}
+    document.addEventListener("keydown",handleKey);
+    return ()=>{
+      document.body.style.overflow=oldOverflow;
+      document.removeEventListener("keydown",handleKey);
+      if(previous?.isConnected&&typeof previous.focus==="function")previous.focus();
+    };
+  },[onClose,pending]);
+  useEffect(()=>{
+    if(result?.type!=="success")return;
+    const timer=window.setTimeout(onClose,5500);
+    return ()=>window.clearTimeout(timer);
+  },[result,onClose]);
+  function chooseImage(event){
+    const selected=event.target.files?.[0]||null;
+    setResult(null);
+    if(!selected){setFile(null);return;}
+    if(!["image/jpeg","image/png","image/webp"].includes(selected.type)||selected.size>5*1024*1024||selected.size===0){
+      setFile(null);setResult({type:"error",text:t.required});
+      event.target.value="";return;
+    }
+    setFile(selected);
+  }
+  async function submit(event){
+    event.preventDefault();
+    if(pending||result?.type==="success")return;
+    if(!file){setResult({type:"error",text:t.required});return;}
+    const form=event.currentTarget;
+    if(!form.reportValidity())return;
+    const body=new FormData(form);
+    body.set("image",file,file.name);
+    body.set("locale",locale);
+    setPending(true);setResult(null);
+    try{
+      const response=await fetch(CAKE_DESIGN_ENDPOINT,{method:"POST",body,cache:"no-store"});
+      const payload=await response.json().catch(()=>({}));
+      if(!response.ok||payload.ok!==true||!payload.ticket_reference){
+        setResult({type:"error",text:response.status===429?t.rate:response.status===400?t.invalid:t.error});
+        return;
+      }
+      setResult({type:"success",text:t.success,reference:payload.ticket_reference});
+    }catch{setResult({type:"error",text:t.error});}
+    finally{setPending(false);}
+  }
+  return <div className="dd-cake-dialog-overlay" dir={locale==="ar"?"rtl":"ltr"}
+    onMouseDown={event=>{if(event.target===event.currentTarget&&!pending)onClose();}}>
+    <section className="dd-cake-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-cake-dialog-title">
+      <div className="dd-cake-dialog-head">
+        <h2 id="dd-cake-dialog-title">{t.title}</h2>
+        <button ref={closeRef} className="dd-cake-dialog-close" type="button" disabled={pending}
+          onClick={onClose} aria-label={t.close}>×</button>
+      </div>
+      {result?.type==="success"?<div className="dd-cake-dialog-success" role="status" aria-live="polite">
+        <span className="dd-cake-dialog-success-icon" aria-hidden="true">✓</span>
+        <p>{t.success}</p><strong>{t.ticket}: <bdi dir="ltr">{result.reference}</bdi></strong>
+        <small>{t.returning}</small>
+        <button className="dd-cake-dialog-submit" type="button" onClick={onClose}>{t.close}</button>
+      </div>:<form onSubmit={submit}>
+        <p className="dd-cake-dialog-intro">{t.subtitle}</p>
+        <div className="dd-cake-dialog-fields">
+          <label>{t.name}<input name="name" required minLength={2} maxLength={160} autoComplete="name"/></label>
+          <label>{t.phone}<input name="phone" type="tel" required minLength={6} maxLength={40} autoComplete="tel" inputMode="tel"/></label>
+          <label className="dd-cake-dialog-full">{t.email}<input name="email" type="email" required maxLength={254} autoComplete="email"/></label>
+          <label className="dd-cake-dialog-full">{t.file}
+            <input type="file" accept="image/jpeg,image/png,image/webp" required onChange={chooseImage}/>
+            <small>{t.choose}</small>
+          </label>
+          {imageUrl&&<img className="dd-cake-dialog-preview" alt={t.file} src={imageUrl}/>}
+          <label className="dd-cake-dialog-full">{t.notes}
+            <textarea name="notes" maxLength={2000} rows={4} placeholder={t.notesHint}/>
+          </label>
+        </div>
+        <input name="websiteExtra" className="dd-cake-honeypot" tabIndex={-1} autoComplete="off" aria-hidden="true"/>
+        {result?.type==="error"&&<p className="dd-cake-dialog-error" role="alert">{result.text}</p>}
+        <div className="dd-cake-dialog-actions">
+          <button type="button" className="dd-cake-dialog-cancel" onClick={onClose} disabled={pending}>{t.cancel}</button>
+          <button className="dd-cake-dialog-submit" type="submit" disabled={pending||!file}>{pending?t.sending:t.send}</button>
+        </div>
+      </form>}
+    </section>
+  </div>;
+}
+
 export default function CakePage({locale="ar",flow=false,standalone=false,incoming=null}){
   const t=textByLocale[locale]||textByLocale.ar;
   const router=useRouter();
@@ -130,10 +256,8 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
   const [sort,setSort]=useState("featured");
   const [budget,setBudget]=useState("unsure");
   const [favorites,setFavorites]=useState([]);
-  const [reference,setReference]=useState("");
-  const [uploadMessage,setUploadMessage]=useState("");
+  const [designDialogOpen,setDesignDialogOpen]=useState(false);
   const [filterOpen,setFilterOpen]=useState(true);
-  const fileInput=useRef(null);
   const previewIDs=useMemo(()=>new Set(cakePrototypeCards.map(x=>x.id)),[]);
   const previewInCart=items.filter(x=>x.type==="cake"&&previewIDs.has(String(x.id)));
   const previewCount=previewInCart.reduce((n,x)=>n+Math.max(1,Number(x.quantity)||1),0);
@@ -155,8 +279,6 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
     try {
       const fav=JSON.parse(localStorage.getItem(favoriteKey)||"[]");
       if(Array.isArray(fav))setFavorites(fav.filter(x=>typeof x==="string").slice(0,100));
-      const r=localStorage.getItem(imageKey);
-      if(r?.startsWith("data:image/"))setReference(r);
     }catch{}
   },[standalone,incoming]);
 
@@ -180,26 +302,6 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
       try{localStorage.setItem(favoriteKey,JSON.stringify(next));}catch{}
       return next;
     });
-  }
-  function upload(event) {
-    const file=event.target.files?.[0];
-    if(!file)return;
-    if(!file.type.startsWith("image/")||file.size>2*1024*1024){
-      setUploadMessage(t.uploadError);event.target.value="";return;
-    }
-    const reader=new FileReader();
-    reader.onload=()=>{
-      try {
-        const img=reader.result;
-        if(typeof img!=="string"||!img.startsWith("data:image/"))throw Error("Bad reference");
-        localStorage.setItem(imageKey,img);
-        const p=readPlan();
-        localStorage.setItem("dearDayPlan",JSON.stringify({...p,hasCakeReference:true}));
-        setReference(img);setUploadMessage(t.uploadSaved);
-      }catch{setUploadMessage(t.uploadStorage);}
-    };
-    reader.onerror=()=>setUploadMessage(t.uploadStorage);
-    reader.readAsDataURL(file);event.target.value="";
   }
   function continuePlanning(){
     if(flow)router.push(pathFor(getNextPlanningStep("cake",readPlanningServices()),locale)+"?flow=1");
@@ -255,16 +357,13 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
         </aside>
         <section className="dd-cake-results" aria-label={t.titleSection}>
           <div className="dd-cake-top-row">
-            {locale==="ar"?<div className="dd-cake-sort dd-cake-sort-custom">
+            {<div className="dd-cake-sort dd-cake-sort-custom">
               <BrandedDropdown label={t.sort} placeholder={t.sort} locale={locale}
                 options={t.sortList} value={sort} onChange={setSort}/>
-            </div>:<div className="dd-cake-sort dd-cake-sort-native">
-              <label className="dd-cake-sort-label" htmlFor="dd-cake-sort">{t.sort}</label>
-              <select id="dd-cake-sort" value={sort} onChange={e=>setSort(e.target.value)}>
-                {t.sortList.map(([k,label])=><option key={k} value={k}>{label}</option>)}
-              </select>
             </div>}
-            {curated.length>0&&<h2>{t.featured}</h2>}
+            {curated.length>0&&<h2 dir={locale==="ar"?"rtl":"ltr"}>
+              {locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.featured}
+            </h2>}
           </div>
           {!visible.length?<p className="dd-cake-no-results">{t.none}</p>:<>
             {curated.length>0&&<section className="dd-cake-curated">
@@ -279,13 +378,10 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
             <img src="/approved-pages/assets/media/custom-cake.jpg" alt="" loading="lazy"/>
             <div className="dd-cake-custom-copy">
               <h2>{t.customTitle}</h2><p>{t.customCopy}</p>
-              {reference&&<img className="dd-cake-reference-preview" src={reference} alt={t.customPreview}/>}
-              {uploadMessage&&<p className="dd-cake-upload-message" role="status">{uploadMessage}</p>}
             </div>
-            <label className="dd-cake-upload">
+            <button className="dd-cake-upload" type="button" onClick={()=>setDesignDialogOpen(true)}>
               <span aria-hidden="true">⇧</span> {t.customButton}
-              <input ref={fileInput} type="file" accept="image/*" onChange={upload}/>
-            </label>
+            </button>
           </div>
           {flow&&<div className="dd-cake-continue">
             <div><strong>{t.selected}: {previewCount}</strong><p>{t.continuation}</p></div>
@@ -294,5 +390,6 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
         </section>
       </div>
     </main>
+    {designDialogOpen&&<CakeDesignDialog locale={locale} onClose={()=>setDesignDialogOpen(false)}/>}
   </>;
 }
