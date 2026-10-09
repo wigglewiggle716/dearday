@@ -35,7 +35,7 @@ export function draftFromListing(listing,version){
   return {
     id:listing.id,
     partner_id:p.partner_id??listing.partner_id,
-    category_id:p.category_id??listing.category_id??"",
+    category_id:(Object.prototype.hasOwnProperty.call(p,"category_id")?p.category_id:listing.category_id)??"",
     kind:p.kind??listing.kind,
     name_ar:version?.name_ar||"",
     name_en:version?.name_en||"",
@@ -43,8 +43,8 @@ export function draftFromListing(listing,version){
     description_en:version?.description_en||"",
     price:String(version?.price??""),
     compare_at_price:version?.compare_at_price==null?"":String(version.compare_at_price),
-    stock_qty:(p.stock_qty??listing.stock_qty)==null?"":String(p.stock_qty??listing.stock_qty),
-    capacity_per_day:(p.capacity_per_day??listing.capacity_per_day)==null?"":String(p.capacity_per_day??listing.capacity_per_day),
+    stock_qty:(Object.prototype.hasOwnProperty.call(p,"stock_qty")?p.stock_qty:listing.stock_qty)==null?"":String(Object.prototype.hasOwnProperty.call(p,"stock_qty")?p.stock_qty:listing.stock_qty),
+    capacity_per_day:(Object.prototype.hasOwnProperty.call(p,"capacity_per_day")?p.capacity_per_day:listing.capacity_per_day)==null?"":String(Object.prototype.hasOwnProperty.call(p,"capacity_per_day")?p.capacity_per_day:listing.capacity_per_day),
     is_available:(p.is_available??listing.is_available)===true,
     media:plainMedia(version?.media).join("\n"),
     submit:false
