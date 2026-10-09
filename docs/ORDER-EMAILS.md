@@ -1,4 +1,4 @@
-# Dear Day — Order email wiring (staging only)
+# Dear Day — Order email integration (staged, email sending OFF)
 
 ## Guarantee
 - Source of truth: `public.orders.status` in Supabase, not browser checkout arguments.
@@ -22,10 +22,10 @@
 - Resend draft: `Dear Day – Payment Received (English)`, alias `dear-day-payment-received-en`, ID `29809617-7af9-4831-89d9-bd84c52c2b76`.
 
 ## Activation prerequisites — DO NOT skip
-1. Review and apply migration to the designated database *after* owner approval. The repository change alone does NOT apply it.
+1. **COMPLETED 2026-10-10:** `order_payment_email_outbox` applied to the existing Supabase database; migration recorded as `20261009211220`. Verified: outbox table present, RLS enabled, paid-status trigger present, anonymous/authenticated roles cannot read or claim the outbox, service role can claim/settle, and a no-op claim returns `[]`. At the time of verification, there were zero paid orders and zero queued emails. Database changes do not enable sending.
 2. Review the order template in Resend, then publish it. Draft templates cannot send.
-3. Configure server-only environment variables:
-   - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (existing).
+3. Configure server-only environment variables. **Both Vercel projects currently report zero configured environment variables; no keys were created or copied:**
+   - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (required; *not present among Vercel project variables at the time of this review*).
    - `RESEND_API_KEY` (sending-only, domain restricted; no client access).
    - `RESEND_ORDER_PAID_TEMPLATE_ID=dear-day-payment-received-en`.
    - `RESEND_ORDER_EMAILS_ENABLED=true` (default disabled; enable only after sandbox acceptance).
