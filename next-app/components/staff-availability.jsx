@@ -157,7 +157,6 @@ function baseline(settings,windows){
  })).sort((a,b)=>a.weekday-b.weekday||a.start_time.localeCompare(b.start_time))});
 }
 function FormField({label,children}){return <label className="dd-av-field"><span>{label}</span>{children}</label>;}
-function tableNote({}){return null;}
 export default function StaffAvailability({locale="ar"}){
  const t=messages[locale]||messages.ar;
  const session=useAuthSession();
@@ -363,11 +362,15 @@ export default function StaffAvailability({locale="ar"}){
   const qty=Number(probe.quantity);
   if(!probe.date||!validInteger(qty,1,10000)){setError(t.checkError);return;}
   setProbe(p=>({...p,working:true,result:null}));setError("");
-  const result=await client.rpc("check_listing_availability",{
-   p_listing_id:selected,p_date:probe.date,p_start_time:config.booking_mode==="time_slot"?probe.time||null:null,p_quantity:qty
-  });
-  if(result.error){setError(t.checkError);setProbe(p=>({...p,working:false,result:null}));return;}
-  setProbe(p=>({...p,working:false,result:result.data}));
+  try{
+   const result=await client.rpc("check_listing_availability",{
+    p_listing_id:selected,p_date:probe.date,p_start_time:scope.settings?.booking_mode==="time_slot"?probe.time||null:null,p_quantity:qty
+   });
+   if(result.error)throw result.error;
+   setProbe(p=>({...p,working:false,result:result.data}));
+  }catch{
+   setError(t.checkError);setProbe(p=>({...p,working:false,result:null}));
+  }
  }
  const gate=session.status==="mfa_setup_required"?{href:pathFor("security",locale),label:t.setup}:
  session.status==="mfa_required"?{href:pathFor("auth",locale)+"?mode=mfa",label:t.mfa}:
@@ -483,7 +486,7 @@ export default function StaffAvailability({locale="ar"}){
         <form className="dd-av-form" onSubmit={checkAvailability}>
          <div className="dd-av-field-grid">
           <FormField label={t.checkDate}><input type="date" value={probe.date} min={today} required onChange={e=>setProbe(p=>({...p,date:e.target.value,result:null}))}/></FormField>
-          {config.booking_mode==="time_slot"&&<FormField label={t.checkTime}><input type="time" value={probe.time} onChange={e=>setProbe(p=>({...p,time:e.target.value,result:null}))}/></FormField>}
+          {scope.settings?.booking_mode==="time_slot"&&<FormField label={t.checkTime}><input type="time" value={probe.time} onChange={e=>setProbe(p=>({...p,time:e.target.value,result:null}))}/></FormField>}
           <FormField label={t.checkQty}><input type="number" min="1" value={probe.quantity} onChange={e=>setProbe(p=>({...p,quantity:e.target.value,result:null}))}/></FormField>
          </div>
          <div className="dd-av-actions"><button type="submit" className="dd-av-button secondary" disabled={probe.working}>{probe.working?t.loading:t.checkButton}</button></div>
