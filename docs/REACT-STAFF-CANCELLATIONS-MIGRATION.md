@@ -29,7 +29,7 @@ Prepared: 2026-10-10; development branch `react-migration` only.
 
 ## Release blockers & acceptance
 - **No SQL migrations were applied** and no real orders, cancellations, refunds, notices or policies were changed during migration. Read-only SQL catalog/function/policy discovery only.
-- Current code has not yet been confirmed as READY at the exact new Git SHA in Vercel Preview; browser and finance acceptance tests still required.
+- Latest commit is not confirmed READY in Vercel Preview. An explicit deployment attempt returned **402 / api-deployments-free-per-day** with a 24-hour retry window, so browser and finance acceptance tests are still required. Older commits may show READY but do not verify these pages.
 - Latest 150 requests and 300 policies/400 listing option caps: implement true server pagination before higher volume.
 - Reviewer must test role separation, duplicate/forged status changes, stale item, refunds requiring actual reference, private customer names, desktop/mobile and bilingual layout, real Paymob reconciliation, and manual vs automatic cancellation paths using **synthetic test entries and explicit authorisation**.
 - Refer to the single [Owner review checklist](./REACT-OWNER-REVIEW-CHECKLIST.md) sections **9هـ** and **9و** (31 new QA items). All remain unchecked.
