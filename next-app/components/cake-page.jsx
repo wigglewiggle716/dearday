@@ -215,7 +215,7 @@ function CakeDesignDialog({locale,onClose}){
       <div className="dd-cake-dialog-head">
         <h2 id="dd-cake-dialog-title">{t.title}</h2>
         <button ref={closeRef} className="dd-cake-dialog-close" type="button" disabled={pending}
-          onClick={onClose} aria-label={t.close}>×</button>
+          onClick={onClose} aria-label={t.close}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       {result?.type==="success"?<div className="dd-cake-dialog-success" role="status" aria-live="polite">
         <span className="dd-cake-dialog-success-icon" aria-hidden="true">✓</span>
