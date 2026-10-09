@@ -1,0 +1,62 @@
+/* Dear Day internal partner operations and join applications */
+.dd-partners-admin{background:linear-gradient(145deg,#FAF3EA,#fff9f5);min-height:70vh;flex:1;padding:38px clamp(15px,5vw,70px) 70px;color:#352D2E}
+.dd-partners-admin *{box-sizing:border-box}
+.dd-partners-admin-width{max-width:1390px;margin:auto}
+.dd-partners-admin-head{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.dd-partners-admin-head a{font-size:13px;color:#A8583D;font-weight:800}
+.dd-partners-admin-head h1{color:#6B3540;font-size:clamp(24px,3vw,34px);margin:9px 0 4px}
+.dd-partners-admin-head p{font-size:13px;color:#77696b;line-height:1.8;margin:0}
+.dd-pa-primary,.dd-pa-outline{border:1px solid #6B3540;border-radius:12px;min-height:42px;padding:10px 14px;display:inline-flex;align-items:center;justify-content:center;font:700 13px/1.3 inherit;cursor:pointer}
+.dd-pa-primary{color:white;background:#6B3540}.dd-pa-outline{color:#6B3540;background:white}
+.dd-pa-primary:disabled,.dd-pa-outline:disabled{opacity:.5;cursor:not-allowed}
+.dd-pa-outline:hover{background:#fbf0ec}.dd-pa-primary:hover{background:#512731}
+.dd-pa-outline.small{padding:7px 11px;min-height:33px;font-size:12px}
+.dd-pa-panel{background:#fff;border:1px solid rgba(107,53,64,.16);border-radius:18px;overflow:hidden;box-shadow:0 10px 29px rgba(61,28,35,.035)}
+.dd-pa-gate{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:12px}
+.dd-pa-tabs{display:flex;gap:7px;border-bottom:1px solid #e7d9d4;margin-bottom:18px}
+.dd-pa-tabs button{border:0;border-bottom:3px solid transparent;background:transparent;padding:13px 19px;color:#795f66;font:700 14px/1.4 inherit;cursor:pointer}
+.dd-pa-tabs button[aria-selected=true]{border-bottom-color:#6B3540;color:#6B3540}
+.dd-pa-kpis{display:flex;gap:11px;margin-bottom:17px;flex-wrap:wrap}
+.dd-pa-kpis article{background:#fff;border:1px solid #eaded9;border-radius:15px;padding:15px 19px;min-width:155px}
+.dd-pa-kpis span{display:block;font-size:12px;color:#77686b}
+.dd-pa-kpis strong{display:block;color:#6B3540;font-size:27px;margin-top:5px}
+.dd-pa-warning,.dd-pa-notice,.dd-pa-error{margin:13px 0;border-radius:12px;padding:13px 16px;line-height:1.7;font-size:12px}
+.dd-pa-warning{color:#826323;background:#fff8e5;border:1px solid #edd8ab}
+.dd-pa-notice{color:#296943;background:#e8f5ec;border:1px solid #c1decb}
+.dd-pa-error{color:#993c42;background:#fff0ef;border:1px solid #edc6c6}
+.dd-pa-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.dd-pa-filters input,.dd-pa-filters select,.dd-pa-editor input,.dd-pa-editor select,.dd-pa-editor textarea{min-height:44px;padding:9px 12px;border:1px solid #e2d4d1;border-radius:11px;color:#352D2E;background:#fff;font:inherit;font-size:13px;min-width:0}
+.dd-pa-filters input{flex:1 1 260px}.dd-pa-filters select{flex:0 1 200px}
+.dd-pa-scroll{overflow-x:auto}
+.dd-pa-scroll table{width:100%;min-width:1000px;border-collapse:collapse}
+.dd-pa-scroll th,.dd-pa-scroll td{text-align:start;vertical-align:middle;font-size:12px;padding:13px;border-bottom:1px solid #eee6e2}
+.dd-pa-scroll th{color:#6B3540;background:#fdf8f6;font-weight:800}
+.dd-pa-scroll tbody tr:last-child td{border-bottom:none}
+.dd-pa-scroll small{display:block;font-size:11px;margin-top:4px;color:#89787a;overflow-wrap:anywhere}
+.dd-pa-status{background:#f3e9e5;color:#6B3540;border-radius:999px;padding:5px 10px;white-space:nowrap;font-size:11px;font-weight:800}
+.dd-pa-status.s-active,.dd-pa-status.s-accepted{background:#e7f2e9;color:#2b6a45}
+.dd-pa-status.s-suspended,.dd-pa-status.s-rejected{background:#f8e8e8;color:#a03d44}
+.dd-pa-status.s-pending,.dd-pa-status.s-under_review,.dd-pa-status.s-new{background:#fff3df;color:#88612d}
+.dd-pa-empty{padding:40px;text-align:center;color:#827376}
+.dd-pa-pagination{border-top:1px solid #eee5e1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 17px;color:#7f7073;font-size:12px}
+.dd-pa-pagination>div{display:flex;gap:8px}
+.dd-pa-hint{font-size:12px;color:#786970;line-height:1.9;margin:15px 2px}
+.dd-pa-overlay{position:fixed;inset:0;z-index:260;background:rgba(31,20,23,.53);display:flex;align-items:center;justify-content:center;padding:13px}
+.dd-pa-dialog{width:min(870px,100%);max-height:94dvh;overflow-y:auto;overscroll-behavior:contain;background:#fffdfa;border-radius:20px;box-shadow:0 23px 64px rgba(37,19,24,.19);outline:0}
+.dd-pa-dialog>header{padding:18px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:1px solid #eee3dd}
+.dd-pa-dialog>header h2{font-size:20px;color:#6B3540;margin:0}
+.dd-pa-dialog>header button{background:#f4e9e4;color:#6B3540;border:0;border-radius:50%;width:38px;height:38px;flex:0 0 38px;font-size:24px;cursor:pointer}
+.dd-pa-detail,.dd-pa-editor{padding:18px 22px}
+.dd-pa-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.dd-partners-admin-field{min-width:0;border:1px solid #ebe0db;background:#fff;border-radius:13px;padding:12px}
+.dd-partners-admin-field span{display:block;color:#77686b;font-size:11px;margin-bottom:4px}
+.dd-partners-admin-field strong{font-weight:700;color:#42373a;font-size:13px;line-height:1.7;overflow-wrap:anywhere;white-space:pre-wrap}
+.dd-pa-detail>h3{color:#6B3540;font-size:16px;margin:14px 0}
+.dd-pa-document-links{display:flex;gap:10px;flex-wrap:wrap}
+.dd-pa-editor{padding-top:6px}
+.dd-pa-editor>label,.dd-pa-form label{display:grid;gap:8px;color:#5d5053;font-size:12px;font-weight:800;margin-bottom:12px}
+.dd-pa-editor textarea{resize:vertical;min-height:85px}
+.dd-pa-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+.dd-pa-form label.wide{grid-column:1 / -1}
+.dd-pa-dialog footer{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:17px}
+@media(max-width:700px){.dd-partners-admin{padding:23px 13px 55px}.dd-pa-form,.dd-pa-detail-grid{grid-template-columns:1fr}.dd-pa-form label.wide{grid-column:auto}.dd-pa-dialog>header,.dd-pa-detail,.dd-pa-editor{padding:16px}.dd-pa-kpis article{flex:1;min-width:120px}.dd-pa-tabs button{flex:1;padding:12px 8px;font-size:12px}.dd-pa-filters>*{flex:1 1 100%}}
