@@ -56,7 +56,7 @@ const statusNames={
  en:{draft:"Draft",pending_payment:"Pending payment",paid:"Paid",confirmed:"Confirmed",in_progress:"In progress",completed:"Completed",cancelled:"Cancelled",refunded:"Refunded"}
 };
 const oldModules=[
- {id:"ordersMenu",p:["orders.view"],path:"Dear-Day-Admin-Orders.html"},
+
  {id:"catalog",p:["catalog.view","catalog.manage"],path:"Dear-Day-Admin-Products.html"},
  {id:"partnerMenu",p:["partners.view","partners.manage"],path:"Dear-Day-Admin-Partners.html"},
  {id:"review",p:["approvals.review"],path:"Dear-Day-Admin-Approvals.html"},
@@ -191,7 +191,7 @@ export default function StaffWorkspace({locale="ar"}){
       {result.orders.length?<div className="dd-work-table-scroll"><table>
        <thead><tr><th>{t.number}</th><th>{t.status}</th><th>{t.occasion}</th><th>{t.total}</th><th>{t.date}</th></tr></thead>
        <tbody>{result.orders.map(order=><tr key={order.id}>
-        <td dir="ltr">{order.order_number===null?"—":"#DD"+order.order_number}</td>
+        <td dir="ltr"><Link href={pathFor("staffOrders",locale)}>{order.order_number===null?"—":"#DD"+order.order_number}</Link></td>
         <td>{statusNames[locale]?.[order.status]||order.status||"—"}</td><td>{order.occasion_type||"—"}</td>
         <td dir="ltr">{amount(order.grand_total,order.currency,locale)}</td><td>{shortDate(order.created_at,locale)}</td>
        </tr>)}</tbody>
@@ -203,6 +203,7 @@ export default function StaffWorkspace({locale="ar"}){
      <div className="dd-work-links">
        <Link href={work}>{t.overview}</Link>
        <Link href={secure}>{t.security}</Link>
+       {perms.has("orders.view")&&<Link href={pathFor("staffOrders",locale)}>{t.ordersMenu}</Link>}
        {(perms.has("employees.view")||perms.has("employees.manage"))&&
         <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
      </div>
