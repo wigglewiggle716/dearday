@@ -33,6 +33,8 @@ export const sections = [
   ["staffCustomers", "staff/customers"],
   ["staffSupport", "staff/support"],
   ["staffAvailability", "staff/availability"],
+  ["staffCancellations", "staff/cancellations"],
+  ["staffRefundPolicies", "staff/refund-policies"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
