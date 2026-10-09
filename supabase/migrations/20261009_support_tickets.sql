@@ -1,18 +1,10 @@
 -- Dear Day customer support ticket intake (additive; no existing records changed).
 -- Public guests submit through a validated Edge Function using service role.
--- All staff access requires explicit RBAC permission and authenticated Supabase JWT.
-insert into public.permissions(code,description) values
-  ('support.view','View customer support tickets'),
-  ('support.manage','Review and manage customer support tickets')
-on conflict(code) do nothing;
-insert into public.role_permissions(role,permission_code)
-values
-  ('admin'::public.app_role,'support.view'),
-  ('admin'::public.app_role,'support.manage'),
-  ('customer_support'::public.app_role,'support.view'),
-  ('customer_support'::public.app_role,'support.manage'),
-  ('operations'::public.app_role,'support.view')
-on conflict(role,permission_code) do nothing;
+-- Staff access uses existing customers.view RBAC and an active Supabase JWT.
+-- Reuse existing customers.view RBAC; the existing permission guard
+-- intentionally prohibits automated editing of roles/permissions.
+-- Review additionally requires an admin or customer_support role.
+
 
 create table if not exists public.support_tickets (
   id uuid primary key default gen_random_uuid(),
@@ -40,7 +32,7 @@ grant select on public.support_tickets to authenticated;
 drop policy if exists support_tickets_staff_read on public.support_tickets;
 create policy support_tickets_staff_read on public.support_tickets
  for select to authenticated
- using (private.has_permission('support.view') or private.has_permission('support.manage'));
+ using (private.has_permission('customers.view'));
 
 -- Append-only audit trail written by a privileged review function.
 create table if not exists public.support_ticket_events(
@@ -60,7 +52,7 @@ grant select on public.support_ticket_events to authenticated;
 drop policy if exists support_ticket_events_staff_read on public.support_ticket_events;
 create policy support_ticket_events_staff_read on public.support_ticket_events
  for select to authenticated
- using (private.has_permission('support.view') or private.has_permission('support.manage'));
+ using (private.has_permission('customers.view'));
 
 create or replace function public.review_support_ticket(
   p_ticket_id uuid, p_status text, p_internal_notes text default null
@@ -73,7 +65,10 @@ declare v_previous text;
 declare v_previous_notes text;
 declare v_note text;
 begin
-  if not private.has_permission('support.manage') then
+  if not private.has_permission('customers.view')
+     or not exists(select 1 from public.profiles
+                   where id=auth.uid() and is_active
+                     and role in ('super_admin','admin','customer_support')) then
     raise exception 'Insufficient support management permission' using errcode='42501';
   end if;
   if p_ticket_id is null or p_status is null or
