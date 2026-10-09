@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import {authClient,rememberPreference,safeNext} from "../lib/auth-client";
+import {authClient,rememberPreference,safeNext,rememberSession,readCurrentAccount,destinationFor} from "../lib/auth-client";
 import {pathFor} from "../lib/locales";
 
 const copy={
@@ -33,7 +33,12 @@ const copy={
   loginDone:"تم تسجيل الدخول.",welcome:"أهلًا بيك في Dear Day",
   accountNote:"إنشاء حساب مش مطلوب لإتمام شراء أو حجز.",
   infoConsent:"باستخدام الخدمة، بتوافق على سياسات Dear Day.",
-  redirectError:"تعذر إكمال عملية تسجيل الدخول. جرّب من جديد."
+  redirectError:"تعذر إكمال عملية تسجيل الدخول. جرّب من جديد.",
+  inactive:"الحساب غير مفعّل أو تم إيقافه. تواصل مع خدمة العملاء.",
+  mfaTitle:"التحقق بخطوتين",mfaIntro:"افتح تطبيق المصادقة واكتب الرمز المكوّن من 6 أرقام.",
+  mfaLabel:"رمز تطبيق المصادقة",mfaSubmit:"تأكيد ومتابعة الدخول",
+  mfaInvalid:"رمز التحقق غير صحيح أو انتهت صلاحيته.",mfaUnavailable:"ماقدرناش نكمل التحقق الثنائي. تواصل مع مسؤول النظام.",
+  mfaSignOut:"إلغاء وتسجيل الخروج",profileError:"تعذر تأكيد صلاحية الحساب حاليًا. حاول لاحقًا."
  },
  en:{
   loginTitle:"Log in",loginIntro:"Pick up where you left off and keep planning your occasions with Dear Day.",
@@ -62,7 +67,12 @@ const copy={
   loginDone:"You're logged in.",welcome:"Welcome to Dear Day",
   accountNote:"You don't need an account to check out.",
   infoConsent:"By continuing, you agree to Dear Day's policies.",
-  redirectError:"We couldn't complete sign-in. Please try again."
+  redirectError:"We couldn't complete sign-in. Please try again.",
+  inactive:"This account is inactive or suspended. Please contact support.",
+  mfaTitle:"Two-step verification",mfaIntro:"Enter the six-digit code from your authenticator app.",
+  mfaLabel:"Authenticator code",mfaSubmit:"Verify and continue",
+  mfaInvalid:"The verification code is incorrect or expired.",mfaUnavailable:"We couldn't complete two-step verification. Please contact your administrator.",
+  mfaSignOut:"Cancel and sign out",profileError:"We couldn't confirm account access. Try again later."
  }
 };
 function authErrorText(error,t){
@@ -105,6 +115,50 @@ export default function AuthPage({locale="ar",page="login"}){
  const signupPath=pathFor("register",locale);
  const homePath=pathFor("home",locale);
  const [oauthPending,setOauthPending]=useState(false);
+ const [mfaFactorId,setMfaFactorId]=useState("");
+ const [mfaNext,setMfaNext]=useState(null);
+ async function finishSignIn(client, requested){
+   const access=await readCurrentAccount(client);
+   if(access.status==="mfa_required"){
+     const factors=await client.auth.mfa.listFactors();
+     if(factors.error)throw factors.error;
+     const verified=factors.data?.totp?.find(f=>f.status==="verified");
+     if(!verified){setMode("mfa");setStatus({error:true,message:t.mfaUnavailable});return;}
+     setMfaFactorId(verified.id);setMfaNext(requested||null);setMode("mfa");setStatus(null);
+     return;
+   }
+   if(access.status==="inactive"){
+     await client.auth.signOut();
+     setStatus({error:true,message:t.inactive});return;
+   }
+   if(access.status!=="authenticated"){
+     setStatus({error:true,message:t.profileError});return;
+   }
+   const destination=destinationFor(access.role,locale);
+   const path=access.role==="customer"?safeNext(requested,destination):destination;
+   window.localStorage.removeItem("ddPostAuthNext");
+   window.location.assign(path);
+ }
+ async function verifyMfa(event){
+   event.preventDefault();
+   if(busy||!mfaFactorId)return;
+   const form=event.currentTarget;if(!form.reportValidity())return;
+   const code=String(new FormData(form).get("otp")||"").trim();
+   setBusy(true);setStatus(null);
+   try{
+     const client=authClient(rememberPreference());
+     const result=await client.auth.mfa.challengeAndVerify({factorId:mfaFactorId,code});
+     if(result.error){setStatus({error:true,message:t.mfaInvalid});return;}
+     await finishSignIn(client,mfaNext);
+   }catch{setStatus({error:true,message:t.mfaUnavailable});}
+   finally{setBusy(false);}
+ }
+ async function abortMfa(){
+   setBusy(true);
+   try{await authClient(rememberPreference()).auth.signOut();}
+   finally{window.location.assign(loginPath);}
+ }
+
  useEffect(()=>{
    setRemember(rememberPreference());
    const hash=window.location.hash;
@@ -112,37 +166,44 @@ export default function AuthPage({locale="ar",page="login"}){
    if(page==="login"&&hash==="#signup"){
      window.location.replace(signupPath+window.location.search);return;
    }
-   if(page==="login"&&(hash==="#forgot"||params.get("mode")==="forgot"))setMode("forgot");
-   if(page==="login"&&(hash.includes("type=recovery")||params.get("mode")==="recover"))setMode("recover");
-   let active=true;
-   const auth=authClient(rememberPreference());
-   const code=params.get("code");
-   const isOAuth=params.get("oauth")==="1";
-   if(params.has("error")||params.has("error_code")){
+   const recovery=params.get("mode")==="recover"||hash.includes("type=recovery");
+   const forgot=hash==="#forgot"||params.get("mode")==="forgot";
+   if(recovery)setMode("recover");
+   else if(forgot)setMode("forgot");
+   else if(params.get("mode")==="mfa")setMode("mfa");
+   if(params.has("error")||params.has("error_code"))
      setStatus({error:true,message:t.providerError});
+   let active=true,redirecting=false;
+   const client=authClient(rememberPreference());
+   function checkAccount(){
+     if(!active||redirecting||recovery||forgot)return;
+     redirecting=true;
+     const storedNext=window.localStorage.getItem("ddPostAuthNext");
+     const requested=storedNext||params.get("next");
+     void finishSignIn(client,requested).catch(()=>{
+       if(active)setStatus({error:true,message:t.redirectError});
+     }).finally(()=>{redirecting=false;});
    }
-   const isRecovery=params.get("mode")==="recover"||hash.includes("type=recovery");
-   const {data:sub}=auth.auth.onAuthStateChange((event,session)=>{
+   const {data:sub}=client.auth.onAuthStateChange(event=>{
      if(!active)return;
-     if(event==="PASSWORD_RECOVERY")setMode("recover");
+     if(event==="PASSWORD_RECOVERY"){setMode("recover");return;}
+     // Waiting for PKCE/OAuth exchange: only use a verified returned session.
+     if(event==="SIGNED_IN"&&!recovery&&!forgot){
+       window.setTimeout(()=>{if(active)checkAccount();},0);
+     }
    });
-   if(code||isOAuth){
-     auth.auth.getSession().then(({data,error})=>{
-       if(!active)return;
-       if(data?.session&&!isRecovery){
-         const pending=window.localStorage.getItem("ddPostAuthNext");
-         window.localStorage.removeItem("ddPostAuthNext");
-         window.location.replace(safeNext(pending||params.get("next"),homePath));
-       }else if(error||isOAuth){
+   if(!recovery&&!forgot){
+     client.auth.getSession().then(({data,error})=>{
+       if(active&&data?.session&&!error)checkAccount();
+       else if(active&&(params.has("oauth")||params.has("code"))&&error)
          setStatus({error:true,message:t.redirectError});
-       }
-     }).catch(()=>active&&setStatus({error:true,message:t.redirectError}));
+     }).catch(()=>{if(active)setStatus({error:true,message:t.redirectError});});
    }
    return ()=>{active=false;sub.subscription.unsubscribe();};
- },[page,locale,homePath,signupPath,t.redirectError]);
+ },[page,locale,loginPath,signupPath]);
  function landing(){
    const params=new URLSearchParams(window.location.search);
-   return safeNext(params.get("next"),homePath);
+   return safeNext(params.get("next"),pathFor("account",locale));
  }
  function linkWithNext(path){
    if(typeof window==="undefined")return path;
@@ -191,15 +252,14 @@ export default function AuthPage({locale="ar",page="login"}){
        const phone=String(values.get("phone")||"").trim();
        const email=String(values.get("email")||"").trim().toLowerCase();
        const supabase=authClient(true);
-       window.localStorage.setItem("ddAuthRemember","1");
        const {data,error}=await supabase.auth.signUp({email,password:pw,
          options:{data:{first_name:first,last_name:last,full_name:(first+" "+last).trim(),phone,
            profile_complete:true},emailRedirectTo:window.location.origin+loginPath+"?verified=1"}
        });
        if(error)throw error;
        if(data?.session){
-         setStatus({error:false,message:t.signupDone});
-         window.location.assign(landing());
+         rememberSession(true);
+         await finishSignIn(supabase,landing());
        }else{
          form.reset();
          setStatus({error:false,message:t.signupConfirm});
@@ -207,15 +267,14 @@ export default function AuthPage({locale="ar",page="login"}){
        return;
      }
      const rememberIt=Boolean(values.get("remember"));
-     window.localStorage.setItem("ddAuthRemember",rememberIt?"1":"0");
      const client=authClient(rememberIt);
      const {error}=await client.auth.signInWithPassword({
        email:String(values.get("email")||"").trim().toLowerCase(),
        password:String(values.get("password")||"")
      });
      if(error)throw error;
-     setStatus({error:false,message:t.loginDone});
-     window.location.assign(landing());
+     rememberSession(rememberIt);
+     await finishSignIn(client,landing());
    }catch(error){
      setStatus({error:true,message:authErrorText(error,t)});
    }finally{setBusy(false);}
@@ -224,13 +283,14 @@ export default function AuthPage({locale="ar",page="login"}){
    if(oauthPending||busy)return;
    setStatus(null);setOauthPending(true);
    try{
-     window.localStorage.setItem("ddAuthRemember","1");
      window.localStorage.setItem("ddPostAuthNext",landing());
      const client=authClient(true);
      const {error}=await client.auth.signInWithOAuth({
        provider,options:{redirectTo:window.location.origin+loginPath+"?oauth=1"}
      });
      if(error)throw error;
+     // OAuth always keeps a persistent browser session after successful return.
+     rememberSession(true);
    }catch(error){
      setStatus({error:true,message:authErrorText(error,t)});setOauthPending(false);
    }
@@ -238,8 +298,9 @@ export default function AuthPage({locale="ar",page="login"}){
  const isSignup=page==="signup";
  const isForgot=mode==="forgot";
  const isRecover=mode==="recover";
- const title=isRecover?t.recoverTitle:isForgot?t.forgotTitle:isSignup?t.signupTitle:t.loginTitle;
- const intro=isRecover?t.recoverIntro:isForgot?t.forgotIntro:isSignup?t.signupIntro:t.loginIntro;
+ const isMfa=mode==="mfa";
+ const title=isMfa?t.mfaTitle:isRecover?t.recoverTitle:isForgot?t.forgotTitle:isSignup?t.signupTitle:t.loginTitle;
+ const intro=isMfa?t.mfaIntro:isRecover?t.recoverIntro:isForgot?t.forgotIntro:isSignup?t.signupIntro:t.loginIntro;
  return <main id="main-content" className="dd-account-auth" dir={locale==="ar"?"rtl":"ltr"}>
    <div className="dd-account-auth-orbit" aria-hidden="true"/>
    <section className={"dd-account-shell"+(isSignup?" is-signup":"")} aria-labelledby="dd-account-title">
@@ -247,7 +308,17 @@ export default function AuthPage({locale="ar",page="login"}){
        <img src="/assets/dear-day-wordmark.svg" className="dd-account-logo" alt="Dear Day" width="172" height="91"/>
        <h1 id="dd-account-title">{title}</h1>
        <p className="dd-account-intro">{intro}</p>
-       <form className="dd-account-form" onSubmit={submit} autoComplete="on">
+       {isMfa?<form className="dd-account-form" onSubmit={verifyMfa}>
+         <div className="dd-account-field">
+           <label htmlFor="dd-mfa-code">{t.mfaLabel}</label>
+           <input id="dd-mfa-code" name="otp" inputMode="numeric" autoComplete="one-time-code"
+             pattern="[0-9]{6}" minLength={6} maxLength={6} required dir="ltr" autoFocus/>
+         </div>
+         <button type="submit" className="dd-account-primary" disabled={busy||!mfaFactorId}>
+           {busy?t.loading:t.mfaSubmit}
+         </button>
+         <button type="button" className="dd-account-cancel" disabled={busy} onClick={abortMfa}>{t.mfaSignOut}</button>
+       </form>:<form className="dd-account-form" onSubmit={submit} autoComplete="on">
          {isSignup&&<div className="dd-account-two">
            <div className="dd-account-field"><label htmlFor="dd-first">{t.first}</label><input id="dd-first" name="firstName" autoComplete="given-name" required minLength={2} maxLength={100}/></div>
            <div className="dd-account-field"><label htmlFor="dd-last">{t.last}</label><input id="dd-last" name="lastName" autoComplete="family-name" required minLength={2} maxLength={100}/></div>
@@ -278,9 +349,9 @@ export default function AuthPage({locale="ar",page="login"}){
          <button className="dd-account-primary" type="submit" disabled={busy||oauthPending}>
            {busy?t.loading:isRecover?t.savePassword:isForgot?t.reset:isSignup?t.signup:t.login}
          </button>
-       </form>
+       </form>}
        {status&&<p className={"dd-account-status "+(status.error?"is-error":"is-success")} role={status.error?"alert":"status"} aria-live="polite">{status.message}</p>}
-       {!isForgot&&!isRecover&&<>
+       {!isForgot&&!isRecover&&!isMfa&&<>
          <div className="dd-account-divider"><span>{t.withSocial}</span></div>
          <div className="dd-account-socials" role="group" aria-label={t.withSocial}>
            {["facebook","google","apple"].map(provider=><button key={provider} type="button" onClick={()=>social(provider)}
@@ -289,11 +360,11 @@ export default function AuthPage({locale="ar",page="login"}){
            </button>)}
          </div>
        </>}
-       <div className="dd-account-switch">
+       {!isMfa&&<div className="dd-account-switch">
          {isSignup?<>{t.already} <Link href={linkWithNext(loginPath)}>{t.login}</Link></>:
          isForgot||isRecover?<Link href={linkWithNext(loginPath)} onClick={()=>{setMode("login");setStatus(null);}}>{t.backLogin}</Link>:
          <>{t.newAccount} <Link href={linkWithNext(signupPath)}>{t.signup}</Link></>}
-       </div>
+       </div>}
      </div>
      <p className="dd-account-bottom-note">{t.accountNote}</p>
    </section>
