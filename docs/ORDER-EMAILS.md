@@ -35,7 +35,7 @@
 4. **PENDING — Vercel returned a 402 daily deployment-quota block (100/day)** during the attempt to deploy the latest React commit with the new settings. No redeploy succeeded and the primary `dear-day.com` site was not altered. Once quota resets, deploy only project `dearday-react-migration`, and verify correct commit and env values. Verify Paymob sandbox is configured and the trusted payment webhook is in the actual deployed runtime. Currently the public create-intention endpoint responds `PAYMENTS_NOT_READY`. No live card charges or order/payment emails can occur until the checkout gateway is enabled.
 5. Arrange protected worker scheduler to POST the maintenance endpoint (for retries). Do not schedule before approval; no cron is included in this branch.
 6. End-to-end sandbox acceptance: a real signed successful callback -> DB status paid -> exactly one outbox record -> one Resend delivery with exact trusted totals; duplicate callback -> no extra email; bad callback -> none; refunded/cancelled/review payment -> none; provider failure -> retry record; successful reply reaches Dynadot.
-7. **STAGED:** bilingual Order Emails admin list (accessible only via `orders.manage`) and manual requeue. RPC gates require verified AAL2, active permission, and mask recipient addresses. Manual retry allows only definitely-unsent failed messages (`RATE_LIMIT`/`PROVIDER_REJECTED`), at most twice; ambiguous transport failures cannot be manually replayed. Retry is **queued**, not sent immediately. Full failure alerting remains for a later step.
+7. **DATABASE APPLIED 2026-10-10:** `staff_order_email_monitor` (Supabase migration version `20261009213351`). Verified 1 paid-status trigger, outbox RLS, no browser SELECT, no anonymous RPC permission, and authenticated wrapper EXECUTE only. Both monitor and retry RPCs reject missing/unauthorized sessions with SQLSTATE 42501 (`ORDER_EMAIL_ACCESS_DENIED`). Frontend is staged on React GitHub, NOT yet deployed. Bilingual Order Emails admin list (accessible only via `orders.manage`) and manual requeue. RPC gates require verified AAL2, active permission, and mask recipient addresses. Manual retry allows only definitely-unsent failed messages (`RATE_LIMIT`/`PROVIDER_REJECTED`), at most twice; ambiguous transport failures cannot be manually replayed. Retry is **queued**, not sent immediately. Full failure alerting remains for a later step.
 8. React `next-app` still contains a payment UI preview only. The signed Paymob callback endpoint exists, but no payment initiation or checkout adapter is enabled yet. Complete sandbox intention/checkout acceptance before switching deployment.
 
 ## Important operational notes
@@ -43,3 +43,15 @@
 - Do not accept recipient, amount, order id, or email template variables directly from the browser.
 - Never expose the Resend API key, the Supabase service-role key, or worker token in client code.
 - The idempotency header reduces duplicates; no email provider can promise perfect exactly-once delivery across arbitrary prolonged outages. Investigate aged uncertain deliveries rather than automatically replaying indefinitely.
+
+## Current admin-monitor acceptance
+- [x] Arabic/English React routes created at `/staff/order-emails` and `/en/staff/order-emails`.
+- [x] Staff workspace and orders panel navigation added for `orders.manage`.
+- [x] Database permission check explicitly requires active `orders.manage` and an AAL2 session.
+- [x] Recipient displayed masked; private outbox has no browser SELECT grants.
+- [x] Manual retry allows only definite provider rejection/rate limits and audits the action, never sends directly.
+- [x] Unauthenticated SQL RPC monitor and retry calls rejected with `ORDER_EMAIL_ACCESS_DENIED`.
+- [ ] Actual MFA-authenticated owner/operations browser test after React build.
+- [ ] Real signed Paymob sandbox callback, Resend receipt, status refresh, idempotency replay acceptance.
+- [ ] Configure and test protected scheduled dispatcher for failed messages.
+- [ ] Independent production cutover approval; do not deploy to `dear-day.com` by default.
