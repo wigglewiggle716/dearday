@@ -10,7 +10,7 @@ export const STAFF_ADMIN_MODULES = [
   {id:"availability",route:"staffAvailability",perms:["availability.view","availability.manage"],ar:"التوفر والمواعيد",en:"Availability & Schedules"},
   {id:"refundPolicies",route:"staffRefundPolicies",perms:["catalog.manage","approvals.review"],ar:"سياسات الإلغاء والاسترداد",en:"Cancellation & Refund Policies"},
   {id:"cancellations",route:"staffCancellations",perms:["orders.manage"],ar:"الإلغاءات والاسترداد",en:"Cancellations & Refunds"},
-  {id:"notifications",legacy:"Dear-Day-Notifications.html",ar:"الإشعارات",en:"Notifications"},
+  {id:"notifications",route:"notifications",ar:"الإشعارات",en:"Notifications"},
   {id:"orderEmails",route:"staffOrderEmails",perms:["orders.manage"],ar:"إشعارات الطلبات",en:"Order Emails"},
   {id:"security",route:"security",ar:"أمان الحساب",en:"Account Security"},
   {id:"customers",route:"staffCustomers",perms:["customers.view"],ar:"العملاء",en:"Customers"},
