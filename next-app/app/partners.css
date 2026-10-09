@@ -178,7 +178,7 @@ html[lang=en] .dd-partners-chips span{font-family:Arial,sans-serif}
   box-shadow:0 0 0 3px rgba(168,88,61,.08);
 }
 .dd-partners-field textarea{
-  min-height:112px;resize:vertical;overflow:hidden;
+  min-height:112px;resize:none;overflow:hidden;
 }
 .dd-partners-field input[type=file]{padding:10px;background:#fffdfb}
 .dd-partners-field select{cursor:pointer}
