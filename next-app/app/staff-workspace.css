@@ -1,0 +1,57 @@
+/* Shared RTL/LTR employee workspace. All data is loaded after Supabase session
+   and permission checks; this stylesheet has no effects outside the workspace. */
+.dd-staff-workspace{
+  flex:1; min-height:65vh; background:linear-gradient(160deg,#FAF3EA,#f8f2ed 72%,#fff9f6);
+  color:#352D2E; padding:42px clamp(16px,5vw,64px) 78px; font-size:14px;
+}
+.dd-staff-workspace *{box-sizing:border-box}
+.dd-work-wrap{width:min(1250px,100%);margin-inline:auto}
+.dd-work-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.dd-work-eyebrow{font-size:12px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#A8583D!important;margin:0 0 4px!important}
+.dd-work-heading h1{margin:0;color:#6B3540;font-size:clamp(24px,2.7vw,34px);line-height:1.4}
+.dd-work-heading p{margin:5px 0;color:#746867;line-height:1.8}
+.dd-work-panel{background:#FFFDFC;border:1px solid rgba(107,53,64,.15);border-radius:20px;padding:23px;margin:20px 0;box-shadow:0 9px 28px rgba(70,37,40,.035)}
+.dd-work-guard{min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:12px;line-height:1.8}
+.dd-work-guard p{margin:0}
+.dd-work-outline,.dd-work-primary{
+  display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;min-height:42px;
+  border-radius:12px;border:1px solid rgba(107,53,64,.2);
+  font:700 13px/1.3 inherit;cursor:pointer;text-align:center;
+}
+.dd-work-outline{background:#fff;color:#6B3540}
+.dd-work-outline:hover,.dd-work-outline:focus-visible{background:#f6eee8}
+.dd-work-primary{background:#6B3540;border-color:#6B3540;color:white}
+.dd-work-primary:hover,.dd-work-primary:focus-visible{background:#552a34}
+.dd-work-identity{border:1px solid rgba(107,53,64,.17);background:#fffdfa;display:flex;align-items:center;gap:12px 26px;flex-wrap:wrap;border-radius:16px;padding:13px 18px;margin-bottom:29px;color:#6c5b5e}
+.dd-work-identity strong{color:#6B3540;overflow-wrap:anywhere}
+.dd-work-identity button{margin-inline-start:auto}
+.dd-work-section-title{font-size:20px!important;color:#6B3540;margin:0 0 17px;font-weight:800}
+.dd-work-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:25px}
+.dd-work-stat{background:#fff;border:1px solid rgba(107,53,64,.14);border-radius:18px;padding:20px;min-width:0}
+.dd-work-stat span{display:block;font-size:12px;color:#736467;font-weight:700}
+.dd-work-stat strong{display:block;margin-top:8px;font-weight:800;color:#6B3540;font-size:clamp(24px,2.5vw,34px)}
+.dd-work-warning{padding:13px 16px;border:1px solid #e9d7b9;background:#fff8e9;color:#75582f;border-radius:12px;line-height:1.8}
+.dd-work-table-scroll{overflow-x:auto;max-width:100%}
+.dd-work-table-scroll table{width:100%;border-collapse:collapse;min-width:660px}
+.dd-work-table-scroll th,.dd-work-table-scroll td{text-align:start;padding:14px 12px;font-size:12px;border-bottom:1px solid #ede6e3}
+.dd-work-table-scroll th{background:#fbf7f4;color:#6B3540;font-weight:800}
+.dd-work-table-scroll td{color:#493e40}
+.dd-work-table-scroll tbody tr:last-child td{border-bottom:none}
+.dd-work-stage{margin:18px 0 12px;color:#A8583D;font-size:12px;font-weight:800}
+.dd-work-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dd-work-links a{border:1px solid rgba(107,53,64,.15);border-radius:12px;padding:13px 14px;background:#fdf9f6;color:#6B3540;font-weight:750;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:49px}
+.dd-work-links a:hover,.dd-work-links a:focus-visible{border-color:#6B3540;background:#f6ece9}
+.dd-work-notice{color:#7a6c6d;font-size:12px;line-height:1.9;margin:13px 0 0}
+.dd-work-empty{color:#796b6b;margin:0;line-height:1.9}
+@media(max-width:850px){.dd-work-metrics,.dd-work-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:570px){
+ .dd-staff-workspace{padding:25px 14px 55px}
+ .dd-work-heading{align-items:flex-start}
+ .dd-work-identity{align-items:flex-start}
+ .dd-work-identity button{margin-inline-start:0}
+ .dd-work-metrics{gap:9px}
+ .dd-work-stat{padding:14px}
+ .dd-work-stat strong{font-size:25px}
+ .dd-work-links{grid-template-columns:1fr}
+ .dd-work-panel{padding:17px}
+}
