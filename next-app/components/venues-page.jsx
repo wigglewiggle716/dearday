@@ -6,7 +6,7 @@ import PlanningStepper from "./planning-stepper";
 import BrandedDropdown from "./branded-dropdown";
 import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 import { pathFor } from "../lib/locales";
-import { venuePreviewAr, venuePreviewEn } from "../lib/venues-preview";
+import { venuePreviews } from "../lib/venues-preview";
 
 const filtersEmpty={type:"all",area:"all",atmosphere:"all",budget:"all"};
 const labels={
@@ -20,20 +20,23 @@ const labels={
     atmosphereChoices:[["all","الكل"],["romantic","رومانسي"],["quiet","هادئ"],["outdoor","Outdoor"],["luxury","فاخر"]],
     budgetChoices:[["all","الكل"],["low","أقل من 1,000"],["mid","1,000–2,500"],["high","أكثر من 2,500"]],
     sort:"ترتيب الأماكن",sortChoices:[["recommended","الأكثر مناسبة"],["asc","السعر: الأقل أولًا"],["desc","السعر: الأعلى أولًا"]],
-    results:"اكتشف أماكن وتجارب أكثر",picks:"مختارات Dear Day",more:"كل الأماكن والتجارب",
+    picks:"مختارات Dear Day",more:"كل الأماكن والتجارب",
     noResults:"لا توجد نتائج لهذه الفلاتر. جرّب مسح الفلاتر أو تغيير الاختيارات.",
     current:"اختيارك الحالي",emptyCurrent:"لسه ما اخترتش مكان أو تجربة. اختار من النتائج تحت.",
     people:"أشخاص",change:"تغيير",remove:"حذف",choose:"اختيار المكان",removeChoice:"إلغاء اختيار المكان",
     favorite:"أضف للمفضلة",unfavorite:"إزالة من المفضلة",
     customTitle:"تجربة مخصصة حسب ذوقك؟",
-    customCopy:"اكتب فكرتك وسنحتفظ بها ضمن تفاصيل المناسبة كطلب مخصص.",
+    customCopy:"احكيلنا فكرتك، وفريق Dear Day هيراجع طلبك ويتواصل معاك.",
     customAction:"طلب تجربة مخصصة",dialogTitle:"احكي لنا عن تجربتك",
-    dialogCopy:"أضف الفكرة والتكلفة التقريبية، وهنحتفظ بيها في خطة مناسبتك.",
+    dialogCopy:"اكتب تفاصيل تجربتك وبيانات التواصل عشان فريق خدمة العملاء يقدر يراجع الطلب ويرد عليك.",
     idea:"وصف التجربة",ideaPlaceholder:"احكي لنا عايز تعمل إيه...",
     ideaError:"اكتب فكرة التجربة الأول",expectedBudget:"ميزانية تقريبية (اختياري)",
-    save:"حفظ التجربة",cancel:"إلغاء",customSaved:"تم حفظ التجربة المخصصة",
-    selected:"تم اختيار المكان",removed:"تم إزالة المكان",selectedSummary:"مكان مختار في الخطة",
-    customSummary:"عندك طلب تجربة مخصصة محفوظ",next:"حفظ ومتابعة التخطيط",continue:"الانتقال للسلة",
+    save:"إرسال الطلب",cancel:"إلغاء",customSaved:"تم استلام طلبك. خدمة العملاء هتراجع الفكرة وتتواصل معاك.",
+    nameLabel:"اسمك",phoneLabel:"رقم الموبايل",emailLabel:"البريد الإلكتروني",sending:"جاري الإرسال...",
+    requestRef:"رقم المتابعة",returning:"هنرجعك للصفحة تلقائيًا خلال ثوانٍ.",
+    submitError:"حصلت مشكلة في إرسال الطلب. جرّب تاني.",invalidRequest:"راجع البيانات المدخلة.",rateLimited:"طلبات كتير اتبعتت من نفس الاتصال. جرّب لاحقًا.",
+    selectedSummary:"مكان مختار في الخطة",
+    customSummary:"تم إرسال طلب التجربة المخصصة",next:"حفظ ومتابعة التخطيط",
   },
   en:{
     title:"Find the right setting for the moment",
@@ -45,20 +48,23 @@ const labels={
     atmosphereChoices:[["all","All"],["romantic","Romantic"],["quiet","Quiet"],["outdoor","Outdoor"],["luxury","Luxury"]],
     budgetChoices:[["all","All"],["low","Under 1,000"],["mid","1,000–2,500"],["high","Over 2,500"]],
     sort:"Sort places",sortChoices:[["recommended","Recommended"],["asc","Price: low to high"],["desc","Price: high to low"]],
-    results:"Explore more places & experiences",picks:"Dear Day Picks",more:"All Places & Experiences",
+    picks:"Dear Day Picks",more:"All Places & Experiences",
     noResults:"No places match these filters. Try changing or clearing the filters.",
     current:"Your current choice",emptyCurrent:"You haven't selected a place or experience yet. Choose one from the results below.",
     people:"guests",change:"Change",remove:"Remove",choose:"Choose place",removeChoice:"Remove selection",
     favorite:"Add to favorites",unfavorite:"Remove from favorites",
     customTitle:"Have a custom experience in mind?",
-    customCopy:"Tell us the idea and we will keep it with the rest of your occasion details as a custom request.",
+    customCopy:"Tell us what you have in mind. Our team will review the request and get in touch.",
     customAction:"Request a Custom Experience",dialogTitle:"Tell us about the experience",
-    dialogCopy:"Save your idea and an approximate budget with your occasion plan.",
+    dialogCopy:"Share your experience idea and contact details so our customer care team can follow up.",
     idea:"Describe your experience",ideaPlaceholder:"Tell us what you have in mind...",
     ideaError:"Add your experience idea first",expectedBudget:"Approximate budget (optional)",
-    save:"Save experience",cancel:"Cancel",customSaved:"Custom experience saved",
-    selected:"Place selected",removed:"Place removed",selectedSummary:"Selected place in your plan",
-    customSummary:"Custom experience request saved",next:"Save & continue planning",continue:"Go to cart",
+    save:"Send request",cancel:"Cancel",customSaved:"Your request has been received. Our customer care team will review it and get in touch.",
+    nameLabel:"Your name",phoneLabel:"Mobile number",emailLabel:"Email address",sending:"Sending...",
+    requestRef:"Request reference",returning:"Returning you to the page in a few seconds.",
+    submitError:"Could not send your request. Please try again.",invalidRequest:"Please review your details.",rateLimited:"Too many requests from this connection. Try again later.",
+    selectedSummary:"Selected place in your plan",
+    customSummary:"Custom experience request submitted",next:"Save & continue planning",
   }
 };
 function readPlan() {
@@ -116,7 +122,7 @@ function VenueCard({venue,locale,t,isSelected,isFavorite,onSelect,onFavorite}) {
 export default function VenuesPage({locale="ar",flow=false,standalone=false,incoming=null}){
   const router=useRouter();
   const t=labels[locale]||labels.ar;
-  const venues=locale==="en"?venuePreviewEn:venuePreviewAr;
+  const venues=venuePreviews;
   const [filters,setFilters]=useState(filtersEmpty);
   const [sort,setSort]=useState("recommended");
   const [search,setSearch]=useState("");
@@ -127,10 +133,16 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
   const [favorites,setFavorites]=useState([]);
   const [customIdea,setCustomIdea]=useState("");
   const [customBudget,setCustomBudget]=useState("");
-  const [notice,setNotice]=useState("");
   const [ideaError,setIdeaError]=useState(false);
+  const [requestName,setRequestName]=useState("");
+  const [requestPhone,setRequestPhone]=useState("");
+  const [requestEmail,setRequestEmail]=useState("");
+  const [requestPending,setRequestPending]=useState(false);
+  const [requestResult,setRequestResult]=useState(null);
+  const closeTimer=useRef(null);
   const [mobileFilterOpen,setMobileFilterOpen]=useState(false);
   const dialog=useRef(null);
+  useEffect(()=>()=>{if(closeTimer.current)clearTimeout(closeTimer.current);},[]);
 
   useEffect(()=>{
     let saved=standalone?{}:readPlan();
@@ -138,7 +150,12 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
       try{const from=JSON.parse(incoming);if(from&&typeof from==="object"&&!Array.isArray(from))saved={...saved,...from};}catch{}
     }
     const old=Array.isArray(saved.venueSelections)?saved.venueSelections:[];
-    const match=venues.find(v=>v.id===old[0]?.id);
+    // Previous English preview used four different IDs; keep prior selections
+    // when switching languages, without changing the shared product identities.
+    const legacyId={"dummy-rooftop":"dummy-rooftop-zayed","dummy-bistro":"dummy-quiet-heliopolis",
+      "dummy-cinema":"dummy-experience-october","dummy-studio":"dummy-private-zamalek"};
+    const savedId=legacyId[old[0]?.id]||old[0]?.id;
+    const match=venues.find(v=>v.id===savedId);
     setSelectedId(match?.id||null);
     const cust=saved.customExperience&&typeof saved.customExperience==="object"?saved.customExperience:null;
     setCustom(cust);
@@ -154,7 +171,11 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     // Preserve products and gifts already in the customer plan.
     // Sample venue preview is *not* a live listing and stays OUT of the paid cart.
     const before=readPlan();
-    const preview=selected?{...selected,previewOnly:true,bookingConfirmed:false} : null;
+    const preview=selected?{
+      ...selected,name_ar:selected.name,name_en:selected.name,
+      description_ar:selected.ar,description_en:selected.descEn,
+      previewOnly:true,bookingConfirmed:false
+    } : null;
     const next={...before,venueSelections:preview?[preview]:[],customExperience:custom||null};
     try{localStorage.setItem("dearDayPlan",JSON.stringify(next));}catch{}
   },[hydrated,selectedId,custom,locale]);
@@ -179,9 +200,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
   const rest=filtered.filter(v=>!v.isPick);
 
   function choose(id){
-    const next=id===selectedId?null:id;
-    setSelectedId(next);
-    setNotice(next?t.selected:t.removed);
+    setSelectedId(id===selectedId?null:id);
   }
   function scrollToSelection(){
     if(!selectedId)return;
@@ -189,14 +208,52 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     requestAnimationFrame(()=>document.getElementById("dd-venue-"+selectedId)?.scrollIntoView({behavior:"smooth",block:"center"}));
   }
   function reset(){setFilters(filtersEmpty);setSearch("");}
-  function saveCustom(event){
-    event.preventDefault();
-    const idea=customIdea.trim();
-    if(!idea){setIdeaError(true);return;}
+  function openCustom(){
+    setRequestResult(null);
     setIdeaError(false);
-    setCustom({idea,budget:Math.max(0,Number(customBudget)||0)});
+    dialog.current?.showModal();
+  }
+  function closeCustom(){
+    if(requestPending)return;
+    if(closeTimer.current){clearTimeout(closeTimer.current);closeTimer.current=null;}
     dialog.current?.close();
-    setNotice(t.customSaved);
+    setRequestResult(null);
+    setIdeaError(false);
+  }
+  async function saveCustom(event){
+    event.preventDefault();
+    if(requestPending||requestResult?.type==="success")return;
+    const idea=customIdea.trim();
+    if(idea.length<10||idea.length>4500){setIdeaError(true);return;}
+    setIdeaError(false);
+    setRequestPending(true);
+    setRequestResult(null);
+    const budgetDescription=customBudget?"Budget: EGP "+String(Number(customBudget)):"Budget not specified";
+    const message=idea+"\n\n"+budgetDescription+"\nOrigin: Places & Experiences custom request";
+    try{
+      const response=await fetch("https://hpffdmldtdtwcaoemyso.supabase.co/functions/v1/contact-submit",{
+        method:"POST",mode:"cors",cache:"no-store",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          name:requestName.trim(),phone:requestPhone.trim(),email:requestEmail.trim(),
+          subject:"طلب تجربة مخصصة — Places & Experiences",
+          message,locale,websiteExtra:""
+        })
+      });
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||result.ok!==true||!result.ticket_reference){
+        setRequestResult({type:"error",message:response.status===429?t.rateLimited:
+          response.status===400?t.invalidRequest:t.submitError});
+        return;
+      }
+      setCustom({idea,budget:Math.max(0,Number(customBudget)||0),ticket_reference:result.ticket_reference});
+      setRequestResult({type:"success",message:t.customSaved,reference:result.ticket_reference});
+      if(closeTimer.current)clearTimeout(closeTimer.current);
+      closeTimer.current=setTimeout(()=>{
+        dialog.current?.close();setRequestResult(null);closeTimer.current=null;
+      },5500);
+    }catch{setRequestResult({type:"error",message:t.submitError});}
+    finally{setRequestPending(false);}
   }
   function continuePlanning(){
     // All preview venues are example inventory; never present them as a
@@ -205,7 +262,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     if(flow){
       const target=getNextPlanningStep("venues",readPlanningServices());
       router.push(pathFor(target,locale)+"?flow=1");
-    }else router.push(pathFor("cart",locale));
+    }
   }
   function renderCards(list) {
     return list.map(v=><VenueCard key={v.id} venue={v} locale={locale} t={t}
@@ -256,14 +313,13 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                 </div>
               </div>}
               <div className="dd-venues-section-title">
-                <h2>{t.results}</h2>
+                <h2>{locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.picks}</h2>
                 <div className="dd-venues-sort">
                   <BrandedDropdown locale={locale} label={t.sort} placeholder={t.sort}
                     value={sort} onChange={setSort} options={t.sortChoices}/>
                 </div>
               </div>
-              {picks.length>0&&<section className="dd-venues-group">
-                <h3>{t.picks}</h3>
+              {picks.length>0&&<section className="dd-venues-group dd-venues-picks">
                 <div className="dd-venues-group-box">
                   <div className="dd-venues-grid">{renderCards(picks)}</div>
                 </div>
@@ -280,43 +336,60 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                 <div className="dd-venues-custom-copy">
                   <h3>{t.customTitle}</h3><p>{t.customCopy}</p>
                 </div>
-                <button type="button" onClick={()=>dialog.current?.showModal()}>{t.customAction}</button>
+                <button type="button" onClick={openCustom}>{t.customAction}</button>
               </section>
               {(selected||custom)&&<div className="dd-venues-plan-summary" aria-live="polite">
                 <span>{selected? t.selectedSummary+": "+selected.name : t.customSummary}</span>
                 {custom?.idea&&<small>{t.customSummary}: {custom.idea}</small>}
               </div>}
-              <div className="dd-venues-continue">
-                <button type="button" onClick={continuePlanning} disabled={!selected&&!custom}>
-                  {flow?t.next:t.continue}
-                </button>
-              </div>
-              {notice&&<p className="dd-venues-notice" role="status">{notice}</p>}
+              {flow&&<div className="dd-venues-continue">
+                <button type="button" onClick={continuePlanning} disabled={!selected&&!custom}>{t.next}</button>
+              </div>}
             </section>
           </div>
         </div>
       </main>
     </div>
     <dialog className="dd-venues-dialog" ref={dialog} dir={locale==="ar"?"rtl":"ltr"}
-      onCancel={()=>setIdeaError(false)}>
+      onCancel={event=>{if(requestPending)event.preventDefault();else setRequestResult(null);}}>
       <form onSubmit={saveCustom}>
         <div className="dd-venues-dialog-top">
           <h2>{t.dialogTitle}</h2>
-          <button type="button" aria-label={t.cancel} onClick={()=>dialog.current?.close()}>×</button>
+          <button type="button" aria-label={t.cancel} disabled={requestPending} onClick={closeCustom}>×</button>
         </div>
-        <p>{t.dialogCopy}</p>
-        <label htmlFor="dd-venues-idea">{t.idea}</label>
-        <textarea id="dd-venues-idea" rows={4} value={customIdea}
-          onChange={e=>{setCustomIdea(e.target.value);setIdeaError(false);}}
-          aria-invalid={ideaError||undefined} placeholder={t.ideaPlaceholder}/>
-        {ideaError&&<p className="dd-venues-error" role="alert">{t.ideaError}</p>}
-        <label htmlFor="dd-venues-budget">{t.expectedBudget}</label>
-        <input id="dd-venues-budget" type="number" min="0" inputMode="numeric"
-          value={customBudget} onChange={e=>setCustomBudget(e.target.value)}/>
-        <div className="dd-venues-dialog-actions">
-          <button type="button" onClick={()=>dialog.current?.close()}>{t.cancel}</button>
-          <button type="submit">{t.save}</button>
-        </div>
+        {requestResult?.type==="success"?<div className="dd-venues-dialog-success" role="status" aria-live="polite">
+          <span aria-hidden="true">✓</span>
+          <p>{requestResult.message}</p>
+          <strong>{t.requestRef}: <bdi dir="ltr">{requestResult.reference}</bdi></strong>
+          <small>{t.returning}</small>
+          <button type="button" onClick={closeCustom}>{t.cancel}</button>
+        </div>:<>
+          <p>{t.dialogCopy}</p>
+          <div className="dd-venues-dialog-fields">
+            <label htmlFor="dd-venues-name">{t.nameLabel}</label>
+            <input id="dd-venues-name" type="text" autoComplete="name" required
+              minLength={2} maxLength={160} value={requestName} onChange={e=>setRequestName(e.target.value)}/>
+            <label htmlFor="dd-venues-phone">{t.phoneLabel}</label>
+            <input id="dd-venues-phone" type="tel" autoComplete="tel" inputMode="tel" required
+              minLength={6} maxLength={40} value={requestPhone} onChange={e=>setRequestPhone(e.target.value)}/>
+            <label htmlFor="dd-venues-email">{t.emailLabel}</label>
+            <input id="dd-venues-email" type="email" autoComplete="email" required maxLength={254}
+              value={requestEmail} onChange={e=>setRequestEmail(e.target.value)}/>
+            <label htmlFor="dd-venues-idea">{t.idea}</label>
+            <textarea id="dd-venues-idea" rows={4} minLength={10} maxLength={4500} required
+              value={customIdea} onChange={e=>{setCustomIdea(e.target.value);setIdeaError(false);}}
+              aria-invalid={ideaError||undefined} placeholder={t.ideaPlaceholder}/>
+            {ideaError&&<p className="dd-venues-error" role="alert">{t.ideaError}</p>}
+            <label htmlFor="dd-venues-budget">{t.expectedBudget}</label>
+            <input id="dd-venues-budget" type="number" min="0" max="10000000" inputMode="numeric"
+              value={customBudget} onChange={e=>setCustomBudget(e.target.value)}/>
+          </div>
+          {requestResult?.type==="error"&&<p className="dd-venues-error" role="alert">{requestResult.message}</p>}
+          <div className="dd-venues-dialog-actions">
+            <button type="button" onClick={closeCustom} disabled={requestPending}>{t.cancel}</button>
+            <button type="submit" disabled={requestPending}>{requestPending?t.sending:t.save}</button>
+          </div>
+        </>}
       </form>
     </dialog>
   </>;
