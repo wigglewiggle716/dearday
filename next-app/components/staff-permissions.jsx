@@ -143,8 +143,8 @@ export default function StaffPermissions({locale="ar"}){
   <section className="dd-security-card dd-permissions-card">
    <h1>{t.title}</h1><p className="dd-security-muted">{t.intro}</p>
    {!staff?<div className="dd-security-guard">
-    <p>{session.status==="mfa_required"?t.verify:session.status==="loading"?t.loading:t.restricted}</p>
-    {session.status!=="loading"&&<Link className="dd-security-primary" href={pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.verify:t.login}</Link>}
+    <p>{session.status==="mfa_setup_required"?t.verify:session.status==="mfa_required"?t.verify:session.status==="loading"?t.loading:t.restricted}</p>
+    {session.status!=="loading"&&<Link className="dd-security-primary" href={session.status==="mfa_setup_required"?pathFor("security",locale):pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.verify:t.login}</Link>}
    </div>:loading?<p role="status">{t.loading}</p>:
     error&&loadedFor!==currentId?<div>
      <p role="alert">{error}</p><button className="dd-security-secondary" type="button" onClick={refresh}>{t.reload}</button>
