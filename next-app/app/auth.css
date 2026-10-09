@@ -1,0 +1,115 @@
+/* Dear Day React customer authentication — shared Arabic/English pages.
+   The approved global header and footer stay the single source of truth. */
+.dd-account-auth {
+ --ac-wine:#6B3540;--ac-terra:#A8583D;--ac-ink:#352D2E;
+ --ac-muted:#756A68;--ac-line:rgba(107,53,64,.17);
+ flex:1;position:relative;isolation:isolate;min-height:650px;
+ display:grid;place-items:center;overflow:hidden;
+ padding:56px 20px 70px;
+ background:
+   radial-gradient(circle at 9% 22%,rgba(232,197,204,.24),transparent 30%),
+   radial-gradient(circle at 90% 86%,rgba(168,88,61,.08),transparent 32%),
+   linear-gradient(155deg,#FAF3EA,#fffaf6 62%,#FAF3EA);
+ color:var(--ac-ink);
+}
+.dd-account-auth *{box-sizing:border-box}
+.dd-account-auth::before,.dd-account-auth::after {
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ border:1px solid rgba(168,88,61,.18);border-radius:50%;
+}
+.dd-account-auth::before{width:390px;height:390px;top:12%;right:-220px}
+.dd-account-auth::after{width:320px;height:320px;bottom:2%;left:-190px}
+.dd-account-auth-orbit {
+ position:absolute;z-index:-1;top:17%;left:8%;width:220px;height:110px;
+ border:2px solid rgba(107,53,64,.13);border-color:rgba(107,53,64,.13) transparent transparent transparent;
+ border-radius:50%;transform:rotate(-18deg);pointer-events:none;
+}
+.dd-account-shell{width:min(475px,100%);position:relative}
+.dd-account-shell.is-signup{width:min(520px,100%)}
+.dd-account-card {
+ background:rgba(255,253,252,.97);border:1px solid var(--ac-line);
+ border-radius:29px;padding:31px 37px 30px;
+ box-shadow:0 25px 75px rgba(78,32,39,.105);
+}
+.dd-account-logo{display:block;margin:0 auto 9px;width:164px;height:75px;object-fit:contain}
+.dd-account-card h1{margin:0 0 9px;text-align:center;color:var(--ac-wine);font-weight:800;font-size:27px;line-height:1.4}
+html[lang=en] .dd-account-card h1{font-family:var(--dd-serif);font-weight:700}
+.dd-account-intro {
+ text-align:center;font-size:13px;line-height:1.85;margin:0 auto 25px;
+ max-width:390px;color:var(--ac-muted);
+}
+.dd-account-form{display:grid;gap:15px}
+.dd-account-field{min-width:0;display:grid;gap:7px}
+.dd-account-field label{font-size:12px;font-weight:800;color:#574A47}
+.dd-account-field>input,.dd-account-password-control>input{
+ height:51px;width:100%;min-width:0;border-radius:14px;
+ border:1px solid #E4D7D2;background:#fff;color:var(--ac-ink);
+ padding:0 14px;outline:0;font-size:13px;font-family:inherit;
+ transition:border-color .16s,box-shadow .16s;
+}
+.dd-account-field>input:focus,.dd-account-password-control>input:focus{
+ border-color:var(--ac-terra);box-shadow:0 0 0 4px rgba(168,88,61,.09);
+}
+.dd-account-field input::placeholder{color:#A79996}
+.dd-account-password-control{position:relative}
+.dd-account-password-control>input{padding-inline-end:50px}
+.dd-account-reveal{
+ position:absolute;inset-inline-end:7px;top:50%;transform:translateY(-50%);
+ width:38px;height:38px;border:0;background:transparent;color:var(--ac-wine);
+ border-radius:9px;display:grid;place-items:center;cursor:pointer;
+}
+.dd-account-reveal svg{width:19px;height:19px}
+.dd-account-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dd-account-aux{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.dd-account-aux>a{font-size:12px;color:var(--ac-terra);font-weight:800}
+.dd-account-check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--ac-muted)}
+.dd-account-check input,.dd-account-consent input{
+ appearance:none;width:17px;height:17px;flex:0 0 17px;
+ border:1px solid rgba(107,53,64,.34);border-radius:5px;
+ background:white;display:grid;place-items:center;margin:0;cursor:pointer;
+}
+.dd-account-check input:checked,.dd-account-consent input:checked{background:var(--ac-wine);border-color:var(--ac-wine)}
+.dd-account-check input:checked::after,.dd-account-consent input:checked::after{content:"✓";color:#fff;font-size:12px;line-height:1}
+.dd-account-consent{display:flex;align-items:start;gap:9px;font-size:11px;line-height:1.85;color:var(--ac-muted);cursor:pointer}
+.dd-account-consent input{margin-top:3px}
+.dd-account-consent a{color:var(--ac-wine);font-weight:800;text-decoration:underline;text-underline-offset:2px}
+.dd-account-primary{
+ width:100%;min-height:51px;border:1px solid var(--ac-wine);border-radius:14px;
+ background:var(--ac-wine);color:white;font-size:14px;font-weight:800;
+ cursor:pointer;transition:background .16s,transform .16s;
+}
+.dd-account-primary:hover:not(:disabled){background:#542A33;transform:translateY(-1px)}
+.dd-account-primary:disabled,.dd-account-socials button:disabled{opacity:.58;cursor:wait}
+.dd-account-status{font-size:12px;line-height:1.8;text-align:center;margin:14px 0 0;padding:10px 12px;border-radius:12px}
+.dd-account-status.is-error{color:#963B35;background:#fff0ea;border:1px solid #efcec5}
+.dd-account-status.is-success{color:#326C4C;background:#f0f7f1;border:1px solid #d7e9d7}
+.dd-account-divider{display:flex;align-items:center;gap:12px;color:#978782;font-size:12px;margin:21px 0 14px}
+.dd-account-divider::before,.dd-account-divider::after{content:"";height:1px;background:var(--ac-line);flex:1}
+.dd-account-socials{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dd-account-socials button{
+ min-height:48px;border:1px solid var(--ac-line);border-radius:13px;
+ background:#fff;color:var(--ac-ink);display:grid;place-items:center;
+ cursor:pointer;transition:border-color .16s,box-shadow .16s;
+}
+.dd-account-socials button:hover:not(:disabled){border-color:var(--ac-terra);box-shadow:0 6px 18px rgba(78,32,39,.06)}
+.dd-account-socials svg{display:block;width:23px;height:23px}
+.dd-account-switch{margin-top:22px;text-align:center;font-size:12px;line-height:1.75;color:var(--ac-muted)}
+.dd-account-switch a{font-weight:900;color:var(--ac-wine)}
+.dd-account-switch a:hover{color:var(--ac-terra)}
+.dd-account-bottom-note{margin:18px 0 0;text-align:center;font-size:11px;color:#927E7A}
+@media(max-width:700px){
+ .dd-account-auth{min-height:560px;padding:35px 15px 55px}
+ .dd-account-card{padding:27px 22px;border-radius:23px}
+ .dd-account-auth::before{width:240px;height:240px;right:-150px}
+ .dd-account-auth::after{width:200px;height:200px;left:-120px}
+ .dd-account-auth-orbit{display:none}
+ .dd-account-card h1{font-size:25px}
+ .dd-account-intro{margin-bottom:20px}
+}
+@media(max-width:420px){
+ .dd-account-two{grid-template-columns:1fr}
+ .dd-account-card{padding:24px 17px}
+}
+@media(prefers-reduced-motion:reduce){
+ .dd-account-auth *{transition:none!important}
+}
