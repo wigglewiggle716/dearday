@@ -31,6 +31,7 @@ export default function PartnerProductsPanel(){
  const [revision,setRevision]=useState(0),[query,setQuery]=useState(""),[status,setStatus]=useState("");
  const [draft,setDraft]=useState(null),[inventory,setInventory]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const reload=()=>setRevision(n=>n+1);
+ useEffect(()=>{setDraft(null);setInventory(null);setError("");},[partner?.id]);
  useEffect(()=>{
   let live=true;setData({stage:"loading",listings:[],versions:[],categories:[]});
   (async()=>{
