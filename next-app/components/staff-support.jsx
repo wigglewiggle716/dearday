@@ -199,7 +199,7 @@ export default function StaffSupport({locale="ar"}){
       <Detail title={t.message}>{ticket.message}</Detail><Detail title={t.updated}>{date(ticket.updated_at,locale)}</Detail>
      </div>
      <div className="dd-cs-actions">
-      {ticket.email&&<a className="dd-cs-outline" href={"mailto:"+encodeURIComponent(ticket.email)}>{t.manualEmail}</a>}
+      {ticket.email&&<a className="dd-cs-outline" href={"mailto:"+ticket.email.replace(/[\r\n<>]/g,"").trim()}>{t.manualEmail}</a>}
       {ticket.phone&&<a className="dd-cs-outline" href={"tel:"+ticket.phone.replace(/[^\d+]/g,"")}>{t.call}</a>}
       {ticket.request_kind==="cake_design"&&ticket.reference_image_path&&<button type="button" className="dd-cs-outline" disabled={fileBusy} onClick={openImage}>{fileBusy?t.loading:t.openImage}</button>}
      </div>
