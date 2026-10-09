@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {authClient,rememberPreference,safeNext,rememberSession,readCurrentAccount,destinationFor} from "../lib/auth-client";
 import {pathFor} from "../lib/locales";
 
@@ -115,6 +115,7 @@ export default function AuthPage({locale="ar",page="login"}){
  const signupPath=pathFor("register",locale);
  const homePath=pathFor("home",locale);
  const [oauthPending,setOauthPending]=useState(false);
+ const activeSubmit=useRef(false);
  const [mfaFactorId,setMfaFactorId]=useState("");
  const [mfaNext,setMfaNext]=useState(null);
  async function finishSignIn(client, requested){
@@ -176,7 +177,7 @@ export default function AuthPage({locale="ar",page="login"}){
    let active=true,redirecting=false;
    const client=authClient(rememberPreference());
    function checkAccount(){
-     if(!active||redirecting||recovery||forgot)return;
+     if(!active||redirecting||recovery||forgot||activeSubmit.current)return;
      redirecting=true;
      const storedNext=window.localStorage.getItem("ddPostAuthNext");
      const requested=storedNext||params.get("next");
@@ -219,6 +220,7 @@ export default function AuthPage({locale="ar",page="login"}){
    const values=new FormData(form);
    setStatus(null);
    setBusy(true);
+   activeSubmit.current=true;
    try{
      if(mode==="forgot"){
        const supabase=authClient(rememberPreference());
@@ -277,7 +279,7 @@ export default function AuthPage({locale="ar",page="login"}){
      await finishSignIn(client,landing());
    }catch(error){
      setStatus({error:true,message:authErrorText(error,t)});
-   }finally{setBusy(false);}
+   }finally{activeSubmit.current=false;setBusy(false);}
  }
  async function social(provider){
    if(oauthPending||busy)return;
@@ -292,8 +294,6 @@ export default function AuthPage({locale="ar",page="login"}){
        provider,options:{redirectTo:window.location.origin+loginPath+"?oauth=1"}
      });
      if(error)throw error;
-     // OAuth always keeps a persistent browser session after successful return.
-     rememberSession(true);
    }catch(error){
      setStatus({error:true,message:authErrorText(error,t)});setOauthPending(false);
    }
