@@ -16,7 +16,7 @@ export const STAFF_ADMIN_MODULES = [
   {id:"customers",route:"staffCustomers",perms:["customers.view"],ar:"العملاء",en:"Customers"},
   {id:"support",route:"staffSupport",perms:["customers.view"],ar:"رسائل العملاء",en:"Customer Messages"},
   {id:"employees",route:"staffPermissions",perms:["employees.view","employees.manage"],ar:"الموظفون والصلاحيات",en:"Staff & Permissions"},
-  {id:"finance",legacy:"Dear-Day-Finance.html",perms:["finance.view"],ar:"المالية والتسويات",en:"Finance & Settlements"},
+  {id:"finance",route:"staffFinance",perms:["finance.view"],ar:"المالية والتسويات",en:"Finance & Settlements"},
 ];
 export function staffAdminVisibleModules(grants,role){
   const allowed = new Set(grants || []);
