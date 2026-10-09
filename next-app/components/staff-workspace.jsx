@@ -5,82 +5,136 @@ import {useEffect,useMemo,useState} from "react";
 import {authClient,EMPLOYEE_ROLES,rememberPreference} from "../lib/auth-client";
 import {useAuthSession} from "./auth-session-provider";
 import {pathFor} from "../lib/locales";
+import {staffAdminVisibleModules} from "../lib/staff-admin-navigation";
 
+const OPEN=["draft","pending_payment","paid","confirmed","in_progress"];
+const PAID=["paid","confirmed","in_progress","completed"];
 const words={
  ar:{
-  title:"بوابة فريق Dear Day",subtitle:"مركز متابعة العمليات — البيانات والصلاحيات من حسابك الفعلي.",
-  signIn:"تسجيل الدخول",setup:"تفعيل التحقق بخطوتين",challenge:"إكمال التحقق بخطوتين",
-  noAccess:"الصفحة مخصصة لموظفي Dear Day النشطين فقط.",
-  inactive:"الحساب غير نشط أو لا يمكن التحقق منه حاليًا.",
-  load:"جاري التحقق من الصلاحيات وتحميل لوحة التحكم…",failed:"تعذر تحميل لوحة التحكم. جرّب مرة أخرى.",
-  noDashboard:"حسابك لا يملك صلاحية عرض لوحة التحكم.",reload:"تحديث البيانات",
-  stats:"نظرة عامة",orders:"إجمالي الطلبات",open:"طلبات مفتوحة",customers:"حسابات العملاء",
-  partners:"شركاء نشطون",approvals:"موافقات معلّقة",settlements:"تسويات مسوّدة",
-  latest:"أحدث الطلبات",noOrders:"لا توجد طلبات لعرضها.",number:"رقم الطلب",status:"الحالة",
-  occasion:"المناسبة",total:"الإجمالي",date:"التاريخ",limited:"بعض البيانات لم تُحمّل؛ باقي اللوحة متاح حسب صلاحيات حسابك.",
-  navigation:"أقسام العمل",now:"متاح على React",old:"متاح مؤقتًا على الموقع القديم",
-  note:"الأقسام التي لم ننقلها بعد تفتح الموقع القديم وتحتاج تسجيل دخول منفصل. لا يتم مشاركة جلسة React بين النطاقين.",
-  security:"أمان الحساب",permissions:"الموظفون والصلاحيات",website:"عرض موقع Dear Day",
-  role:"دور الحساب",email:"بريد الموظف",source:"يتم التحقق من الصلاحيات على سيرفر Supabase لكل عملية؛ القائمة ليست وسيلة لمنح صلاحيات.",
-  directory:"العملاء",catalog:"المنتجات والخدمات",partnerMenu:"الشركاء",review:"الموافقات",
-  financial:"المالية والتسويات",ordersMenu:"الطلبات",orderEmailsMenu:"إشعارات الطلبات",availability:"التوفر والمواعيد",
-  cancellations:"الإلغاءات والاستردادات",support:"رسائل العملاء",overview:"لوحة التحكم",
-  emptySections:"ليس لهذا الحساب أي أقسام إضافية متاحة.",back:"بوابة الوصول",
-  denied:"هذه الإحصائية غير متاحة لهذا الدور."
+  ownerTitle:"لوحة الـ Super Admin",ownerSubtitle:"مركز التحكم التشغيلي والمالي لـ Dear Day.",
+  accountantTitle:"لوحة المحاسب",accountantSubtitle:"ملخص المالية والتسويات والطلبات في Dear Day.",
+  staffTitle:"بوابة فريق Dear Day",staffSubtitle:"الأقسام المعروضة مبنية على صلاحيات حسابك الفعلية.",
+  login:"تسجيل الدخول",mfa:"إكمال التحقق بخطوتين",mfaSetup:"تفعيل التحقق بخطوتين",
+  unavailable:"الصفحة مخصصة لفريق Dear Day.",loading:"جاري تحميل لوحة الإدارة…",
+  error:"تعذر تحميل لوحة الإدارة. حاول مجددًا.",noAccess:"هذا الحساب لا يملك صلاحية عرض لوحة الإدارة.",
+  refresh:"تحديث البيانات",role:"الدور",email:"البريد",all:"كل الطلبات",open:"طلبات مفتوحة",
+  customers:"العملاء",partners:"شركاء نشطون",pending:"بانتظار الموافقة",
+  unsettled:"Partner Net غير مسوّى",paidRevenue:"قيمة الطلبات المدفوعة",cancelled:"إلغاءات / استردادات",
+  draft:"تسويات Draft",approved:"تسويات Approved",paid:"إجمالي Paid",
+  recentOrders:"أحدث الطلبات",allOrders:"عرض كل الطلبات",order:"رقم الطلب",status:"الحالة",
+  occasion:"المناسبة",area:"المنطقة",total:"الإجمالي",created:"الإنشاء",emptyOrders:"لا توجد طلبات حتى الآن.",
+  pendingApprovals:"موافقات تحتاج مراجعة",openApprovals:"فتح الموافقات",item:"العنصر",partner:"الشريك",
+  price:"السعر",sent:"تاريخ الإرسال",emptyApprovals:"لا توجد موافقات معلقة.",
+  financeTitle:"ملخص المالية والتسويات",openFinance:"فتح المالية",
+  latestSettlements:"أحدث التسويات",period:"الفترة",reference:"المرجع",emptySettlements:"لا توجد تسويات حتى الآن.",
+  workAreas:"أقسام العمل",oldNotice:"↗ يفتح القسم غير المنقول بعد على الموقع الأساسي، وقد يتطلب تسجيل دخول منفصل.",
+  permissionNote:"الروابط والمؤشرات تتبع صلاحيات Supabase الفعلية، وليست وسيلة لمنح صلاحيات.",
+  limited:"بعض البيانات لم تُحمّل؛ عرضنا فقط الأقسام التي سمحت بها الصلاحيات.",
+  empty:"لا توجد بيانات حاليًا.",na:"—"
  },
  en:{
-  title:"Dear Day Staff Workspace",subtitle:"Operations overview — data and permissions are tied to your actual account.",
-  signIn:"Log in",setup:"Set up two-step verification",challenge:"Complete two-step verification",
-  noAccess:"This workspace is for active Dear Day employees only.",
-  inactive:"This account is inactive or its access cannot currently be verified.",
-  load:"Checking permissions and loading your workspace…",failed:"Couldn't load the workspace. Please try again.",
-  noDashboard:"Your account does not have permission to view the dashboard.",reload:"Refresh data",
-  stats:"Overview",orders:"All orders",open:"Open orders",customers:"Customer accounts",
-  partners:"Active partners",approvals:"Pending approvals",settlements:"Draft settlements",
-  latest:"Recent orders",noOrders:"No orders to display.",number:"Order",status:"Status",
-  occasion:"Occasion",total:"Total",date:"Date",limited:"Some data could not be loaded; the rest is shown according to your permissions.",
-  navigation:"Work areas",now:"Available in React",old:"Temporarily on the old website",
-  note:"Sections not migrated yet open the old website and may require a separate sign-in. React sessions are not transferred between domains.",
-  security:"Account security",permissions:"Staff access & permissions",website:"View Dear Day website",
-  role:"Account role",email:"Staff email",source:"Every action is authorized by Supabase server-side. This menu does not grant permissions.",
-  directory:"Customers",catalog:"Products & services",partnerMenu:"Partners",review:"Approvals",
-  financial:"Finance & settlements",ordersMenu:"Orders",orderEmailsMenu:"Order Emails",availability:"Availability",
-  cancellations:"Cancellations & refunds",support:"Customer messages",overview:"Dashboard",
-  emptySections:"No other work areas are available for this account.",back:"Access hub",
-  denied:"This metric is unavailable for this role."
+  ownerTitle:"Super Admin Dashboard",ownerSubtitle:"Dear Day operational and financial control centre.",
+  accountantTitle:"Accountant Dashboard",accountantSubtitle:"Finance, settlements and order overview for Dear Day.",
+  staffTitle:"Dear Day Staff Portal",staffSubtitle:"Available work areas are based on your actual account permissions.",
+  login:"Log in",mfa:"Complete two-step verification",mfaSetup:"Set up two-step verification",
+  unavailable:"This workspace is only for Dear Day staff.",loading:"Loading dashboard…",
+  error:"Couldn't load the dashboard. Please try again.",noAccess:"This account cannot view the staff dashboard.",
+  refresh:"Refresh",role:"Role",email:"Email",all:"All orders",open:"Open orders",
+  customers:"Customers",partners:"Active partners",pending:"Pending approvals",
+  unsettled:"Unsettled Partner Net",paidRevenue:"Paid order value",cancelled:"Cancellations / Refunds",
+  draft:"Draft settlements",approved:"Approved settlements",paid:"Paid settlements",
+  recentOrders:"Recent Orders",allOrders:"View all orders",order:"Order",status:"Status",
+  occasion:"Occasion",area:"Area",total:"Total",created:"Created",emptyOrders:"No orders yet.",
+  pendingApprovals:"Approvals Needing Review",openApprovals:"Review Approvals",item:"Item",partner:"Partner",
+  price:"Price",sent:"Submitted",emptyApprovals:"No pending approvals.",
+  financeTitle:"Finance & Settlements Summary",openFinance:"Open Finance",
+  latestSettlements:"Recent Settlements",period:"Period",reference:"Reference",emptySettlements:"No settlements yet.",
+  workAreas:"Work Areas",oldNotice:"↗ opens a module not yet moved to React on the original website; separate sign-in may be required.",
+  permissionNote:"Cards and links use real Supabase permissions; they do not grant access.",
+  limited:"Some records could not be loaded; only permitted data is shown.",
+  empty:"No data available.",na:"—"
  }
 };
-const OPEN=["draft","pending_payment","paid","confirmed","in_progress"];
-const statusNames={
+const orderStatuses={
  ar:{draft:"مسودة",pending_payment:"بانتظار الدفع",paid:"مدفوع",confirmed:"مؤكد",in_progress:"قيد التنفيذ",completed:"مكتمل",cancelled:"ملغي",refunded:"مسترد"},
  en:{draft:"Draft",pending_payment:"Pending payment",paid:"Paid",confirmed:"Confirmed",in_progress:"In progress",completed:"Completed",cancelled:"Cancelled",refunded:"Refunded"}
 };
-const oldModules=[
-
-
-
-
- {id:"financial",p:["finance.view"],path:"Dear-Day-Finance.html"},
-
-
-
-
-];
-function amount(value,currency,locale){
- try{return new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-EG",{style:"currency",currency:currency||"EGP",maximumFractionDigits:2}).format(Number(value||0));}
- catch{return String(value||0)+" EGP";}
+function money(value,currency,locale){
+ if(value===null||value===undefined)return "—";
+ try{return new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-EG",{style:"currency",currency:currency||"EGP",maximumFractionDigits:2}).format(Number(value));}
+ catch{return String(value)+" "+(currency||"EGP");}
 }
+function number(value,locale){return value===undefined||value===null?"—":new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-US").format(value);}
 function shortDate(value,locale){
  if(!value)return "—";
- const d=new Date(value);
- return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat(locale==="ar"?"ar-EG":"en-GB",{day:"numeric",month:"short",year:"numeric"}).format(d);
+ const d=new Date(value);return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat(locale==="ar"?"ar-EG":"en-GB",{day:"numeric",month:"short",year:"numeric"}).format(d);
 }
 async function count(client,table,filter){
  let q=client.from(table).select("id",{count:"exact",head:true});
  if(filter)q=filter(q);
- const result=await q;
- if(result.error)throw result.error;
- return result.count;
+ const result=await q;if(result.error)throw result.error;return result.count??0;
+}
+async function financialSnapshot(client){
+ const [partnerOrders,items,settlements]=await Promise.all([
+  client.from("partner_orders").select("id,partner_net").eq("status","completed"),
+  client.from("settlement_items").select("partner_order_id"),
+  client.from("partner_settlements").select("status,partner_net")
+ ]);
+ for(const r of [partnerOrders,items,settlements])if(r.error)throw r.error;
+ const already=new Set((items.data||[]).map(i=>i.partner_order_id));
+ const numbers={unsettled:(partnerOrders.data||[]).filter(p=>!already.has(p.id)).reduce((sum,p)=>sum+Number(p.partner_net||0),0),draft:0,approved:0,paid:0};
+ for(const s of settlements.data||[]){
+  if(["draft","approved","paid"].includes(s.status))numbers[s.status]+=Number(s.partner_net||0);
+ }
+ return numbers;
+}
+async function paidOrderValue(client){
+ const r=await client.from("orders").select("grand_total").in("status",PAID);
+ if(r.error)throw r.error;
+ return (r.data||[]).reduce((sum,item)=>sum+Number(item.grand_total||0),0);
+}
+async function recentApprovals(client){
+ const r=await client.from("listing_versions")
+  .select("id,listing_id,name_ar,name_en,price,currency,submitted_at,created_at")
+  .eq("status","pending_review").order("submitted_at",{ascending:true,nullsFirst:false})
+  .limit(6);
+ if(r.error)throw r.error;
+ const versions=r.data||[];
+ if(!versions.length)return[];
+ const listingIds=[...new Set(versions.map(v=>v.listing_id).filter(Boolean))];
+ if(!listingIds.length)return versions;
+ // Optional partner labels: display the approval safely even if this
+ // supplementary lookup has a more restrictive RLS policy.
+ const l=await client.from("listings").select("id,partner_id").in("id",listingIds);
+ if(l.error)return versions;
+ const partnersByListing=Object.fromEntries((l.data||[]).map(x=>[x.id,x.partner_id]));
+ const partnerIds=[...new Set(Object.values(partnersByListing).filter(Boolean))];
+ if(!partnerIds.length)return versions;
+ const p=await client.from("partner_directory").select("id,name_ar,name_en").in("id",partnerIds);
+ if(p.error)return versions;
+ const names=Object.fromEntries((p.data||[]).map(x=>[x.id,x]));
+ return versions.map(v=>({...v,partnerName:names[partnersByListing[v.listing_id]]||null}));
+}
+async function recentSettlements(client){
+ const r=await client.from("partner_settlements")
+  .select("id,partner_id,period_start,period_end,partner_net,status,payment_reference,created_at")
+  .order("created_at",{ascending:false}).limit(6);
+ if(r.error)throw r.error;
+ const rows=r.data||[];
+ if(!rows.length)return[];
+ const p=await client.from("partner_directory").select("id,name_ar,name_en")
+  .in("id",[...new Set(rows.map(x=>x.partner_id).filter(Boolean))]);
+ if(p.error)return rows;
+ const names=Object.fromEntries((p.data||[]).map(x=>[x.id,x]));
+ return rows.map(x=>({...x,partnerName:names[x.partner_id]||null}));
+}
+function Panel({title,href,hrefLabel,children,external=false}){
+ return <section className="dd-work-panel dd-work-parity-panel">
+  <div className="dd-work-parity-heading"><h2 className="dd-work-section-title">{title}</h2>
+   {href&&(external?<a href={href} target="_blank" rel="noopener noreferrer">{hrefLabel} ↗</a>:
+    <Link href={href}>{hrefLabel} ←</Link>)}
+  </div>{children}
+ </section>;
 }
 export default function StaffWorkspace({locale="ar"}){
  const t=words[locale]||words.ar;
@@ -88,143 +142,162 @@ export default function StaffWorkspace({locale="ar"}){
  const valid=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
  const [revision,setRevision]=useState(0);
- const [result,setResult]=useState({stage:"loading",id:null,permissions:[],stats:{},orders:[],warning:false});
+ const [result,setResult]=useState({stage:"loading",id:null,permissions:[],stats:{},orders:[],approvals:[],settlements:[],warning:false});
  const id=valid?session.user?.id:null;
  useEffect(()=>{
   let alive=true;
   if(!valid||!client||!id){
-   setResult({stage:"loading",id:null,permissions:[],stats:{},orders:[],warning:false});
+   setResult({stage:"loading",id:null,permissions:[],stats:{},orders:[],approvals:[],settlements:[],warning:false});
    return()=>{alive=false;};
   }
-  setResult({stage:"loading",id,permissions:[],stats:{},orders:[],warning:false});
+  setResult({stage:"loading",id,permissions:[],stats:{},orders:[],approvals:[],settlements:[],warning:false});
   (async()=>{
    try{
-    const permsResult=await client.rpc("get_my_permissions");
-    if(permsResult.error)throw permsResult.error;
+    const p=await client.rpc("get_my_permissions");
+    if(p.error)throw p.error;
     if(!alive)return;
-    const permissions=[...new Set((permsResult.data||[]).map(x=>x.permission_code))];
+    const permissions=[...new Set((p.data||[]).map(x=>x.permission_code))];
     if(!permissions.includes("dashboard.view")){
-     setResult({stage:"forbidden",id,permissions,stats:{},orders:[],warning:false});
-     return;
+     setResult({stage:"forbidden",id,permissions,stats:{},orders:[],approvals:[],settlements:[],warning:false});return;
     }
-    const permitted=new Set(permissions),tasks=[];
-    if(permitted.has("orders.view")){
+    const grants=new Set(permissions),tasks=[];
+    if(grants.has("orders.view")){
      tasks.push(["orders",()=>count(client,"orders")]);
      tasks.push(["open",()=>count(client,"orders",q=>q.in("status",OPEN))]);
+     tasks.push(["cancelled",()=>count(client,"orders",q=>q.in("status",["cancelled","refunded"]))]);
+     tasks.push(["paidRevenue",()=>paidOrderValue(client)]);
      tasks.push(["recent",async()=>{
-      const r=await client.from("orders").select("id,order_number,status,occasion_type,grand_total,currency,created_at")
-       .order("created_at",{ascending:false}).limit(7);
-      if(r.error)throw r.error;
-      return r.data||[];
+      const q=await client.from("orders")
+       .select("id,order_number,status,occasion_type,delivery_area,grand_total,currency,created_at")
+       .order("created_at",{ascending:false}).limit(8);
+      if(q.error)throw q.error;return q.data||[];
      }]);
     }
-    if(permitted.has("customers.view"))tasks.push(["customers",()=>count(client,"profiles",q=>q.eq("role","customer"))]);
-    if(permitted.has("partners.view"))tasks.push(["partners",()=>count(client,"partners",q=>q.eq("status","active"))]);
-    if(permitted.has("approvals.review"))tasks.push(["approvals",()=>count(client,"listing_versions",q=>q.eq("status","pending_review"))]);
-    if(permitted.has("finance.view"))tasks.push(["settlements",()=>count(client,"partner_settlements",q=>q.eq("status","draft"))]);
+    if(grants.has("customers.view"))tasks.push(["customers",()=>count(client,"profiles",q=>q.eq("role","customer"))]);
+    if(grants.has("partners.view"))tasks.push(["partners",()=>count(client,"partners",q=>q.eq("status","active"))]);
+    if(grants.has("approvals.review")){
+     tasks.push(["pending",()=>count(client,"listing_versions",q=>q.eq("status","pending_review"))]);
+     tasks.push(["approvalsList",()=>recentApprovals(client)]);
+    }
+    if(grants.has("finance.view")){
+     tasks.push(["financial",()=>financialSnapshot(client)]);
+     tasks.push(["settlementsList",()=>recentSettlements(client)]);
+    }
     const settled=await Promise.allSettled(tasks.map(async([key,fn])=>({key,value:await fn()})));
     if(!alive)return;
-    const stats={},orders=[],warning=settled.some(x=>x.status==="rejected");
-    let recent=[];
-    settled.forEach(x=>{
-     if(x.status!=="fulfilled")return;
-     if(x.value.key==="recent")recent=x.value.value;
-     else stats[x.value.key]=x.value.value;
-    });
-    setResult({stage:"ready",id,permissions,stats,orders:recent,warning});
+    const values={},warning=settled.some(x=>x.status==="rejected");
+    settled.forEach(x=>{if(x.status==="fulfilled")values[x.value.key]=x.value.value;});
+    const fin=values.financial||{};
+    setResult({stage:"ready",id,permissions,
+     stats:{orders:values.orders,open:values.open,customers:values.customers,partners:values.partners,
+      pending:values.pending,unsettled:fin.unsettled,draft:fin.draft,approved:fin.approved,paid:fin.paid,
+      paidRevenue:values.paidRevenue,cancelled:values.cancelled},
+     orders:values.recent||[],approvals:values.approvalsList||[],
+     settlements:values.settlementsList||[],warning});
    }catch{
-    if(alive)setResult({stage:"error",id,permissions:[],stats:{},orders:[],warning:false});
+    if(alive)setResult({stage:"error",id,permissions:[],stats:{},orders:[],approvals:[],settlements:[],warning:false});
    }
   })();
   return()=>{alive=false;};
  },[valid,client,id,revision]);
- const signin=pathFor("auth",locale);
- const secure=pathFor("security",locale);
- const work=pathFor("staffPortal",locale);
- const a=session.status;
- const gate=a==="mfa_setup_required"?{text:t.setup,href:secure}:a==="mfa_required"?{text:t.challenge,href:signin+"?mode=mfa"}:
-  a==="signed_out"?{text:t.signIn,href:signin+"?next="+encodeURIComponent(work)}:null;
+ const role=session.role||"";
+ const owner=role==="super_admin"||role==="admin";
+ const accountant=role==="accountant";
  const perms=new Set(result.permissions);
- const metrics=[
-  {id:"orders",p:"orders.view",label:t.orders},
-  {id:"open",p:"orders.view",label:t.open},
-  {id:"customers",p:"customers.view",label:t.customers},
-  {id:"partners",p:"partners.view",label:t.partners},
-  {id:"approvals",p:"approvals.review",label:t.approvals},
-  {id:"settlements",p:"finance.view",label:t.settlements}
- ].filter(x=>perms.has(x.p));
- const modules=oldModules.filter(x=>x.p.some(p=>perms.has(p)));
- return <main id="main-content" className="dd-staff-workspace" dir={locale==="ar"?"rtl":"ltr"}>
+ const ar=locale==="ar";
+ const signin=pathFor("auth",locale),secure=pathFor("security",locale);
+ const gate=session.status==="mfa_setup_required"?{label:t.mfaSetup,href:secure}:
+  session.status==="mfa_required"?{label:t.mfa,href:signin+"?mode=mfa"}:
+  session.status==="signed_out"?{label:t.login,href:signin}:null;
+ const metrics=owner?[
+  ["orders","orders.view",t.all],["open","orders.view",t.open],
+  ["customers","customers.view",t.customers],["partners","partners.view",t.partners],
+  ["pending","approvals.review",t.pending],["unsettled","finance.view",t.unsettled],
+  ["paidRevenue","orders.view",t.paidRevenue],["cancelled","orders.view",t.cancelled]
+ ]:accountant?[
+  ["unsettled","finance.view",t.unsettled],["draft","finance.view",t.draft],
+  ["approved","finance.view",t.approved],["paid","finance.view",t.paid]
+ ]:[
+  ["orders","orders.view",t.all],["open","orders.view",t.open],
+  ["customers","customers.view",t.customers],["partners","partners.view",t.partners],
+  ["pending","approvals.review",t.pending],["draft","finance.view",t.draft]
+ ];
+ const visible=metrics.filter(x=>perms.has(x[1]));
+ const moneyMetric=new Set(["unsettled","paidRevenue","draft","approved","paid"]);
+ const title=owner?t.ownerTitle:accountant?t.accountantTitle:t.staffTitle;
+ const subtitle=owner?t.ownerSubtitle:accountant?t.accountantSubtitle:t.staffSubtitle;
+ const modules=staffAdminVisibleModules(result.permissions,role);
+ return <main id="main-content" className="dd-staff-workspace" dir={ar?"rtl":"ltr"}>
   <div className="dd-work-wrap">
    <header className="dd-work-heading">
-    <div>
-     <p className="dd-work-eyebrow">Dear Day · {t.overview}</p>
-     <h1>{t.title}</h1>
-     <p>{t.subtitle}</p>
-    </div>
-    <Link href={pathFor("home",locale)} className="dd-work-outline">{t.website} ↗</Link>
+    <div><h1>{title}</h1><p>{subtitle}</p></div>
+    {valid&&result.stage==="ready"&&<div className="dd-work-parity-badge">{t.role}: <strong>{role.replaceAll("_"," ")}</strong></div>}
    </header>
    {!valid?<section className="dd-work-panel dd-work-guard" role="status">
-    <p>{a==="loading"?t.load:gate? (a==="mfa_required"?t.challenge:a==="mfa_setup_required"?t.setup:t.noAccess):
-       a==="inactive"||a==="error"?t.inactive:t.noAccess}</p>
-    {gate&&<Link href={gate.href} className="dd-work-primary">{gate.text}</Link>}
-   </section>:result.id!==id||result.stage==="loading"?<section className="dd-work-panel dd-work-guard" role="status">{t.load}</section>:
-   result.stage==="error"?<section className="dd-work-panel dd-work-guard" role="alert">
-    <p>{t.failed}</p><button type="button" onClick={()=>setRevision(n=>n+1)} className="dd-work-primary">{t.reload}</button>
-   </section>:result.stage==="forbidden"?<section className="dd-work-panel dd-work-guard">
-    <p>{t.noDashboard}</p><Link className="dd-work-outline" href={pathFor("access",locale)}>{t.back}</Link>
-   </section>:<>
-    <section className="dd-work-identity" aria-label={t.role}>
-      <span>{t.role}: <strong>{session.role.replaceAll("_"," ")}</strong></span>
-      <span>{t.email}: <strong dir="ltr">{session.user?.email||"—"}</strong></span>
-      <button type="button" onClick={()=>setRevision(n=>n+1)} className="dd-work-outline">{t.reload}</button>
-    </section>
-    {metrics.length>0&&<section aria-labelledby="dd-work-overview">
-     <h2 id="dd-work-overview" className="dd-work-section-title">{t.stats}</h2>
-     <div className="dd-work-metrics">{metrics.map(x=><article className="dd-work-stat" key={x.id}>
-       <span>{x.label}</span><strong>{result.stats[x.id]===undefined?"—":new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-US").format(result.stats[x.id])}</strong>
-     </article>)}</div>
+    <p>{session.status==="loading"?t.loading:t.unavailable}</p>
+    {gate&&<Link className="dd-work-primary" href={gate.href}>{gate.label}</Link>}
+   </section>:result.id!==id||result.stage==="loading"?<section className="dd-work-panel dd-work-guard" role="status">{t.loading}</section>:
+    result.stage==="error"?<section className="dd-work-panel dd-work-guard" role="alert">
+     <p>{t.error}</p><button type="button" className="dd-work-primary" onClick={()=>setRevision(x=>x+1)}>{t.refresh}</button>
+    </section>:result.stage==="forbidden"?<section className="dd-work-panel dd-work-guard" role="alert">{t.noAccess}</section>:<>
+    {visible.length>0&&<section className="dd-work-metrics" aria-label={t.role}>
+     {visible.map(([key,,label])=><article className="dd-work-stat" key={key}>
+      <span>{label}</span><strong dir={moneyMetric.has(key)?"ltr":undefined}>
+       {moneyMetric.has(key)?money(result.stats[key]??null,"EGP",locale):number(result.stats[key],locale)}
+      </strong>
+     </article>)}
     </section>}
     {result.warning&&<p className="dd-work-warning" role="status">{t.limited}</p>}
-    {perms.has("orders.view")&&<section className="dd-work-panel" aria-labelledby="dd-work-orders">
-      <h2 id="dd-work-orders" className="dd-work-section-title">{t.latest}</h2>
+    {perms.has("orders.view")&&<Panel title={t.recentOrders} href={pathFor("staffOrders",locale)} hrefLabel={t.allOrders}>
       {result.orders.length?<div className="dd-work-table-scroll"><table>
-       <thead><tr><th>{t.number}</th><th>{t.status}</th><th>{t.occasion}</th><th>{t.total}</th><th>{t.date}</th></tr></thead>
+       <thead><tr><th>{t.order}</th><th>{t.status}</th><th>{t.occasion}</th><th>{t.area}</th><th>{t.total}</th><th>{t.created}</th></tr></thead>
        <tbody>{result.orders.map(order=><tr key={order.id}>
-        <td dir="ltr"><Link href={pathFor("staffOrders",locale)}>{order.order_number===null?"—":"#DD"+order.order_number}</Link></td>
-        <td>{statusNames[locale]?.[order.status]||order.status||"—"}</td><td>{order.occasion_type||"—"}</td>
-        <td dir="ltr">{amount(order.grand_total,order.currency,locale)}</td><td>{shortDate(order.created_at,locale)}</td>
+        <td dir="ltr"><Link href={pathFor("staffOrders",locale)}>{order.order_number==null?"—":"#DD"+order.order_number}</Link></td>
+        <td><span className={"dd-work-status-badge "+(order.status==="paid"||order.status==="completed"?"good":order.status==="cancelled"||order.status==="refunded"?"bad":"warn")}>{orderStatuses[locale]?.[order.status]||order.status||"—"}</span></td>
+        <td>{order.occasion_type||"—"}</td><td>{order.delivery_area||"—"}</td>
+        <td dir="ltr">{money(order.grand_total,order.currency,locale)}</td><td>{shortDate(order.created_at,locale)}</td>
        </tr>)}</tbody>
-      </table></div>:<p className="dd-work-empty">{result.stats.orders===undefined?t.limited:t.noOrders}</p>}
-    </section>}
-    <section className="dd-work-panel" aria-labelledby="dd-work-nav">
-     <h2 id="dd-work-nav" className="dd-work-section-title">{t.navigation}</h2>
-     <p className="dd-work-stage">{t.now}</p>
-     <div className="dd-work-links">
-       <Link href={work}>{t.overview}</Link>
-       <Link href={secure}>{t.security}</Link>
-       {perms.has("orders.view")&&<Link href={pathFor("staffOrders",locale)}>{t.ordersMenu}</Link>}
-        {perms.has("orders.manage")&&<Link href={pathFor("staffOrderEmails",locale)}>{t.orderEmailsMenu}</Link>}
-       {(perms.has("catalog.view")||perms.has("catalog.manage"))&&<Link href={pathFor("staffCatalog",locale)}>{t.catalog}</Link>}
-       {perms.has("approvals.review")&&<Link href={pathFor("staffApprovals",locale)}>{t.review}</Link>}
-       {(perms.has("partners.view")||perms.has("partners.manage"))&&<Link href={pathFor("staffPartners",locale)}>{t.partnerMenu}</Link>}
-       {perms.has("customers.view")&&<Link href={pathFor("staffCustomers",locale)}>{t.directory}</Link>}
-       {perms.has("customers.view")&&<Link href={pathFor("staffSupport",locale)}>{t.support}</Link>}
-       {(perms.has("availability.view")||perms.has("availability.manage"))&&<Link href={pathFor("staffAvailability",locale)}>{t.availability}</Link>}
-       {perms.has("orders.view")&&<Link href={pathFor("staffCancellations",locale)}>{t.cancellations}</Link>}
-       {(perms.has("catalog.manage")||perms.has("approvals.review"))&&<Link href={pathFor("staffRefundPolicies",locale)}>{locale==="ar"?"سياسات الاسترداد":"Refund policies"}</Link>}
-       {(perms.has("employees.view")||perms.has("employees.manage"))&&
-        <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
+      </table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptyOrders}</p>}
+    </Panel>}
+    {owner&&<div className="dd-work-dual-panels">
+     {perms.has("approvals.review")&&<Panel title={t.pendingApprovals} href={pathFor("staffApprovals",locale)} hrefLabel={t.openApprovals}>
+       {result.approvals.length?<div className="dd-work-table-scroll"><table>
+        <thead><tr><th>{t.item}</th><th>{t.partner}</th><th>{t.price}</th><th>{t.sent}</th></tr></thead>
+        <tbody>{result.approvals.map(v=><tr key={v.id}>
+         <td>{ar?v.name_ar||v.name_en||"—":v.name_en||v.name_ar||"—"}</td>
+         <td>{ar?v.partnerName?.name_ar||v.partnerName?.name_en||"—":v.partnerName?.name_en||v.partnerName?.name_ar||"—"}</td>
+         <td dir="ltr">{money(v.price,v.currency,locale)}</td>
+         <td>{shortDate(v.submitted_at||v.created_at,locale)}</td>
+        </tr>)}</tbody>
+       </table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptyApprovals}</p>}
+      </Panel>}
+     {perms.has("finance.view")&&<Panel title={t.financeTitle} external href="https://dear-day.com/Dear-Day-Finance.html" hrefLabel={t.openFinance}>
+       <div className="dd-work-finance-summary">
+        {[["draft",t.draft],["approved",t.approved],["paid",t.paid],["unsettled",t.unsettled]].map(([key,label])=>
+         <div className="dd-work-finance-box" key={key}><span>{label}</span>
+          <strong dir="ltr">{money(result.stats[key]??null,"EGP",locale)}</strong>
+         </div>)}
+       </div>
+      </Panel>}
+    </div>}
+    {accountant&&perms.has("finance.view")&&<Panel title={t.latestSettlements} external href="https://dear-day.com/Dear-Day-Finance.html" hrefLabel={t.openFinance}>
+     {result.settlements.length?<div className="dd-work-table-scroll"><table>
+      <thead><tr><th>{t.partner}</th><th>{t.period}</th><th>Partner Net</th><th>{t.status}</th><th>{t.reference}</th></tr></thead>
+      <tbody>{result.settlements.map(s=><tr key={s.id}>
+       <td>{ar?s.partnerName?.name_ar||s.partnerName?.name_en||"—":s.partnerName?.name_en||s.partnerName?.name_ar||"—"}</td>
+       <td>{s.period_start||"—"} — {s.period_end||"—"}</td>
+       <td dir="ltr">{money(s.partner_net,"EGP",locale)}</td><td>{s.status}</td><td dir="ltr">{s.payment_reference||"—"}</td>
+      </tr>)}</tbody></table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptySettlements}</p>}
+    </Panel>}
+    {!owner&&!accountant&&<Panel title={t.workAreas}>
+     <div className="dd-work-links dd-work-parity-links">
+      {modules.map(mod=>mod.legacy?
+       <a key={mod.id} href={"https://dear-day.com/"+mod.legacy} target="_blank" rel="noopener noreferrer">{ar?mod.ar:mod.en} ↗</a>:
+       <Link key={mod.id} href={pathFor(mod.route,locale)}>{ar?mod.ar:mod.en}</Link>)}
      </div>
-     <p className="dd-work-stage">{t.old}</p>
-     {modules.length?<div className="dd-work-links">
-       {modules.map(m=><a key={m.id} href={"https://dear-day.com/"+m.path} target="_blank" rel="noopener noreferrer">
-         {t[m.id]} <span aria-hidden="true">↗</span>
-       </a>)}
-     </div>:<p className="dd-work-empty">{t.emptySections}</p>}
-     <p className="dd-work-notice">{t.note}</p>
-     <p className="dd-work-notice">{t.source}</p>
-    </section>
+    </Panel>}
+    <p className="dd-work-notice">{t.permissionNote}</p>
+    {modules.some(m=>m.legacy)&&<p className="dd-work-notice">{t.oldNotice}</p>}
    </>}
   </div>
  </main>;

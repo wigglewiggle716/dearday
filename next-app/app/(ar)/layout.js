@@ -1,7 +1,7 @@
 import "../globals.css";
-import SiteHeader from "../../components/site-header";
+import SiteLayoutChrome from "../../components/site-layout-chrome";
+import "../staff-admin-shell.css";
 import { AuthSessionProvider } from "../../components/auth-session-provider";
-import SiteFooter from "../../components/site-footer";
 import { CatalogProvider, CatalogCartProvider } from "../../components/live-catalog";
 
 export const metadata = {
@@ -17,9 +17,9 @@ export default function ArabicLayout({ children }) {
         <AuthSessionProvider>
         <CatalogProvider>
           <CatalogCartProvider locale="ar">
-            <SiteHeader locale="ar" />
+            <SiteLayoutChrome locale="ar">
         {children}
-            <SiteFooter locale="ar" />
+            </SiteLayoutChrome>
           </CatalogCartProvider>
         </CatalogProvider>
         </AuthSessionProvider>

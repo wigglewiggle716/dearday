@@ -1,0 +1,62 @@
+/* Dear Day React Admin — visual parity with the original 260px burgundy sidebar.
+   Internal routes have their own chrome: no consumer header/footer. */
+.dd-admin-shell{--dd-admin-wine:#6B3540;--dd-admin-ivory:#FAF3EA;--dd-admin-line:rgba(107,53,64,.14);display:flex;min-height:100dvh;width:100%;background:#f7f2ed;color:#352D2E;font-family:"Noto Sans Arabic",Tahoma,Arial,sans-serif}
+html[lang="en"] .dd-admin-shell{font-family:Arial,Helvetica,sans-serif}
+.dd-admin-shell *{box-sizing:border-box}
+.dd-admin-sidebar{position:fixed;inset-block:0;inset-inline-start:0;width:260px;background:var(--dd-admin-wine);color:#fff;padding:24px 18px 0;display:flex;flex-direction:column;height:100dvh;z-index:249;overflow:hidden}
+.dd-admin-side-brand{padding:0 10px 22px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}
+.dd-admin-brand-copy strong{display:block;font-size:23px;line-height:1.35;letter-spacing:0}
+.dd-admin-brand-copy span{display:block;font-size:11px;opacity:.75;margin-top:5px;line-height:1.5}
+.dd-admin-side-nav{display:flex;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;flex-direction:column;gap:7px;margin-top:24px;padding:0 0 16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+.dd-admin-side-link{width:100%;text-align:start;background:transparent;color:#fff;padding:12px 14px;border-radius:13px;font-size:13px;font-weight:700;line-height:1.45;text-decoration:none;opacity:.82;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:43px}
+.dd-admin-side-link:hover,.dd-admin-side-link:focus-visible,.dd-admin-side-link.is-active{background:rgba(255,255,255,.14);opacity:1;color:#fff}
+.dd-admin-external-icon{font-size:12px;opacity:.8}
+.dd-admin-side-link.is-legacy{border:1px solid rgba(255,255,255,.08)}
+.dd-admin-side-status{font-size:12px;line-height:1.7;padding:12px 14px;margin:0;color:#fff}
+.dd-admin-sidebar-foot{margin-top:auto;border-top:1px solid rgba(255,255,255,.15);padding:14px 0 max(16px,env(safe-area-inset-bottom));flex-shrink:0}
+.dd-admin-sidebar-foot p{font-size:11px;opacity:.8;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-admin-role-label{display:block;font-size:10px;opacity:.78;margin-bottom:12px;overflow-wrap:anywhere}
+.dd-admin-logout{width:100%;border:1px solid rgba(255,255,255,.3);background:transparent;color:white;border-radius:12px;padding:10px;font:700 12px/1.5 inherit;cursor:pointer;min-height:40px}
+.dd-admin-logout:hover{background:rgba(255,255,255,.12)}
+.dd-admin-logout:disabled{opacity:.6}
+.dd-admin-side-error{color:white}
+.dd-admin-main{margin-inline-start:260px;min-width:0;width:calc(100% - 260px);min-height:100dvh;display:flex;flex-direction:column}
+.dd-admin-topbar{position:sticky;top:0;z-index:180;min-height:56px;padding:10px 30px;background:rgba(250,243,234,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--dd-admin-line);display:flex;align-items:center;gap:10px}
+.dd-admin-site-link,.dd-admin-lang-link,.dd-admin-top-role{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 14px;font-size:11px;font-weight:700;border-radius:999px;text-decoration:none}
+.dd-admin-site-link{color:#fff;background:var(--dd-admin-wine);border:1px solid var(--dd-admin-wine)}
+.dd-admin-lang-link,.dd-admin-top-role{color:var(--dd-admin-wine);background:#fff;border:1px solid var(--dd-admin-line)}
+.dd-admin-site-link:hover{background:#522731;color:#fff}
+.dd-admin-lang-link:hover{background:#f8ece7}
+.dd-admin-top-spacer{flex:1}
+.dd-admin-menu-trigger,.dd-admin-menu-close,.dd-admin-mobile-backdrop{display:none}
+.dd-admin-main-content{flex:1;min-width:0}
+.dd-admin-main-content>main{width:100%;min-width:0;box-sizing:border-box;max-width:none;margin:0}
+.dd-admin-main-content .dd-staff-workspace{background:transparent;padding:30px}
+.dd-admin-main-content .dd-work-wrap{width:100%;max-width:none}
+.dd-admin-main-content .dd-work-panel{background:#fff;box-shadow:0 12px 30px rgba(70,37,40,.05)}
+.dd-admin-main-content .dd-work-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.dd-admin-main-content .dd-work-stat{box-shadow:0 12px 30px rgba(70,37,40,.05);padding:17px}
+.dd-admin-main-content .dd-work-stat span{font-size:10px}
+.dd-admin-main-content .dd-work-stat strong{font-size:25px}
+.dd-admin-main-content .dd-work-heading h1{font-size:clamp(25px,2.7vw,31px)}
+.dd-admin-main-content .dd-work-section-title{font-size:18px!important}
+.dd-admin-main-content .dd-work-links{grid-template-columns:repeat(3,minmax(0,1fr))}
+.dd-admin-main-content .dd-staff-orders,.dd-admin-main-content .dd-email-admin{background:transparent;padding:30px}
+.dd-admin-main-content .dd-orders-layout,.dd-admin-main-content .dd-email-admin-wrap{width:100%;max-width:none}
+@media(max-width:1180px){.dd-admin-main-content .dd-work-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .dd-admin-shell{display:block}
+ .dd-admin-sidebar{position:fixed;z-index:301;inset-block:0;inset-inline-start:0;width:min(300px,85vw);height:100dvh;transform:translateX(110%);transition:transform .2s ease;box-shadow:0 16px 50px rgba(30,15,18,.18)}
+ html[lang="en"] .dd-admin-sidebar{transform:translateX(-110%)}
+ .dd-admin-sidebar.is-open,html[lang="en"] .dd-admin-sidebar.is-open{transform:translateX(0)}
+ .dd-admin-mobile-backdrop{display:block;position:fixed;inset:0;z-index:300;background:rgba(31,16,20,.46);border:0;padding:0}
+ .dd-admin-main{margin-inline-start:0;width:100%}
+ .dd-admin-topbar{padding:9px 14px;gap:8px}
+ .dd-admin-top-role{display:none}
+ .dd-admin-menu-trigger{display:flex;flex-direction:column;justify-content:center;gap:4px;width:40px;height:36px;padding:0 10px;background:#fff;border:1px solid var(--dd-admin-line);border-radius:10px;cursor:pointer}
+ .dd-admin-menu-trigger span{display:block;width:100%;height:2px;background:var(--dd-admin-wine);border-radius:2px}
+ .dd-admin-menu-close{display:block;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:9px;width:35px;height:35px;font-size:25px;line-height:30px;cursor:pointer;flex-shrink:0}
+ .dd-admin-main-content .dd-staff-workspace,.dd-admin-main-content .dd-staff-orders,.dd-admin-main-content .dd-email-admin{padding:20px 14px 55px}
+ .dd-admin-main-content .dd-work-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){.dd-admin-main-content .dd-work-metrics,.dd-admin-main-content .dd-work-links{grid-template-columns:1fr}}
