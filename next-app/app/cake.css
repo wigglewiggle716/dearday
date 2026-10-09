@@ -345,7 +345,7 @@ html[lang=en] .dd-cake-custom{direction:ltr}
 .dd-cake-dialog-fields input,.dd-cake-dialog-fields textarea{
   width:100%;min-width:0;border:1px solid #eaded9;background:#fff;
   border-radius:12px;padding:11px 12px;font-size:13px;color:#352D2E;
-  font-family:inherit;resize:vertical;
+  font-family:inherit;resize:none;
 }
 .dd-cake-dialog-fields input:focus,.dd-cake-dialog-fields textarea:focus{border-color:#A8583D;outline:2px solid rgba(168,88,61,.14)}
 .dd-cake-dialog-fields input[type=file]{font-size:12px;max-width:100%}
@@ -369,3 +369,29 @@ html[lang=en] .dd-cake-custom{direction:ltr}
   .dd-cake-dialog-full{grid-column:1}
   .dd-cake-dialog-head h2{font-size:20px}
 }
+
+/* Cake page only: Arabic sorting starts at the right, with chevron on the left. */
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-field,
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-trigger,
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-menu,
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-option {
+  direction:rtl;
+}
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-trigger {
+  flex-direction:row;text-align:right;
+}
+.dd-cake-page[dir="rtl"] .dd-cake-sort .dd-home-dropdown-trigger > span:first-child {
+  min-width:0;text-align:right;
+}
+/* Keep the scrollbar off the Arabic modal's close-button edge while
+   preserving RTL form labels and content. English layout is unchanged. */
+.dd-cake-dialog-overlay[dir="rtl"] .dd-cake-dialog {direction:ltr;scrollbar-width:thin}
+.dd-cake-dialog-overlay[dir="rtl"] .dd-cake-dialog-head,
+.dd-cake-dialog-overlay[dir="rtl"] .dd-cake-dialog > form,
+.dd-cake-dialog-overlay[dir="rtl"] .dd-cake-dialog-success {direction:rtl}
+.dd-cake-dialog .dd-cake-dialog-close {
+  display:grid;place-items:center;
+  flex:0 0 36px;width:36px;height:36px;min-width:36px;
+  padding:0;margin:0;line-height:1;
+}
+.dd-cake-dialog .dd-cake-dialog-close svg {display:block;width:17px;height:17px}
