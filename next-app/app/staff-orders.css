@@ -15,6 +15,7 @@
 .dd-orders-toolbar input,.dd-orders-toolbar select,.dd-orders-update select{min-height:44px;border:1px solid #e2d4d1;border-radius:11px;background:#fff;color:#352D2E;padding:0 12px;font:inherit;font-size:13px;min-width:0}
 .dd-orders-toolbar input{flex:1 1 250px}
 .dd-orders-toolbar select{min-width:166px}
+.dd-orders-notice{padding:12px 16px;border:1px solid #c5dfc8;background:#edf8ed;color:#2b6840;border-radius:12px;font-size:13px;line-height:1.8}
 .dd-orders-helper{font-size:12px;margin:8px 2px 16px;color:#837375}
 .dd-orders-panel{background:#fff;border:1px solid rgba(107,53,64,.14);border-radius:19px;overflow:hidden;box-shadow:0 12px 32px rgba(78,32,39,.035)}
 .dd-orders-guard{padding:45px 20px;min-height:230px;display:flex;gap:16px;align-items:center;justify-content:center;flex-direction:column;text-align:center}
