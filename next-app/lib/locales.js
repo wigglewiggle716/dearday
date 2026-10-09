@@ -20,6 +20,7 @@ export const sections = [
   ["auth", "auth"],
   ["register", "register"],
   ["account", "account"],
+  ["bookings", "bookings"],
   ["access", "access"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
