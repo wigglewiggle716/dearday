@@ -61,10 +61,10 @@ const oldModules=[
 
 
  {id:"financial",p:["finance.view"],path:"Dear-Day-Finance.html"},
- {id:"directory",p:["customers.view"],path:"Dear-Day-Admin-Customers.html"},
+
  {id:"availability",p:["availability.view"],path:"Dear-Day-Admin-Availability.html"},
  {id:"cancellations",p:["orders.manage"],path:"Dear-Day-Admin-Cancellations.html"},
- {id:"support",p:["customers.view"],path:"Dear-Day-Admin-Support.html"}
+
 ];
 function amount(value,currency,locale){
  try{return new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-EG",{style:"currency",currency:currency||"EGP",maximumFractionDigits:2}).format(Number(value||0));}
@@ -207,6 +207,8 @@ export default function StaffWorkspace({locale="ar"}){
        {(perms.has("catalog.view")||perms.has("catalog.manage"))&&<Link href={pathFor("staffCatalog",locale)}>{t.catalog}</Link>}
        {perms.has("approvals.review")&&<Link href={pathFor("staffApprovals",locale)}>{t.review}</Link>}
        {(perms.has("partners.view")||perms.has("partners.manage"))&&<Link href={pathFor("staffPartners",locale)}>{t.partnerMenu}</Link>}
+       {perms.has("customers.view")&&<Link href={pathFor("staffCustomers",locale)}>{t.directory}</Link>}
+       {perms.has("customers.view")&&<Link href={pathFor("staffSupport",locale)}>{t.support}</Link>}
        {(perms.has("employees.view")||perms.has("employees.manage"))&&
         <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
      </div>
