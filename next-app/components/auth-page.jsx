@@ -284,6 +284,9 @@ export default function AuthPage({locale="ar",page="login"}){
    setStatus(null);setOauthPending(true);
    try{
      window.localStorage.setItem("ddPostAuthNext",landing());
+     // OAuth callback must read the same persistent storage tier.
+     // Set the preference before the provider redirects away.
+     rememberSession(true);
      const client=authClient(true);
      const {error}=await client.auth.signInWithOAuth({
        provider,options:{redirectTo:window.location.origin+loginPath+"?oauth=1"}
