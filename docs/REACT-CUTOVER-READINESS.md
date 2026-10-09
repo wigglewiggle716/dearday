@@ -42,3 +42,6 @@
 - Finish and test admin/finance/partner route separation.
 - Stage and review public SEO metadata and server-side Resend integration, without enabling emails or changing production configuration.
 - Reserve the actual domain handover, final MFA enforcement and transactional send activation for controlled owner-approved checkpoints.
+
+## Owner acceptance tracking
+The owner-facing **single cumulative checklist** is [REACT-OWNER-REVIEW-CHECKLIST.md](./REACT-OWNER-REVIEW-CHECKLIST.md). Every new feature or bug fix must add its own AR/EN/mobile/permissions checks to that file. React Staff Phase 3 (catalog and approvals) is on branch, not yet browser/READY-build validated. No checkbox in the owner checklist was pre-approved.
