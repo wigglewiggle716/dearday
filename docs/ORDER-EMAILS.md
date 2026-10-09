@@ -13,7 +13,8 @@
 
 ## Added on `react-migration`
 - `supabase/migrations/20261009_order_payment_email_outbox.sql` — private ledger, paid-status trigger and service-only claim/settle RPCs.
-- `lib/order-email-dispatch.js` — server-only Resend API worker.
+- `next-app/lib/order-email-dispatch.cjs` — server-only shared Resend worker; `lib/order-email-dispatch.js` is a compatibility wrapper for the legacy Vercel API.
+- `next-app/app/api/maintenance/order-emails/route.js` — protected Next.js dispatcher endpoint (no production cron).
 - `api/paymob/webhook.js` — after verified `paid`, best-effort immediate dispatch; never compromises callback acknowledgement on email failure.
 - `api/maintenance/send-order-emails.js` — POST worker protected by `Authorization: Bearer <ORDER_EMAIL_DISPATCH_SECRET>`.
 - `tests/order-email-dispatch.cjs` — deterministic mock-based test: `node tests/order-email-dispatch.cjs`.
