@@ -11,3 +11,20 @@ Safety rules:
 
 Baseline source commit:
 `5d97cc458910279646ec10a18ffecaca81a6854d`
+
+## Privacy policy migration — 2026-10-09
+
+- Added `/privacy` and `/en/privacy` as server-rendered React pages, using the
+  existing shared header, footer and language navigation.
+- Both sets of 12 sections and the original September 30, 2026 update date are
+  preserved from the live `/privacy` and `/privacy-en` content. Live page bodies
+  matched the current `main` source at `5d97cc4`; the cookies update is included.
+- Scoped responsive legal styling mirrors the original layout. Section anchors
+  clear the sticky header; the desktop contents panel can scroll on short screens.
+- Verified: production build, rendered content parity for both languages, 1440px,
+  390px and 320px widths without horizontal overflow, section navigation,
+  language switching with the section fragment, contact links and footer return.
+- Browser checks ran locally with catalog requests mocked and external font loading
+  replaced by the existing local Arabic font; no production data was written.
+- Changes are limited to `next-app/` on `react-migration`; no production deploy or
+  changes to `main`. Terms, refunds and account/data-deletion remain separate steps.
