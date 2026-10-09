@@ -303,7 +303,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                 onChange={value=>setFilters(x=>({...x,budget:value}))}/>
               <button className="dd-venues-reset" type="button" onClick={reset}>{t.reset}</button>
             </aside>
-            <section className="dd-venues-results" aria-label={t.results}>
+            <section className="dd-venues-results" aria-label={t.picks}>
               <div className="dd-venues-section-title">
                 <h2>{locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.picks}</h2>
                 <div className="dd-venues-sort">
