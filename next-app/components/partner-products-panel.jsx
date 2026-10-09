@@ -52,7 +52,7 @@ export default function PartnerProductsPanel(){
   return()=>{live=false;};
  },[client,partner?.id,revision]);
  const versionMap=useMemo(()=>{
-  const out={};for(const v of data.versions.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))){if(!out[v.listing_id])out[v.listing_id]=v;}
+  const out={};for(const v of [...data.versions].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))){if(!out[v.listing_id])out[v.listing_id]=v;}
   return out;
  },[data.versions]);
  const results=data.listings.filter(l=>{
