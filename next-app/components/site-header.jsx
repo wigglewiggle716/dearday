@@ -74,6 +74,10 @@ export default function SiteHeader({ locale }) {
 
   function AccountControls({mobile=false}){
     if(session.status==="loading")return <span className="dd-session-loading" aria-label={locale==="ar"?"جاري تحميل الحساب":"Loading account"}/>;
+    if(session.status==="mfa_setup_required")
+      return <Link className="dd-auth-link dd-signup" href={pathFor("security",locale)}>
+        {locale==="ar"?"تفعيل التحقق الثنائي":"Set up 2-step verification"}
+      </Link>;
     if(session.status==="mfa_required")
       return <Link className="dd-auth-link dd-signup" href={pathFor("auth",locale)+"?mode=mfa"}>
         {locale==="ar"?"تأكيد الأمان":"Verify sign-in"}
