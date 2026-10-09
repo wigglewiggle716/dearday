@@ -250,3 +250,87 @@ html[lang=en] .dd-flowers-custom-copy {direction:ltr}
 @media(prefers-reduced-motion:reduce){
   .dd-flowers-page * {transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+/* Preserve approved flower-page look. RTL order for branded sort; LTR English unchanged. */
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-field,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-menu,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-option{direction:rtl}
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger{flex-direction:row;text-align:right}
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger>span:first-child{text-align:right;min-width:0}
+.dd-flowers-sort .dd-home-dropdown-trigger{font-size:13px;font-weight:700;border-color:rgba(107,53,64,.18);background:#fffdfc}
+.dd-flowers-sort .dd-home-dropdown-chevron{color:#6B3540}
+.dd-flowers-sort .dd-home-dropdown-trigger[aria-expanded="true"] .dd-home-dropdown-chevron{transform:rotate(180deg)}
+.dd-flowers-sort .dd-home-dropdown-option{font-size:12px;font-weight:600;min-height:40px}
+.dd-flowers-sort .dd-home-dropdown-option[aria-selected=true]{background:#6B3540;color:#fff;font-weight:800}
+.dd-flowers-custom .dd-flowers-upload{font-family:inherit}
+/* Custom flower design modal uses the same branded, responsive UX as custom cakes. */
+.dd-flowers-dialog-overlay{
+  position:fixed;inset:0;z-index:1000;display:grid;place-items:center;
+  padding:18px;background:rgba(38,19,23,.58);backdrop-filter:blur(3px);
+}
+.dd-flowers-dialog{
+  width:min(590px,100%);max-height:calc(100dvh - 36px);overflow-y:auto;
+  padding:25px;background:#fffdfc;border-radius:22px;color:#352D2E;
+  border:1px solid #eaded9;box-shadow:0 25px 90px rgba(36,14,19,.24)
+}
+.dd-flowers-dialog-head{display:flex;justify-content:space-between;align-items:start;gap:15px}
+.dd-flowers-dialog-head h2{font-size:23px;line-height:1.5;color:#6B3540;margin:0}
+.dd-flowers-dialog-close{border:1px solid #eaded9;border-radius:50%;background:#fff;color:#6B3540;width:36px;height:36px;cursor:pointer;font-size:25px}
+.dd-flowers-dialog-intro{margin:8px 0 16px;color:#81716e;font-size:13px;line-height:1.85}
+.dd-flowers-dialog-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd-flowers-dialog-fields label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700}
+.dd-flowers-dialog-full{grid-column:1/-1}
+.dd-flowers-dialog-fields input,.dd-flowers-dialog-fields textarea{
+  width:100%;min-width:0;border:1px solid #eaded9;background:#fff;
+  border-radius:12px;padding:11px 12px;font-size:13px;color:#352D2E;
+  font-family:inherit;resize:none;
+}
+.dd-flowers-dialog-fields input:focus,.dd-flowers-dialog-fields textarea:focus{border-color:#A8583D;outline:2px solid rgba(168,88,61,.14)}
+.dd-flowers-dialog-fields input[type=file]{font-size:12px;max-width:100%}
+.dd-flowers-dialog-fields small{font-size:11px;font-weight:400;color:#81716e}
+.dd-flowers-dialog-preview{width:86px;height:86px;object-fit:cover;border-radius:12px;border:1px solid #eaded9}
+.dd-flowers-honeypot{position:absolute;left:-9999px;opacity:0;width:1px;height:1px}
+.dd-flowers-dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:19px}
+.dd-flowers-dialog-actions button,.dd-flowers-dialog-success button{border-radius:999px;padding:11px 20px;min-height:44px;font-size:13px;font-weight:800;cursor:pointer}
+.dd-flowers-dialog-cancel{background:#fff;border:1px solid #eaded9;color:#6B3540}
+.dd-flowers-dialog-submit{background:#6B3540;border:1px solid #6B3540;color:#fff}
+.dd-flowers-dialog-actions button:disabled{opacity:.58;cursor:wait}
+.dd-flowers-dialog-error{color:#a13838;font-size:13px;line-height:1.7}
+.dd-flowers-dialog-success{text-align:center;display:grid;justify-items:center;gap:11px;padding:22px 0}
+.dd-flowers-dialog-success-icon{background:#edf5ec;color:#297347;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:29px}
+.dd-flowers-dialog-success p{font-size:16px;line-height:1.9;margin:0}
+.dd-flowers-dialog-success strong{color:#6B3540}
+.dd-flowers-dialog-success small{color:#81716e;font-size:12px}
+@media(max-width:620px){
+  .dd-flowers-dialog{padding:18px}
+  .dd-flowers-dialog-fields{grid-template-columns:1fr}
+  .dd-flowers-dialog-full{grid-column:1}
+  .dd-flowers-dialog-head h2{font-size:20px}
+}
+
+/* Cake page only: Arabic sorting starts at the right, with chevron on the left. */
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-field,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-menu,
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-option {
+  direction:rtl;
+}
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger {
+  flex-direction:row;text-align:right;
+}
+.dd-flowers-page[dir="rtl"] .dd-flowers-sort .dd-home-dropdown-trigger > span:first-child {
+  min-width:0;text-align:right;
+}
+/* Keep the scrollbar off the Arabic modal's close-button edge while
+   preserving RTL form labels and content. English layout is unchanged. */
+.dd-flowers-dialog-overlay[dir="rtl"] .dd-flowers-dialog {direction:ltr;scrollbar-width:thin}
+.dd-flowers-dialog-overlay[dir="rtl"] .dd-flowers-dialog-head,
+.dd-flowers-dialog-overlay[dir="rtl"] .dd-flowers-dialog > form,
+.dd-flowers-dialog-overlay[dir="rtl"] .dd-flowers-dialog-success {direction:rtl}
+.dd-flowers-dialog .dd-flowers-dialog-close {
+  display:grid;place-items:center;
+  flex:0 0 36px;width:36px;height:36px;min-width:36px;
+  padding:0;margin:0;line-height:1;
+}
+.dd-flowers-dialog .dd-flowers-dialog-close svg {display:block;width:17px;height:17px}
