@@ -1,0 +1,102 @@
+/* Dear Day internal catalog / approval workflow. No global selectors. */
+.dd-staff-catalog{flex:1;min-height:75vh;padding:38px clamp(15px,5vw,70px) 72px;background:linear-gradient(145deg,#FAF3EA,#fff9f5);color:#352D2E}
+.dd-staff-catalog *{box-sizing:border-box}
+.dd-catalog-width{width:min(1390px,100%);margin:auto}
+.dd-catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:23px}
+.dd-catalog-heading>div:first-child>a{font-size:13px;font-weight:750;color:#A8583D}
+.dd-catalog-heading>div:first-child>a:hover{text-decoration:underline}
+.dd-catalog-heading h1{margin:11px 0 5px;font-size:clamp(25px,2.7vw,35px);color:#6B3540}
+.dd-catalog-heading p{margin:0;font-size:13px;line-height:1.85;color:#76686a}
+.dd-catalog-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.dd-catalog-main,.dd-catalog-outline,.dd-catalog-danger{border-radius:12px;display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:10px 16px;font:700 13px/1.25 inherit;cursor:pointer;white-space:normal;text-align:center}
+.dd-catalog-main{color:white;border:1px solid #6B3540;background:#6B3540}
+.dd-catalog-outline{color:#6B3540;border:1px solid rgba(107,53,64,.25);background:white}
+.dd-catalog-danger{border:1px solid #9a4545;background:#fff4f1;color:#9a4545}
+.dd-catalog-outline:hover{background:#f7efeb}
+.dd-catalog-main:hover{background:#542932}
+.dd-catalog-danger:hover{background:#ffe8e4}
+.dd-catalog-main:disabled,.dd-catalog-outline:disabled,.dd-catalog-danger:disabled{opacity:.53;cursor:not-allowed}
+.dd-catalog-outline.small{font-size:12px;min-height:34px;padding:7px 11px}
+.dd-catalog-panel{border-radius:19px;background:#fff;border:1px solid rgba(107,53,64,.15);overflow:hidden;box-shadow:0 9px 30px rgba(62,29,34,.04)}
+.dd-catalog-gate{min-height:235px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:13px;padding:26px;text-align:center}
+.dd-catalog-gate p{margin:0}
+.dd-catalog-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:17px}
+.dd-catalog-stats article{background:#fffdfa;border:1px solid rgba(107,53,64,.14);border-radius:17px;padding:17px;min-width:0}
+.dd-catalog-stats article span{display:block;color:#786b6d;font-size:12px;font-weight:700}
+.dd-catalog-stats article strong{display:block;color:#6B3540;font-size:28px;margin-top:8px}
+.dd-catalog-toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+.dd-catalog-toolbar input,.dd-catalog-toolbar select{min-width:0;min-height:44px;border:1px solid #e1d4d0;border-radius:12px;background:#fff;color:#352D2E;font:inherit;font-size:13px;padding:0 12px}
+.dd-catalog-toolbar input{flex:2 1 260px}
+.dd-catalog-toolbar select{flex:1 1 165px}
+.dd-catalog-table-scroll{overflow-x:auto}
+.dd-catalog-table-scroll table{width:100%;min-width:1050px;border-collapse:collapse}
+.dd-catalog-table-scroll th,.dd-catalog-table-scroll td{padding:14px 12px;text-align:start;font-size:12px;line-height:1.5;border-bottom:1px solid #f0e8e5;vertical-align:middle}
+.dd-catalog-table-scroll th{color:#6B3540;background:#fbf7f3;font-weight:800;white-space:nowrap}
+.dd-catalog-table-scroll tbody tr:last-child td{border-bottom:0}
+.dd-catalog-table-scroll tbody tr:hover{background:#fffcf9}
+.dd-catalog-table-scroll td strong{font-size:12px}
+.dd-catalog-table-scroll td small{display:block;color:#376a4a;font-size:10px;margin-top:4px}
+.dd-catalog-tag{display:inline-block;border-radius:50px;background:#f2ece7;padding:6px 9px;color:#6B3540;font-size:11px;font-weight:750;white-space:nowrap}
+.dd-catalog-tag.s-published{color:#376a4a;background:#e9f3ec}
+.dd-catalog-tag.s-pending_review,.dd-catalog-tag.s-draft{color:#865e2c;background:#f8f0df}
+.dd-catalog-tag.s-rejected,.dd-catalog-tag.s-archived{color:#9a4545;background:#f8e7e7}
+.dd-catalog-empty{padding:45px 20px;text-align:center;color:#76676b}
+.dd-catalog-warning,.dd-catalog-notice,.dd-catalog-error{padding:12px 15px;border-radius:12px;font-size:12px;line-height:1.8;margin:15px 0}
+.dd-catalog-warning{color:#7d602d;border:1px solid #eadbbd;background:#fff9e9}
+.dd-catalog-notice{color:#376a4a;border:1px solid #c5dfc8;background:#edf8ed}
+.dd-catalog-error{color:#a13543;border:1px solid #f0c8c8;background:#fff0ed}
+.dd-catalog-overlay{position:fixed;inset:0;z-index:260;background:rgba(36,18,25,.52);display:flex;align-items:center;justify-content:center;padding:12px}
+.dd-catalog-dialog{width:min(870px,100%);max-height:95dvh;overflow-y:auto;background:#fffdfb;border-radius:21px;padding:0 0 20px;box-shadow:0 20px 65px rgba(36,18,25,.19);outline:0}
+.dd-catalog-dialog>header{display:flex;justify-content:space-between;align-items:flex-start;gap:13px;padding:18px 23px;border-bottom:1px solid #eee4de}
+.dd-catalog-dialog>header h2{margin:0;color:#6B3540;font-size:20px;line-height:1.4}
+.dd-catalog-dialog>header button{flex:0 0 38px;width:38px;height:38px;border:0;border-radius:50%;font-size:23px;background:#f4eae4;color:#6B3540;cursor:pointer}
+.dd-catalog-dialog-hint{padding:0 22px;color:#7f6b6b;font-size:12px;line-height:1.8}
+.dd-catalog-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;padding:19px 22px}
+.dd-catalog-form label,.dd-catalog-review-note{display:grid;gap:7px;font-size:12px;font-weight:800;color:#675658;min-width:0}
+.dd-catalog-form label.wide{grid-column:1/-1}
+.dd-catalog-form input:not([type=checkbox]),.dd-catalog-form select,.dd-catalog-form textarea,.dd-catalog-review-note textarea{
+ border:1px solid #e4d6d1;border-radius:11px;background:white;color:#352D2E;min-width:0;width:100%;font:inherit;font-size:13px;padding:11px 12px
+}
+.dd-catalog-form input:not([type=checkbox]),.dd-catalog-form select{min-height:43px}
+.dd-catalog-form textarea,.dd-catalog-review-note textarea{resize:vertical;min-height:75px}
+.dd-catalog-form input:disabled,.dd-catalog-form select:disabled,.dd-catalog-form textarea:disabled{opacity:.74}
+.dd-catalog-form .dd-catalog-checkbox{display:flex;align-items:center;gap:9px;line-height:1.5;cursor:pointer}
+.dd-catalog-checkbox input{width:19px;height:19px;accent-color:#6B3540}
+.dd-catalog-history{margin:12px 22px;padding-top:16px;border-top:1px solid #efe2db}
+.dd-catalog-history h3{font-size:16px;color:#6B3540;margin:0 0 10px}
+.dd-catalog-history p{display:flex;justify-content:space-between;gap:10px;border:1px solid #eee4de;border-radius:10px;padding:9px;margin:6px 0;font-size:12px}
+.dd-catalog-history strong{color:#6B3540}
+.dd-catalog-dialog>footer{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:13px 22px 0}
+.dd-catalog-dialog>.dd-catalog-error{margin-inline:22px}
+.dd-catalog-compare{margin:15px 22px;border:1px solid #e8dcd7;border-radius:12px;overflow:hidden}
+.dd-compare-head,.dd-compare-row{display:grid;grid-template-columns:25% 37.5% 37.5%;align-items:stretch}
+.dd-compare-head{background:#f4e9e5;color:#6B3540}
+.dd-compare-head strong{padding:12px 11px;font-size:12px;min-width:0;overflow-wrap:anywhere}
+.dd-compare-row{border-top:1px solid #eee4df}
+.dd-compare-row>strong,.dd-compare-row>span{padding:10px 11px;min-width:0;overflow-wrap:anywhere;font-size:12px;line-height:1.7}
+.dd-compare-row>strong{font-weight:700;color:#624f52}
+.dd-compare-row.is-changed>span:last-child{color:#6B3540;background:#fff3db;font-weight:750}
+.dd-catalog-review-note{margin:12px 22px 10px}
+@media(max-width:900px){
+.dd-catalog-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dd-catalog-toolbar input{flex-basis:100%}
+}
+@media(max-width:620px){
+.dd-staff-catalog{padding:23px 13px 55px}
+.dd-catalog-heading{align-items:flex-start}
+.dd-catalog-heading h1{font-size:25px}
+.dd-catalog-actions{width:100%}
+.dd-catalog-actions>*{flex:1}
+.dd-catalog-stats{gap:9px}
+.dd-catalog-stats article{padding:13px}
+.dd-catalog-stats article strong{font-size:24px}
+.dd-catalog-form{grid-template-columns:1fr;gap:12px;padding-inline:15px}
+.dd-catalog-form label.wide{grid-column:auto}
+.dd-catalog-dialog>header{padding:15px}
+.dd-catalog-dialog>header h2{font-size:18px}
+.dd-catalog-dialog-hint{padding-inline:15px}
+.dd-catalog-dialog>footer{margin-inline:15px}
+.dd-catalog-compare,.dd-catalog-review-note{margin-inline:10px}
+.dd-compare-head strong,.dd-compare-row>strong,.dd-compare-row>span{padding:9px 7px;font-size:11px}
+.dd-catalog-history{margin-inline:15px}
+}
