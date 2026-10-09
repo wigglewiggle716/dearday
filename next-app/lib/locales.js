@@ -19,6 +19,8 @@ export const sections = [
   ["refunds", "refunds"],
   ["auth", "auth"],
   ["register", "register"],
+  ["account", "account"],
+  ["access", "access"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
