@@ -1,5 +1,6 @@
 import "../globals.css";
 import SiteHeader from "../../components/site-header";
+import { AuthSessionProvider } from "../../components/auth-session-provider";
 import SiteFooter from "../../components/site-footer";
 import { CatalogProvider, CatalogCartProvider } from "../../components/live-catalog";
 
@@ -13,6 +14,7 @@ export default function ArabicLayout({ children }) {
   return (
     <html lang="ar" dir="rtl">
       <body>
+        <AuthSessionProvider>
         <CatalogProvider>
           <CatalogCartProvider locale="ar">
             <SiteHeader locale="ar" />
@@ -20,6 +22,7 @@ export default function ArabicLayout({ children }) {
             <SiteFooter locale="ar" />
           </CatalogCartProvider>
         </CatalogProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );
