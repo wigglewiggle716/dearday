@@ -58,3 +58,17 @@ Baseline source commit:
   Catalog responses were mocked and local Arabic fonts used for visual inspection.
 - Only migration page files and this log were changed; no production writes or
   deployment operations. Account/data-deletion page migration remains separate.
+
+## Account and data deletion instructions — 2026-10-09
+
+- Added `/delete-account` and `/en/delete-account`, preserving the repository's
+  original five informational sections and October 3, 2026 date.
+- Shared header/footer and scoped legal styling; links point to localised React
+  account and privacy routes. Existing authenticated account deletion requests and
+  administrative review remain unchanged. No immediate-delete action was added.
+- Build and local browser checks passed for Arabic/English at 1440, 390 and 320px:
+  source content parity, no horizontal overflow, language switching, privacy/footer
+  navigation and account CTA. Desktop/mobile screenshots inspected.
+- External catalog requests mocked and local Arabic fonts used during checks.
+  No request submitted, real account deleted, or backend behaviour certified by
+  these page checks. Live HTML fetch was unavailable; repository source was used.
