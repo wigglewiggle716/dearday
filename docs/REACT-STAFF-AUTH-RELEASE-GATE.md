@@ -56,3 +56,24 @@ Scope: `react-migration` preview only. Do not merge into `main`, replace `dear-d
   https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
 - INFO: `public.parking_layout_history` has RLS enabled but no policy. Determine whether this is deliberately closed before adding any policy.
 - No Supabase DDL, Auth configuration, existing permissions, or MFA factors were changed in this React work phase.
+
+
+## Approved target: universal employee MFA (2026-10-09)
+The owner explicitly requires two-step verification for **all current and future employees**, including both current accountant accounts. Customer and partner-user account MFA remain outside the employee-only requirement.
+
+**Implementation staged (no live cutoff yet):**
+- React `readCurrentAccount` returns `mfa_setup_required` for any active employee without an AAL2 session and without an enrolled TOTP factor; login and header lead them to `/security` or `/en/security` instead of the staff portal.
+- Employees with a verified authenticator but an AAL1 session get `mfa_required` and must supply their code; they cannot bypass this with a password reset.
+- `supabase/migrations/20261009_staff_mfa_required_all_roles.sql` replaces staged `private.staff_mfa_satisfied()` with universal employee AAL2 checks. Existing restrictive `active_actor_boundary` policies and `has_permission` depend on this function.
+- **DO NOT apply the database migration before onboarding is reachable on a READY React deployment and the old-account transition has been tested.** Supabase is shared with live `dear-day.com`; prematurely executing the change would block accountants' financial API access in the existing site.
+
+**Safe activation steps:**
+1. Confirm deployment at the newest `react-migration` commit, then use an authorized, non-production test employee to check that first login with no factors opens authenticator enrollment and cannot reach staff data.
+2. Notify and prepare the **two existing accountant accounts**. Each accountant personally signs in and enrolls their authenticator. The existing legacy account security page at `https://dear-day.com/Dear-Day-Security.html` can be used for supervised pre-enrollment, without publishing changes to the main site.
+3. Add backup authenticator per employee on a separate device and validate fresh sign-in with both primary and backup factors.
+4. Confirm owner Super Admin still has both factors and a usable independent recovery procedure. Verify all active employees have at least one verified TOTP factor via role-scoped aggregate query, no code/secret collection.
+5. Apply the staged server-side migration via Supabase `apply_migration`. Test rejected AAL1 staff access and successful AAL2 staff access for finance, operations, and employee administration. If any account cannot enroll or test fails, defer activation (or roll back the migration under change control).
+6. Preserve `profiles_self_read` and Supabase Auth endpoints before AAL2 for onboarding. Never broaden staff business-data policies or expose secret service-role keys to implement setup.
+7. After successful activation, do not disable employee MFA as a routine workaround. Lost-factor recovery requires identity verification and operator-audited factor reset.
+
+Activation is not complete merely because the code and migration file exist. Do not report universal MFA as enabled until the live DB function has been applied and verified.
