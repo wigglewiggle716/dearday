@@ -1,0 +1,92 @@
+/* Dear Day — bilingual customer account center */
+.dd-my-account{
+ --my-wine:#6B3540;--my-terracotta:#A8583D;--my-text:#44363a;--my-muted:#82736f;
+ --my-line:rgba(107,53,64,.16);
+ flex:1;min-height:650px;background:linear-gradient(135deg,#faf3ea,#fffaf7 68%,#faf3ea);
+ padding:44px clamp(16px,4vw,60px) 70px;color:var(--my-text)
+}
+.dd-my-account *{box-sizing:border-box}
+.dd-my-wrap{width:min(1160px,100%);margin:0 auto}
+.dd-my-heading{text-align:start;margin:0 0 24px}
+.dd-my-heading h1{margin:0 0 4px;font-size:clamp(26px,3vw,34px);color:var(--my-wine)}
+.dd-my-heading p{margin:0;color:var(--my-muted);font-size:13px;line-height:1.8}
+.dd-my-layout{display:grid;grid-template-columns:220px minmax(0,1fr);align-items:start;gap:23px}
+.dd-my-nav{display:grid;gap:6px;border:1px solid var(--my-line);background:#fffdfc;border-radius:19px;padding:12px;position:sticky;top:111px}
+.dd-my-nav button{cursor:pointer;border:0;border-radius:12px;min-height:47px;text-align:start;padding:10px 14px;background:transparent;color:var(--my-wine);font-size:13px;font-weight:800}
+.dd-my-nav button:hover:not(.is-selected){background:#faf0eb}
+.dd-my-nav button.is-selected{color:white;background:var(--my-wine);box-shadow:0 7px 15px rgba(107,53,64,.15)}
+.dd-my-panel{border-radius:22px;border:1px solid var(--my-line);min-height:430px;background:#fffdfc;padding:28px;box-shadow:0 17px 45px rgba(59,28,32,.065)}
+.dd-my-panel h2{font-size:23px;line-height:1.6;color:var(--my-wine);margin:0 0 17px}
+.dd-my-panel h3{font-size:17px;line-height:1.6;color:var(--my-wine);margin:0 0 12px}
+.dd-my-panel p{font-size:13px;line-height:1.85}
+.dd-my-form{display:grid;gap:17px}
+.dd-my-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:16px}
+.dd-my-field{display:grid;gap:7px;min-width:0}
+.dd-my-field span{color:#5b4947;font-size:12px;font-weight:800}
+.dd-my-field input{
+ background:white;width:100%;min-width:0;border:1px solid #e6d9d4;border-radius:12px;
+ min-height:48px;padding:10px 12px;color:var(--my-text);font:inherit;font-size:13px;
+ transition:border-color .15s,box-shadow .15s;
+}
+.dd-my-field input:focus{outline:0;border-color:var(--my-terracotta);box-shadow:0 0 0 3px rgba(168,88,61,.12)}
+.dd-my-field input:read-only{background:#faf8f6;color:var(--my-muted)}
+.dd-my-field input::placeholder{color:#a79a95;font-size:12px}
+.dd-my-wide{grid-column:1/-1}
+.dd-my-primary,.dd-my-danger-primary,.dd-my-secondary,.dd-my-danger{
+ min-height:43px;border-radius:999px;padding:10px 20px;font-weight:800;font-size:12px;
+ cursor:pointer;border:1px solid var(--my-wine);font-family:inherit;display:inline-flex;align-items:center;
+ justify-content:center;text-align:center;max-width:100%;
+}
+.dd-my-primary{background:var(--my-wine);color:#fff;width:fit-content}
+.dd-my-primary:hover:not(:disabled){background:#542b33}
+.dd-my-secondary{background:#fff;color:var(--my-wine);border-color:var(--my-line)}
+.dd-my-secondary:hover{background:#fff6f0}
+.dd-my-danger{border-color:#e7beb9;color:#a0433f;background:#fff;font-size:12px}
+.dd-my-danger-primary{color:#fff;background:#a0433f;border-color:#a0433f}
+.dd-my-primary:disabled,.dd-my-danger-primary:disabled,.dd-my-secondary:disabled,.dd-my-danger:disabled{cursor:wait;opacity:.55}
+.dd-my-readonly{border:1px solid var(--my-line);border-radius:12px;background:#faf7f5;padding:12px 15px;display:grid;gap:6px;max-width:100%;overflow-wrap:anywhere}
+.dd-my-readonly small{font-size:11px;color:var(--my-muted)}
+.dd-my-readonly strong{font-size:13px;text-align:start;font-weight:700}
+.dd-my-subsection{margin-top:28px;border-top:1px solid var(--my-line);padding-top:21px}
+.dd-my-subsection>p{color:var(--my-muted);margin:0 0 13px}
+.dd-my-subsection .dd-my-form{margin-top:14px}
+.dd-my-checkbox{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:12px;color:var(--my-wine);cursor:pointer}
+.dd-my-checkbox input{accent-color:var(--my-wine);width:17px;height:17px;cursor:pointer}
+.dd-my-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dd-my-addresses,.dd-my-order-list{display:grid;gap:13px}
+.dd-my-address,.dd-my-order{border:1px solid var(--my-line);background:#fffdfa;border-radius:16px;padding:17px}
+.dd-my-address>p,.dd-my-order>p{margin:6px 0;color:var(--my-muted);overflow-wrap:anywhere}
+.dd-my-address-title,.dd-my-order-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dd-my-address-title>strong{color:var(--my-wine);font-size:14px}
+.dd-my-address-title>span,.dd-my-order-top>span{background:#f5e8e4;color:var(--my-wine);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800}
+.dd-my-address .dd-my-actions{margin-top:16px}
+.dd-my-address .dd-my-actions button{min-height:37px;padding:7px 13px}
+.dd-my-order h3{font-size:16px;margin:0}
+.dd-my-order>strong{display:block;color:var(--my-wine);margin-top:8px;font-size:15px}
+.dd-my-order-items{border-top:1px solid var(--my-line);display:grid;gap:9px;margin-top:13px;padding-top:13px}
+.dd-my-order-items>div{display:flex;justify-content:space-between;gap:14px;font-size:12px}
+.dd-my-order-items>div strong{white-space:nowrap;color:var(--my-wine)}
+.dd-my-order-items span{overflow-wrap:anywhere}
+.dd-my-empty{border:1px dashed #dcc4bb;background:#fff9f5;color:var(--my-muted);padding:22px;border-radius:15px;text-align:center}
+.dd-my-muted{color:var(--my-muted);margin:0 0 15px}
+.dd-my-muted a{color:var(--my-wine);text-decoration:underline}
+.dd-my-pending{border:1px solid #efddc4;background:#fff8ed;border-radius:13px;padding:13px 16px;color:#815a2f}
+.dd-my-notice{padding:12px 16px;margin:18px 0 0;border-radius:13px;font-size:12px;line-height:1.8}
+.dd-my-notice.is-error{border:1px solid #ebc4c1;color:#a13f42;background:#fff3f0}
+.dd-my-notice.is-success{border:1px solid #d7e8d8;color:#346744;background:#f0f8f0}
+.dd-my-bottom{text-align:center;margin-top:20px;color:var(--my-wine);font-weight:800;font-size:13px}
+.dd-my-guard{width:min(530px,100%);margin:40px auto;padding:35px;background:#fffdfc;border-radius:22px;border:1px solid var(--my-line);box-shadow:0 15px 45px rgba(78,32,39,.08);display:grid;gap:14px}
+.dd-my-guard h1{color:var(--my-wine);margin:0}.dd-my-guard p{font-size:13px;line-height:1.9}.dd-my-guard .dd-my-primary{width:fit-content}
+@media(max-width:850px){
+ .dd-my-layout{grid-template-columns:minmax(0,1fr);gap:13px}
+ .dd-my-nav{position:static;display:flex;overflow-x:auto;scrollbar-width:thin;white-space:nowrap;padding:9px;border-radius:16px;gap:5px}
+ .dd-my-nav button{flex:0 0 auto;padding:8px 15px}
+ .dd-my-account{padding:30px 16px 60px}
+}
+@media(max-width:600px){
+ .dd-my-fields{grid-template-columns:1fr}
+ .dd-my-panel{padding:19px;border-radius:17px}
+ .dd-my-panel h2{font-size:20px}
+ .dd-my-heading h1{font-size:27px}
+ .dd-my-order-items>div{flex-wrap:wrap}
+}
