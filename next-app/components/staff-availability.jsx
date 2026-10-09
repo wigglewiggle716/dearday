@@ -177,7 +177,7 @@ export default function StaffAvailability({locale="ar",portal="staff"}){
  const [revision,setRevision]=useState(0),[scopeRevision,setScopeRevision]=useState(0);
  const [saving,setSaving]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  const rootReq=useRef(0),scopeReq=useRef(0);
- const canView=active&&root.stage==="ready";
+ const canView=active&&root.stage==="ready"&&(!isPartner||root.partnerId===currentPartner?.id);
  const canManage=canView&&(isPartner||root.permissions.includes("availability.manage"));
  const listing=root.listings.find(x=>x.id===selected)||null;
  const today=useMemo(()=>cairoDate(),[]);
@@ -220,7 +220,7 @@ export default function StaffAvailability({locale="ar",portal="staff"}){
      if(result.error)throw result.error;
      for(const v of result.data||[])names[v.id]=v;
     }
-    if(seq===rootReq.current)setRoot({stage:"ready",permissions,listings,names,overflow:(ls.data||[]).length>LIMIT_LISTINGS});
+    if(seq===rootReq.current)setRoot({stage:"ready",permissions,listings,names,partnerId:isPartner?currentPartner.id:null,overflow:(ls.data||[]).length>LIMIT_LISTINGS});
    }catch{
     if(seq===rootReq.current)setRoot({stage:"error",permissions:[],listings:[],names:{},overflow:false});
    }
