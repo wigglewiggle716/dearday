@@ -252,7 +252,7 @@ export default function StaffCatalog({locale="ar"}){
        <option value="">—</option>{data.partners.map(p=><option value={p.id} key={p.id}>{localeName(p,locale)}</option>)}
       </select></label>
       <label>{t.category}<select value={draft.category_id} disabled={!canManage||saveBusy} onChange={e=>field("category_id",e.target.value)}>
-       <option value="">{t.noCategory}</option>{data.categories.filter(x=>x.is_active).map(c=><option key={c.id} value={c.id}>{localeName(c,locale)}</option>)}
+       <option value="">{t.noCategory}</option>{data.categories.filter(x=>x.is_active||x.id===draft.category_id).map(c=><option key={c.id} value={c.id}>{localeName(c,locale)}</option>)}
       </select></label>
       <label>{t.kind}<select value={draft.kind} disabled={!canManage||saveBusy} onChange={e=>field("kind",e.target.value)}>
        {kinds.map(k=><option key={k} value={k}>{t.kinds[k]}</option>)}
