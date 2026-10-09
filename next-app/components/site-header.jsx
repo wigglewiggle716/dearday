@@ -93,8 +93,8 @@ export default function SiteHeader({ locale }) {
         <nav aria-label={t.navigation} className="dd-desktop-nav"><NavLinks /></nav>
         <div className="dd-header-actions">
           {!isCheckout&&<>
-            <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
-            <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+            <Link href={pathFor("auth", locale)} className="dd-auth-link">{t.login}</Link>
+            <Link href={pathFor("register", locale)} className="dd-auth-link dd-signup">{t.signup}</Link>
           </>}
           <Link href={alternatePath(pathname, locale)} onClick={changeLanguage} className="dd-language" aria-label={t.languageLabel} hrefLang={locale === "ar" ? "en" : "ar"}>{t.language}</Link>
         </div>
@@ -113,8 +113,8 @@ export default function SiteHeader({ locale }) {
         <NavLinks mobile />
         <div className="dd-mobile-actions">
           {!isCheckout&&<>
-            <Link href={pathFor("auth", locale) + "#login"} className="dd-auth-link">{t.login}</Link>
-            <Link href={pathFor("auth", locale) + "#signup"} className="dd-auth-link dd-signup">{t.signup}</Link>
+            <Link href={pathFor("auth", locale)} className="dd-auth-link">{t.login}</Link>
+            <Link href={pathFor("register", locale)} className="dd-auth-link dd-signup">{t.signup}</Link>
           </>}
           <Link href={alternatePath(pathname, locale)} onClick={changeLanguage} className="dd-language">{t.language}</Link>
         </div>
