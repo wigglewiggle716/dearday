@@ -30,7 +30,7 @@ const copy={
   signIn:"تسجيل الدخول",continueMfa:"التحقق بخطوتين",
   name:"الاسم",email:"البريد الإلكتروني",role:"نوع الحساب",
   accountUpcoming:"بيانات الحساب والعناوين والطلبات والحجوزات موجودة دلوقتي في حسابي.",
-  securityPage:"تأمين الحساب والتحقق بخطوتين",permissionsPage:"صلاحيات الفريق",
+  securityPage:"تأمين الحساب والتحقق بخطوتين",permissionsPage:"صلاحيات الفريق",setup:"لازم تفعّل التحقق بخطوتين قبل دخول بوابة العمل.",activate:"تفعيل تطبيق المصادقة",
   staffPortal:"فتح بوابة الموظفين الحالية",partnerPortal:"فتح بوابة الشركاء الحالية",
   separateSession:"الرابط هيفتح الموقع الأساسي، وممكن يطلب تسجيل الدخول مرة تانية. مش بننقل جلسة React أو كلمة المرور بين الدومينين.",
   back:"العودة للرئيسية",logout:"تسجيل الخروج",waiting:"جاري الخروج…",
@@ -49,7 +49,7 @@ const copy={
   signIn:"Log in",continueMfa:"Two-step verification",
   name:"Name",email:"Email",role:"Account type",
   accountUpcoming:"Your profile, addresses, orders and bookings are now available in My Account.",
-  securityPage:"Account security & two-step verification",permissionsPage:"Staff permissions",
+  securityPage:"Account security & two-step verification",permissionsPage:"Staff permissions",setup:"Two-step verification is required before opening the work portal.",activate:"Set up your authenticator",
   staffPortal:"Open existing staff portal",partnerPortal:"Open existing partner portal",
   separateSession:"This opens the existing website, which may ask you to sign in again. React sessions and passwords aren't transferred between domains.",
   back:"Back to homepage",logout:"Log out",waiting:"Signing out…",
@@ -77,6 +77,7 @@ export default function AccountGateway({locale="ar",kind="customer"}){
           <p>{t.signedOut}</p>
           <Link href={login+"?next="+encodeURIComponent(kind==="work"?pathFor("access",locale):pathFor("account",locale))} className="dd-gateway-primary">{t.signIn}</Link>
         </div>:
+        session.status==="mfa_setup_required"?<div className="dd-gateway-message"><p>{t.setup}</p><Link href={pathFor("security",locale)} className="dd-gateway-primary">{t.activate}</Link></div>:
         session.status==="mfa_required"?<div className="dd-gateway-message">
           <p>{t.verify}</p><Link href={login+"?mode=mfa"} className="dd-gateway-primary">{t.continueMfa}</Link>
         </div>:
