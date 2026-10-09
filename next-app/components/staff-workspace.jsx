@@ -57,9 +57,9 @@ const statusNames={
 };
 const oldModules=[
 
- {id:"catalog",p:["catalog.view","catalog.manage"],path:"Dear-Day-Admin-Products.html"},
+
  {id:"partnerMenu",p:["partners.view","partners.manage"],path:"Dear-Day-Admin-Partners.html"},
- {id:"review",p:["approvals.review"],path:"Dear-Day-Admin-Approvals.html"},
+
  {id:"financial",p:["finance.view"],path:"Dear-Day-Finance.html"},
  {id:"directory",p:["customers.view"],path:"Dear-Day-Admin-Customers.html"},
  {id:"availability",p:["availability.view"],path:"Dear-Day-Admin-Availability.html"},
@@ -204,6 +204,8 @@ export default function StaffWorkspace({locale="ar"}){
        <Link href={work}>{t.overview}</Link>
        <Link href={secure}>{t.security}</Link>
        {perms.has("orders.view")&&<Link href={pathFor("staffOrders",locale)}>{t.ordersMenu}</Link>}
+       {(perms.has("catalog.view")||perms.has("catalog.manage"))&&<Link href={pathFor("staffCatalog",locale)}>{t.catalog}</Link>}
+       {perms.has("approvals.review")&&<Link href={pathFor("staffApprovals",locale)}>{t.review}</Link>}
        {(perms.has("employees.view")||perms.has("employees.manage"))&&
         <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
      </div>
