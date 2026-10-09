@@ -63,7 +63,7 @@ const oldModules=[
  {id:"financial",p:["finance.view"],path:"Dear-Day-Finance.html"},
 
 
- {id:"cancellations",p:["orders.manage"],path:"Dear-Day-Admin-Cancellations.html"},
+
 
 ];
 function amount(value,currency,locale){
@@ -211,6 +211,8 @@ export default function StaffWorkspace({locale="ar"}){
        {perms.has("customers.view")&&<Link href={pathFor("staffCustomers",locale)}>{t.directory}</Link>}
        {perms.has("customers.view")&&<Link href={pathFor("staffSupport",locale)}>{t.support}</Link>}
        {(perms.has("availability.view")||perms.has("availability.manage"))&&<Link href={pathFor("staffAvailability",locale)}>{t.availability}</Link>}
+       {perms.has("orders.view")&&<Link href={pathFor("staffCancellations",locale)}>{t.cancellations}</Link>}
+       {(perms.has("catalog.manage")||perms.has("approvals.review"))&&<Link href={pathFor("staffRefundPolicies",locale)}>{locale==="ar"?"سياسات الاسترداد":"Refund policies"}</Link>}
        {(perms.has("employees.view")||perms.has("employees.manage"))&&
         <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
      </div>
