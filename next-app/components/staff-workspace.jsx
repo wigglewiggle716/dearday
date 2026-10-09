@@ -62,7 +62,7 @@ const oldModules=[
 
  {id:"financial",p:["finance.view"],path:"Dear-Day-Finance.html"},
 
- {id:"availability",p:["availability.view"],path:"Dear-Day-Admin-Availability.html"},
+
  {id:"cancellations",p:["orders.manage"],path:"Dear-Day-Admin-Cancellations.html"},
 
 ];
@@ -209,6 +209,7 @@ export default function StaffWorkspace({locale="ar"}){
        {(perms.has("partners.view")||perms.has("partners.manage"))&&<Link href={pathFor("staffPartners",locale)}>{t.partnerMenu}</Link>}
        {perms.has("customers.view")&&<Link href={pathFor("staffCustomers",locale)}>{t.directory}</Link>}
        {perms.has("customers.view")&&<Link href={pathFor("staffSupport",locale)}>{t.support}</Link>}
+       {(perms.has("availability.view")||perms.has("availability.manage"))&&<Link href={pathFor("staffAvailability",locale)}>{t.availability}</Link>}
        {(perms.has("employees.view")||perms.has("employees.manage"))&&
         <Link href={pathFor("staffPermissions",locale)}>{t.permissions}</Link>}
      </div>
