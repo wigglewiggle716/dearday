@@ -1,0 +1,22 @@
+.dd-notify-main{flex:1;min-height:75vh;padding:40px max(16px,calc((100vw - 1080px)/2)) 70px;background:#FAF3EA;color:#382d30}
+.dd-notify-main *{box-sizing:border-box}.dd-notify-wrap{width:100%}
+.dd-notify-head{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:24px}
+.dd-notify-head a{color:#A8583D;font-size:13px;font-weight:750}
+.dd-notify-head h1{color:#6B3540;margin:11px 0 4px;font-size:clamp(25px,3vw,35px)}
+.dd-notify-head p{color:#7d6c6f;font-size:13px;line-height:1.8;margin:0}
+.dd-notify-actions,.dd-notify-card-actions,.dd-notify-filters{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.dd-notify-actions button,.dd-notify-card-actions button,.dd-notify-card-actions a,.dd-notify-more{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:1px solid #cfaeb6;background:#fff;color:#6B3540;border-radius:11px;padding:10px 14px;font:700 12px/1.3 inherit}
+.dd-notify-actions button:first-child,.dd-notify-more{background:#6B3540;color:#fff;border-color:#6B3540}
+.dd-notify-actions button:disabled,.dd-notify-card-actions button:disabled{opacity:.6}
+.dd-notify-filters{margin:18px 0}.dd-notify-filters button{padding:10px 15px;background:#fff;color:#6B3540;border:1px solid #e2cbd0;border-radius:50px;cursor:pointer}
+.dd-notify-filters button.active{background:#6B3540;color:white}
+.dd-notify-list{display:grid;gap:12px}
+.dd-notify-card{border:1px solid #e5d2ce;border-radius:17px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:18px 21px}
+.dd-notify-card.unread{border-color:#b67d89;background:#fffbf8}
+.dd-notify-card h2{font-size:16px;color:#6B3540;margin:0 0 8px}
+.dd-notify-card p{color:#534748;font-size:13px;line-height:1.8;white-space:pre-wrap;margin:0 0 8px}
+.dd-notify-card time{color:#84777b;font-size:11px}
+.dd-notify-dot{display:inline-block;height:9px;width:9px;border-radius:50%;background:#A8583D}
+.dd-notify-empty{background:#fff;border:1px solid #e9d7d2;border-radius:17px;padding:35px;text-align:center;color:#806d72}
+.dd-notify-more{margin-top:17px}.dd-notify-error{color:#a53e4a}
+@media(max-width:640px){.dd-notify-main{padding:24px 13px 55px}.dd-notify-card{padding:14px}.dd-notify-card-actions{width:100%}}
