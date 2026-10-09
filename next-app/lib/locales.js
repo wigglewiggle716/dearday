@@ -22,6 +22,8 @@ export const sections = [
   ["account", "account"],
   ["bookings", "bookings"],
   ["access", "access"],
+  ["security","security"],
+  ["staffPermissions","staff-permissions"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
