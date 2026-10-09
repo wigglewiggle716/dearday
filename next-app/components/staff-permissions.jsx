@@ -1,5 +1,5 @@
 "use client";
-import {useCallback,useEffect,useMemo,useState} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
 import {authClient,EMPLOYEE_ROLES,rememberPreference} from "../lib/auth-client";
 import {useAuthSession} from "./auth-session-provider";
@@ -53,19 +53,23 @@ function uniq(xs){return [...new Set(xs)];}
 export default function StaffPermissions({locale="ar"}){
  const t=words[locale]||words.ar,session=useAuthSession();
  const staff=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role);
+ const currentId=staff?session.user?.id:null;
+ const requestSeq=useRef(0);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
- const [loading,setLoading]=useState(true),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [loading,setLoading]=useState(true),[loadedFor,setLoadedFor]=useState(null),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [mine,setMine]=useState([]),[employees,setEmployees]=useState([]),[available,setAvailable]=useState([]);
  const [defaults,setDefaults]=useState([]),[overrides,setOverrides]=useState([]);
  const [selected,setSelected]=useState(null),[role,setRole]=useState(""),[active,setActive]=useState(true),[busy,setBusy]=useState(false);
  const canView=mine.includes("employees.view")||mine.includes("employees.manage");
  const canManage=session.role==="super_admin"&&mine.includes("employees.manage");
  const refresh=useCallback(async()=>{
-  if(!staff||!client)return;
-  setLoading(true);setError("");
+  if(!staff||!client||!currentId)return;
+  const requestId=++requestSeq.current;
+  setLoading(true);setLoadedFor(null);setError("");
   try{
    const own=await client.rpc("get_my_permissions");
    if(own.error)throw own.error;
+   if(requestId!==requestSeq.current)return;
    const perms=(own.data||[]).map(row=>row.permission_code);
    setMine(perms);
    if(perms.includes("employees.view")||perms.includes("employees.manage")){
@@ -76,14 +80,23 @@ export default function StaffPermissions({locale="ar"}){
      client.from("employee_permission_overrides").select("user_id,permission_code,is_granted")
     ]);
     if(people.error||all.error||rolePermissions.error||over.error)throw people.error||all.error||rolePermissions.error||over.error;
+    if(requestId!==requestSeq.current)return;
     setEmployees(people.data||[]);
     setAvailable(all.data||[]);
     setDefaults(rolePermissions.data||[]);
     setOverrides(over.data||[]);
    }else{setEmployees([]);setAvailable([]);setDefaults([]);setOverrides([]);}
-  }catch{setError(t.failed);}finally{setLoading(false);}
- },[staff,client,t.failed]);
- useEffect(()=>{if(staff)void refresh();},[staff,refresh]);
+   if(requestId===requestSeq.current)setLoadedFor(currentId);
+  }catch{if(requestId===requestSeq.current)setError(t.failed);}
+  finally{if(requestId===requestSeq.current)setLoading(false);}
+ },[staff,client,currentId,t.failed]);
+ useEffect(()=>{
+  if(staff)void refresh();
+  else{
+   requestSeq.current++;setLoadedFor(null);setMine([]);setEmployees([]);
+   setSelected(null);setOverrides([]);
+  }
+ },[staff,refresh]);
  function select(employee){
   if(!canManage||employee.id===session.user.id)return;
   setSelected(employee);setRole(employee.role);setActive(employee.is_active);setError("");setNotice("");
@@ -132,7 +145,7 @@ export default function StaffPermissions({locale="ar"}){
    {!staff?<div className="dd-security-guard">
     <p>{session.status==="mfa_required"?t.verify:session.status==="loading"?t.loading:t.restricted}</p>
     {session.status!=="loading"&&<Link className="dd-security-primary" href={pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.verify:t.login}</Link>}
-   </div>:loading?<p role="status">{t.loading}</p>:error&&!mine.length?<div>
+   </div>:loading||loadedFor!==currentId?<p role="status">{t.loading}</p>:error&&!mine.length?<div>
     <p role="alert">{error}</p><button className="dd-security-secondary" type="button" onClick={refresh}>{t.reload}</button>
    </div>:<>
     <section className="dd-permissions-section">
