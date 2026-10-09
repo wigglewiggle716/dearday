@@ -1,10 +1,12 @@
 "use client";
 
 import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState} from "react";
+import {usePathname} from "next/navigation";
 import {authClient,readCurrentAccount,rememberPreference} from "../lib/auth-client";
 
 const SessionContext=createContext(null);
 export function AuthSessionProvider({children}){
+  const pathname=usePathname();
   const [state,setState]=useState({status:"loading",user:null,role:null,profile:null,error:null});
   const seq=useRef(0);
   const mounted=useRef(true);
@@ -46,6 +48,14 @@ export function AuthSessionProvider({children}){
       window.removeEventListener("storage",synchronize);
     };
   },[refresh]);
+  // Re-check access when a tab resumes and when moving between pages.
+  // This catches suspensions and role changes without waiting for a logout.
+  useEffect(()=>{
+    function recheck(){if(document.visibilityState==="visible")void refresh();}
+    document.addEventListener("visibilitychange",recheck);
+    return ()=>document.removeEventListener("visibilitychange",recheck);
+  },[refresh]);
+  useEffect(()=>{void refresh();},[pathname,refresh]);
   const signOut=useCallback(async()=>{
     const client=authClient(rememberPreference());
     const {error}=await client.auth.signOut({scope:"local"});
