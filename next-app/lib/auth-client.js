@@ -54,6 +54,7 @@ export function destinationFor(role,locale="ar"){
   const prefix=locale==="en"?"/en":"";
   if(role==="customer")return prefix+"/account";
   if(EMPLOYEE_ROLES.has(role))return prefix+"/staff";
+  if(role==="partner_user")return prefix+"/partner";
   return prefix+"/access";
 }
 // Always verify the auth user, AAL and active role in Supabase. Never trust
