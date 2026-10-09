@@ -45,3 +45,14 @@ Scope: `react-migration` preview only. Do not merge into `main`, replace `dear-d
 
 ## Rollback
 - React changes only on `react-migration`. If regression found, revert React commits in this branch; no Supabase role grants or data migrations were applied by this stage.
+
+
+## Supabase Security Advisor follow-up (2026-10-09)
+- WARNING: Leaked Password Protection disabled in Supabase Auth. Must be configured by a project owner and then retested; not changeable by website client code.
+  https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+- WARNING: `public.backup_parking_layout()` can be invoked by both anon and authenticated as SECURITY DEFINER. This appears unrelated to the customer website; investigate function purpose, callers and grants before changing any shared live database object. Consider revoking public execute if unused.
+  https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable
+- WARNING: Seven authenticated SECURITY DEFINER functions are executable through REST. Several serve intentional role-scoped account deletion, partner review and support flows; review their internal role checks, input validation and configured search_path rather than revoking legitimate endpoints blindly.
+  https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable
+- INFO: `public.parking_layout_history` has RLS enabled but no policy. Determine whether this is deliberately closed before adding any policy.
+- No Supabase DDL, Auth configuration, existing permissions, or MFA factors were changed in this React work phase.
