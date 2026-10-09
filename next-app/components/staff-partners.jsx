@@ -126,17 +126,11 @@ export default function StaffPartners({locale="ar"}){
     ]);
     if(p.error||a.error)throw p.error||a.error;
     const partners=(p.data||[]).slice(0,500);
-    const counts={};
-    // No public partner contacts or documents are loaded outside authorised staff.
-    // Listing count is optional: failure should not disable partner/application inbox.
-    const countResults=await Promise.allSettled(partners.map(async item=>{
-     const r=await client.from("listings").select("id",{head:true,count:"exact"}).eq("partner_id",item.id);
-     return [item.id,r.error?null:r.count];
-    }));
-    for(const x of countResults)if(x.status==="fulfilled")counts[x.value[0]]=x.value[1];
+    // Listing counts are retrieved only for an opened partner. This avoids
+    // making hundreds of parallel queries when listing partner records.
     if(requested===seq.current)setData({
      stage:"ready",permissions:perms,partners,applications:(a.data||[]).slice(0,250),
-     pOverflow:(p.data||[]).length>500,aOverflow:(a.data||[]).length>250,counts
+     pOverflow:(p.data||[]).length>500,aOverflow:(a.data||[]).length>250,counts:{}
     });
    }catch{if(requested===seq.current)setData({...initial,stage:"error"});}
   })();
@@ -151,7 +145,12 @@ export default function StaffPartners({locale="ar"}){
   return()=>{document.body.style.overflow="";window.removeEventListener("keydown",key);if(prev instanceof HTMLElement)prev.focus();};
  },[Boolean(opened),Boolean(editing),busy]);
  function go(next){setTab(next);setPage(0);setStatus("");setTerm("");setErr("");setNotice("");setOpened(null);}
- function openPartner(p){setOpened({kind:"partner",id:p.id});setEditing(null);setErr("");}
+ async function openPartner(p){
+  if(!canView)return;
+  setOpened({kind:"partner",id:p.id});setEditing(null);setErr("");
+  const r=await client.from("listings").select("id",{head:true,count:"exact"}).eq("partner_id",p.id);
+  if(!r.error)setData(d=>({...d,counts:{...d.counts,[p.id]:r.count}}));
+ }
  function openApplication(a){setOpened({kind:"application",id:a.id});setReview({status:a.status,notes:a.internal_notes||""});setErr("");}
  function editPartner(p){if(!canManage)return;setOpened(null);setErr("");setEditing(draftOf(p));}
  async function ensureManage(){
