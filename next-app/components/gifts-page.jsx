@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { pathFor } from "../lib/locales";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCatalog } from "./live-catalog";
 import { useCart, QuantityAction, money } from "./cart-provider";
 import PlanningStepper from "./planning-stepper";
-import { getNextPlanningStep } from "../lib/planning-flow";
 
 const copy = {
   ar: {
@@ -22,12 +19,9 @@ const copy = {
     loading:"جاري تحميل الهدايا...",error:"تعذر تحميل المنتجات المنشورة حاليًا.",
     none:"مفيش نتائج بالفلاتر دي. جرّب تغيّر فلتر أو تمسح الاختيارات.",
     noStock:"لا توجد هدايا منشورة حاليًا.",
-    show:"عدد الهدايا المعروضة", tag:"هدية",
-    choose:"أضف للسلة",back:"رجوع",next:"حفظ والانتقال للخطوة التالية ←",
-    selected:"هدايا في السلة",personalized:"قابلة للتخصيص",
-    saved:"هداياك محفوظة في السلة، وتقدر تكمل ترتيب المناسبة.",
+    tag:"هدية",
+    choose:"أضف للسلة",personalized:"قابلة للتخصيص",
     explore:"تصفح الهدايا",
-    nextHint:"الاختيارات بتفضل في السلة حتى لو انتقلت لأقسام تانية.",
     flow:["اختيار الخدمات","الهدايا","شكولاته و كيك","الأماكن والتجارب","تفاصيل المناسبة","مراجعة وحجز"]
   },
   en: {
@@ -43,11 +37,9 @@ const copy = {
     loading:"Loading gifts…",error:"Published gifts could not be loaded.",
     none:"No gifts match these filters. Try changing a filter or clearing your selections.",
     noStock:"No published gifts available yet.",
-    show:"Gifts shown", tag:"Gift",
-    choose:"Add to cart",back:"Back",next:"Save & continue →",
-    selected:"Gifts in your cart",personalized:"Personalizable",
-    saved:"Your selected gifts stay in your cart as you continue planning.",
-    explore:"Browse gifts",nextHint:"Your selections stay in your cart as you browse other categories.",
+    tag:"Gift",
+    choose:"Add to cart",personalized:"Personalizable",
+    explore:"Browse gifts",
     flow:["Choose services","Gifts","Chocolate & Cakes","Places & Experiences","Occasion details","Review & Book"]
   }
 };
@@ -131,11 +123,71 @@ function FilterSet({name,items,value,onSelect}){
   </section>;
 }
 
+
+function GiftSort({value, options, label, locale, onChange}) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+  const triggerRef = useRef(null);
+  const selectedLabel = options.find(([key])=>key===value)?.[1] || options[0][1];
+
+  useEffect(()=>{
+    if(!open)return;
+    function onOutside(event) {
+      if(!wrapperRef.current?.contains(event.target))setOpen(false);
+    }
+    function onEscape(event) {
+      if(event.key==="Escape"){
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown",onOutside);
+    document.addEventListener("keydown",onEscape);
+    return ()=>{
+      document.removeEventListener("pointerdown",onOutside);
+      document.removeEventListener("keydown",onEscape);
+    };
+  },[open]);
+
+  function handleKeys(event) {
+    if(event.key==="ArrowDown" || event.key==="ArrowUp"){
+      event.preventDefault();
+      if(!open){
+        setOpen(true);
+      }else{
+        const elements=Array.from(wrapperRef.current?.querySelectorAll('[role="option"]')||[]);
+        const current=elements.indexOf(document.activeElement);
+        const next=event.key==="ArrowDown"
+          ?(current+1)%elements.length
+          :(current<=0?elements.length-1:current-1);
+        elements[next]?.focus();
+      }
+    }
+  }
+
+  return <div className={"dd-gifts-sort"+(open?" is-open":"")} ref={wrapperRef} dir={locale==="ar"?"rtl":"ltr"}>
+    <button ref={triggerRef} type="button" className="dd-gifts-sort-trigger"
+      aria-label={label} aria-haspopup="listbox" aria-expanded={open}
+      aria-controls="dd-gifts-sort-options"
+      onClick={()=>setOpen(previous=>!previous)} onKeyDown={handleKeys}>
+      <span className="dd-gifts-sort-value">{selectedLabel}</span>
+      <span className="dd-gifts-sort-chevron" aria-hidden="true"/>
+    </button>
+    {open&&<div className="dd-gifts-sort-menu" id="dd-gifts-sort-options" role="listbox" aria-label={label}>
+      {options.map(([key,optionLabel])=><button key={key} type="button" role="option"
+        className="dd-gifts-sort-option" aria-selected={value===key}
+        onKeyDown={handleKeys}
+        onClick={()=>{onChange(key);setOpen(false);triggerRef.current?.focus();}}>
+        {optionLabel}
+      </button>)}
+    </div>}
+  </div>;
+}
+
 export default function GiftsPage({locale="ar",flow=false}){
   const t=copy[locale] || copy.ar;
   const {rows,loading,error}=useCatalog();
   const {items,isLoaded}=useCart();
-  const router=useRouter();
   const [criteria,setCriteria]=useState({category:"all",recipient:"all",price:"all"});
   const [sort,setSort]=useState("recommended");
   const [planBudget,setPlanBudget]=useState("unsure");
@@ -183,16 +235,7 @@ export default function GiftsPage({locale="ar",flow=false}){
     .slice(0,6).map(item=>item.id)),[gifts]);
   const curatedGifts=filtered.filter(item=>curatedIds.has(item.id));
   const otherGifts=filtered.filter(item=>!curatedIds.has(item.id));
-  const giftCart=items.filter(x=>x.type==="gift");
-  const giftCount=giftCart.reduce((n,x)=>n+Math.max(1,Number(x.quantity)||1),0);
-
   function reset(){setCriteria({category:"all",recipient:"all",price:"all"});setSort("recommended");}
-  function proceed(){
-    const plan=readPlan();
-    const names=Array.isArray(plan.services)?plan.services:[];
-    const next=getNextPlanningStep("gifts",names);
-    router.push(pathFor(next,locale)+(flow?"?flow=1":""));
-  }
 
   return <main id="main-content" className="dd-gifts-page" dir={locale==="ar"?"rtl":"ltr"}>
     {flow&&<PlanningStepper locale={locale} current="gifts"/>}
@@ -223,13 +266,11 @@ export default function GiftsPage({locale="ar",flow=false}){
           </aside>
           <div className="dd-gifts-results">
             <div className="dd-gifts-toolbar">
-              <div className="dd-gifts-sort">
-                <label htmlFor="dd-gifts-sort">{t.sortLabel}</label>
-                <select id="dd-gifts-sort" value={sort} onChange={e=>setSort(e.target.value)}>
-                  {t.sortList.map(([key,label])=><option key={key} value={key}>{label}</option>)}
-                </select>
-              </div>
-              <h2>{t.curated}</h2>
+              <GiftSort value={sort} options={t.sortList} label={t.sortLabel}
+                locale={locale} onChange={setSort}/>
+              <h2 dir={locale==="ar"?"rtl":"ltr"}>
+                {locale==="ar"?<>مختارات <bdi dir="ltr">Dear Day</bdi></>:t.curated}
+              </h2>
             </div>
             {loading?<p className="dd-gifts-message">{t.loading}</p>:
               error?<p className="dd-gifts-message" role="status">{t.error}</p>:
@@ -249,15 +290,7 @@ export default function GiftsPage({locale="ar",flow=false}){
                     </div>
                   </div>
                 </section>}
-                <p className="dd-gifts-found" role="status">{t.show}: {filtered.length}</p>
               </>}
-          </div>
-        </div>
-        <div className="dd-gifts-continue">
-          <div><strong>{t.selected}: {giftCount}</strong><p>{t.nextHint}</p></div>
-          <div className="dd-gifts-continue-actions">
-            <button type="button" className="dd-gifts-back" onClick={()=>router.back()}>{t.back}</button>
-            <button type="button" className="dd-gifts-next" onClick={proceed}>{t.next}</button>
           </div>
         </div>
       </div>
