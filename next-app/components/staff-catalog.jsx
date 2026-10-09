@@ -99,14 +99,22 @@ export default function StaffCatalog({locale="ar"}){
     if(listings.error)throw listings.error;
     const rows=(listings.data||[]).slice(0,MAX_ROWS);
     const ids=rows.map(l=>l.id);
-    const [partners,categories,versions]=await Promise.all([
+    // Supabase/PostgREST queries with hundreds of UUIDs can exceed proxy URL
+    // limits; fetch version history in bounded batches and sort it globally.
+    const batches=[];
+    for(let i=0;i<ids.length;i+=60)batches.push(ids.slice(i,i+60));
+    const responses=await Promise.all([
       client.from("partner_directory").select("id,name_ar,name_en,status").order("name_ar").limit(1000),
       client.from("categories").select("id,slug,name_ar,name_en,is_active").order("sort_order"),
-      ids.length?client.from("listing_versions").select(versionFields).in("listing_id",ids).order("created_at",{ascending:false}).limit(2000):Promise.resolve({data:[],error:null})
+      ...batches.map(batch=>client.from("listing_versions").select(versionFields)
+        .in("listing_id",batch).order("created_at",{ascending:false}).limit(1000))
     ]);
-    if(partners.error||categories.error||versions.error)throw partners.error||categories.error||versions.error;
+    if(responses.some(r=>r.error))throw responses.find(r=>r.error).error;
+    const [partners,categories,...versionBatches]=responses;
+    const versions=versionBatches.flatMap(r=>r.data||[])
+      .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
     if(current!==req.current)return;
-    setData({stage:"ready",permissions,listings:rows,partners:partners.data||[],categories:categories.data||[],versions:versions.data||[],hasMore:(listings.data||[]).length>MAX_ROWS});
+    setData({stage:"ready",permissions,listings:rows,partners:partners.data||[],categories:categories.data||[],versions,hasMore:(listings.data||[]).length>MAX_ROWS});
    }catch{if(current===req.current)setData({...empty,stage:"error"});}
   })();
   return()=>{req.current++;};
