@@ -157,10 +157,14 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     const savedId=legacyId[old[0]?.id]||old[0]?.id;
     const match=venues.find(v=>v.id===savedId);
     setSelectedId(match?.id||null);
-    const cust=saved.customExperience&&typeof saved.customExperience==="object"?saved.customExperience:null;
+    const previousDraft=saved.customExperience&&typeof saved.customExperience==="object"?saved.customExperience:null;
+    // Old preview builds saved custom ideas without actually sending them.
+    // Never mislabel those browser-only drafts as customer-service requests.
+    const cust=previousDraft&&typeof previousDraft.ticket_reference==="string"&&
+      /^DD-CS-[0-9]{6,}$/.test(previousDraft.ticket_reference)?previousDraft:null;
     setCustom(cust);
-    setCustomIdea(cust?.idea||"");
-    setCustomBudget(cust?.budget?String(cust.budget):"");
+    setCustomIdea(previousDraft?.idea||"");
+    setCustomBudget(previousDraft?.budget?String(previousDraft.budget):"");
     setBudgetKey(saved.budgetKey||saved.budget||"unsure");
     setHydrated(true);
   },[locale,standalone,incoming,venues]);
