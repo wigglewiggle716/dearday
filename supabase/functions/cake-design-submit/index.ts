@@ -63,8 +63,8 @@ Deno.serve(async request=>{
     const phone=field(data,"phone",6,40);
     const email=field(data,"email",5,254).toLowerCase();
     const notes=String(data.get("notes")||"").trim();
-    if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error("Invalid email");
-    if(!/^[\\d+()\\s-]{6,40}$/.test(phone))throw new Error("Invalid phone");
+    if(!/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(email))throw new Error("Invalid email");
+    if(!/^[\d+()\s-]{6,40}$/.test(phone))throw new Error("Invalid phone");
     if(notes.length>2000)throw new Error("Invalid notes");
     const locale=data.get("locale")==="en"?"en":"ar";
     const image=data.get("image");
