@@ -476,3 +476,44 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
 .dd-cart-back-to-products{min-height:46px;display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border:1px solid #6B3540;border-radius:999px;color:#6B3540;font-size:13px;font-weight:700;background:#fff;text-align:center}
 .dd-cart-back-to-products:hover{background:#fff5f1}
 @media(max-width:480px){.dd-cart-page-actions{flex-direction:column;align-items:stretch}.dd-cart-page .dd-cart-page-actions .dd-cart-goto,.dd-cart-back-to-products{width:100%;min-width:0}}
+
+/* Verified signed-in account menu — shared approved header. */
+.dd-session-loading{display:inline-block;width:42px;height:42px;border-radius:50%;background:rgba(107,53,64,.075)}
+.dd-account-nav{position:relative;display:flex;align-items:center;z-index:160}
+.dd-account-trigger{
+  width:42px;height:42px;display:grid;place-items:center;
+  border:1px solid rgba(107,53,64,.25);border-radius:50%;
+  background:#fffdfc;color:var(--dd-burgundy);cursor:pointer;
+  box-shadow:0 5px 14px rgba(78,32,39,.07);
+}
+.dd-account-trigger svg{display:block;width:22px;height:22px}
+.dd-account-trigger:hover,.dd-account-trigger[aria-expanded=true]{border-color:var(--dd-terracotta)}
+.dd-account-menu{
+  position:absolute;z-index:200;top:calc(100% + 11px);inset-inline-end:0;
+  width:235px;padding:9px;border-radius:16px;border:1px solid var(--dd-line);
+  background:var(--dd-white);box-shadow:0 18px 45px rgba(78,32,39,.16);
+  display:grid;gap:2px;
+}
+.dd-account-menu-head{border-bottom:1px solid var(--dd-line);margin-bottom:4px;
+  padding:9px 10px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--dd-burgundy);font-size:12px;font-weight:800;direction:ltr;text-align:start}
+.dd-account-menu a,.dd-account-menu button{
+  padding:12px 11px;min-height:40px;display:block;width:100%;
+  border:0;border-radius:10px;background:transparent;
+  color:var(--dd-burgundy);font-size:13px;font-weight:700;
+  text-align:start;cursor:pointer;
+}
+.dd-account-menu a:hover,.dd-account-menu button:hover:not(:disabled){background:#f6e7e1}
+.dd-account-menu button:disabled{opacity:.6;cursor:wait}
+.dd-account-menu [role=alert]{color:#a13f42;font-size:11px;padding:8px}
+.dd-mobile-account{display:grid;gap:10px;min-width:0;width:100%;padding:10px 0}
+.dd-mobile-account strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--dd-burgundy)}
+.dd-mobile-account a,.dd-mobile-account button{
+  display:block;border:1px solid var(--dd-line);padding:10px 15px;border-radius:12px;
+  background:#fffdfc;color:var(--dd-burgundy);text-align:start;font-size:13px;font-weight:800;
+}
+.dd-mobile-account button{cursor:pointer}
+.dd-mobile-account small{color:#a13f42}
+@media(max-width:650px){
+ .dd-account-menu{position:fixed;top:80px;inset-inline-start:14px;inset-inline-end:14px;width:auto}
+}
