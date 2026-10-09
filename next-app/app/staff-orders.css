@@ -1,0 +1,64 @@
+/* Internal order operations, scoped to the React staff page. Brand: Dear Day. */
+.dd-staff-orders{flex:1;min-height:70vh;background:#FAF3EA;color:#352D2E;padding:35px clamp(15px,4vw,65px) 70px}
+.dd-staff-orders *{box-sizing:border-box}
+.dd-orders-layout{width:min(1360px,100%);margin:auto}
+.dd-orders-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:21px}
+.dd-orders-heading h1{font-size:clamp(26px,3vw,36px);margin:12px 0 5px;color:#6B3540;line-height:1.3}
+.dd-orders-heading p{font-size:13px;line-height:1.8;color:#756a68;margin:0}
+.dd-orders-back{color:#A8583D;text-decoration:none;font-size:13px;font-weight:700}
+.dd-orders-back:hover{text-decoration:underline}
+.dd-orders-btn{min-height:42px;padding:10px 15px;border-radius:12px;border:1px solid #6B3540;background:#6B3540;color:#fff;font:700 13px/1.25 inherit;cursor:pointer;white-space:nowrap}
+.dd-orders-btn.secondary{background:#fff;color:#6B3540}
+.dd-orders-btn:disabled{opacity:.52;cursor:not-allowed}
+.dd-orders-btn:not(:disabled):hover{filter:brightness(.94)}
+.dd-orders-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:15px;background:#fff;border:1px solid rgba(107,53,64,.15);border-radius:17px}
+.dd-orders-toolbar input,.dd-orders-toolbar select,.dd-orders-update select{min-height:44px;border:1px solid #e2d4d1;border-radius:11px;background:#fff;color:#352D2E;padding:0 12px;font:inherit;font-size:13px;min-width:0}
+.dd-orders-toolbar input{flex:1 1 250px}
+.dd-orders-toolbar select{min-width:166px}
+.dd-orders-helper{font-size:12px;margin:8px 2px 16px;color:#837375}
+.dd-orders-panel{background:#fff;border:1px solid rgba(107,53,64,.14);border-radius:19px;overflow:hidden;box-shadow:0 12px 32px rgba(78,32,39,.035)}
+.dd-orders-guard{padding:45px 20px;min-height:230px;display:flex;gap:16px;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.dd-orders-guard p{margin:0}
+.dd-orders-panel-heading{padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #ede3df}
+.dd-orders-panel-heading h2{font-size:19px;margin:0;color:#6B3540}
+.dd-orders-panel-heading span{font-size:12px;color:#766969}
+.dd-orders-scroll{overflow-x:auto}
+.dd-orders-scroll table{border-collapse:collapse;width:100%;min-width:1010px}
+.dd-orders-scroll th,.dd-orders-scroll td{text-align:start;padding:14px 13px;font-size:12px;border-bottom:1px solid #f0e9e5}
+.dd-orders-scroll th{background:#fdf8f6;color:#6B3540;font-weight:800;white-space:nowrap}
+.dd-orders-scroll tbody tr:last-child td{border-bottom:0}
+.dd-orders-scroll tbody tr:hover{background:#fffaf7}
+.dd-orders-text-btn{border:1px solid rgba(107,53,64,.28);background:#fff9f6;color:#6B3540;padding:8px 11px;border-radius:10px;font:700 12px/1.25 inherit;cursor:pointer;white-space:nowrap}
+.dd-orders-text-btn:hover{background:#f3e7e1}
+.dd-order-status{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;background:#f1e8e5;color:#6B3540;white-space:nowrap}
+.dd-order-status.s-paid,.dd-order-status.s-confirmed,.dd-order-status.s-completed{background:#e9f3ec;color:#376a4a}
+.dd-order-status.s-draft,.dd-order-status.s-pending_payment,.dd-order-status.s-in_progress{background:#f8f0df;color:#865e2c}
+.dd-order-status.s-cancelled,.dd-order-status.s-refunded{background:#f8e7e7;color:#9a4545}
+.dd-orders-empty{padding:45px 16px;text-align:center;color:#756a68;font-size:14px}
+.dd-orders-pages{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 19px;border-top:1px solid #eee6e1;color:#786b6a;font-size:12px}
+.dd-orders-pages>div{display:flex;gap:8px}
+.dd-orders-hint{margin:14px 4px;font-size:12px;color:#7c686b;line-height:1.9}
+.dd-orders-overlay{position:fixed;inset:0;z-index:260;background:rgba(36,22,28,.53);display:flex;justify-content:flex-end}
+html[lang=en] .dd-orders-overlay{justify-content:flex-start}
+.dd-orders-drawer{width:min(620px,100%);min-width:0;height:100dvh;overflow-y:auto;background:#fffdfa;padding:25px 24px 48px;box-shadow:0 12px 45px rgba(21,10,14,.2);outline:0}
+.dd-orders-drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding-bottom:15px;border-bottom:1px solid #e9ded9;margin-bottom:18px}
+.dd-orders-drawer-head h2{margin:0;color:#6B3540;font-size:22px}
+.dd-orders-drawer-head p{margin:5px 0 0;color:#807276;font-size:12px}
+.dd-orders-close{width:40px;height:40px;flex:0 0 40px;cursor:pointer;color:#6B3540;border:0;border-radius:50%;background:#f2e5e0;font-size:26px;line-height:1}
+.dd-orders-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0 11px}
+.dd-order-summary{padding:12px 14px;border:1px solid #ebdedb;border-radius:13px;background:#fff;min-width:0;margin-bottom:9px}
+.dd-orders-summary-grid .dd-order-summary{margin:0}
+.dd-order-summary span{display:block;color:#857779;font-size:11px;font-weight:700;line-height:1.6}
+.dd-order-summary strong{display:block;color:#3f3436;margin-top:5px;overflow-wrap:anywhere;font-size:13px;line-height:1.7}
+.dd-orders-detail-section{margin:26px 0 0}
+.dd-orders-detail-section h3{font-size:18px;color:#6B3540;margin:0 0 13px}
+.dd-orders-detail-section>p{color:#74696a;font-size:13px;line-height:1.8}
+.dd-orders-update{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dd-orders-update select{min-width:210px;flex:1}
+.dd-orders-feedback{border:1px solid rgba(107,53,64,.18);padding:10px 14px;border-radius:10px;background:#fbf3ed;color:#6B3540}
+.dd-order-item{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;border:1px solid #ebdedb;border-radius:13px;background:#fff;padding:14px;margin:9px 0}
+.dd-order-item>div{min-width:0;display:grid;gap:6px}
+.dd-order-item strong{color:#403637;font-size:13px;overflow-wrap:anywhere}
+.dd-order-item small{color:#817376;font-size:12px}
+@media(max-width:700px){.dd-staff-orders{padding:23px 14px 55px}.dd-orders-heading{align-items:flex-start}.dd-orders-heading>.dd-orders-btn{flex-shrink:0}.dd-orders-toolbar{display:grid;grid-template-columns:1fr auto;gap:8px}.dd-orders-toolbar input{grid-column:1 / -1;width:100%}.dd-orders-toolbar select{grid-column:1/2;grid-row:2}.dd-orders-toolbar button{grid-column:2/3;grid-row:2}.dd-orders-drawer{padding:18px 15px 44px}.dd-orders-summary-grid{gap:8px}.dd-order-summary{padding:10px}.dd-orders-pages{flex-wrap:wrap}}
+@media(max-width:410px){.dd-orders-heading{flex-wrap:wrap}.dd-orders-heading>.dd-orders-btn{margin-inline-start:auto}.dd-orders-pages .dd-orders-btn{padding-inline:11px}}
