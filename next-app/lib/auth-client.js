@@ -82,5 +82,11 @@ export async function readCurrentAccount(client){
   if(!role||!["customer","partner_user",...EMPLOYEE_ROLES].includes(role)){
     return {status:"inactive",user};
   }
+  // Staff with no enrolled factor must finish MFA onboarding before any
+  // protected staff application access. Enrolled AAL1 staff are challenged
+  // above; new AAL1 staff are routed only to authenticator enrollment.
+  if(EMPLOYEE_ROLES.has(role)&&assurance.data?.currentLevel!=="aal2"){
+    return {status:"mfa_setup_required",user,role,profile:profile.data};
+  }
   return {status:"authenticated",user,role,profile:profile.data};
 }
