@@ -1,4 +1,4 @@
-import "../../../auth.css";
-import AccountGateway from "../../../../components/account-gateway";
+import "../../../my-account.css";
+import MyAccount from "../../../../components/my-account";
 export const metadata={title:"My Account | Dear Day",robots:{index:false,follow:false}};
-export default function AccountLanding(){return <AccountGateway locale="en" kind="customer"/>;}
+export default function AccountPage(){return <MyAccount locale="en" initialTab="profile"/>;}
