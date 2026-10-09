@@ -62,7 +62,7 @@ const translations={
 const selectList="id,order_number,customer_id,status,occasion_type,occasion_date,delivery_area,grand_total,currency,created_at,updated_at";
 const selectFull="id,order_number,customer_id,status,occasion_type,occasion_date,occasion_time,delivery_area,delivery_address,customer_note,subtotal,discount_total,delivery_total,grand_total,currency,created_at,updated_at";
 const selectItems="id,item_name,unit_price,quantity,line_total,partner_id";
-const selectPartners="id,partner_id,status,subtotal,commission_rate,commission_amount,partner_net";
+const selectPartners="id,partner_id,status,subtotal";
 function money(n,c,locale){
  try{return new Intl.NumberFormat(locale==="ar"?"ar-EG":"en-EG",{style:"currency",currency:c||"EGP",maximumFractionDigits:2}).format(Number(n||0));}
  catch{return String(n??0)+" EGP";}
@@ -105,6 +105,7 @@ export default function StaffOrders({locale="ar"}){
  const [next,setNext]=useState("");
  const [busy,setBusy]=useState(false);
  const [feedback,setFeedback]=useState("");
+ const [pageNotice,setPageNotice]=useState("");
  const dialogRef=useRef(null);
  const loadSeq=useRef(0);
  const detailSeq=useRef(0);
@@ -130,7 +131,7 @@ export default function StaffOrders({locale="ar"}){
     let query=client.from("orders").select(selectList,{count:"exact"}).order("created_at",{ascending:false});
     if(statusFilter)query=query.eq("status",statusFilter);
     if(search){
-      if(/^\d+$/.test(search))query=query.eq("order_number",Number(search));
+      if(/^(?:dd)?\d+$/i.test(search))query=query.eq("order_number",Number(search.replace(/^dd/i,"")));
       else query=query.or("occasion_type.ilike.%"+search+"%,delivery_area.ilike.%"+search+"%");
     }
     const rows=await query.range(page*PAGE_SIZE,(page+1)*PAGE_SIZE-1);
@@ -226,13 +227,13 @@ export default function StaffOrders({locale="ar"}){
     .select("id,status,updated_at").maybeSingle();
    if(updated.error||!updated.data)throw updated.error||new Error("CONCURRENT_UPDATE");
    setDetail(d=>({...d,order:{...d.order,status:updated.data.status,updated_at:updated.data.updated_at}}));
-   setNext(updated.data.status);setFeedback(t.changed);reload();
+   setNext(updated.data.status);setFeedback(t.changed);setPageNotice(t.changed);setSelected(null);reload();
   }catch{setFeedback(t.saveError);}finally{setBusy(false);}
  }
  function applySearch(event){
-  event.preventDefault();setPage(0);setSearch(safeSearch(searchInput));setSelected(null);
+  event.preventDefault();setPageNotice("");setPage(0);setSearch(safeSearch(searchInput));setSelected(null);
  }
- function filterStatus(value){setPage(0);setStatusFilter(value);setSelected(null);}
+ function filterStatus(value){setPageNotice("");setPage(0);setStatusFilter(value);setSelected(null);}
  const gate=session.status==="mfa_setup_required"?{href:pathFor("security",locale),label:t.setup}:
   session.status==="mfa_required"?{href:pathFor("auth",locale)+"?mode=mfa",label:t.challenge}:
   session.status==="signed_out"?{href:pathFor("auth",locale)+"?next="+encodeURIComponent(pathFor("staffOrders",locale)),label:t.signIn}:null;
@@ -252,6 +253,7 @@ export default function StaffOrders({locale="ar"}){
     </section>:stage==="loading"?<section className="dd-orders-panel dd-orders-guard" role="status">{t.loading}</section>:
      stage==="forbidden"?<section className="dd-orders-panel dd-orders-guard" role="alert">{t.blocked}</section>:
      stage==="error"?<section className="dd-orders-panel dd-orders-guard" role="alert">{t.error} <button type="button" className="dd-orders-btn secondary" onClick={reload}>{t.refresh}</button></section>:<>
+     {pageNotice&&<p className="dd-orders-notice" role="status">{pageNotice}</p>}
      <form className="dd-orders-toolbar" onSubmit={applySearch}>
       <input type="search" value={searchInput} onChange={e=>setSearchInput(e.target.value)} placeholder={t.search} aria-label={t.search} maxLength={70}/>
       <button type="submit" className="dd-orders-btn">{t.searchButton}</button>
