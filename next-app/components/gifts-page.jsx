@@ -171,7 +171,7 @@ function GiftSort({value, options, label, locale, onChange}) {
       aria-controls="dd-gifts-sort-options"
       onClick={()=>setOpen(previous=>!previous)} onKeyDown={handleKeys}>
       <span className="dd-gifts-sort-value">{selectedLabel}</span>
-      <span className="dd-gifts-sort-chevron" aria-hidden="true"/>
+      <span className="dd-gifts-sort-chevron" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 8 5 5 5-5"/></svg></span>
     </button>
     {open&&<div className="dd-gifts-sort-menu" id="dd-gifts-sort-options" role="listbox" aria-label={label}>
       {options.map(([key,optionLabel])=><button key={key} type="button" role="option"
