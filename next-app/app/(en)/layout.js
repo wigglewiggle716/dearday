@@ -1,8 +1,7 @@
 import "../globals.css";
 import SiteHeader from "../../components/site-header";
 import SiteFooter from "../../components/site-footer";
-import { CartProvider } from "../../components/cart-provider";
-import { CatalogProvider } from "../../components/live-catalog";
+import { CatalogProvider, CatalogCartProvider } from "../../components/live-catalog";
 
 export const metadata = {
   title: "Dear Day — Every Detail of Your Occasion",
@@ -15,11 +14,11 @@ export default function EnglishLayout({ children }) {
     <html lang="en" dir="ltr">
       <body>
         <CatalogProvider>
-          <CartProvider locale="en">
+          <CatalogCartProvider locale="en">
             <SiteHeader locale="en" />
         {children}
             <SiteFooter locale="en" />
-          </CartProvider>
+          </CatalogCartProvider>
         </CatalogProvider>
       </body>
     </html>
