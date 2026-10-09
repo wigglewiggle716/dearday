@@ -91,6 +91,7 @@ export default function SiteHeader({ locale }) {
     if(mobile)return <div className="dd-mobile-account">
       <strong title={userLabel}>{userLabel}</strong>
       <Link href={accountHref}>{linkText}</Link>
+      <Link href={pathFor("notifications",locale)}>{locale==="ar"?"الإشعارات":"Notifications"}</Link>
       {session.role==="customer"&&<Link href={pathFor("bookings",locale)}>{locale==="ar"?"حجوزاتي":"My Bookings"}</Link>}
       <button type="button" disabled={signoutBusy} onClick={logout}>
         {signoutBusy?(locale==="ar"?"جاري الخروج…":"Signing out…"):(locale==="ar"?"تسجيل الخروج":"Log out")}
@@ -108,6 +109,7 @@ export default function SiteHeader({ locale }) {
       {accountOpen&&<div className="dd-account-menu" role="menu">
         <div className="dd-account-menu-head" title={userLabel}>{userLabel}</div>
         <Link href={accountHref} role="menuitem" onClick={()=>setAccountOpen(false)}>{linkText}</Link>
+        <Link href={pathFor("notifications",locale)} role="menuitem" onClick={()=>setAccountOpen(false)}>{locale==="ar"?"الإشعارات":"Notifications"}</Link>
         {session.role==="customer"&&<Link href={pathFor("bookings",locale)} role="menuitem"
           onClick={()=>setAccountOpen(false)}>{locale==="ar"?"حجوزاتي":"My Bookings"}</Link>}
         <button type="button" role="menuitem" disabled={signoutBusy} onClick={logout}>
