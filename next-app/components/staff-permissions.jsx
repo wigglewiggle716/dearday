@@ -9,7 +9,7 @@ const roles=["super_admin","admin","operations","accountant","partner_manager","
 const words={
  ar:{
  title:"صلاحيات الفريق",intro:"الصلاحيات الفعلية جاية من Supabase، وبتتراجع على السيرفر في كل عملية.",
- login:"تسجيل الدخول",verify:"إكمال التحقق بخطوتين",restricted:"الصفحة لموظفي Dear Day النشطين.",
+ login:"تسجيل الدخول",verify:"إكمال التحقق بخطوتين",setup:"تفعيل تطبيق المصادقة",restricted:"الصفحة لموظفي Dear Day النشطين.",
  loading:"جاري تحميل الصلاحيات…",failed:"تعذر تحميل الصلاحيات. جرّب مرة تانية.",
  own:"صلاحياتي الحالية",none:"مفيش صلاحيات إدارية متاحة لهذا الحساب.",
  roster:"حسابات الموظفين",noRoster:"مفيش صلاحية لعرض بيانات باقي الموظفين.",
@@ -29,7 +29,7 @@ const words={
  },
  en:{
  title:"Staff permissions",intro:"Effective permissions come from Supabase and are enforced server-side for each action.",
- login:"Log in",verify:"Complete two-step verification",restricted:"Restricted to active Dear Day staff.",
+ login:"Log in",verify:"Complete two-step verification",setup:"Set up authenticator",restricted:"Restricted to active Dear Day staff.",
  loading:"Loading permissions…",failed:"Couldn't load staff permissions. Try again.",
  own:"My effective permissions",none:"No administrative permissions are assigned to this account.",
  roster:"Employees",noRoster:"You do not have permission to see the employee directory.",
@@ -144,7 +144,7 @@ export default function StaffPermissions({locale="ar"}){
    <h1>{t.title}</h1><p className="dd-security-muted">{t.intro}</p>
    {!staff?<div className="dd-security-guard">
     <p>{session.status==="mfa_setup_required"?t.verify:session.status==="mfa_required"?t.verify:session.status==="loading"?t.loading:t.restricted}</p>
-    {session.status!=="loading"&&<Link className="dd-security-primary" href={session.status==="mfa_setup_required"?pathFor("security",locale):pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.verify:t.login}</Link>}
+    {session.status!=="loading"&&<Link className="dd-security-primary" href={session.status==="mfa_setup_required"?pathFor("security",locale):pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_setup_required"?t.setup:session.status==="mfa_required"?t.verify:t.login}</Link>}
    </div>:loading?<p role="status">{t.loading}</p>:
     error&&loadedFor!==currentId?<div>
      <p role="alert">{error}</p><button className="dd-security-secondary" type="button" onClick={refresh}>{t.reload}</button>
