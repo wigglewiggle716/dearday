@@ -32,7 +32,7 @@ Date: 2026-10-10. Prepared on `react-migration` only. Live site `dear-day.com`, 
 - All write operations must be tested on *designated dummy data only* with separate owner approval. No data was written while preparing phase 9.
 
 ## Remaining gaps / release gates
-1. A **successful READY Vercel preview at the exact latest Git SHA** and authenticated browser testing are still required. A GitHub commit is NOT a successful build or owner approval.
+1. A **successful READY Vercel preview at the exact latest Git SHA** and authenticated browser testing are still required. An explicit deployment attempt on this phase returned HTTP **402 `api-deployments-free-per-day`** with a 24-hour retry indication, so **there is no verified READY preview for these changes**. GitHub source commits are NOT successful builds or owner approval.
 2. Partner-orders RPC and cancellation RPC can return all authorized memberships; the React orders page filters selected partner; the cancellations multi-member experience remains blocked pending an explicit server response field.
 3. Portal view count and product loading currently have bounds; add server-side pagination/aggregation if volume exceeds 300 listing records or version queries.
 4. The availability RPC does not server-side guard reduction below confirmed reservations. Define and test confirmed-booking protections before activating real partner schedule changes.
