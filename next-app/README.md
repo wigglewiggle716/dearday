@@ -43,3 +43,18 @@ Baseline source commit:
   footer return. Visually inspected desktop and mobile screenshots in both languages.
 - Test catalog responses were mocked and the existing local Arabic font substituted
   for external font loading. No production writes or deployment operations.
+
+## Cancellation and refund policy migration — 2026-10-09
+
+- Added `/refunds` and `/en/refunds` with the shared legal layout and site navigation.
+- Preserved the approved wording of all 10 sections and the October 2, 2026 date.
+  Live page bodies matched the approved source files when the migration began.
+- Existing footer and Terms links now open the completed React policy; Contact Us
+  links resolve to the corresponding language. No cancellation/payment logic changed.
+- Integrated the latest React work through `f1f7e7b` before final verification.
+- Production build passed. Local browser checks passed in both languages at 1440,
+  390 and 320 pixels: rendered text parity, no horizontal overflow, anchors,
+  language switch with fragments, contact/footer round trips, and Terms navigation.
+  Catalog responses were mocked and local Arabic fonts used for visual inspection.
+- Only migration page files and this log were changed; no production writes or
+  deployment operations. Account/data-deletion page migration remains separate.
