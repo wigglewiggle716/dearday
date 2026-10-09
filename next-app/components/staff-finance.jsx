@@ -15,7 +15,7 @@ const dictionary={
   loading:"جاري تحميل بيانات المالية…",denied:"الصفحة متاحة فقط للموظفين المصرح لهم ببيانات المالية.",
   failed:"تعذر تحميل بيانات المالية. حاول مرة أخرى.",signIn:"تسجيل الدخول",setup:"تفعيل التحقق بخطوتين",mfa:"إكمال التحقق بخطوتين",
   unsettled:"صافي المستحقات غير المسوّاة",draftTotal:"مسودات التسوية",approvedTotal:"التسويات المعتمدة",paidTotal:"المسجل كمدفوع",
-  summary:"ملخص من النتائج المحمّلة",partial:"بعض السجلات أقدم من حد العرض؛ الأرقام الظاهرة جزئية وليست إجماليات حسابية نهائية.",
+  summary:"ملخص من النتائج المحمّلة",partial:"بعض السجلات أقدم من حد العرض؛ الأرقام الظاهرة جزئية وليست إجماليات حسابية نهائية.",usedUnknown:"عدد بنود التسوية كبير؛ لا يمكن تأكيد قائمة غير المسوّاة من التحميل الحالي. استعلم من السيرفر قبل اتخاذ قرار مالي.",
   add:"إنشاء تسوية جديدة",new:"إنشاء مسودة تسوية",settlements:"التسويات",eligible:"طلبات الشركاء المكتملة وغير المسوّاة",
   partner:"الشريك",period:"الفترة",from:"من",to:"إلى",gross:"قيمة الطلبات",commission:"عمولة Dear Day",adjustments:"التسويات الإضافية",
   net:"صافي مستحقات الشريك",status:"الحالة",reference:"مرجع التحويل",notes:"ملاحظات",created:"تاريخ الإنشاء",
@@ -47,7 +47,7 @@ const dictionary={
   loading:"Loading finance data…",denied:"This page requires finance-view permission.",
   failed:"Could not load finance data. Try again.",signIn:"Log in",setup:"Set up two-step verification",mfa:"Complete two-step verification",
   unsettled:"Unsettled partner net",draftTotal:"Draft settlements",approvedTotal:"Approved settlements",paidTotal:"Recorded as paid",
-  summary:"Summary of loaded rows",partial:"Older rows exceeded the display cap. These sums are partial, not accounting-grade final totals.",
+  summary:"Summary of loaded rows",partial:"Older rows exceeded the display cap. These sums are partial, not accounting-grade final totals.",usedUnknown:"Settlement links exceed the loaded limit. Unsettled eligibility cannot be calculated safely; use server-side reconciliation.",
   add:"New settlement",new:"Create draft settlement",settlements:"Settlements",eligible:"Completed, unsettled partner orders",
   partner:"Partner",period:"Period",from:"From",to:"To",gross:"Gross",commission:"Dear Day commission",adjustments:"Adjustments",
   net:"Partner net",status:"Status",reference:"Transfer reference",notes:"Notes",created:"Created",
@@ -98,7 +98,7 @@ export default function StaffFinance({locale="ar"}){
  const t=dictionary[locale]||dictionary.ar;
  const session=useAuthSession(),active=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role),uid=active?session.user?.id:null;
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
- const [data,setData]=useState({stage:"loading",permissions:[],partners:[],settlements:[],eligible:[],overflow:false});
+ const [data,setData]=useState({stage:"loading",permissions:[],partners:[],settlements:[],eligible:[],overflow:false,usedOverflow:false});
  const [rev,setRev]=useState(0),[filter,setFilter]=useState(""),[partnerFilter,setPartnerFilter]=useState(""),[statusFilter,setStatusFilter]=useState(""),[page,setPage]=useState(0);
  const [form,setForm]=useState(null),[selected,setSelected]=useState(null),[paymentRef,setPaymentRef]=useState("");
  const [items,setItems]=useState({stage:"loading",rows:[],overflow:false});
@@ -111,7 +111,7 @@ export default function StaffFinance({locale="ar"}){
  const refresh=()=>setRev(v=>v+1);
  useEffect(()=>{
   const run=++seq.current;
-  if(!uid||!client){setData({stage:"loading",permissions:[],partners:[],settlements:[],eligible:[],overflow:false});return;}
+  if(!uid||!client){setData({stage:"loading",permissions:[],partners:[],settlements:[],eligible:[],overflow:false,usedOverflow:false});return;}
   setData({stage:"loading",permissions:[],partners:[],settlements:[],eligible:[],overflow:false});
   (async()=>{
    try{
@@ -127,9 +127,9 @@ export default function StaffFinance({locale="ar"}){
     ]);
     if(run!==seq.current)return;
     const usedIds=new Set(used.rows.map(x=>x.partner_order_id));
-    const eligible=completed.rows.filter(x=>!usedIds.has(x.id));
+    const eligible=used.overflow?[]:completed.rows.filter(x=>!usedIds.has(x.id));
     const overflow=[partners,settlements,used,completed].some(x=>x.overflow);
-    setData({stage:"ready",permissions:perms,partners:partners.rows,settlements:settlements.rows,eligible,overflow});
+    setData({stage:"ready",permissions:perms,partners:partners.rows,settlements:settlements.rows,eligible,overflow,usedOverflow:used.overflow});
    }catch{if(run===seq.current)setData(x=>({...x,stage:"error"}));}
   })();
   return()=>{seq.current++;};
@@ -209,7 +209,7 @@ export default function StaffFinance({locale="ar"}){
  const pages=Math.max(1,Math.ceil(filtered.length/PAGE)),visible=filtered.slice(page*PAGE,(page+1)*PAGE);
  const sum=(values)=>values.reduce((a,x)=>a+Number(x.partner_net||0),0);
  const summary=[
-  [t.unsettled,sum(data.eligible)],
+  [t.unsettled,data.usedOverflow?null:sum(data.eligible)],
   [t.draftTotal,sum(data.settlements.filter(x=>x.status==="draft"))],
   [t.approvedTotal,sum(data.settlements.filter(x=>x.status==="approved"))],
   [t.paidTotal,sum(data.settlements.filter(x=>x.status==="paid"))]
@@ -230,6 +230,7 @@ export default function StaffFinance({locale="ar"}){
     {notice&&<p className="dd-fin-success" role="status">{notice}</p>}
     {error&&!selected&&!form&&<p className="dd-fin-error" role="alert">{error}</p>}
     <p className="dd-fin-hint">{t.summary}{data.overflow?" — "+t.partial:""}</p>
+    {data.usedOverflow&&<p className="dd-fin-warning" role="alert">{t.usedUnknown}</p>}
     {data.overflow&&<p className="dd-fin-warning">{t.limit}</p>}
     <div className="dd-fin-stats">{summary.map(([label,value])=><article key={label}><span>{label}</span><strong dir="ltr">{money(value,"EGP",locale)}</strong></article>)}</div>
     <p className="dd-fin-warning">{t.policy}</p>
@@ -256,13 +257,13 @@ export default function StaffFinance({locale="ar"}){
       <button className="dd-fin-secondary small" disabled={page+1>=pages} onClick={()=>setPage(p=>p+1)}>{t.next}</button>
      </div></nav>
     </section>
-    <div className="dd-fin-toolbar"><h2>{t.eligible}</h2><span>{t.eligibleCount}: {data.eligible.length}</span></div>
-    <section className="dd-fin-panel">{data.eligible.length?<div className="dd-fin-scroll"><table>
+    <div className="dd-fin-toolbar"><h2>{t.eligible}</h2><span>{t.eligibleCount}: {data.usedOverflow?"—":data.eligible.length}</span></div>
+    <section className="dd-fin-panel">{!data.usedOverflow&&data.eligible.length?<div className="dd-fin-scroll"><table>
      <thead><tr><th>{t.partner}</th><th>{t.status}</th><th>{t.gross}</th><th>{t.commission}</th><th>{t.net}</th><th>{t.completed}</th></tr></thead>
      <tbody>{data.eligible.slice(0,150).map(x=><tr key={x.id}><td>{partnerName(x.partner_id)}</td><td>{x.status}</td>
       <td dir="ltr">{money(x.subtotal,"EGP",locale)}</td><td dir="ltr">{money(x.commission_amount,"EGP",locale)}</td>
       <td dir="ltr"><strong>{money(x.partner_net,"EGP",locale)}</strong></td><td>{day(x.completed_at,locale)}</td></tr>)}</tbody>
-    </table></div>:<p className="dd-fin-empty">{t.noEligible}</p>}</section>
+    </table></div>:<p className="dd-fin-empty">{data.usedOverflow?t.usedUnknown:t.noEligible}</p>}</section>
     <p className="dd-fin-hint">{t.verification}</p>
    </>}
   </div>
