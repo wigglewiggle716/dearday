@@ -67,7 +67,7 @@ export default function PartnerPoliciesPanel(){
      if(r.error)throw r.error;
      for(const x of r.data||[])names[x.id]=x;
     }
-    if(live)setData({stage:"ready",policies:rows,listings:ls,names});
+    if(live)setData({stage:"ready",partnerId:partner.id,policies:rows,listings:ls,names});
    }catch{if(live)setData({stage:"error",policies:[],listings:[],names:{}});}
   })();
   return()=>{live=false;};
@@ -103,7 +103,7 @@ export default function PartnerPoliciesPanel(){
    <button type="button" onClick={()=>{setDraft(initial(partner.id));setError("");}}>+ {t.add}</button></div></div>
   <p className="dd-pp-warning">{t.warning}</p>{notice&&<p role="status" className="dd-pp-success">{notice}</p>}
   {error&&!draft&&<p role="alert" className="dd-pp-error">{error}</p>}
-  {data.stage==="loading"?<p>{t.loading}</p>:data.stage==="error"?<p role="alert">{t.error}</p>:<div className="dd-pp-panel">
+  {(data.stage==="ready"&&data.partnerId!==partner?.id||data.stage==="loading")?<p>{t.loading}</p>:data.stage==="error"?<p role="alert">{t.error}</p>:<div className="dd-pp-panel">
    {data.policies.length?<div className="dd-pp-table-wrap"><table><thead><tr><th>{t.name}</th><th>{t.scope}</th><th>{t.target}</th><th>{t.status}</th><th>{t.rules}</th></tr></thead>
     <tbody>{data.policies.map(p=><tr key={p.id}>
      <td><strong>{p.title}</strong>{p.review_note&&<small>{p.review_note}</small>}</td>
