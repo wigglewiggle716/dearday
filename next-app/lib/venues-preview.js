@@ -1,8 +1,7 @@
-// Extracted from the current production deployment's source commit
-// 5d97cc458910279646ec10a18ffecaca81a6854d. Entries are PROTOTYPE PREVIEWS, not bookable venue inventory.
-// Source: /venues and /venues-en, Arabic 12 cards, English 10 cards.
-// Do not pass these IDs to checkout or the live commerce cart.
-export const venuePreviewAr = [
+/* Shared locale-neutral venue preview catalog for the migration.
+   Both languages use the same twelve stable IDs, pictures, pricing, order and filters.
+   Venue samples are NOT verified live booking inventory; planning only. */
+export const venuePreviews = [
   {
     "id": "terrace",
     "name": "The Terrace Lounge",
@@ -18,7 +17,8 @@ export const venuePreviewAr = [
     "meta": "مطعم وكافيهات",
     "areaEn": "Sheikh Zayed",
     "descEn": "Outdoor dining experience",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Restaurants & Cafés"
   },
   {
     "id": "ovio",
@@ -35,7 +35,8 @@ export const venuePreviewAr = [
     "meta": "مطعم وكافيهات",
     "areaEn": "Heliopolis",
     "descEn": "Quiet, intimate dinner",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Restaurants & Cafés"
   },
   {
     "id": "zooba",
@@ -52,7 +53,8 @@ export const venuePreviewAr = [
     "meta": "مكان خاص",
     "areaEn": "Zamalek",
     "descEn": "Private garden setting",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Private Venue"
   },
   {
     "id": "boulud",
@@ -69,7 +71,8 @@ export const venuePreviewAr = [
     "meta": "مطعم وكافيهات",
     "areaEn": "New Cairo",
     "descEn": "Elegant dinner experience",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Restaurants & Cafés"
   },
   {
     "id": "nacelle",
@@ -86,7 +89,8 @@ export const venuePreviewAr = [
     "meta": "تجربة وترفيه",
     "areaEn": "6th of October",
     "descEn": "A different evening experience",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Entertainment & Experiences"
   },
   {
     "id": "scarabeo",
@@ -103,7 +107,8 @@ export const venuePreviewAr = [
     "meta": "مكان خاص",
     "areaEn": "Sheikh Zayed",
     "descEn": "Warm-light dinner setting",
-    "isPick": true
+    "isPick": true,
+    "metaEn": "Private Venue"
   },
   {
     "id": "dummy-rooftop-zayed",
@@ -119,8 +124,8 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-01.jpg",
     "meta": "روف توب ومطعم",
     "areaEn": "Sheikh Zayed",
-    "descEn": "عشاء روف توب بإطلالة مفتوحة",
-    "metaEn": "روف توب ومطعم",
+    "descEn": "Rooftop dinner with sweeping open-air views",
+    "metaEn": "Rooftop Restaurant",
     "isPick": false
   },
   {
@@ -137,8 +142,8 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-02.jpg",
     "meta": "مطعم وجاردن",
     "areaEn": "Heliopolis",
-    "descEn": "جلسة عشاء هادئة وسط الجاردن",
-    "metaEn": "مطعم وجاردن",
+    "descEn": "Relaxed garden dinner in a peaceful setting",
+    "metaEn": "Garden Restaurant",
     "isPick": false
   },
   {
@@ -155,8 +160,8 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-03.jpg",
     "meta": "مكان خاص",
     "areaEn": "Zamalek",
-    "descEn": "جلسة جاردن خاصة للمناسبات",
-    "metaEn": "مكان خاص",
+    "descEn": "Private garden setting for special occasions",
+    "metaEn": "Private Venue",
     "isPick": false
   },
   {
@@ -173,7 +178,7 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-04.jpg",
     "meta": "Fine Dining",
     "areaEn": "New Cairo",
-    "descEn": "عشاء فاخر بإضاءة دافئة",
+    "descEn": "Elegant fine dining in warm ambient light",
     "metaEn": "Fine Dining",
     "isPick": false
   },
@@ -191,8 +196,8 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-05.jpg",
     "meta": "تجربة وترفيه",
     "areaEn": "6th of October",
-    "descEn": "تجربة رسم وعشاء مسائية",
-    "metaEn": "تجربة وترفيه",
+    "descEn": "An evening of painting followed by dinner",
+    "metaEn": "Entertainment & Experiences",
     "isPick": false
   },
   {
@@ -209,180 +214,10 @@ export const venuePreviewAr = [
     "img": "/approved-pages/assets/media/venue-06.jpg",
     "meta": "مكان خاص",
     "areaEn": "Sheikh Zayed",
-    "descEn": "عشاء خاص بالشموع",
-    "metaEn": "مكان خاص",
+    "descEn": "Private candlelit dinner",
+    "metaEn": "Private Venue",
     "isPick": false
   }
 ];
-export const venuePreviewEn = [
-  {
-    "id": "terrace",
-    "name": "The Terrace Lounge",
-    "ar": "تجربة عشاء خارجية",
-    "type": "restaurant",
-    "area": "الشيخ زايد",
-    "people": "8-12",
-    "guests": 12,
-    "price": 2500,
-    "atmosphere": "outdoor",
-    "rating": 4.8,
-    "img": "/approved-pages/assets/media/venue-01.jpg",
-    "meta": "مطعم وكافيهات",
-    "areaEn": "Sheikh Zayed",
-    "descEn": "Outdoor dining experience",
-    "isPick": true
-  },
-  {
-    "id": "ovio",
-    "name": "Ovio Restaurant",
-    "ar": "عشاء هادئ ومميز",
-    "type": "restaurant",
-    "area": "مصر الجديدة",
-    "people": "6-10",
-    "guests": 10,
-    "price": 1800,
-    "atmosphere": "quiet",
-    "rating": 4.7,
-    "img": "/approved-pages/assets/media/venue-02.jpg",
-    "meta": "مطعم وكافيهات",
-    "areaEn": "Heliopolis",
-    "descEn": "Quiet, intimate dinner",
-    "isPick": true
-  },
-  {
-    "id": "zooba",
-    "name": "Zooba Garden",
-    "ar": "جلسة جاردن خاصة",
-    "type": "private",
-    "area": "الزمالك",
-    "people": "10-20",
-    "guests": 20,
-    "price": 3200,
-    "atmosphere": "outdoor",
-    "rating": 4.6,
-    "img": "/approved-pages/assets/media/venue-03.jpg",
-    "meta": "مكان خاص",
-    "areaEn": "Zamalek",
-    "descEn": "Private garden setting",
-    "isPick": true
-  },
-  {
-    "id": "boulud",
-    "name": "Café Boulud",
-    "ar": "تجربة عشاء أنيقة",
-    "type": "restaurant",
-    "area": "التجمع الخامس",
-    "people": "6-10",
-    "guests": 10,
-    "price": 2200,
-    "atmosphere": "luxury",
-    "rating": 4.8,
-    "img": "/approved-pages/assets/media/venue-04.jpg",
-    "meta": "مطعم وكافيهات",
-    "areaEn": "New Cairo",
-    "descEn": "Elegant dinner experience",
-    "isPick": true
-  },
-  {
-    "id": "nacelle",
-    "name": "Nacelle Experience",
-    "ar": "تجربة مسائية مختلفة",
-    "type": "experience",
-    "area": "أكتوبر",
-    "people": "8-15",
-    "guests": 15,
-    "price": 3500,
-    "atmosphere": "romantic",
-    "rating": 4.9,
-    "img": "/approved-pages/assets/media/venue-05.jpg",
-    "meta": "تجربة وترفيه",
-    "areaEn": "6th of October",
-    "descEn": "A different evening experience",
-    "isPick": true
-  },
-  {
-    "id": "scarabeo",
-    "name": "Scarabeo",
-    "ar": "عشاء بإضاءة دافئة",
-    "type": "private",
-    "area": "الشيخ زايد",
-    "people": "8-12",
-    "guests": 12,
-    "price": 2800,
-    "atmosphere": "romantic",
-    "rating": 4.7,
-    "img": "/approved-pages/assets/media/venue-06.jpg",
-    "meta": "مكان خاص",
-    "areaEn": "Sheikh Zayed",
-    "descEn": "Warm-light dinner setting",
-    "isPick": true
-  },
-  {
-    "id": "dummy-rooftop",
-    "name": "Skyline Rooftop",
-    "ar": "تجربة عشاء خارجية",
-    "type": "restaurant",
-    "area": "التجمع الخامس",
-    "people": "8-12",
-    "guests": 12,
-    "price": 3000,
-    "atmosphere": "outdoor",
-    "rating": 4.8,
-    "img": "/approved-pages/assets/media/venue-01.jpg",
-    "meta": "مطعم وكافيهات",
-    "areaEn": "New Cairo",
-    "descEn": "Rooftop dinner with city views",
-    "isPick": false
-  },
-  {
-    "id": "dummy-bistro",
-    "name": "Garden Bistro",
-    "ar": "عشاء هادئ ومميز",
-    "type": "restaurant",
-    "area": "الشيخ زايد",
-    "people": "6-10",
-    "guests": 10,
-    "price": 2100,
-    "atmosphere": "quiet",
-    "rating": 4.6,
-    "img": "/approved-pages/assets/media/venue-02.jpg",
-    "meta": "مطعم وكافيهات",
-    "areaEn": "Sheikh Zayed",
-    "descEn": "Relaxed dinner in a garden setting",
-    "isPick": false
-  },
-  {
-    "id": "dummy-cinema",
-    "name": "Private Cinema Experience",
-    "ar": "تجربة مسائية مختلفة",
-    "type": "experience",
-    "area": "أكتوبر",
-    "people": "8-15",
-    "guests": 15,
-    "price": 3400,
-    "atmosphere": "romantic",
-    "rating": 4.9,
-    "img": "/approved-pages/assets/media/venue-05.jpg",
-    "meta": "تجربة وترفيه",
-    "areaEn": "6th of October",
-    "descEn": "Private screening with snacks and setup",
-    "isPick": false
-  },
-  {
-    "id": "dummy-studio",
-    "name": "Private Celebration Studio",
-    "ar": "جلسة جاردن خاصة",
-    "type": "private",
-    "area": "الزمالك",
-    "people": "10-20",
-    "guests": 20,
-    "price": 3600,
-    "atmosphere": "outdoor",
-    "rating": 4.7,
-    "img": "/approved-pages/assets/media/venue-03.jpg",
-    "meta": "مكان خاص",
-    "areaEn": "Zamalek",
-    "descEn": "Private styled space for a small celebration",
-    "isPick": false
-  }
-];
+export const venuePreviewAr = venuePreviews;
+export const venuePreviewEn = venuePreviews;
