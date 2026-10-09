@@ -108,21 +108,24 @@ async function authorize(){
  authorized=false;
  const userResult=await sb.auth.getUser();
  if(userResult.error||!userResult.data?.user){show("auth");return;}
- const id=userResult.data.user.id;
- const [p,r,a]=await Promise.all([
-  sb.from("profiles").select("role,is_active").eq("id",id).single(),
-  sb.rpc("get_my_permissions"),
-  sb.auth.mfa.getAuthenticatorAssuranceLevel()
- ]);
- if(p.error||r.error||a.error||!p.data?.is_active||!ALLOWED_ROLES.has(p.data.role)||
-    !(r.data||[]).some(x=>x.permission_code==="customers.view")){
-   await sb.auth.signOut();show("auth");message("الحساب غير مخوّل بعرض طلبات العملاء.");return;
- }
- if(a.data.nextLevel==="aal2"&&a.data.currentLevel!=="aal2"){
+ // MFA challenge must happen before permission checks: access predicates
+ // can require AAL2 and must not cause a premature sign-out at AAL1.
+ const assurance=await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+ if(assurance.error){show("auth");message("تعذر التحقق من مستوى أمان الحساب.");return;}
+ if(assurance.data.nextLevel==="aal2"&&assurance.data.currentLevel!=="aal2"){
    const factors=await sb.auth.mfa.listFactors();
    const verified=factors.data?.totp?.find(x=>x.status==="verified");
    if(!verified){show("auth");message("أكمل تفعيل التحقق الثنائي في بوابة الموظفين أولًا.");return;}
    factorId=verified.id;show("mfa");return;
+ }
+ const id=userResult.data.user.id;
+ const [p,r]=await Promise.all([
+   sb.from("profiles").select("role,is_active").eq("id",id).single(),
+   sb.rpc("get_my_permissions")
+ ]);
+ if(p.error||r.error||!p.data?.is_active||!ALLOWED_ROLES.has(p.data.role)||
+    !(r.data||[]).some(x=>x.permission_code==="customers.view")){
+   await sb.auth.signOut();show("auth");message("الحساب غير مخوّل بعرض طلبات العملاء.");return;
  }
  authorized=true;show("workspace");await refresh();
 }
