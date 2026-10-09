@@ -46,7 +46,7 @@ export default function PartnerProductsPanel(){
      const v=await client.from("listing_versions").select("id,listing_id,status,name_ar,name_en,description_ar,description_en,price,compare_at_price,currency,media,metadata,created_at").in("listing_id",ids.slice(i,i+40)).order("created_at",{ascending:false}).limit(1000);
      if(v.error)throw v.error;versions.push(...(v.data||[]));
     }
-    if(live)setData({stage:"ready",listings,versions,categories:c.data||[],overflow:(l.data||[]).length>cap});
+    if(live)setData({stage:"ready",partnerId:partner.id,listings,versions,categories:c.data||[],overflow:(l.data||[]).length>cap});
    }catch{if(live)setData({stage:"error",listings:[],versions:[],categories:[]});}
   })();
   return()=>{live=false;};
@@ -104,7 +104,7 @@ export default function PartnerProductsPanel(){
    <button type="button" onClick={reload}>{t.refresh}</button><button type="button" onClick={()=>begin(null)}>+ {t.new}</button>
   </div></div>
   {error&&<p role="alert" className="dd-pp-error">{error}</p>}{notice&&<p role="status" className="dd-pp-success">{notice}</p>}
-  {data.stage==="loading"?<p role="status">{t.loading}</p>:data.stage==="error"?<p role="alert">{t.error}</p>:<>
+  {(data.stage==="ready"&&data.partnerId!==partner?.id||data.stage==="loading")?<p role="status">{t.loading}</p>:data.stage==="error"?<p role="alert">{t.error}</p>:<>
    {data.overflow&&<p className="dd-pp-warning">{t.limit}</p>}
    <div className="dd-pp-kpis">{[data.listings.length,data.versions.filter(x=>x.status==="pending_review").length,data.listings.filter(x=>x.published_version_id).length,data.listings.filter(x=>x.is_available).length]
      .map((n,i)=><article key={i}><span>{t.stats[i]}</span><strong>{n}</strong></article>)}</div>
