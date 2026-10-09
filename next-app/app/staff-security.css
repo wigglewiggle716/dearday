@@ -1,0 +1,81 @@
+/* Dear Day React staff authentication and role management — no impact on legacy portal */
+.dd-staff-security{
+ --st-wine:#6B3540;--st-terra:#A8583D;--st-text:#352D2E;--st-border:rgba(107,53,64,.17);
+ display:flex;align-items:flex-start;justify-content:center;flex:1;
+ min-height:620px;padding:46px clamp(15px,5vw,60px) 70px;
+ background:radial-gradient(circle at 10% 15%,#f7e6e0,transparent 30%),linear-gradient(140deg,#faf3ea,#fffaf7);
+ color:var(--st-text);
+}
+.dd-staff-security *{box-sizing:border-box}
+.dd-security-card{width:min(570px,100%);background:#fffdfc;padding:31px;
+ border:1px solid var(--st-border);border-radius:24px;box-shadow:0 22px 65px rgba(75,30,37,.075)}
+.dd-security-card>img{display:block;object-fit:contain;margin:0 auto 10px}
+.dd-security-card h1{font-size:25px;line-height:1.5;text-align:center;color:var(--st-wine);margin:0 0 7px}
+.dd-security-muted{font-size:12px;line-height:1.9;color:#806f6d;margin:12px 0}
+.dd-security-card>p.dd-security-muted:first-of-type{text-align:center;margin:0 0 22px}
+.dd-security-guard{text-align:center;display:grid;justify-items:center;gap:17px;font-size:13px}
+.dd-security-state{display:flex;align-items:center;gap:11px;border-radius:13px;background:#faf5f2;padding:15px;margin:0 0 14px;color:var(--st-wine)}
+.dd-security-dot{width:12px;height:12px;flex:0 0 12px;border-radius:100%;background:#bc9286}
+.dd-security-dot.active{background:#328456}
+.dd-security-primary,.dd-security-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;
+ padding:10px 18px;border:1px solid var(--st-wine);border-radius:12px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;text-align:center}
+.dd-security-primary{background:var(--st-wine);color:#fff}
+.dd-security-primary:hover:not(:disabled){background:#522b33}
+.dd-security-secondary{color:var(--st-wine);background:transparent;border-color:var(--st-border)}
+.dd-security-secondary:hover:not(:disabled){background:#fff4ef}
+.dd-security-primary:disabled,.dd-security-secondary:disabled{opacity:.53;cursor:wait}
+.dd-security-factors{display:grid;gap:8px;margin:15px 0}
+.dd-security-factors>div{display:flex;align-items:center;gap:8px;color:#326d4c;background:#f0f8f0;padding:9px 13px;border-radius:10px;font-size:12px}
+.dd-security-enrollment{border-top:1px solid var(--st-border);padding-top:17px;margin-top:22px}
+.dd-security-enrollment p{font-size:12px;line-height:1.8;color:#766b69}
+.dd-security-enrollment img{display:block;border:1px solid var(--st-border);border-radius:12px;background:white;max-width:100%;padding:10px;margin:16px auto}
+.dd-security-enrollment details{margin:12px 0;font-size:12px}
+.dd-security-enrollment summary,.dd-security-recovery summary{cursor:pointer;color:var(--st-wine);font-weight:800}
+.dd-security-enrollment code{display:block;overflow-wrap:anywhere;padding:12px;margin:11px 0;border-radius:10px;background:#f7eee9;text-align:center;user-select:all}
+.dd-security-warning{color:#9b583f!important}
+.dd-security-enrollment form{display:grid;gap:11px}
+.dd-security-enrollment label{font-size:12px;font-weight:800}
+.dd-security-enrollment input,.dd-employee-fields select,.dd-override-item select{
+ min-height:45px;border-radius:12px;border:1px solid #e5d6d2;background:#fff;
+ padding:8px 13px;color:var(--st-text);font:inherit;font-size:13px;width:100%;outline-offset:2px}
+.dd-security-enrollment input{max-width:250px}
+.dd-security-actions,.dd-security-links,.dd-permissions-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.dd-security-feedback{font-size:12px;line-height:1.8;border-radius:12px;background:#f8f2ec;color:var(--st-wine);padding:11px 14px}
+.dd-security-recovery{border-top:1px solid var(--st-border);margin-top:26px;padding-top:18px}
+.dd-security-recovery p{font-size:12px;line-height:1.9;color:#6b5e5b}
+.dd-security-links{border-top:1px solid var(--st-border);margin-top:24px;padding-top:17px}
+.dd-security-links a{font-size:12px;color:var(--st-wine);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.dd-permissions-card{width:min(1030px,100%)}
+.dd-staff-permissions h2{margin:0;color:var(--st-wine);font-size:19px}
+.dd-permissions-section{border-top:1px solid var(--st-border);padding-top:23px;margin-top:23px}
+.dd-permissions-section p{color:#806f6d;line-height:1.75;font-size:12px}
+.dd-permission-tags{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.dd-permission-tags span{font-size:11px;border:1px solid #e8d7d1;background:#faf2ef;
+ color:var(--st-wine);padding:7px 10px;border-radius:999px;direction:ltr}
+.dd-employee-list{display:grid;gap:9px;margin-top:16px}
+.dd-employee{display:flex;justify-content:space-between;align-items:center;gap:12px;
+ padding:13px 16px;border-radius:14px;border:1px solid var(--st-border);background:#fffaf7}
+.dd-employee-main{display:grid;gap:4px;min-width:0}
+.dd-employee-main strong{font-size:13px;color:var(--st-wine)}
+.dd-employee-main small{font-size:11px;color:#716260;overflow-wrap:anywhere;text-align:start}
+.dd-employee-main span{font-size:11px;color:#867671}
+.dd-employee-edit{margin-top:24px;padding:22px;border:1px solid var(--st-border);border-radius:15px;background:#fff9f4}
+.dd-employee-edit>p{font-size:12px;color:#766b69}
+.dd-employee-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.dd-employee-fields label{display:grid;gap:8px;color:var(--st-wine);font-size:12px;font-weight:800}
+.dd-employee-edit h3{color:var(--st-wine);font-size:17px;margin:28px 0 12px}
+.dd-override-group{border:1px solid var(--st-border);border-radius:13px;margin-top:13px;overflow:hidden;background:#fffdfc}
+.dd-override-group h4{margin:0;padding:11px 15px;background:#faf0eb;color:var(--st-wine);font-size:13px}
+.dd-override-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(125px,170px);gap:12px;
+ align-items:center;padding:11px 14px;border-top:1px solid var(--st-border)}
+.dd-override-item>div{min-width:0;display:grid;gap:3px}
+.dd-override-item strong{font-size:12px;overflow-wrap:anywhere;direction:ltr;text-align:start;color:var(--st-text)}
+.dd-override-item small,.dd-override-item span{color:#857775;font-size:11px;line-height:1.5}
+@media(max-width:640px){
+ .dd-staff-security{padding:24px 13px 48px}
+ .dd-security-card{padding:21px;border-radius:18px}
+ .dd-security-card h1{font-size:23px}
+ .dd-employee-fields{grid-template-columns:1fr}
+ .dd-override-item{grid-template-columns:1fr}
+ .dd-employee{align-items:flex-start}
+}
