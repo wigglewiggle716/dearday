@@ -145,9 +145,10 @@ export default function StaffPermissions({locale="ar"}){
    {!staff?<div className="dd-security-guard">
     <p>{session.status==="mfa_required"?t.verify:session.status==="loading"?t.loading:t.restricted}</p>
     {session.status!=="loading"&&<Link className="dd-security-primary" href={pathFor("auth",locale)+(session.status==="mfa_required"?"?mode=mfa":"")}>{session.status==="mfa_required"?t.verify:t.login}</Link>}
-   </div>:loading||loadedFor!==currentId?<p role="status">{t.loading}</p>:error&&!mine.length?<div>
-    <p role="alert">{error}</p><button className="dd-security-secondary" type="button" onClick={refresh}>{t.reload}</button>
-   </div>:<>
+   </div>:loading?<p role="status">{t.loading}</p>:
+    error&&loadedFor!==currentId?<div>
+     <p role="alert">{error}</p><button className="dd-security-secondary" type="button" onClick={refresh}>{t.reload}</button>
+    </div>:loadedFor!==currentId?<p role="status">{t.loading}</p>:<>
     <section className="dd-permissions-section">
      <h2>{t.own}</h2>
      {mine.length?<div className="dd-permission-tags">{mine.map(x=><span key={x}>{x}</span>)}</div>:<p>{t.none}</p>}
