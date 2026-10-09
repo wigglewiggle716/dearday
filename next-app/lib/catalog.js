@@ -62,6 +62,10 @@ export async function loadPublicCatalog() {
       score:(ver.metadata?.featured?20:0)+(tags.includes("best_seller")?10:0)+(tags.includes("new")?4:0)
     });
   }
-  for (const key of SLUGS) grouped[key].sort((a,b) => b.score-a.score || a.price-b.price);
+  // The database does not promise row order. Break all ties with a stable listing ID
+  // so Arabic, English and repeated page loads receive identical product order.
+  for (const key of SLUGS) grouped[key].sort((a,b) =>
+    b.score-a.score || a.price-b.price || String(a.id).localeCompare(String(b.id))
+  );
   return grouped;
 }
