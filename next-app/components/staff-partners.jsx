@@ -214,16 +214,23 @@ export default function StaffPartners({locale="ar"}){
   const file=kind==="profile"?current.company_profile_path:current.product_list_path;
   const filename=kind==="profile"?current.company_profile_name:current.product_list_name;
   if(!file)return;
+  // Open within the user gesture so Safari/iOS pop-up blockers don't reject
+  // the signed link after the asynchronous permission check.
+  const viewer=window.open("about:blank","_blank");
+  if(!viewer){setErr(t.downloadError);return;}
+  viewer.opener=null;
   setFileBusy(true);setErr("");
   try{
    const who=await readCurrentAccount(client);
    if(who.status!=="authenticated"||who.user?.id!==id)throw Error("session");
+   const perms=await client.rpc("get_my_permissions");
+   if(perms.error||!(perms.data||[]).some(x=>["partners.view","partners.manage"].includes(x.permission_code)))throw Error("permission");
    const signed=await client.storage.from("partner-applications")
     .createSignedUrl(file,60,{download:filename||"partner-file"});
    if(signed.error||!signed.data?.signedUrl)throw signed.error||Error("no_url");
    // Link lifetime is 60 seconds and the bucket remains private.
-   window.open(signed.data.signedUrl,"_blank","noopener,noreferrer");
-  }catch{setErr(t.downloadError);}finally{setFileBusy(false);}
+   viewer.location.replace(signed.data.signedUrl);
+  }catch{viewer.close();setErr(t.downloadError);}finally{setFileBusy(false);}
  }
  const source=tab==="partners"?data.partners:data.applications;
  const rows=source.filter(p=>{
