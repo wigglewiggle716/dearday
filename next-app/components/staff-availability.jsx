@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {authClient,EMPLOYEE_ROLES,readCurrentAccount,rememberPreference} from "../lib/auth-client";
 import {useAuthSession} from "./auth-session-provider";
+import {usePartnerPortalOptional} from "./partner-portal-base";
 import {pathFor} from "../lib/locales";
 
 const DAYS={
@@ -157,10 +158,13 @@ function baseline(settings,windows){
  })).sort((a,b)=>a.weekday-b.weekday||a.start_time.localeCompare(b.start_time))});
 }
 function FormField({label,children}){return <label className="dd-av-field"><span>{label}</span>{children}</label>;}
-export default function StaffAvailability({locale="ar"}){
+export default function StaffAvailability({locale="ar",portal="staff"}){
  const t=messages[locale]||messages.ar;
  const session=useAuthSession();
- const active=session.status==="authenticated"&&EMPLOYEE_ROLES.has(session.role);
+ const partnerContext=usePartnerPortalOptional();
+ const isPartner=portal==="partner";
+ const currentPartner=isPartner?partnerContext?.partner:null;
+ const active=session.status==="authenticated"&&(isPartner?(session.role==="partner_user"&&Boolean(currentPartner)):EMPLOYEE_ROLES.has(session.role));
  const uid=active?session.user?.id:null;
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
  const [root,setRoot]=useState({stage:"loading",permissions:[],listings:[],names:{},overflow:false});
@@ -174,13 +178,14 @@ export default function StaffAvailability({locale="ar"}){
  const [saving,setSaving]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  const rootReq=useRef(0),scopeReq=useRef(0);
  const canView=active&&root.stage==="ready";
- const canManage=canView&&root.permissions.includes("availability.manage");
+ const canManage=canView&&(isPartner||root.permissions.includes("availability.manage"));
  const listing=root.listings.find(x=>x.id===selected)||null;
  const today=useMemo(()=>cairoDate(),[]);
  const recentHolds=scope.reservations.filter(x=>x.status==="hold"&&x.expires_at&&new Date(x.expires_at)>new Date()).length;
  const confirmed=scope.reservations.filter(x=>x.status==="confirmed").length;
  function reload(){setRevision(v=>v+1);setScopeRevision(v=>v+1);}
  function refreshSelected(){setScopeRevision(v=>v+1);}
+ useEffect(()=>{if(isPartner)setSelected("");},[isPartner,currentPartner?.id]);
  function choose(id){setSelected(id);setNotice("");setError("");setProbe({date:"",time:"",quantity:"1",result:null,working:false});}
  useEffect(()=>{
   const seq=++rootReq.current;
@@ -188,15 +193,24 @@ export default function StaffAvailability({locale="ar"}){
   setRoot({stage:"loading",permissions:[],listings:[],names:{},overflow:false});
   (async()=>{
    try{
-    const grant=await client.rpc("get_my_permissions");
-    if(grant.error)throw grant.error;
-    const permissions=(grant.data||[]).map(x=>x.permission_code);
-    if(!permissions.some(x=>x==="availability.view"||x==="availability.manage")){
-     if(seq===rootReq.current)setRoot({stage:"denied",permissions:[],listings:[],names:{},overflow:false});return;
+    let permissions=[];
+    if(isPartner){
+     const account=await readCurrentAccount(client);
+     if(account.status!=="authenticated"||account.role!=="partner_user"||!currentPartner)throw Error("partner");
+     const member=await client.from("partner_users").select("partner_id").eq("user_id",uid).eq("partner_id",currentPartner.id).eq("is_active",true).maybeSingle();
+     if(member.error||!member.data)throw Error("partner");
+    }else{
+     const grant=await client.rpc("get_my_permissions");
+     if(grant.error)throw grant.error;
+     permissions=(grant.data||[]).map(x=>x.permission_code);
+     if(!permissions.some(x=>x==="availability.view"||x==="availability.manage")){
+      if(seq===rootReq.current)setRoot({stage:"denied",permissions:[],listings:[],names:{},overflow:false});return;
+     }
     }
-    const ls=await client.from("listings")
-     .select("id,partner_id,kind,is_available,capacity_per_day,published_version_id,updated_at")
-     .order("updated_at",{ascending:false}).limit(LIMIT_LISTINGS+1);
+    let query=client.from("listings")
+     .select("id,partner_id,kind,is_available,capacity_per_day,published_version_id,updated_at");
+    if(isPartner)query=query.eq("partner_id",currentPartner.id);
+    const ls=await query.order("updated_at",{ascending:false}).limit(LIMIT_LISTINGS+1);
     if(ls.error)throw ls.error;
     const listings=(ls.data||[]).slice(0,LIMIT_LISTINGS);
     const publishedIds=[...new Set(listings.map(x=>x.published_version_id).filter(Boolean))];
@@ -212,7 +226,7 @@ export default function StaffAvailability({locale="ar"}){
    }
   })();
   return()=>{rootReq.current++;};
- },[uid,client,revision]);
+ },[uid,client,revision,isPartner,currentPartner?.id]);
 
  useEffect(()=>{
   const seq=++scopeReq.current;
@@ -245,9 +259,17 @@ export default function StaffAvailability({locale="ar"}){
  async function verifyManage(){
   if(!uid||!canManage)throw Error("permission");
   const who=await readCurrentAccount(client);
-  if(who.status!=="authenticated"||who.user?.id!==uid||!EMPLOYEE_ROLES.has(who.role))throw Error("permission");
-  const grants=await client.rpc("get_my_permissions");
-  if(grants.error||!(grants.data||[]).some(x=>x.permission_code==="availability.manage"))throw Error("permission");
+  if(who.status!=="authenticated"||who.user?.id!==uid)throw Error("permission");
+  if(isPartner){
+   if(who.role!=="partner_user"||!currentPartner||!root.listings.some(x=>x.id===selected&&x.partner_id===currentPartner.id))throw Error("permission");
+   const m=await client.from("partner_users").select("partner_id").eq("user_id",uid).eq("partner_id",currentPartner.id).eq("is_active",true).maybeSingle();
+   const p=await client.from("partners").select("status").eq("id",currentPartner.id).maybeSingle();
+   if(m.error||!m.data||p.error||p.data?.status!=="active")throw Error("permission");
+  }else{
+   if(!EMPLOYEE_ROLES.has(who.role))throw Error("permission");
+   const grants=await client.rpc("get_my_permissions");
+   if(grants.error||!(grants.data||[]).some(x=>x.permission_code==="availability.manage"))throw Error("permission");
+  }
  }
  function updateWindow(key,changes){
   setWeek(rows=>rows.map(w=>w.key===key?{...w,...changes}:w));
@@ -377,9 +399,9 @@ export default function StaffAvailability({locale="ar"}){
  session.status==="signed_out"?{href:pathFor("auth",locale)+"?next="+encodeURIComponent(pathFor("staffAvailability",locale)),label:t.signIn}:null;
  const kindName=l=>t.kind[l.kind]||l.kind;
  const nameOf=l=>{const v=root.names[l.published_version_id];return (locale==="en"?v?.name_en||v?.name_ar:v?.name_ar||v?.name_en)||kindName(l)+" · "+l.id.slice(0,8);};
- return <main id="main-content" className="dd-staff-availability" dir={locale==="ar"?"rtl":"ltr"}>
+ return <section id={isPartner?undefined:"main-content"} className="dd-staff-availability" dir={locale==="ar"?"rtl":"ltr"}>
   <div className="dd-av-wrap">
-   <header className="dd-av-header"><div><Link href={pathFor("staffPortal",locale)}>{t.back} ↗</Link>
+   <header className="dd-av-header"><div><Link href={pathFor(isPartner?"partnerPortal":"staffPortal",locale)}>{isPartner?(locale==="ar"?"بوابة الشريك":"Partner portal"):t.back} ↗</Link>
     <h1>{t.title}</h1><p>{t.subtitle}</p></div>
     {canView&&<button type="button" className="dd-av-button secondary" onClick={reload}>{t.reload}</button>}
    </header>
@@ -515,5 +537,5 @@ export default function StaffAvailability({locale="ar"}){
       </>:null)}
    </>}
   </div>
- </main>;
+ </section>;
 }
