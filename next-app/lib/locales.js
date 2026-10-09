@@ -36,6 +36,13 @@ export const sections = [
   ["staffCancellations", "staff/cancellations"],
   ["staffRefundPolicies", "staff/refund-policies"],
   ["staffFinance", "staff/finance"],
+  ["notifications", "notifications"],
+  ["partnerPortal", "partner"],
+  ["partnerOrders", "partner/orders"],
+  ["partnerProducts", "partner/products"],
+  ["partnerAvailability", "partner/availability"],
+  ["partnerPolicies", "partner/refund-policies"],
+  ["partnerCancellations", "partner/cancellations"],
   ["cart", "cart"],
   ["deleteAccount", "delete-account"],
 ];
