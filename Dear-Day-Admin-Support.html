@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#6B3540"><meta name="robots" content="noindex,nofollow">
+<title>رسائل العملاء | Dear Day Admin</title>
+<style>
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-400.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url('/approved-pages/assets/fonts/noto-sans-arabic-700.woff2') format('woff2')}
+:root{--wine:#6B3540;--ivory:#FAF3EA;--ink:#352D2E;--muted:#786C69;--line:rgba(107,53,64,.14)}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#f7f2ed;font-family:'Noto Sans Arabic',Tahoma,Arial,sans-serif}
+.layout{min-height:100vh;display:grid;grid-template-columns:260px minmax(0,1fr)}
+.sidebar{background:var(--wine);color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh}
+.brand{padding:0 10px 22px;border-bottom:1px solid rgba(255,255,255,.15)}
+.brand strong{display:block;font-size:23px}.brand span{font-size:11px;opacity:.72}
+.nav{display:grid;gap:7px;margin-top:24px}.nav a{color:#fff;text-decoration:none;padding:12px 14px;border-radius:13px;font-size:13px;opacity:.82}
+.nav a.active{background:rgba(255,255,255,.14);opacity:1}
+.sidebar-foot{position:absolute;bottom:22px;right:18px;left:18px;border-top:1px solid rgba(255,255,255,.15);padding-top:14px}
+.sidebar-foot p{font-size:11px;opacity:.72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logout{width:100%;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:9px;border-radius:10px}
+.main{padding:30px;min-width:0}.topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+h1,h2,h3{color:var(--wine)}h1{margin:0;font-size:28px}.muted,.topbar p{color:var(--muted);font-size:12px}
+.role{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:11px;color:var(--wine)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid var(--line);padding:18px;border-radius:16px}
+.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:24px;color:var(--wine)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.toolbar input,.toolbar select{border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:#fff;color:var(--ink)}
+.toolbar input{flex:1;min-width:200px}.toolbar select{min-width:170px}
+.btn{border:1px solid #d4bdb6;border-radius:10px;padding:10px 13px;background:#fff;color:var(--wine);cursor:pointer;font:700 12px 'Noto Sans Arabic',Tahoma,Arial,sans-serif}
+.btn.primary{background:var(--wine);color:#fff;border-color:var(--wine)}
+.btn:disabled{opacity:.55;cursor:wait}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.table-wrap{overflow:auto}table{width:100%;min-width:720px;border-collapse:collapse}
+th,td{border-bottom:1px solid #f0e8e3;padding:13px;text-align:right;font-size:12px;vertical-align:middle}
+th{background:#fcf8f5;color:#6e5a59}
+td small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.pill{padding:6px 10px;border-radius:999px;display:inline-flex;background:#f6e7e1;color:var(--wine);font-size:11px;font-weight:700;white-space:nowrap}
+.pill[data-status=resolved],.pill[data-status=closed]{background:#e6f3e9;color:#297347}
+.pill[data-status=awaiting_customer]{background:#fff4d8;color:#86601d}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.notice{padding:12px 14px;border-radius:10px;background:#fcecec;color:#963737;margin-bottom:14px}
+.notice[data-kind=success]{background:#e9f3ec;color:#326f43}
+.loading{position:fixed;inset:0;background:var(--ivory);display:grid;place-items:center;z-index:500;font-weight:700;color:var(--wine)}
+.loading[hidden]{display:none}
+.modal{position:fixed;inset:0;background:rgba(35,18,20,.55);display:none;place-items:center;z-index:400;padding:14px}
+.modal.show{display:grid}
+.dialog{width:min(810px,100%);background:#fff;border-radius:21px;padding:23px;max-height:93vh;overflow-y:auto;box-shadow:0 20px 64px rgba(28,12,15,.24)}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.dialog-head h2{margin:0}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.detail{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.detail.wide{grid-column:1/-1}.detail span{font-size:11px;color:var(--muted);display:block}
+.detail strong{font-size:13px;display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:600;margin-top:6px}
+.contact-actions{display:flex;gap:9px;margin:16px 0;flex-wrap:wrap}
+.contact-actions a{border:1px solid var(--wine);color:var(--wine);padding:9px 12px;border-radius:999px;font-size:12px;text-decoration:none}
+.review-section{border-top:1px solid var(--line);padding-top:17px;display:grid;gap:10px}
+.review-section label{font-size:12px;color:var(--muted);font-weight:700}
+.review-section textarea,.review-section select{width:100%;font:inherit;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px}
+.review-section textarea{min-height:100px;resize:vertical}
+.history{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.history h3{font-size:15px}.history-entry{font-size:12px;padding:10px 0;border-bottom:1px solid #eee5e1}
+.history-entry p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 0;color:var(--muted)}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.layout{display:block}.sidebar{position:relative;height:auto;padding:16px}.main{padding:20px 14px}.detail-grid{grid-template-columns:1fr}.detail.wide{grid-column:1}.dialog{padding:17px}}
+</style>
+</head>
+<body>
+<div id="loading" class="loading">جاري تحميل رسائل العملاء…</div>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><strong>Dear Day</strong><span>Admin Panel</span></div>
+  <nav class="nav" aria-label="القائمة الرئيسية"></nav>
+  <div class="sidebar-foot"><p id="adminEmail">—</p><button class="logout" id="logoutBtn" type="button">تسجيل الخروج</button></div>
+</aside>
+<main class="main">
+  <div class="topbar"><div><h1>رسائل العملاء</h1><p>متابعة استفسارات العملاء والطلبات الخاصة من صفحة «تواصل معنا».</p></div><div class="role" id="roleBadge">—</div></div>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <section class="stats" aria-label="إحصائيات رسائل العملاء">
+    <div class="stat"><span>إجمالي الرسائل</span><strong id="countAll">0</strong></div>
+    <div class="stat"><span>جديد</span><strong id="countNew">0</strong></div>
+    <div class="stat"><span>قيد المتابعة / في الانتظار</span><strong id="countProgress">0</strong></div>
+    <div class="stat"><span>تم الحل / مغلق</span><strong id="countResolved">0</strong></div>
+  </section>
+  <section class="toolbar" aria-label="فلاتر الرسائل">
+    <input type="search" id="ticketSearch" placeholder="بحث بالاسم، الموضوع، البريد، أو رقم التذكرة" aria-label="البحث في الرسائل">
+    <select id="ticketFilter" aria-label="تصفية بحالة التذكرة">
+      <option value="">كل الحالات</option>
+      <option value="new">جديد</option>
+      <option value="in_progress">قيد المتابعة</option>
+      <option value="awaiting_customer">في انتظار العميل</option>
+      <option value="resolved">تم الحل</option>
+      <option value="closed">مغلق</option>
+    </select>
+    <button id="refreshBtn" class="btn" type="button">تحديث</button>
+  </section>
+  <section class="panel"><div class="table-wrap"><table>
+    <thead><tr><th>رقم التذكرة</th><th>العميل</th><th>الموضوع</th><th>الحالة</th><th>التفاصيل</th></tr></thead>
+    <tbody id="ticketRows"></tbody>
+  </table></div><p id="emptyState" class="empty" hidden>لا توجد رسائل مطابقة.</p></section>
+</main>
+</div>
+<div id="ticketModal" class="modal" aria-hidden="true">
+ <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="dialog-head"><h2 id="modalTitle">رسالة العميل</h2><button id="closeModal" class="btn" type="button" aria-label="إغلاق">✕</button></div>
+  <div id="ticketDetail"></div>
+ </section>
+</div>
+<script src="/approved-pages/dear-day-admin-support.js?v=20261009-1"></script>
+<script src="/approved-pages/dear-day-admin-shell.js?v=20261003-3"></script>
+</body>
+</html>

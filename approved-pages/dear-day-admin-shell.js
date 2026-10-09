@@ -12,6 +12,7 @@
     {href:'/Dear-Day-Notifications.html',label:'الإشعارات'},
     {href:'/Dear-Day-Security.html',label:'أمان الحساب'},
     {href:'/Dear-Day-Admin-Customers.html',label:'العملاء',perm:'customers.view'},
+    {href:'/Dear-Day-Admin-Support.html',label:'رسائل العملاء',perm:'customers.view'},
     {href:'/Dear-Day-Admin-Employees.html',label:'الموظفون والصلاحيات',perm:'employees.view'},
     {href:'/Dear-Day-Finance.html',label:'المالية والتسويات',perm:'finance.view'}
   ];
