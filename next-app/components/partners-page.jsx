@@ -273,7 +273,16 @@ export default function PartnersPage({locale="ar"}){
     <section className="dd-partners-apply" id="partnerForm">
       <div className="dd-partners-wrap dd-partners-apply-grid">
         <form className="dd-partners-form" id="partnerApplication"
-          noValidate encType="multipart/form-data" onSubmit={handleSubmit}>
+          noValidate encType="multipart/form-data" onSubmit={handleSubmit}
+          onReset={event=>{
+            const form=event.currentTarget;
+            // Native form reset completes after the event: shrink any
+            // expanded textareas back to their content-sized height.
+            requestAnimationFrame(()=>form.querySelectorAll("textarea").forEach(el=>{
+              el.style.height="auto";
+              el.style.height=Math.max(112,el.scrollHeight)+"px";
+            }));
+          }}>
           <h2>{t.applicationTitle}</h2><p>{t.applicationIntro}</p>
           <FormSection title={t.sectionBusiness} eyebrow={t.sectionBusinessEyebrow}>
             <FormField id="companyName" label={t.companyName}>
