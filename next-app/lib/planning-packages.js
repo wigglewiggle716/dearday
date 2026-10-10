@@ -61,7 +61,7 @@ export function composeLivePackages(rows,occasionKey="birthday"){
     const bucket=groups[type];
     return bucket[(shift+(index===0?0:index*2))%bucket.length];
    });
-   const unique=items.map(p=>p.type+":"+p.id).join("|");
+   const unique=items.map(p=>p.type+":"+p.id).sort().join("|");
    if(used.has(unique))continue;
    const total=items.reduce((s,p)=>s+Number(p.price),0);
    const rank=items.reduce((s,p)=>s+(p.metadata?.occasions?.includes(occasionKey)?15:0)+(Number(p.score)||0),0);
