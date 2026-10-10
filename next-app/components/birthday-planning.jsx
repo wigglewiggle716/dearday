@@ -72,7 +72,7 @@ const texts={
     viewExperiences:"See experiences →",selectedCount:(n)=>n?n+" selected "+(n===1?"item":"items"):"No items selected yet",
     continue:"Next: Build your occasion",nextShort:"Next",choose:"Choose at least one service to continue",
     serviceImage:"Service image",venueDisclaimer:"Browse places and experiences in the next step.",
-        packageItemsNote:"Choosing a package selects service categories. Confirm products and prices in the next steps."
+        packageItemsNote:"Your package choices are saved and its products are in your cart. Venue selections are provisional until booking is confirmed."
   }
 };
 
