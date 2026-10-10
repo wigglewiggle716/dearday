@@ -401,7 +401,7 @@ export default function StaffAvailability({locale="ar",portal="staff"}){
  const nameOf=l=>{const v=root.names[l.published_version_id];return (locale==="en"?v?.name_en||v?.name_ar:v?.name_ar||v?.name_en)||kindName(l)+" · "+l.id.slice(0,8);};
  return <section id={isPartner?undefined:"main-content"} className="dd-staff-availability" dir={locale==="ar"?"rtl":"ltr"}>
   <div className="dd-av-wrap">
-   <header className="dd-av-header"><div><Link href={pathFor(isPartner?"partnerPortal":"staffPortal",locale)}>{isPartner?(locale==="ar"?"بوابة الشريك":"Partner portal"):t.back} ↗</Link>
+   <header className="dd-av-header"><div><Link href={pathFor(isPartner?"partnerPortal":"staffPortal",locale)}>{isPartner?(locale==="ar"?"لوحة التحكم":"Dashboard"):t.back} ↗</Link>
     <h1>{t.title}</h1><p>{t.subtitle}</p></div>
     {canView&&<button type="button" className="dd-av-button secondary" onClick={reload}>{t.reload}</button>}
    </header>
