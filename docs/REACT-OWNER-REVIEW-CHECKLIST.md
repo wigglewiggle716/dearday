@@ -355,6 +355,23 @@
 - [ ] الاختبار البصري والمقارنة باللوحة القديمة على Desktop/Mobile Safari/Chrome ثم تأكيدك قبل الاعتماد.
 - [ ] أحدث Build على مشروع Vercel React يكون READY **بنفس SHA** الذي يحتوي إعادة التصميم؛ الموقع الأساسي `dear-day.com` لا يتغير دون إذن صريح.
 
+## 9م — التحويل النهائي من HTML إلى React [تحضير؛ صاحب المشروع أتم المراجعة اليدوية للشكل]
+- [ ] راجع مع صاحب المشروع **قرار الدفع عند الإطلاق**: يظل الدفع الإلكتروني متوقفًا كما كان بالموقع القديم، أو يجب أن يعمل الدفع الحقيقي وإنشاء الطلبات قبل نقل الدومين.
+- [ ] لا تعتبر مراجعة التصميم اليدوية موافقة على عمل Checkout أو Paymob أو RLS أو صلاحيات الموظفين والشركاء؛ تحقق من الوظائف لكل دور.
+- [ ] اعتمد **أحدث Git SHA** بعد إيقاف التعديلات الجديدة؛ اضمن نجاح Build Vercel بحالة `READY` لنفس SHA قبل نقل أي دومين.
+- [ ] تأكد من إعدادات Vercel لكل بيئة بدون إفشاء أسرار؛ Paymob HMAC وCreate Intention وCheckout Expiry غير مثبتين في مشروع React حتى الآن.
+- [ ] إتمام إنشاء الطلب والحجز/الـHold والحساب المالي على السيرفر أو اتخاذ قرار صريح بالانطلاق **من دون استقبال طلبات مدفوعة**.
+- [ ] لو المطلوب تفعيل الدفع: إنهاء Sandbox Card، Webhook HMAC، حماية التكرار، انتهاء الحجوزات، نتيجة الدفع والمطابقة المالية قبل Live Paymob.
+- [ ] تفعيل فهرسة صفحات **الكتالوج العامة فقط** وقت الإطلاق، وإزالة `noindex` من الصفحات العامة على مستوى Layout **والصفحات**، مع إبقاء الحسابات والإدارة خاصة.
+- [ ] ضبط `robots.txt` و`sitemap.xml` وCanonical وAR/EN `hreflang` وأسماء النطاقات قبل الإطلاق، واختبار HTTP وGoogle Search Console.
+- [ ] اختبار تحويل **71 رابط HTML قديم** إلى مسارات React الصحيحة (هدايا، مناسبات، ورد، كيك، أماكن، حسابات، موظفين، شركاء)، بدون Redirect Loop.
+- [ ] التحقق من Google/Facebook/Apple Login وتسجيل الحسابات الحالية وروابط الاستعادة وSupabase OAuth بعد تغيير `dear-day.com`، مع الحفاظ على Guest Checkout من دون فرض تسجيل دخول.
+- [ ] اختبار شاشة الشريك الجديدة، الإدارة والمالية والصلاحيات الحالية التي وافق عليها المالك، وعدم تغيير `finance.manage` تلقائيًا.
+- [ ] اختبار وصول ومزامنة الطلبات/الإشعارات/الإيميلات بعد الإطلاق من غير أي رسائل تجريبية لعملاء حقيقيين.
+- [ ] تسجيل Deployment/URL القديم قبل التغيير، والاحتفاظ بمشروع HTML القديم سليمًا لاسترجاع سريع؛ عدم حذفه عند نقل الدومين.
+- [ ] نقل `dear-day.com` و`www.dear-day.com` إلى React **بعد اعتماد الجاهزية**، مع إعادة توجيه WWW→apex، وحفظ إعدادات MX و`info@dear-day.com`.
+- [ ] فحص SSL والدومين والروابط الأساسية والطلبات/السلة وOAuth والإشعارات وإيميلات التشغيل بعد النقل، ومراقبة أول فترة تشغيل؛ الرجوع للقديم إذا ظهرت مشكلة حرجة.
+
 ## 10 — البريد وDNS والإطلاق النهائي [GATE]
 - [ ] توثيق `dear-day.com` داخل Resend ثم إرسال إيميل اختبار مصرح به فقط.
 - [ ] تأكد من أن `info@dear-day.com` يستقبل ويرسل يدويًا عبر Dynadot بعد إضافة SPF/DKIM/Return-Path.
@@ -378,6 +395,6 @@
 |---|---|---|---|---|---|
 | — | — | — | لم تبدأ المراجعة | — | — |
 
-**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Catalog & Approvals](./REACT-STAFF-CATALOG-MIGRATION.md) · [Partners](./REACT-STAFF-PARTNERS-MIGRATION.md) · [Customers & Support](./REACT-STAFF-CUSTOMER-SUPPORT-MIGRATION.md) · [Availability](./REACT-STAFF-AVAILABILITY-MIGRATION.md) · [Cancellations & Refund Policies](./REACT-STAFF-CANCELLATIONS-MIGRATION.md) · [Finance & Settlements](./REACT-STAFF-FINANCE-MIGRATION.md) · [Notifications & Partner Portal](./REACT-NOTIFICATIONS-PARTNER-PORTAL-MIGRATION.md) · [Owner Planning & Live Bundles Fixes](./REACT-OCT10-PLANNING-FIXES.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
+**ملفات التفاصيل:** [Staff portal](./REACT-STAFF-PORTAL-MIGRATION.md) · [Orders](./REACT-STAFF-ORDERS-MIGRATION.md) · [Catalog & Approvals](./REACT-STAFF-CATALOG-MIGRATION.md) · [Partners](./REACT-STAFF-PARTNERS-MIGRATION.md) · [Customers & Support](./REACT-STAFF-CUSTOMER-SUPPORT-MIGRATION.md) · [Availability](./REACT-STAFF-AVAILABILITY-MIGRATION.md) · [Cancellations & Refund Policies](./REACT-STAFF-CANCELLATIONS-MIGRATION.md) · [Finance & Settlements](./REACT-STAFF-FINANCE-MIGRATION.md) · [Notifications & Partner Portal](./REACT-NOTIFICATIONS-PARTNER-PORTAL-MIGRATION.md) · [Owner Planning & Live Bundles Fixes](./REACT-OCT10-PLANNING-FIXES.md) · [Final Cutover Audit](./REACT-FINAL-CUTOVER-AUDIT-2026-10-10.md) · [Auth / MFA](./REACT-STAFF-AUTH-RELEASE-GATE.md) · [Cutover](./REACT-CUTOVER-READINESS.md).
 
 **سياسة متابعة:** أي تطوير جديد أو إصلاح Bug على `react-migration` يجب إضافة اختبار له هنا قبل أن يطلب من المالك اعتماده.
