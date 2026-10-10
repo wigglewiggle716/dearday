@@ -120,7 +120,10 @@ function Planner({ locale, t }) {
     if(!ready)return;
     const selection={occasionKey:occasion,area,date,budget,budgetKey:budget};
     try {localStorage.setItem("dearDayPlan",JSON.stringify(selection));}catch{}
-    router.push(pathFor("occasions",locale));
+    // Occasion has already been chosen on Home. Continue directly into
+    // service/package selection while preserving area, date and budget.
+    const qp=new URLSearchParams({flow:"1",occasion,area,date,budget});
+    router.push(pathFor("birthday",locale)+"?"+qp.toString());
   }
   return (
     <section className="dd-home-container dd-occasion-planner" id="occasions" aria-labelledby="dd-planner-title">
