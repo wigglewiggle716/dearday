@@ -156,7 +156,11 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     const rawBudget=incoming.budget||merged.budgetKey||merged.budget||"unsure";
     const budgetKey=knownBudgets.includes(rawBudget)?rawBudget:"unsure";
     const services=Array.isArray(merged.services)?merged.services.filter(s=>serviceDefs.some(item=>item.name===s)): [];
-    setDetails({occasionKey,area,date,budgetKey,services,recommendedPackage:null});
+    const last=merged.recommendedPackage;
+    const validSelection=last&&typeof last.id==="string"&&Array.isArray(last.items)&&
+      last.items.length>0&&last.items.every(x=>x?.listing_id&&x?.partner_id);
+    setDetails({occasionKey,area,date,budgetKey,services,
+      recommendedPackage:validSelection?last:null,packageSelections:validSelection?last.items:[]});
     setLoaded(true);
   },[incoming.dd,incoming.occasion,incoming.area,incoming.date,incoming.budget]);
 
@@ -168,6 +172,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
   },[loaded,details]);
 
   function updateDetails(change){
+    if(change.recommendedPackage===null&&details.recommendedPackage)applyPackage(null);
     setDetails(old=>({...old,...change}));
     setFeedback("");
   }
@@ -177,10 +182,11 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     return ()=>window.clearTimeout(timer);
   },[feedback,details.recommendedPackage?.id]);
   function switchService(name){
+    if(details.recommendedPackage)applyPackage(null);
     setDetails(prev=>{
       const before=prev.services;
       const services=before.includes(name)?before.filter(s=>s!==name):[...before,name];
-      return {...prev,services,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]};
+      return {...prev,services,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]};
     });
     setFeedback("");
   }
@@ -211,7 +217,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
   }
   function unpickPackage(){
     applyPackage(null);
-    setDetails(prev=>({...prev,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
+    setDetails(prev=>({...prev,services:[],recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
     setFeedback("");
   }
   function moveNext(){
