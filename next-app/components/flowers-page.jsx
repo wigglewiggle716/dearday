@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import BrandedDropdown from "./branded-dropdown";
 import PlanningStepper from "./planning-stepper";
+import PlanningFlowDock from "./planning-flow-dock";
 import { QuantityAction, money, useCart } from "./cart-provider";
 import { useCatalog } from "./live-catalog";
 import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
@@ -363,12 +364,10 @@ export default function FlowersPage({locale="ar",flow=false}){
               <span aria-hidden="true">⇧</span> {t.customUpload}
             </button>
           </section>
-          {flow&&<div className="dd-flowers-next">
-            <div><strong>{t.selectedLabel}: {flowerCount}</strong><p>{t.nextNote}</p></div>
-            <button type="button" onClick={next}>{t.next}</button>
-          </div>}
+
         </section>
       </div>
+      {flow&&<PlanningFlowDock locale={locale} current="flowers"/>}
     </main>
     {designDialogOpen&&<FlowerDesignDialog locale={locale} onClose={()=>setDesignDialogOpen(false)}/>}
   </>;
