@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlanningStepper from "./planning-stepper";
+import PlanningFlowDock from "./planning-flow-dock";
 import BrandedDropdown from "./branded-dropdown";
 import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 import { pathFor } from "../lib/locales";
@@ -347,13 +348,12 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
                 <span>{selected? t.selectedSummary+": "+selected.name : t.customSummary}</span>
                 {custom?.idea&&<small>{t.customSummary}: {custom.idea}</small>}
               </div>}
-              {flow&&<div className="dd-venues-continue">
-                <button type="button" onClick={continuePlanning} disabled={!selected&&!custom}>{t.next}</button>
-              </div>}
+
             </section>
           </div>
         </div>
       </main>
+      {flow&&<PlanningFlowDock locale={locale} current="venues"/>}
     </div>
     <dialog className="dd-venues-dialog" ref={dialog} dir={locale==="ar"?"rtl":"ltr"}
       onCancel={event=>{
