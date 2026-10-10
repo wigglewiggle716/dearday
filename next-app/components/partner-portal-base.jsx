@@ -1,22 +1,40 @@
 "use client";
 import Link from "next/link";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
+import {usePathname} from "next/navigation";
 import {authClient,rememberPreference,readCurrentAccount} from "../lib/auth-client";
 import {useAuthSession} from "./auth-session-provider";
-import {pathFor} from "../lib/locales";
+import {pathFor,alternatePath} from "../lib/locales";
 
 const PortalContext=createContext(null);
 export function usePartnerPortal(){const ctx=useContext(PortalContext);if(!ctx)throw Error("PartnerPortalProvider required");return ctx;}
 export function usePartnerPortalOptional(){return useContext(PortalContext);}
 const labels={
- ar:{title:"بوابة الشريك",pick:"الشريك",loading:"جاري التحقق من حساب الشريك…",denied:"هذه البوابة مخصصة لحساب شريك نشط مرتبط ببراند فعّال.",error:"تعذر تحميل بيانات الشريك.",login:"تسجيل الدخول",refresh:"تحديث الحساب",signout:"تسجيل الخروج",
- overview:"نظرة عامة",orders:"طلباتي",products:"منتجاتي وخدماتي",availability:"التوفر والمواعيد",policies:"سياسات الاسترداد",cancellations:"الإلغاءات والاسترداد",notifications:"الإشعارات"},
- en:{title:"Partner Portal",pick:"Partner",loading:"Checking partner account…",denied:"An active partner membership is required to access this portal.",error:"Unable to load partner information.",login:"Log in",refresh:"Refresh account",signout:"Sign out",
- overview:"Overview",orders:"Orders",products:"Products & Services",availability:"Availability",policies:"Refund policies",cancellations:"Cancellations",notifications:"Notifications"}
+ ar:{
+  title:"لوحة التحكم",pick:"حسابي",loading:"جاري فتح لوحة التحكم…",
+  denied:"لوحة التحكم متاحة للحسابات التجارية النشطة فقط.",error:"تعذر تحميل بيانات حسابك.",
+  login:"تسجيل الدخول",refresh:"تحديث",signout:"تسجيل الخروج",summary:"نظرة سريعة على طلباتك ومنتجاتك ومواعيدك.",
+  active:"نشط",lang:"English",nav:"أقسام حسابي",menu:"فتح القائمة",close:"إغلاق القائمة",
+  overview:"نظرة عامة",orders:"طلباتي",products:"منتجاتي وخدماتي",
+  availability:"التوفر والمواعيد",policies:"سياسات الإلغاء والاسترداد",
+  cancellations:"الإلغاءات والاسترداد",notifications:"الإشعارات",
+  quickAvailability:"إدارة التوفر",viewSite:"عرض الموقع"
+ },
+ en:{
+  title:"My Dashboard",pick:"My business",loading:"Opening your dashboard…",
+  denied:"This dashboard is available to active business accounts only.",error:"Couldn't load your account details.",
+  login:"Log in",refresh:"Refresh",signout:"Sign out",summary:"Your orders, catalog and availability at a glance.",
+  active:"Active",lang:"العربية",nav:"My workspace",menu:"Open menu",close:"Close menu",
+  overview:"Overview",orders:"My Orders",products:"My Products & Services",
+  availability:"Availability & Schedule",policies:"Cancellation & Refund Policies",
+  cancellations:"Cancellations & Refunds",notifications:"Notifications",
+  quickAvailability:"Manage Availability",viewSite:"View Website"
+ }
 };
 const nav=[["partnerPortal","overview"],["partnerOrders","orders"],["partnerProducts","products"],["partnerAvailability","availability"],["partnerPolicies","policies"],["partnerCancellations","cancellations"],["notifications","notifications"]];
 export function PartnerPortalProvider({locale="ar",children}){
  const session=useAuthSession();
+ const pathname=usePathname()||pathFor("partnerPortal",locale);
  const client=useMemo(()=>typeof window==="undefined"?null:authClient(rememberPreference()),[]);
  const [data,setData]=useState({stage:"loading",partners:[],members:[]}),[selected,setSelected]=useState(""),[version,setVersion]=useState(0);
  const [busy,setBusy]=useState(false),[menu,setMenu]=useState(false);
@@ -54,32 +72,60 @@ export function PartnerPortalProvider({locale="ar",children}){
   try{await session.signOut();window.location.assign(pathFor("auth",locale));}
   finally{setBusy(false);}
  }
+ const businessName=locale==="en"?partner?.name_en||partner?.name_ar:partner?.name_ar||partner?.name_en;
  return <PortalContext.Provider value={context}>
   <main className="dd-pp-main" id="main-content" dir={locale==="ar"?"rtl":"ltr"}>
-   <div className="dd-pp-container">
-    <header className="dd-pp-top">
-     <div><Link href={pathFor("home",locale)} className="dd-pp-brand">Dear Day</Link>
-      <span className="dd-pp-subtitle">{t.title}</span></div>
-     {data.stage==="ready"&&<div className="dd-pp-top-actions">
-      {data.partners.length>1&&<label>{t.pick}<select value={selected} onChange={e=>setSelected(e.target.value)}>
-       {data.partners.map(p=><option key={p.id} value={p.id}>{locale==="en"?p.name_en||p.name_ar:p.name_ar||p.name_en}</option>)}</select></label>}
-      <button type="button" onClick={()=>setVersion(n=>n+1)}>{t.refresh}</button>
-      <button type="button" disabled={busy} onClick={logout}>{t.signout}</button></div>}
-    </header>
-    {!active?<div className="dd-pp-guard"><p>{session.status==="loading"?t.loading:t.denied}</p><Link href={pathFor("auth",locale)+"?next="+encodeURIComponent(pathFor("partnerPortal",locale))}>{t.login}</Link></div>:
-     data.stage==="loading"?<div role="status" className="dd-pp-guard">{t.loading}</div>:
-     data.stage!=="ready"?<div role="alert" className="dd-pp-guard"><p>{data.stage==="error"?t.error:t.denied}</p><button type="button" onClick={()=>setVersion(n=>n+1)}>{t.refresh}</button></div>:<>
-      <div className="dd-pp-body">
-       <aside className="dd-pp-aside"><button type="button" className="dd-pp-mobile-toggle" aria-expanded={menu} onClick={()=>setMenu(v=>!v)}>{t.title} ☰</button>
-        <nav className={menu?"open":""} aria-label={t.title}>{nav.map(([route,key])=>
-         <Link onClick={()=>setMenu(false)} key={key} href={pathFor(route,locale)}>{t[key]}</Link>)}</nav></aside>
-       <section className="dd-pp-content">
-        <div className="dd-pp-partnername">{locale==="en"?partner?.name_en||partner?.name_ar:partner?.name_ar||partner?.name_en}</div>
-        {children}
-       </section>
+   {!active?<div className="dd-pp-guard">
+    <p>{session.status==="loading"?t.loading:t.denied}</p>
+    <Link href={pathFor("auth",locale)+"?next="+encodeURIComponent(pathFor("partnerPortal",locale))}>{t.login}</Link>
+   </div>:data.stage==="loading"?<div className="dd-pp-guard" role="status">{t.loading}</div>:
+    data.stage!=="ready"?<div className="dd-pp-guard" role="alert">
+     <p>{data.stage==="error"?t.error:t.denied}</p>
+     <button type="button" onClick={()=>setVersion(v=>v+1)}>{t.refresh}</button>
+    </div>:
+    <div className="dd-pp-container">
+     <aside className={"dd-pp-aside"+(menu?" dd-mobile-open":"")} aria-label={t.nav}>
+      <div className="dd-pp-side-brand">
+       <div><Link href={pathFor("partnerPortal",locale)} className="dd-pp-brand" onClick={()=>setMenu(false)}>Dear Day</Link>
+        <span className="dd-pp-subtitle">{t.title}</span></div>
+       <button type="button" className="dd-pp-mobile-toggle" onClick={()=>setMenu(v=>!v)}
+        aria-expanded={menu} aria-label={menu?t.close:t.menu}><span/><span/><span/></button>
       </div>
-     </>}
-   </div>
+      <nav className="dd-pp-side-nav" aria-label={t.nav}>
+       {nav.map(([route,key])=>{
+        const href=pathFor(route,locale),activeLink=pathname===href||pathname===href+"/";
+        return <Link key={key} href={href} aria-current={activeLink?"page":undefined}
+         className={activeLink?"is-active":""} onClick={()=>setMenu(false)}>{t[key]}</Link>;
+       })}
+      </nav>
+      <div className="dd-pp-sidebar-foot">
+       <p dir="auto">{session.user?.email||businessName||""}</p>
+       <button type="button" className="dd-pp-logout" disabled={busy} onClick={logout}>{t.signout}</button>
+      </div>
+     </aside>
+     <div className="dd-pp-main-column">
+      <header className="dd-pp-topbar">
+       <div className="dd-pp-topbar-text">
+        <h1>{businessName||t.title}</h1>
+        <p>{t.summary}</p>
+       </div>
+       <div className="dd-pp-quick-actions">
+        {data.partners.length>1&&<label className="dd-pp-switcher">{t.pick}
+         <select value={selected} onChange={e=>{setSelected(e.target.value);setMenu(false);}}>
+          {data.partners.map(p=><option value={p.id} key={p.id}>{locale==="en"?p.name_en||p.name_ar:p.name_ar||p.name_en}</option>)}
+         </select></label>}
+        <Link href={pathFor("notifications",locale)}>{t.notifications}</Link>
+        <Link href={pathFor("partnerOrders",locale)}>{t.orders}</Link>
+        <Link href={pathFor("partnerProducts",locale)}>{t.products}</Link>
+        <Link href={pathFor("partnerAvailability",locale)} className="is-primary">{t.quickAvailability}</Link>
+        <button type="button" onClick={()=>setVersion(v=>v+1)}>{t.refresh}</button>
+        <Link href={alternatePath(pathname,locale)} className="dd-pp-language">{t.lang}</Link>
+        <span className="dd-pp-status">{t.active}</span>
+       </div>
+      </header>
+      <div className="dd-pp-content">{children}</div>
+     </div>
+    </div>}
   </main>
  </PortalContext.Provider>;
 }
