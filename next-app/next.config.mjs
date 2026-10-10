@@ -362,7 +362,15 @@ const legacyRedirects = [
 const nextConfig = {
   poweredByHeader: false,
   async redirects() {
-    return legacyRedirects;
+    // The historical Vercel project alias must not serve a second public copy.
+    // Keep path/query when permanently moving bookmarked URLs to the canonical host.
+    const obsoletePreviewDomainRedirect = {
+      source: "/:path*",
+      has: [{ type: "host", value: "dearday-react-migration.vercel.app" }],
+      destination: "https://dear-day.com/:path*",
+      permanent: true,
+    };
+    return [obsoletePreviewDomainRedirect, ...legacyRedirects];
   },
 };
 
