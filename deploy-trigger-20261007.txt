@@ -1,4 +1,0 @@
-Dear Day deployment trigger
-Reason: retry publishing latest English Home unified sections after Vercel cooldown.
-Trigger version: 2026-10-07-home-3
-Latest main includes: bca22d0c4870f29ac1b4c16440135442b8b61fe9
