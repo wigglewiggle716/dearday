@@ -12,6 +12,9 @@ export default function SiteLayoutChrome({children,locale}){
  const pathname=usePathname()||"/";
  if(isStaffAdminPath(pathname))
   return <StaffAdminShell locale={locale}>{children}</StaffAdminShell>;
+ // The original account dashboard is a self-contained workspace, not a
+ // storefront page. Do not wrap its classic sidebar in the shop header/footer.
+ if(/^\/(?:en\/)?partner(?:\/|$)/.test(pathname))return children;
  return <>
   <SiteHeader locale={locale}/>
   {children}
