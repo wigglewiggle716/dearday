@@ -115,6 +115,10 @@ export default function PartnerOrdersPanel({section="overview"}){
   }catch{setError(t.saveError);}finally{setBusy(false);}
  }
  const header=section==="overview"?t.overview:section==="cancellations"?t.cancellations:t.orders;
+ const kinds=locale==="ar"?{product:"منتج",service:"خدمة",venue:"مكان",experience:"تجربة"}:
+  {product:"Product",service:"Service",venue:"Venue",experience:"Experience"};
+ const versionStatuses=locale==="ar"?{draft:"مسودة",pending_review:"بانتظار الموافقة",published:"منشور",rejected:"مرفوض",archived:"مؤرشف"}:
+  {draft:"Draft",pending_review:"Pending review",published:"Published",rejected:"Rejected",archived:"Archived"};
  return <div className="dd-pp-page"><div className="dd-pp-heading"><h1>{header}</h1><button type="button" onClick={()=>setRevision(v=>v+1)}>{t.refresh}</button></div>
   {error&&<p role="alert" className="dd-pp-error">{error}</p>}{notice&&<p role="status" className="dd-pp-success">{notice}</p>}
   {(state.stage==="ready"&&state.partnerId!==partner?.id||state.stage==="loading")?<p role="status">{t.loading}</p>:state.stage==="error"?<p role="alert">{t.error}</p>:section==="cancellations"?<>
@@ -156,7 +160,7 @@ export default function PartnerOrdersPanel({section="overview"}){
        <thead><tr><th>{t.itemName}</th><th>{t.itemType}</th><th>{t.status}</th><th>{t.itemPrice}</th><th>{t.available}</th></tr></thead>
        <tbody>{catalogSnap.recent.map(item=><tr key={item.id}>
         <td>{locale==="en"?item.version?.name_en||item.version?.name_ar:item.version?.name_ar||item.version?.name_en||"—"}</td>
-        <td>{item.kind||"—"}</td><td><span className="dd-pp-status-pill">{item.version?.status||"—"}</span></td>
+        <td>{kinds[item.kind]||item.kind||"—"}</td><td><span className="dd-pp-status-pill">{versionStatuses[item.version?.status]||item.version?.status||"—"}</span></td>
         <td dir="ltr">{item.version?.price!=null?money(item.version.price,item.version.currency,locale):"—"}</td>
         <td>{item.is_available?"✓":"—"}</td>
        </tr>)}</tbody></table></div>:<p className="dd-pp-empty">{t.empty}</p>}
