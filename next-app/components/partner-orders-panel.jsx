@@ -14,7 +14,7 @@ const labels={
   close:"إغلاق",quantity:"الكمية",price:"السعر",loadingDetail:"جاري تحميل التفاصيل…",confirm:"هل تؤكد تغيير حالة الطلب؟ التعديل سيُسجّل في النظام الفعلي.",
   saved:"تم تغيير حالة الطلب.",saveError:"تعذر تغيير الحالة؛ ربما تغيّرت حالة الطلب أو صلاحية الحساب.",
   allOrders:"إجمالي الطلبات",await:"بانتظار الرد",active:"تحت التنفيذ",products:"المنتجات والخدمات",
-  overviewOrders:"آخر الطلبات",viewAll:"عرض كل الطلبات",cancellationReason:"سبب الإلغاء",
+  overviewOrders:"أحدث الطلبات",recentProducts:"أحدث المنتجات والخدمات",catalog:"إدارة الكتالوج",itemsTotal:"المنتجات والخدمات",pendingApproval:"بانتظار الموافقة",approval:"تحتاج إجراء",itemName:"الاسم",itemType:"النوع",itemPrice:"السعر",available:"التوفر",viewAll:"عرض الكل",cancellationReason:"سبب الإلغاء",
   estimated:"الاسترداد المتوقع",approved:"الاسترداد المعتمد",reviewNote:"ملاحظة المراجعة",
   cancellationHint:"الاستثناء قيد المراجعة: استمر في تنفيذ الطلب. إذا تم الإلغاء أو أصبح الاسترداد معلقًا، أوقف تنفيذ العنصر.",
   multiPartnerCancellations:"حسابك مرتبط بأكثر من نشاط تجاري. بيانات الإلغاءات الحالية لا تتيح فصل الإلغاءات حسب النشاط، لذلك القسم ده محتاج تحديث آمن قبل عرضه هنا.",
@@ -29,7 +29,7 @@ const labels={
   close:"Close",quantity:"Quantity",price:"Price",loadingDetail:"Loading details…",confirm:"Confirm changing this live partner order status?",
   saved:"Order status updated.",saveError:"Update failed; order state or access may have changed.",
   allOrders:"Total orders",await:"Awaiting response",active:"In progress",products:"Products & Services",
-  overviewOrders:"Recent orders",viewAll:"View all orders",cancellationReason:"Cancellation reason",
+  overviewOrders:"Recent orders",recentProducts:"Recent products & services",catalog:"Manage catalog",itemsTotal:"Products & services",pendingApproval:"Pending approval",approval:"Need action",itemName:"Name",itemType:"Type",itemPrice:"Price",available:"Available",viewAll:"View all",cancellationReason:"Cancellation reason",
   estimated:"Estimated refund",approved:"Approved refund",reviewNote:"Review note",
   cancellationHint:"While manual cancellation is under review, continue fulfilment. Stop fulfilment when cancelled/refund pending.",
   multiPartnerCancellations:"You manage more than one business. Cancellation records cannot currently be separated by business; an approved backend update is required before showing them here.",
@@ -43,6 +43,7 @@ export default function PartnerOrdersPanel({section="overview"}){
  const {client,locale,partner,partners}=usePartnerPortal(),verify=usePartnerMutations();
  const t=labels[locale]||labels.ar;
  const [state,setState]=useState({stage:"loading",orders:[],cancellations:[]});
+ const [catalogSnap,setCatalogSnap]=useState({stage:"loading",partnerId:null,count:null,pending:null,recent:[]});
  const [search,setSearch]=useState(""),[status,setStatus]=useState(""),[revision,setRevision]=useState(0);
  const [detail,setDetail]=useState({id:null,stage:"idle",data:null}),[busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  useEffect(()=>{
@@ -63,6 +64,33 @@ export default function PartnerOrdersPanel({section="overview"}){
   return()=>{live=false;};
  },[client,partner?.id,section,revision,partners.length]);
  useEffect(()=>{setDetail({id:null,stage:"idle",data:null});setError("");},[partner?.id]);
+ useEffect(()=>{
+  let live=true;
+  if(section!=="overview"||!partner||!client)return;
+  setCatalogSnap({stage:"loading",partnerId:partner.id,count:null,pending:null,recent:[]});
+  (async()=>{
+   try{
+    const q=await client.from("listings")
+     .select("id,kind,is_available,published_version_id,updated_at",{count:"exact"})
+     .eq("partner_id",partner.id).order("updated_at",{ascending:false}).limit(300);
+    if(q.error)throw q.error;
+    const ls=q.data||[],ids=ls.map(x=>x.id),versions=[];
+    for(let i=0;i<ids.length;i+=50){
+     const r=await client.from("listing_versions")
+      .select("id,listing_id,name_ar,name_en,status,price,currency,created_at")
+      .in("listing_id",ids.slice(i,i+50)).order("created_at",{ascending:false}).limit(700);
+     if(r.error)throw r.error;
+     versions.push(...(r.data||[]));
+    }
+    const latest=new Map();
+    for(const v of versions)if(!latest.has(v.listing_id))latest.set(v.listing_id,v);
+    const recent=ls.slice(0,6).map(l=>({...l,version:latest.get(l.id)||null}));
+    if(live)setCatalogSnap({stage:"ready",partnerId:partner.id,count:q.count??ls.length,
+      pending:(q.count??ls.length)>300?null:ls.filter(l=>latest.get(l.id)?.status==="pending_review").length,recent});
+   }catch{if(live)setCatalogSnap({stage:"error",partnerId:partner.id,count:null,pending:null,recent:[]});}
+  })();
+  return()=>{live=false;};
+ },[client,partner?.id,section,revision]);
  const rows=state.orders.filter(o=>(!status||o.status===status)&&(!search.trim()||
    [o.order_number,o.occasion_type,o.delivery_area].join(" ").toLowerCase().includes(search.trim().toLowerCase())));
  async function open(o){
@@ -102,14 +130,15 @@ export default function PartnerOrdersPanel({section="overview"}){
   </>:<>
    {section==="overview"&&<div className="dd-pp-kpis">
     <article><span>{t.allOrders}</span><strong>{state.orders.length}</strong></article>
-    <article><span>{t.await}</span><strong>{state.orders.filter(o=>o.status==="pending").length}</strong></article>
-    <article><span>{t.active}</span><strong>{state.orders.filter(o=>["accepted","in_progress","ready"].includes(o.status)).length}</strong></article>
-    <article><span>{t.net}</span><strong>{money(state.orders.reduce((a,o)=>a+Number(o.partner_net||0),0),"EGP",locale)}</strong></article>
+    <article><span>{t.approval}</span><strong>{state.orders.filter(o=>o.status==="pending").length}</strong></article>
+    <article><span>{t.itemsTotal}</span><strong>{catalogSnap.partnerId===partner.id&&catalogSnap.stage==="ready"?catalogSnap.count:"—"}</strong></article>
+    <article><span>{t.pendingApproval}</span><strong>{catalogSnap.partnerId===partner.id&&catalogSnap.stage==="ready"?catalogSnap.pending??"—":"—"}</strong></article>
    </div>}
    {section==="orders"&&<div className="dd-pp-filters"><input type="search" aria-label={t.search} placeholder={t.search} value={search} onChange={e=>setSearch(e.target.value)}/>
     <select aria-label={t.status} value={status} onChange={e=>setStatus(e.target.value)}><option value="">{t.all}</option>{STATUS.map(s=><option value={s} key={s}>{t.statuses[s]||s}</option>)}</select></div>}
-   {section==="overview"&&<div className="dd-pp-heading"><h2>{t.overviewOrders}</h2><Link href={pathFor("partnerOrders",locale)}>{t.viewAll}</Link></div>}
-   <div className="dd-pp-panel">{(section==="overview"?rows.slice(0,6):rows).length?
+   <div className="dd-pp-panel">
+    {section==="overview"&&<div className="dd-pp-panel-head"><h2>{t.overviewOrders}</h2><Link href={pathFor("partnerOrders",locale)}>{t.viewAll} ←</Link></div>}
+    {(section==="overview"?rows.slice(0,6):rows).length?
     <div className="dd-pp-table-wrap"><table><thead><tr><th>{t.number}</th><th>{t.status}</th><th>{t.occasion}</th><th>{t.date}</th><th>{t.area}</th><th>{t.items}</th><th>{t.net}</th><th></th></tr></thead>
      <tbody>{(section==="overview"?rows.slice(0,6):rows).map(o=><tr key={o.partner_order_id}>
       <td dir="ltr">#DD{o.order_number}</td><td>{t.statuses[o.status]||o.status}</td>
@@ -117,8 +146,21 @@ export default function PartnerOrdersPanel({section="overview"}){
       <td dir="ltr">{money(o.partner_net,o.currency,locale)}</td>
       <td><button type="button" onClick={()=>open(o)}>{t.open}</button></td>
      </tr>)}</tbody></table></div>:<p className="dd-pp-empty">{t.empty}</p>}</div>
-   {section==="overview"&&<div className="dd-pp-actions"><Link href={pathFor("partnerProducts",locale)}>{t.products}</Link>
-    <Link href={pathFor("partnerCancellations",locale)}>{t.cancellations}</Link></div>}
+   {section==="overview"&&<section className="dd-pp-panel">
+     <div className="dd-pp-panel-head"><h2>{t.recentProducts}</h2>
+      <Link href={pathFor("partnerProducts",locale)}>{t.catalog} ←</Link></div>
+     {catalogSnap.partnerId!==partner.id||catalogSnap.stage==="loading"?
+      <p className="dd-pp-empty">{t.loading}</p>:
+      catalogSnap.stage==="error"?<p className="dd-pp-empty">{t.error}</p>:
+      catalogSnap.recent.length?<div className="dd-pp-table-wrap"><table>
+       <thead><tr><th>{t.itemName}</th><th>{t.itemType}</th><th>{t.status}</th><th>{t.itemPrice}</th><th>{t.available}</th></tr></thead>
+       <tbody>{catalogSnap.recent.map(item=><tr key={item.id}>
+        <td>{locale==="en"?item.version?.name_en||item.version?.name_ar:item.version?.name_ar||item.version?.name_en||"—"}</td>
+        <td>{item.kind||"—"}</td><td><span className="dd-pp-status-pill">{item.version?.status||"—"}</span></td>
+        <td dir="ltr">{item.version?.price!=null?money(item.version.price,item.version.currency,locale):"—"}</td>
+        <td>{item.is_available?"✓":"—"}</td>
+       </tr>)}</tbody></table></div>:<p className="dd-pp-empty">{t.empty}</p>}
+    </section>}
   </>}
   {detail.id&&<div className="dd-pp-overlay" onMouseDown={e=>{if(e.target===e.currentTarget&&!busy)setDetail({id:null,stage:"idle",data:null});}}>
    <section role="dialog" aria-modal="true" aria-labelledby="dd-pp-order-title" className="dd-pp-dialog">
