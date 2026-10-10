@@ -84,3 +84,49 @@
 .dd-work-parity-links{padding:18px}
 @media(max-width:1120px){.dd-work-dual-panels{grid-template-columns:1fr}}
 @media(max-width:600px){.dd-work-parity-heading{padding:15px 13px;flex-wrap:wrap}.dd-work-finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-work-finance-box{padding:10px}.dd-work-finance-box strong{font-size:14px}.dd-work-parity-links{grid-template-columns:1fr}}
+
+
+/* Accountant dashboard: preserve approved Dear-Day-Staff visual hierarchy.
+   Scope all changes to accountant role: owner and other staff stay unchanged. */
+.dd-admin-main-content .dd-work-accountant{padding:30px;background:transparent}
+.dd-work-accountant .dd-work-heading{align-items:flex-start;gap:16px;margin-bottom:22px}
+.dd-work-accountant .dd-work-heading h1{font-size:30px;line-height:1.35}
+.dd-work-accountant .dd-work-heading p{font-size:13px;line-height:1.7;margin:5px 0 0}
+.dd-work-accountant .dd-work-heading .dd-work-accountant-email{
+  color:#786C69;font-size:11px;margin-top:5px;line-height:1.6;text-align:start;overflow-wrap:anywhere
+}
+.dd-work-accountant-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.dd-work-accountant-actions .dd-work-parity-badge{font-size:11px;min-height:38px;padding:8px 12px;border-radius:999px;white-space:nowrap}
+.dd-work-accountant-quick{
+  display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 13px;
+  border-radius:11px;background:#fff;border:1px solid rgba(107,53,64,.14);
+  color:#6B3540;text-decoration:none;font-size:11px;font-weight:700;line-height:1.4;white-space:nowrap
+}
+.dd-work-accountant-quick.primary{background:#6B3540;border-color:#6B3540;color:white}
+.dd-work-accountant-quick:hover,.dd-work-accountant-quick:focus-visible{background:#f5eae5;color:#6B3540;border-color:#6B3540}
+.dd-work-accountant-quick.primary:hover,.dd-work-accountant-quick.primary:focus-visible{background:#522731;color:white}
+.dd-admin-main-content .dd-work-accountant .dd-work-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:18px}
+.dd-work-accountant .dd-work-stat{background:#fff;border-radius:18px;padding:16px;box-shadow:0 12px 30px rgba(70,37,40,.05)}
+.dd-work-accountant .dd-work-stat span{font-size:10px;line-height:1.6;color:#786C69;font-weight:500}
+.dd-work-accountant .dd-work-stat strong{font-size:24px;margin-top:4px;line-height:1.35;overflow-wrap:anywhere}
+.dd-work-accountant .dd-work-parity-panel{margin:0 0 18px;background:#fff;border-radius:20px;box-shadow:0 12px 30px rgba(70,37,40,.05)}
+.dd-work-accountant .dd-work-parity-heading{padding:17px 19px}
+.dd-work-accountant .dd-work-parity-heading .dd-work-section-title{font-size:18px!important}
+.dd-work-accountant .dd-work-parity-heading a{font-size:11px}
+.dd-work-accountant .dd-work-parity-panel .dd-work-table-scroll table{min-width:760px}
+.dd-work-accountant .dd-work-parity-panel .dd-work-table-scroll th,
+.dd-work-accountant .dd-work-parity-panel .dd-work-table-scroll td{font-size:12px;padding:12px 15px;vertical-align:middle}
+@media(max-width:1180px){
+ .dd-admin-main-content .dd-work-accountant .dd-work-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .dd-admin-main-content .dd-work-accountant{padding:20px 14px 55px}
+ .dd-work-accountant .dd-work-heading h1{font-size:25px}
+ .dd-work-accountant-actions{justify-content:flex-start}
+ .dd-work-accountant .dd-work-heading .dd-work-accountant-email{display:block}
+}
+@media(max-width:480px){
+ .dd-admin-main-content .dd-work-accountant .dd-work-metrics{grid-template-columns:1fr}
+ .dd-work-accountant-actions{width:100%}
+ .dd-work-accountant-actions .dd-work-accountant-quick{min-width:0}
+}

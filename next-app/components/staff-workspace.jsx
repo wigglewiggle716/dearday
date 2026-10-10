@@ -21,12 +21,12 @@ const words={
   customers:"العملاء",partners:"شركاء نشطون",pending:"بانتظار الموافقة",
   unsettled:"Partner Net غير مسوّى",paidRevenue:"قيمة الطلبات المدفوعة",cancelled:"إلغاءات / استردادات",
   draft:"تسويات Draft",approved:"تسويات Approved",paid:"إجمالي Paid",
-  recentOrders:"أحدث الطلبات",allOrders:"عرض كل الطلبات",order:"رقم الطلب",status:"الحالة",
+  recentOrders:"أحدث الطلبات",allOrders:"عرض كل الطلبات",showSettlements:"عرض كل التسويات",ordersShortcut:"الطلبات",partnersShortcut:"الشركاء",financeShortcut:"فتح المالية والتسويات",order:"رقم الطلب",status:"الحالة",
   occasion:"المناسبة",area:"المنطقة",total:"الإجمالي",created:"الإنشاء",emptyOrders:"لا توجد طلبات حتى الآن.",
   pendingApprovals:"موافقات تحتاج مراجعة",openApprovals:"فتح الموافقات",item:"العنصر",partner:"الشريك",
   price:"السعر",sent:"تاريخ الإرسال",emptyApprovals:"لا توجد موافقات معلقة.",
   financeTitle:"ملخص المالية والتسويات",openFinance:"فتح المالية",
-  latestSettlements:"أحدث التسويات",period:"الفترة",reference:"المرجع",emptySettlements:"لا توجد تسويات حتى الآن.",
+  latestSettlements:"أحدث التسويات",period:"الفترة",reference:"المرجع",emptySettlements:"لا توجد تسويات حتى الآن.",settlementStatuses:{draft:"مسودة",approved:"معتمدة",paid:"مدفوعة",cancelled:"ملغاة"},
   workAreas:"أقسام العمل",oldNotice:"↗ يفتح القسم غير المنقول بعد على الموقع الأساسي، وقد يتطلب تسجيل دخول منفصل.",
   permissionNote:"الروابط والمؤشرات تتبع صلاحيات Supabase الفعلية، وليست وسيلة لمنح صلاحيات.",
   limited:"بعض البيانات لم تُحمّل؛ عرضنا فقط الأقسام التي سمحت بها الصلاحيات.",
@@ -43,12 +43,12 @@ const words={
   customers:"Customers",partners:"Active partners",pending:"Pending approvals",
   unsettled:"Unsettled Partner Net",paidRevenue:"Paid order value",cancelled:"Cancellations / Refunds",
   draft:"Draft settlements",approved:"Approved settlements",paid:"Paid settlements",
-  recentOrders:"Recent Orders",allOrders:"View all orders",order:"Order",status:"Status",
+  recentOrders:"Recent Orders",allOrders:"View all orders",showSettlements:"View all settlements",ordersShortcut:"Orders",partnersShortcut:"Partners",financeShortcut:"Open Finance & Settlements",order:"Order",status:"Status",
   occasion:"Occasion",area:"Area",total:"Total",created:"Created",emptyOrders:"No orders yet.",
   pendingApprovals:"Approvals Needing Review",openApprovals:"Review Approvals",item:"Item",partner:"Partner",
   price:"Price",sent:"Submitted",emptyApprovals:"No pending approvals.",
   financeTitle:"Finance & Settlements Summary",openFinance:"Open Finance",
-  latestSettlements:"Recent Settlements",period:"Period",reference:"Reference",emptySettlements:"No settlements yet.",
+  latestSettlements:"Recent Settlements",period:"Period",reference:"Reference",emptySettlements:"No settlements yet.",settlementStatuses:{draft:"Draft",approved:"Approved",paid:"Paid",cancelled:"Cancelled"},
   workAreas:"Work Areas",oldNotice:"↗ opens a module not yet moved to React on the original website; separate sign-in may be required.",
   permissionNote:"Cards and links use real Supabase permissions; they do not grant access.",
   limited:"Some records could not be loaded; only permitted data is shown.",
@@ -75,18 +75,14 @@ async function count(client,table,filter){
  const result=await q;if(result.error)throw result.error;return result.count??0;
 }
 async function financialSnapshot(client){
- const [partnerOrders,items,settlements]=await Promise.all([
-  client.from("partner_orders").select("id,partner_net").eq("status","completed"),
-  client.from("settlement_items").select("partner_order_id"),
-  client.from("partner_settlements").select("status,partner_net")
- ]);
- for(const r of [partnerOrders,items,settlements])if(r.error)throw r.error;
- const already=new Set((items.data||[]).map(i=>i.partner_order_id));
- const numbers={unsettled:(partnerOrders.data||[]).filter(p=>!already.has(p.id)).reduce((sum,p)=>sum+Number(p.partner_net||0),0),draft:0,approved:0,paid:0};
- for(const s of settlements.data||[]){
-  if(["draft","approved","paid"].includes(s.status))numbers[s.status]+=Number(s.partner_net||0);
- }
- return numbers;
+ // Never calculate monetary totals from implicitly capped PostgREST result sets.
+ // The SQL RPC enforces active finance.view + AAL2 and aggregates every row.
+ const {data,error}=await client.rpc("staff_finance_exact_totals");
+ if(error)throw error;
+ const keys=["unsettled","draft","approved","paid"];
+ if(!data||keys.some(key=>data[key]==null||!Number.isFinite(Number(data[key]))))
+  throw Error("INVALID_FINANCIAL_TOTALS");
+ return Object.fromEntries(keys.map(key=>[key,Number(data[key])]));
 }
 async function paidOrderValue(client){
  const r=await client.from("orders").select("grand_total").in("status",PAID);
@@ -227,11 +223,20 @@ export default function StaffWorkspace({locale="ar"}){
  const title=owner?t.ownerTitle:accountant?t.accountantTitle:t.staffTitle;
  const subtitle=owner?t.ownerSubtitle:accountant?t.accountantSubtitle:t.staffSubtitle;
  const modules=staffAdminVisibleModules(result.permissions,role);
- return <main id="main-content" className="dd-staff-workspace" dir={ar?"rtl":"ltr"}>
+ return <main id="main-content" className={"dd-staff-workspace"+(accountant?" dd-work-accountant":"")} dir={ar?"rtl":"ltr"}>
   <div className="dd-work-wrap">
    <header className="dd-work-heading">
-    <div><h1>{title}</h1><p>{subtitle}</p></div>
-    {valid&&result.stage==="ready"&&<div className="dd-work-parity-badge">{t.role}: <strong>{role.replaceAll("_"," ")}</strong></div>}
+    <div><h1>{title}</h1><p>{subtitle}</p>
+     {accountant&&valid&&result.stage==="ready"&&<p className="dd-work-accountant-email" dir="ltr">{session.user?.email||"—"}</p>}
+    </div>
+    {accountant&&valid&&result.stage==="ready"?
+     <div className="dd-work-accountant-actions" aria-label={t.workAreas}>
+      <span className="dd-work-parity-badge">Accountant</span>
+      {perms.has("orders.view")&&<Link href={pathFor("staffOrders",locale)} className="dd-work-accountant-quick">{t.ordersShortcut}</Link>}
+      {perms.has("partners.view")&&<Link href={pathFor("staffPartners",locale)} className="dd-work-accountant-quick">{t.partnersShortcut}</Link>}
+      {perms.has("finance.view")&&<Link href={pathFor("staffFinance",locale)} className="dd-work-accountant-quick primary">{t.financeShortcut}</Link>}
+     </div>:
+     valid&&result.stage==="ready"&&<div className="dd-work-parity-badge">{t.role}: <strong>{role.replaceAll("_"," ")}</strong></div>}
    </header>
    {!valid?<section className="dd-work-panel dd-work-guard" role="status">
     <p>{session.status==="loading"?t.loading:t.unavailable}</p>
@@ -248,13 +253,24 @@ export default function StaffWorkspace({locale="ar"}){
      </article>)}
     </section>}
     {result.warning&&<p className="dd-work-warning" role="status">{t.limited}</p>}
+    {accountant&&perms.has("finance.view")&&<Panel title={t.latestSettlements} href={pathFor("staffFinance",locale)} hrefLabel={t.showSettlements}>
+     {result.settlements.length?<div className="dd-work-table-scroll"><table>
+      <thead><tr><th>{t.partner}</th><th>{t.period}</th><th>Partner Net</th><th>{t.status}</th><th>{t.reference}</th></tr></thead>
+      <tbody>{result.settlements.map(s=><tr key={s.id}>
+       <td>{ar?s.partnerName?.name_ar||s.partnerName?.name_en||"—":s.partnerName?.name_en||s.partnerName?.name_ar||"—"}</td>
+       <td>{shortDate(s.period_start,locale)} — {shortDate(s.period_end,locale)}</td>
+       <td dir="ltr">{money(s.partner_net,"EGP",locale)}</td><td><span className={"dd-work-status-badge "+(s.status==="paid"?"good":s.status==="approved"||s.status==="draft"?"warn":s.status==="cancelled"?"bad":"")}>{t.settlementStatuses[s.status]||s.status}</span></td><td dir="ltr">{s.payment_reference||"—"}</td>
+      </tr>)}</tbody></table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptySettlements}</p>}
+    </Panel>}
     {perms.has("orders.view")&&<Panel title={t.recentOrders} href={pathFor("staffOrders",locale)} hrefLabel={t.allOrders}>
       {result.orders.length?<div className="dd-work-table-scroll"><table>
-       <thead><tr><th>{t.order}</th><th>{t.status}</th><th>{t.occasion}</th><th>{t.area}</th><th>{t.total}</th><th>{t.created}</th></tr></thead>
-       <tbody>{result.orders.map(order=><tr key={order.id}>
+       <thead><tr><th>{t.order}</th>{!accountant&&<th>{t.status}</th>}<th>{t.occasion}</th>{accountant&&<th>{t.status}</th>}{!accountant&&<th>{t.area}</th>}<th>{t.total}</th><th>{t.created}</th></tr></thead>
+       <tbody>{result.orders.slice(0,accountant?6:8).map(order=><tr key={order.id}>
         <td dir="ltr"><Link href={pathFor("staffOrders",locale)}>{order.order_number==null?"—":"#DD"+order.order_number}</Link></td>
-        <td><span className={"dd-work-status-badge "+(order.status==="paid"||order.status==="completed"?"good":order.status==="cancelled"||order.status==="refunded"?"bad":"warn")}>{orderStatuses[locale]?.[order.status]||order.status||"—"}</span></td>
-        <td>{order.occasion_type||"—"}</td><td>{order.delivery_area||"—"}</td>
+        {!accountant&&<td><span className={"dd-work-status-badge "+(order.status==="paid"||order.status==="completed"?"good":order.status==="cancelled"||order.status==="refunded"?"bad":"warn")}>{orderStatuses[locale]?.[order.status]||order.status||"—"}</span></td>}
+        <td>{order.occasion_type||"—"}</td>
+        {accountant&&<td><span className={"dd-work-status-badge "+(order.status==="paid"||order.status==="completed"?"good":order.status==="cancelled"||order.status==="refunded"?"bad":"warn")}>{orderStatuses[locale]?.[order.status]||order.status||"—"}</span></td>}
+        {!accountant&&<td>{order.delivery_area||"—"}</td>}
         <td dir="ltr">{money(order.grand_total,order.currency,locale)}</td><td>{shortDate(order.created_at,locale)}</td>
        </tr>)}</tbody>
       </table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptyOrders}</p>}
@@ -280,15 +296,6 @@ export default function StaffWorkspace({locale="ar"}){
        </div>
       </Panel>}
     </div>}
-    {accountant&&perms.has("finance.view")&&<Panel title={t.latestSettlements} href={pathFor("staffFinance",locale)} hrefLabel={t.openFinance}>
-     {result.settlements.length?<div className="dd-work-table-scroll"><table>
-      <thead><tr><th>{t.partner}</th><th>{t.period}</th><th>Partner Net</th><th>{t.status}</th><th>{t.reference}</th></tr></thead>
-      <tbody>{result.settlements.map(s=><tr key={s.id}>
-       <td>{ar?s.partnerName?.name_ar||s.partnerName?.name_en||"—":s.partnerName?.name_en||s.partnerName?.name_ar||"—"}</td>
-       <td>{s.period_start||"—"} — {s.period_end||"—"}</td>
-       <td dir="ltr">{money(s.partner_net,"EGP",locale)}</td><td>{s.status}</td><td dir="ltr">{s.payment_reference||"—"}</td>
-      </tr>)}</tbody></table></div>:<p className="dd-work-empty dd-work-parity-empty">{t.emptySettlements}</p>}
-    </Panel>}
     {!owner&&!accountant&&<Panel title={t.workAreas}>
      <div className="dd-work-links dd-work-parity-links">
       {modules.map(mod=>mod.legacy?
