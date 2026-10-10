@@ -97,7 +97,7 @@ function VenueCard({venue,locale,t,isSelected,isFavorite,onSelect,onFavorite}) {
   const area=locale==="ar"?venue.area:venue.areaEn;
   return <article className={"dd-venues-card"+(isSelected?" is-selected":"")} id={"dd-venue-"+venue.id}>
     <div className="dd-venues-card-media">
-      <img src={venue.img} alt={desc||title} loading="lazy"/>
+      {venue.img?<img src={venue.img} alt={desc||title} loading="lazy"/>:<div className="dd-venues-image-fallback" aria-label={title}>Dear Day</div>}
       <button type="button" className={"dd-venues-favorite"+(isFavorite?" is-active":"")}
         aria-label={isFavorite?t.unfavorite:t.favorite} aria-pressed={isFavorite}
         onClick={()=>onFavorite(venue.id)}>{isFavorite?"♥":"♡"}</button>
@@ -135,7 +135,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
       return {
         id:item.id,listing_id:item.listing_id,partner_id:item.partner_id,
         name:locale==="ar"?item.name_ar:item.name_en,
-        ar:item.desc_ar,descEn:item.desc_en,img:item.image||"/approved-pages/assets/media/venue-01.jpg",
+        ar:item.desc_ar,descEn:item.desc_en,img:item.image||"",
         price:item.price,area:m.area||m.district||"",areaEn:m.area_en||m.district_en||m.area||"",
         people:m.capacity||m.guests||"—",rating:m.rating||"—",
         type:m.venue_type|| (m.kind==="experience"?"experience":"restaurant"),
@@ -338,7 +338,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
               {selected&&<div className="dd-venues-current">
                 <h2>{t.current}</h2>
                 <div className="dd-venues-current-card">
-                  <img src={selected.img} alt={selected.name}/>
+                  {selected.img?<img src={selected.img} alt={selected.name}/>:<div className="dd-venues-image-fallback">Dear Day</div>}
                   <div><small>{locale==="ar"?selected.meta:selected.metaEn}</small><h3>{selected.name}</h3>
                     <p>{locale==="ar"?selected.area:selected.areaEn} · {selected.people} {t.people} · <strong>{currency(selected.price)}</strong></p>
                   </div>
