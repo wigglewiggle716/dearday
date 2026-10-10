@@ -5,7 +5,7 @@ import {blankDraft,draftFromListing,createVersionPayload,kinds,localeName,priceL
 const lex={
  ar:{title:"منتجاتي وخدماتي",new:"إضافة عنصر",refresh:"تحديث",loading:"جاري تحميل الكتالوج…",error:"تعذر تحميل بيانات الكتالوج.",search:"ابحث بالاسم",all:"كل الحالات",none:"لا توجد منتجات أو خدمات مطابقة.",
  name:"اسم المنتج",kind:"نوع الخدمة",status:"آخر نسخة",price:"السعر",available:"التوفر",inventory:"المخزون / السعة",edit:"تعديل",stock:"تعديل التوفر",live:"الإصدار المنشور لم يتغير",
- partner:"الشريك",category:"التصنيف",nameAr:"الاسم بالعربي",nameEn:"الاسم بالإنجليزي",descAr:"الوصف بالعربي",descEn:"الوصف بالإنجليزي",compare:"السعر قبل الخصم",
+ partner:"حسابي",category:"التصنيف",nameAr:"الاسم بالعربي",nameEn:"الاسم بالإنجليزي",descAr:"الوصف بالعربي",descEn:"الوصف بالإنجليزي",compare:"السعر قبل الخصم",
  stockQty:"المخزون",daily:"السعة اليومية",media:"روابط الصور (كل رابط HTTPS في سطر)",enabled:"إتاحة المنتج",draft:"حفظ مسودة",submit:"إرسال للمراجعة",save:"حفظ التوفر",close:"إغلاق",
  bad:"راجع الاسم العربي والسعر وروابط الصور (HTTPS فقط) والمخزون والسعة.",confirm:"هل تؤكد حفظ هذا التعديل على كتالوج Dear Day؟ النسخة المنشورة لن تتغير إلا بعد الموافقة.",
  confirmStock:"تحديث المخزون والتوفر هيغيّر الإتاحة الحالية مباشرة. هل تؤكد؟",saved:"تم حفظ التعديل؛ النسخة المنشورة لم تتغير.",
@@ -15,7 +15,7 @@ const lex={
  kinds:{product:"منتج",service:"خدمة",venue:"مكان",experience:"تجربة"},limit:"أحدث 300 عنصر فقط، و1000 نسخة لكل 40 عنصر؛ يلزم Pagination قبل زيادة الأعداد."},
  en:{title:"My Products & Services",new:"Add listing",refresh:"Refresh",loading:"Loading catalog…",error:"Unable to load your catalog.",search:"Search by name",all:"All statuses",none:"No matching listings.",
  name:"Listing",kind:"Type",status:"Latest version",price:"Price",available:"Available",inventory:"Stock / capacity",edit:"Edit",stock:"Inventory",live:"Published version remains unchanged",
- partner:"Partner",category:"Category",nameAr:"Arabic name",nameEn:"English name",descAr:"Arabic description",descEn:"English description",compare:"Compare-at price",
+ partner:"My account",category:"Category",nameAr:"Arabic name",nameEn:"English name",descAr:"Arabic description",descEn:"English description",compare:"Compare-at price",
  stockQty:"Stock",daily:"Daily capacity",media:"Image URLs (one HTTPS URL per line)",enabled:"Enable listing",draft:"Save draft",submit:"Submit for review",save:"Save inventory",close:"Close",
  bad:"Check Arabic name, nonnegative price, HTTPS images, stock and capacity.",confirm:"Confirm saving this listing? Existing published details will remain unchanged until approved.",
  confirmStock:"Inventory and availability change immediately. Confirm?",saved:"Proposal saved; published listing unchanged.",
