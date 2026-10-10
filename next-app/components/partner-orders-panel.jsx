@@ -6,10 +6,10 @@ import {pathFor} from "../lib/locales";
 const STATUS=["pending","accepted","rejected","in_progress","ready","completed","cancelled","refunded"];
 const transitions={pending:["accepted","rejected"],accepted:["in_progress"],in_progress:["ready"],ready:["completed"]};
 const labels={
- ar:{overview:"نظرة عامة",orders:"طلبات الشريك",cancellations:"الإلغاءات والاسترداد",refresh:"تحديث",
+ ar:{overview:"نظرة عامة",orders:"طلباتي",cancellations:"الإلغاءات والاسترداد",refresh:"تحديث",
   error:"تعذر تحميل البيانات؛ حاول مرة أخرى.",loading:"جاري تحميل الطلبات…",search:"ابحث برقم الطلب أو المناسبة أو المنطقة",
   all:"كل الحالات",empty:"لا توجد بيانات حالياً.",number:"رقم الطلب",status:"الحالة",occasion:"المناسبة",
-  date:"التاريخ",area:"المنطقة",items:"العناصر",subtotal:"إجمالي الشريك",net:"صافي الشريك",commission:"العمولة",
+  date:"التاريخ",area:"المنطقة",items:"العناصر",subtotal:"قيمة الطلب",net:"صافي مستحقاتي",commission:"عمولة Dear Day",
   open:"فتح التفاصيل",address:"عنوان التوصيل",note:"ملاحظة العميل",details:"تفاصيل الطلب",update:"تحديث الحالة",
   close:"إغلاق",quantity:"الكمية",price:"السعر",loadingDetail:"جاري تحميل التفاصيل…",confirm:"هل تؤكد تغيير حالة الطلب؟ التعديل سيُسجّل في النظام الفعلي.",
   saved:"تم تغيير حالة الطلب.",saveError:"تعذر تغيير الحالة؛ ربما تغيّرت حالة الطلب أو صلاحية الحساب.",
@@ -17,14 +17,14 @@ const labels={
   overviewOrders:"آخر الطلبات",viewAll:"عرض كل الطلبات",cancellationReason:"سبب الإلغاء",
   estimated:"الاسترداد المتوقع",approved:"الاسترداد المعتمد",reviewNote:"ملاحظة المراجعة",
   cancellationHint:"الاستثناء قيد المراجعة: استمر في تنفيذ الطلب. إذا تم الإلغاء أو أصبح الاسترداد معلقًا، أوقف تنفيذ العنصر.",
-  multiPartnerCancellations:"هذا الحساب مرتبط بأكثر من شريك. لا تتضمن بيانات الإلغاءات الحالية معرف الشريك، لذلك عرضها مفصلاً حسب الشريك يحتاج تحديث RPC قبل الاعتماد.",
+  multiPartnerCancellations:"حسابك مرتبط بأكثر من نشاط تجاري. بيانات الإلغاءات الحالية لا تتيح فصل الإلغاءات حسب النشاط، لذلك القسم ده محتاج تحديث آمن قبل عرضه هنا.",
   statuses:{pending:"بانتظار الرد",accepted:"مقبول",rejected:"مرفوض",in_progress:"قيد التنفيذ",ready:"جاهز",completed:"مكتمل",cancelled:"ملغي",refunded:"مسترد"},
   cancelStatuses:{pending_review:"استثناء قيد المراجعة — استمر في التنفيذ",approved:"إلغاء بدون استرداد",partially_approved:"مقبول جزئيًا",rejected:"تم رفض الإلغاء — استمر في التنفيذ",refund_pending:"تم الإلغاء — أوقف التنفيذ",refunded:"تم الإلغاء — تم الاسترداد"}
  },
- en:{overview:"Overview",orders:"Partner Orders",cancellations:"Cancellations & Refunds",refresh:"Refresh",
+ en:{overview:"Overview",orders:"My Orders",cancellations:"Cancellations & Refunds",refresh:"Refresh",
   error:"Could not load data. Retry.",loading:"Loading partner orders…",search:"Search order, occasion or area",
   all:"All statuses",empty:"No records yet.",number:"Order",status:"Status",occasion:"Occasion",
-  date:"Date",area:"Area",items:"Items",subtotal:"Partner subtotal",net:"Partner net",commission:"Commission",
+  date:"Date",area:"Area",items:"Items",subtotal:"Order subtotal",net:"My net earnings",commission:"Dear Day commission",
   open:"Open details",address:"Delivery address",note:"Customer note",details:"Order details",update:"Update status",
   close:"Close",quantity:"Quantity",price:"Price",loadingDetail:"Loading details…",confirm:"Confirm changing this live partner order status?",
   saved:"Order status updated.",saveError:"Update failed; order state or access may have changed.",
@@ -32,7 +32,7 @@ const labels={
   overviewOrders:"Recent orders",viewAll:"View all orders",cancellationReason:"Cancellation reason",
   estimated:"Estimated refund",approved:"Approved refund",reviewNote:"Review note",
   cancellationHint:"While manual cancellation is under review, continue fulfilment. Stop fulfilment when cancelled/refund pending.",
-  multiPartnerCancellations:"This account manages multiple partners. Cancellation records lack a partner ID, so accurate per-partner filtering needs a backend RPC update before sign-off.",
+  multiPartnerCancellations:"You manage more than one business. Cancellation records cannot currently be separated by business; an approved backend update is required before showing them here.",
   statuses:{pending:"Pending",accepted:"Accepted",rejected:"Rejected",in_progress:"In progress",ready:"Ready",completed:"Completed",cancelled:"Cancelled",refunded:"Refunded"},
   cancelStatuses:{pending_review:"Manual review — continue",approved:"Cancelled without refund",partially_approved:"Partially approved",rejected:"Rejected — continue",refund_pending:"Cancelled — stop fulfilment",refunded:"Cancelled — refunded"}
  }
