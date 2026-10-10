@@ -175,7 +175,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     if(!feedback)return;
     const timer=window.setTimeout(()=>setFeedback(""),7000);
     return ()=>window.clearTimeout(timer);
-  },[feedback]);
+  },[feedback,details.recommendedPackage?.id]);
   function switchService(name){
     setDetails(prev=>{
       const before=prev.services;
