@@ -302,7 +302,7 @@ export default function FlowersPage({locale="ar",flow=false}){
         </div>
       </div>
       <div className="dd-flowers-wrap">
-        <aside className="dd-flowers-filters" aria-label={t.filters}>
+        <aside className="dd-flowers-filters" aria-label={t.filters} tabIndex={0}> 
           <div className="dd-flowers-filter-head">
             <strong>{t.filters}</strong><button type="button" onClick={reset}>{t.reset}</button>
           </div>
