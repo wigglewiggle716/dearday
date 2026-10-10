@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlanningStepper from "./planning-stepper";
+import PlanningFlowDock from "./planning-flow-dock";
 import BrandedDropdown from "./branded-dropdown";
 import { QuantityAction, money, useCart } from "./cart-provider";
 import { cakePrototypeCards } from "../lib/cake-preview";
@@ -383,12 +384,10 @@ export default function CakePage({locale="ar",flow=false,standalone=false,incomi
               <span aria-hidden="true">⇧</span> {t.customButton}
             </button>
           </div>
-          {flow&&<div className="dd-cake-continue">
-            <div><strong>{t.selected}: {previewCount}</strong><p>{t.continuation}</p></div>
-            <button type="button" onClick={continuePlanning}>{t.continue}</button>
-          </div>}
+
         </section>
       </div>
+      {flow&&<PlanningFlowDock locale={locale} current="cake"/>}
     </main>
     {designDialogOpen&&<CakeDesignDialog locale={locale} onClose={()=>setDesignDialogOpen(false)}/>}
   </>;
