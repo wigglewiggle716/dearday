@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useCatalog } from "./live-catalog";
 import { useCart, QuantityAction, money } from "./cart-provider";
 import PlanningStepper from "./planning-stepper";
+import PlanningFlowDock from "./planning-flow-dock";
 
 const copy = {
   ar: {
@@ -296,5 +297,6 @@ export default function GiftsPage({locale="ar",flow=false}){
         </div>
       </div>
     </section>
+    {flow&&<PlanningFlowDock locale={locale} current="gifts"/>}
   </main>;
 }
