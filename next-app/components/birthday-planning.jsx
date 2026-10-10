@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import OccasionDatePicker from "./occasion-date-picker";
 import BrandedDropdown from "./branded-dropdown";
@@ -55,7 +55,7 @@ const texts={
     viewExperiences:"شاهد التجارب ←",selectedCount:(n)=>n? n+" "+(n===1?"عنصر مختار":"عناصر مختارة"):"لم تختر أي عناصر بعد",
     continue:"التالي: كمّل ترتيب مناسبتك",nextShort:"التالي",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
     serviceImage:"صورة الخدمة",venueDisclaimer:"تقدر تستكشف الأماكن والتجارب في الخطوة التالية.",
-        packageItemsNote:"اتحفظت اختيارات الباقة في رحلتك، ومنتجاتها اتضافت للسلة. المكان اختيار مبدئي لحين تأكيد الحجز."
+
   },
   en:{
     select:"Choose services",flow:["Choose services","Gifts","Chocolate & Cakes","Places & Experiences","Occasion Details","Review & Booking"],
@@ -72,7 +72,7 @@ const texts={
     viewExperiences:"See experiences →",selectedCount:(n)=>n?n+" selected "+(n===1?"item":"items"):"No items selected yet",
     continue:"Next: Build your occasion",nextShort:"Next",choose:"Choose at least one service to continue",
     serviceImage:"Service image",venueDisclaimer:"Browse places and experiences in the next step.",
-        packageItemsNote:"Your package choices are saved and its products are in your cart. Venue selections are provisional until booking is confirmed."
+
   }
 };
 
@@ -129,8 +129,6 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
   const [loaded,setLoaded]=useState(false);
   const [details,setDetails]=useState({occasionKey:normOccasion(incoming.occasion),area:"",date:"",budgetKey:"unsure",services:[],recommendedPackage:null});
   const [showAllSuggestions,setShowAllSuggestions]=useState(false);
-  const [feedback,setFeedback]=useState("");
-  const feedbackRef=useRef(null);
   const flow=incoming.flow==="1";
   const occasion=occasionInfo[details.occasionKey]?.[locale]||occasionInfo.birthday[locale];
   const livePackages=useMemo(()=>composeLivePackages(catalog,details.occasionKey),[catalog,details.occasionKey]);
@@ -184,18 +182,11 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     applyPackage(null);
     setDetails(prev=>({...prev,services:[],recommendedPackage:null,packageSelections:[],
       giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
-    setFeedback(locale==="ar"?"الباقة القديمة اتغيّرت أو منتج منها لم يعد متاحًا. اختار باقة من المنتجات الحالية.":"That package changed or is no longer available. Choose from the current published bundles.");
   },[loaded,catalogLoading,livePackages,details.recommendedPackage,applyPackage,locale]);
   function updateDetails(change){
     if(change.recommendedPackage===null&&details.recommendedPackage)applyPackage(null);
     setDetails(old=>({...old,...change}));
-    setFeedback("");
   }
-  useEffect(()=>{
-    if(!feedback)return;
-    const timer=window.setTimeout(()=>setFeedback(""),7000);
-    return ()=>window.clearTimeout(timer);
-  },[feedback,details.recommendedPackage?.id]);
   function switchService(name){
     if(details.recommendedPackage)applyPackage(null);
     setDetails(prev=>{
@@ -203,7 +194,6 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
       const services=before.includes(name)?before.filter(s=>s!==name):[...before,name];
       return {...prev,services,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]};
     });
-    setFeedback("");
   }
   function pickPackage(pkg){
     if(!cartLoaded||catalogLoading)return;
@@ -228,15 +218,13 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
       flowerSelections:selected.items.filter(x=>x.type==="flower"),
       venueSelections:selected.items.filter(x=>x.type==="venue"),
       occasion:name,occasionKey:details.occasionKey,budget:details.budgetKey});
-    setFeedback(t.packageItemsNote);
   }
   function unpickPackage(){
     applyPackage(null);
     setDetails(prev=>({...prev,services:[],recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
-    setFeedback("");
   }
   function moveNext(){
-    if(selectedCount===0){setFeedback(t.choose);return;}
+    if(selectedCount===0)return;
     const names=[...details.services];
     if(cartItems.some(x=>x.type==="gift")&&!names.includes("هدايا"))names.push("هدايا");
     if(cartItems.some(x=>x.type==="flower")&&!names.includes("ورد"))names.push("ورد");
@@ -339,6 +327,5 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
       </div>
     </div>
     <SelectionDock t={t} selectedCount={selectedCount} chosenServices={details.services} onNext={moveNext}/>
-    {feedback&&<div className="dd-birthday-feedback" role="status" ref={feedbackRef}>{feedback}</div>}
   </main>;
 }
