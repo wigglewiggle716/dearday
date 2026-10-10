@@ -8,6 +8,7 @@ import BrandedDropdown from "./branded-dropdown";
 import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 import { pathFor } from "../lib/locales";
 import { venuePreviews } from "../lib/venues-preview";
+import { useCatalog } from "./live-catalog";
 
 const filtersEmpty={type:"all",area:"all",atmosphere:"all",budget:"all"};
 const labels={
@@ -123,7 +124,26 @@ function VenueCard({venue,locale,t,isSelected,isFavorite,onSelect,onFavorite}) {
 export default function VenuesPage({locale="ar",flow=false,standalone=false,incoming=null}){
   const router=useRouter();
   const t=labels[locale]||labels.ar;
-  const venues=venuePreviews;
+  const {rows:liveCatalog}=useCatalog();
+  // Published venues take priority over legacy showcase previews. Showcase
+  // entries stay explicitly nonbookable and are never used in live bundles.
+  const venues=useMemo(()=>{
+    const published=liveCatalog.venues||[];
+    if(!published.length)return venuePreviews;
+    return published.map(item=>{
+      const m=item.metadata||{};
+      return {
+        id:item.id,listing_id:item.listing_id,partner_id:item.partner_id,
+        name:locale==="ar"?item.name_ar:item.name_en,
+        ar:item.desc_ar,descEn:item.desc_en,img:item.image||"/approved-pages/assets/media/venue-01.jpg",
+        price:item.price,area:m.area||m.district||"",areaEn:m.area_en||m.district_en||m.area||"",
+        people:m.capacity||m.guests||"—",rating:m.rating||"—",
+        type:m.venue_type|| (m.kind==="experience"?"experience":"restaurant"),
+        atmosphere:m.atmosphere||"",meta:item.vendor_ar||"",metaEn:item.vendor_en||"",
+        isPick:!!item.score,previewOnly:false,bookingConfirmed:false
+      };
+    });
+  },[liveCatalog.venues,locale]);
   const [filters,setFilters]=useState(filtersEmpty);
   const [sort,setSort]=useState("recommended");
   const [search,setSearch]=useState("");
@@ -179,10 +199,10 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     const preview=selected?{
       ...selected,name_ar:selected.name,name_en:selected.name,
       description_ar:selected.ar,description_en:selected.descEn,
-      previewOnly:true,bookingConfirmed:false
+      previewOnly:!!selected.previewOnly,bookingConfirmed:false
     } : null;
     const next={...before,venueSelections:preview?[preview]:[],customExperience:custom||null};
-    try{localStorage.setItem("dearDayPlan",JSON.stringify(next));}catch{}
+    try{localStorage.setItem("dearDayPlan",JSON.stringify(next));window.dispatchEvent(new Event("ddplanchange"));}catch{}
   },[hydrated,selectedId,custom,locale]);
 
   const filtered=useMemo(()=>{
