@@ -337,7 +337,7 @@ html[lang=en] .dd-flowers-custom-copy {direction:ltr}
 
 
 /* Owner-approved flower sidebar: same burgundy controls as other categories. */
-.dd-flowers-filters{overflow:visible;background:#fffdfa;border-color:rgba(107,53,64,.23);box-shadow:0 8px 22px rgba(70,35,40,.055)}
+.dd-flowers-filters{z-index:30;overflow:visible;background:#fffdfa;border-color:rgba(107,53,64,.23);box-shadow:0 8px 22px rgba(70,35,40,.055)}
 .dd-flowers-filters .dd-home-dropdown-field{position:relative;min-width:0}
 .dd-flowers-filters .dd-home-dropdown-label{display:block;position:static;width:auto;height:auto;clip-path:none;font-size:12px;line-height:1.5;color:#6B3540;font-weight:750;margin-bottom:7px}
 .dd-flowers-filters .dd-home-dropdown-trigger{
