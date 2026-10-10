@@ -199,7 +199,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     const preview=selected?{
       ...selected,name_ar:selected.name,name_en:selected.name,
       description_ar:selected.ar,description_en:selected.descEn,
-      previewOnly:!!selected.previewOnly,bookingConfirmed:false
+      previewOnly:!selected.listing_id,bookingConfirmed:false
     } : null;
     const next={...before,venueSelections:preview?[preview]:[],customExperience:custom||null};
     try{localStorage.setItem("dearDayPlan",JSON.stringify(next));window.dispatchEvent(new Event("ddplanchange"));}catch{}
