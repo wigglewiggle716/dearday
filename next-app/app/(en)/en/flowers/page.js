@@ -1,8 +1,9 @@
+import { publicPageMetadata } from "../../../../lib/public-seo";
 import "../../../home.css";
 import "../../../flowers.css";
 import FlowersPage from "../../../../components/flowers-page";
 
-export const metadata={title:"Flowers | Dear Day",robots:{index:false,follow:false}};
+export async function generateMetadata() { return publicPageMetadata({title:"Flowers | Dear Day",robots:{index:false,follow:false}}, "en", "/flowers"); }
 
 export default async function FlowersEnglish({searchParams}){
   const q=await searchParams;

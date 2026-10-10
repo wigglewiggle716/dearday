@@ -1,7 +1,8 @@
+import { publicPageMetadata } from "../../../../lib/public-seo";
 import "../../../gifts.css";
 import GiftsPage from "../../../../components/gifts-page";
 
-export const metadata={title:"Gifts | Dear Day",robots:{index:false,follow:false}};
+export async function generateMetadata() { return publicPageMetadata({title:"Gifts | Dear Day",robots:{index:false,follow:false}}, "en", "/gifts"); }
 
 export default async function EnglishGiftsPage({searchParams}){
   const params=await searchParams;

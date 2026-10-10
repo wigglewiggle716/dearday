@@ -1,12 +1,13 @@
+import { publicPageMetadata } from "../../../../lib/public-seo";
 import "../../../home.css";
 import "../../../venues.css";
 import VenuesPage from "../../../../components/venues-page";
 
-export const metadata={
+export async function generateMetadata() { return publicPageMetadata({
   title:"Places & Experiences | Dear Day",
   description:"Explore venues and experiences for your special occasion with Dear Day.",
   robots:{index:false,follow:false}
-};
+}, "en", "/venues"); }
 
 export default async function EnglishVenues({searchParams}){
   const q=await searchParams;
