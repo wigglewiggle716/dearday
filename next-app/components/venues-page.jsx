@@ -124,7 +124,7 @@ function VenueCard({venue,locale,t,isSelected,isFavorite,onSelect,onFavorite}) {
 export default function VenuesPage({locale="ar",flow=false,standalone=false,incoming=null}){
   const router=useRouter();
   const t=labels[locale]||labels.ar;
-  const {rows:liveCatalog}=useCatalog();
+  const {rows:liveCatalog,loading:venueLoading}=useCatalog();
   // Published venues take priority over legacy showcase previews. Showcase
   // entries stay explicitly nonbookable and are never used in live bundles.
   const venues=useMemo(()=>{
@@ -166,6 +166,9 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
   useEffect(()=>()=>{if(closeTimer.current)clearTimeout(closeTimer.current);},[]);
 
   useEffect(()=>{
+    // Wait for published venue listings before restoring a package choice;
+    // otherwise the showcase fallback would erase it from local storage.
+    if(venueLoading)return;
     let saved=standalone?{}:readPlan();
     if(incoming&&typeof incoming==="string"&&incoming.length<30000){
       try{const from=JSON.parse(incoming);if(from&&typeof from==="object"&&!Array.isArray(from))saved={...saved,...from};}catch{}
@@ -188,7 +191,7 @@ export default function VenuesPage({locale="ar",flow=false,standalone=false,inco
     setCustomBudget(previousDraft?.budget?String(previousDraft.budget):"");
     setBudgetKey(saved.budgetKey||saved.budget||"unsure");
     setHydrated(true);
-  },[locale,standalone,incoming,venues]);
+  },[locale,standalone,incoming,venues,venueLoading]);
 
   const selected=venues.find(v=>v.id===selectedId)||null;
   useEffect(()=>{
