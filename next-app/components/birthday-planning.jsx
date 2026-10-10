@@ -226,7 +226,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     const name=occasionInfo[details.occasionKey]?.ar.label||"عيد ميلاد";
     writePlan({...previous,...details,services:names,occasion:name,occasionLabel:name,occasionKey:details.occasionKey,budget:details.budgetKey,budgetLabel:budgetLabels[details.budgetKey],
       products:cartItems.map(item=>({name:item.ar||item.name,listing_id:item.listing_id||item.id,type:item.type,quantity:item.quantity,price:item.price}))});
-    router.push(pathFor(next,locale)+"?flow=1");
+    router.push(pathFor(next,locale)+"?flow=1"+(details.recommendedPackage&&cartItems.length?"&fromPackage=1":""));
   }
   const heroImage=occasionMedia+"occasion-"+(details.occasionKey==="date_night"?"date-night":details.occasionKey)+".jpg";
 
