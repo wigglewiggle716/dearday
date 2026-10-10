@@ -230,7 +230,11 @@ function CartRows({ locale }) {
 
 function FloatingCart({ locale }) {
   const { count, isLoaded, setOpen } = useCart();
+  const pathname=usePathname()||"/";
   const t = cartCopy(locale);
+  // The standalone business dashboard uses the old workspace layout,
+  // never the public storefront's floating shopping-cart control.
+  if(/^\/(?:en\/)?partner(?:\/|$)/.test(pathname))return null;
   return <button className="dd-floating-cart" type="button" disabled={!isLoaded}
     onClick={() => setOpen(true)} aria-label={t.cart}>
     <svg width="27" height="27" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
