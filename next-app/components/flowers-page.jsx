@@ -108,13 +108,11 @@ function FlowerCard({item,locale,t}){
     </div>
   </article>;
 }
-function FilterSelect({name,choices,value,onChange}) {
-  return <label className="dd-flowers-filter-field">
-    <span>{name}</span>
-    <select value={value} onChange={e=>onChange(e.target.value)}>
-      {choices.map(([v,label])=><option value={v} key={v}>{label}</option>)}
-    </select>
-  </label>;
+function FilterSelect({name,choices,value,onChange,locale}) {
+  return <div className="dd-flowers-filter-field">
+    <BrandedDropdown label={name} placeholder={choices[0]?.[1]||name}
+      value={value} onChange={onChange} options={choices} locale={locale}/>
+  </div>;
 }
 const FLOWER_DESIGN_ENDPOINT="https://hpffdmldtdtwcaoemyso.supabase.co/functions/v1/flower-design-submit";
 const designCopy={
@@ -313,11 +311,11 @@ export default function FlowersPage({locale="ar",flow=false}){
             <input type="search" value={filters.search}
               onChange={e=>update("search",e.target.value)} placeholder={t.searchPlaceholder}/>
           </label>
-          <FilterSelect name={t.price} choices={t.priceOptions} value={filters.price}
+          <FilterSelect locale={locale} name={t.price} choices={t.priceOptions} value={filters.price}
             onChange={value=>update("price",value)}/>
-          {names.map(key=><FilterSelect key={key} name={t[key]} choices={options[key]}
+          {names.map(key=><FilterSelect locale={locale} key={key} name={t[key]} choices={options[key]}
             value={filters[key]} onChange={value=>update(key,value)}/>)}
-          <FilterSelect name={t.stems} choices={t.stemsOptions} value={filters.stems}
+          <FilterSelect locale={locale} name={t.stems} choices={t.stemsOptions} value={filters.stems}
             onChange={value=>update("stems",value)}/>
           <label className="dd-flowers-check">
             <input type="checkbox" checked={filters.same_day}
