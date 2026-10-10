@@ -553,3 +553,13 @@ html[lang=ar] .dd-cart-drawer { animation-name: ddDrawerInRtl; }
  .dd-flow-dock button{padding:8px 9px;font-size:11px}
  .dd-flow-dock .dd-flow-cart{width:100%}
 }
+
+
+/* The sliding cart keeps the route's Next action visible during ?flow=1. */
+.dd-cart-drawer-bottom .dd-cart-flow-next{
+ display:flex;justify-content:center;align-items:center;width:100%;
+ margin-top:9px;min-height:44px;padding:10px 14px;
+ border:1px solid #6B3540;border-radius:13px;background:#6B3540;
+ color:white;text-decoration:none;text-align:center;font-weight:800;font-size:13px
+}
+.dd-cart-drawer-bottom .dd-cart-flow-next:hover{background:#874955;color:#fff}
