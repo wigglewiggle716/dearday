@@ -109,7 +109,6 @@
 
 
 
-.dd-birthday-feedback {position:fixed;z-index:330;bottom:112px;inset-inline-end:25px;max-width:min(420px,calc(100% - 50px));background:var(--dd-bp-wine);color:#fff;padding:12px 17px;border-radius:12px;box-shadow:0 10px 28px rgba(60,27,35,.19);font-size:13px}
 @media(max-width:1000px) {
   .dd-birthday-hero {grid-template-columns:1fr}
   .dd-birthday-hero-copy {order:2;padding:34px 24px 42px}
@@ -130,7 +129,6 @@
   
   
   
-  .dd-birthday-feedback {bottom:110px}
 }
 @media(max-width:620px) {
   .dd-birthday-hero-photo {min-height:280px}
@@ -312,11 +310,3 @@
 }
 
 
-/* One centered, nonblocking toast which dismisses after seven seconds. */
-.dd-birthday-feedback{
- position:fixed;top:50%;left:50%;right:auto;bottom:auto;inset-inline-end:auto;
- transform:translate(-50%,-50%);z-index:335;
- width:max-content;max-width:min(440px,calc(100vw - 36px));
- padding:16px 21px;text-align:center;line-height:1.8;pointer-events:none;
- background:#6B3540;border:1px solid #8d5561;box-shadow:0 16px 50px rgba(64,25,36,.25)
-}
