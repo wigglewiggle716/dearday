@@ -171,6 +171,21 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     writePlan({...previous,...details,occasion:name,occasionLabel:name,budget:details.budgetKey,budgetLabel:budgetLabels[details.budgetKey]||budgetLabels.unsure});
   },[loaded,details]);
 
+  // If the customer comes back after publication/price/availability changed,
+  // never silently reuse a previously stored bundle quote or old listing IDs.
+  useEffect(()=>{
+    if(!loaded||catalogLoading||!details.recommendedPackage)return;
+    const saved=details.recommendedPackage;
+    const current=livePackages.find(p=>p.id===saved.id);
+    const valid=current&&current.items.length===saved.items?.length&&
+      saved.items.every(x=>current.items.some(y=>y.type===x.type&&
+        String(y.listing_id)===String(x.listing_id)&&Number(y.price)===Number(x.price)));
+    if(valid)return;
+    applyPackage(null);
+    setDetails(prev=>({...prev,services:[],recommendedPackage:null,packageSelections:[],
+      giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
+    setFeedback(locale==="ar"?"الباقة القديمة اتغيّرت أو منتج منها لم يعد متاحًا. اختار باقة من المنتجات الحالية.":"That package changed or is no longer available. Choose from the current published bundles.");
+  },[loaded,catalogLoading,livePackages,details.recommendedPackage,applyPackage,locale]);
   function updateDetails(change){
     if(change.recommendedPackage===null&&details.recommendedPackage)applyPackage(null);
     setDetails(old=>({...old,...change}));
