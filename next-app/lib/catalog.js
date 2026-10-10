@@ -4,7 +4,8 @@
    No write operations are performed by the migration preview. */
 const BASE = "https://hpffdmldtdtwcaoemyso.supabase.co/rest/v1/";
 const PUBLIC_KEY = "sb_publishable_10ZXpBIQH2bG-iseG7jpdw_DfmEUT_C";
-const SLUGS = ["gifts","cakes-sweets","flowers"];
+const SLUGS = ["gifts","cakes-sweets","flowers","venues","places-experiences","experiences","places"];
+const emptyCatalog=()=>({gifts:[],"cakes-sweets":[],flowers:[],venues:[]});
 
 async function read(table, query) {
   const response = await fetch(BASE + table + "?" + query.toString(), {
@@ -21,13 +22,13 @@ export async function loadPublicCatalog() {
     select:"id,slug",slug:filter(SLUGS)
   }));
   const cats = new Map(categories.map(x => [String(x.id),x.slug]));
-  if (!cats.size) return {gifts:[],"cakes-sweets":[],flowers:[]};
+  if (!cats.size) return emptyCatalog();
   const listings = await read("listings",new URLSearchParams({
-    select:"id,partner_id,category_id,published_version_id",
+    select:"id,partner_id,category_id,published_version_id,kind,stock_qty,capacity_per_day",
     category_id:filter([...cats.keys()]),is_available:"eq.true",
     published_version_id:"not.is.null"
   }));
-  if (!listings.length) return {gifts:[],"cakes-sweets":[],flowers:[]};
+  if (!listings.length) return emptyCatalog();
   const versionIds = listings.map(x => x.published_version_id).filter(Boolean);
   const partnerIds = [...new Set(listings.map(x => x.partner_id).filter(Boolean))];
   const [versions,partners] = await Promise.all([
@@ -42,29 +43,32 @@ export async function loadPublicCatalog() {
   ]);
   const vs = new Map(versions.map(x => [String(x.id),x]));
   const ps = new Map(partners.map(x => [String(x.id),x]));
-  const grouped = {gifts:[],"cakes-sweets":[],flowers:[]};
+  const grouped = emptyCatalog();
   for (const row of listings) {
     const ver = vs.get(String(row.published_version_id));
     const partner = ps.get(String(row.partner_id));
     const slug = cats.get(String(row.category_id));
-    if (!ver || !partner || !grouped[slug]) continue;
+    const group=["venues","places-experiences","experiences","places"].includes(slug)?"venues":slug;
+    if (!ver || !partner || !grouped[group]) continue;
+    if (group==="venues"&&!["venue","experience","service"].includes(row.kind)) continue;
+    if (row.stock_qty===0||row.capacity_per_day===0)continue;
     const firstMedia = Array.isArray(ver.media) ? ver.media[0] : null;
     const image = typeof firstMedia?.url === "string" ? firstMedia.url : "";
     const tags = Array.isArray(ver.metadata?.tags) ? ver.metadata.tags : [];
-    grouped[slug].push({
+    grouped[group].push({
       id:String(row.id),listing_id:String(row.id),partner_id:String(row.partner_id),
-      type:slug === "gifts" ? "gift" : slug === "cakes-sweets" ? "cake" : "flower",
+      type:group === "gifts" ? "gift" : group === "cakes-sweets" ? "cake" : group === "venues" ? "venue" : "flower",
       name_ar:ver.name_ar || ver.name_en || "",name_en:ver.name_en || ver.name_ar || "",
       desc_ar:ver.description_ar || "",desc_en:ver.description_en || "",
       vendor_ar:partner.name_ar || partner.name_en || "",vendor_en:partner.name_en || partner.name_ar || "",
       price:Number(ver.price)||0,currency:ver.currency || "EGP",
-      image,meta:ver.metadata?.subcategory || "",metadata:ver.metadata || {},publishedOrder:listings.indexOf(row),
+      image,meta:ver.metadata?.subcategory || "",metadata:ver.metadata || {},is_available:true,publishedOrder:listings.indexOf(row),
       score:(ver.metadata?.featured?20:0)+(tags.includes("best_seller")?10:0)+(tags.includes("new")?4:0)
     });
   }
   // The database does not promise row order. Break all ties with a stable listing ID
   // so Arabic, English and repeated page loads receive identical product order.
-  for (const key of SLUGS) grouped[key].sort((a,b) =>
+  for (const key of ["gifts","cakes-sweets","flowers","venues"]) grouped[key].sort((a,b) =>
     b.score-a.score || a.price-b.price || String(a.id).localeCompare(String(b.id))
   );
   return grouped;
