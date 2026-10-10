@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { dictionaries, pathFor } from "../lib/locales";
+import { getNextPlanningStep, readPlanningServices } from "../lib/planning-flow";
 
 const KEY = "dearDayCart";
 const CartContext = createContext(null);
@@ -66,7 +67,10 @@ export function CartProvider({ children, locale, catalogRows }) {
     };
   }, []);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    const fromPackage=new URLSearchParams(window.location.search).get("fromPackage")==="1";
+    setOpen(fromPackage);
+  }, [pathname]);
 
   const commit = useCallback((updater) => {
     // Re-read storage on every mutation, then notify listeners AFTER updating state.
@@ -238,6 +242,7 @@ function FloatingCart({ locale }) {
 
 function CartDrawer({ locale }) {
   const { items,open,setOpen,total,count } = useCart();
+  const pathname=usePathname();
   const t = cartCopy(locale);
   const [planningFlow,setPlanningFlow] = useState(false);
   // A cart item does not start the planning journey. Only retain the explicit
@@ -259,6 +264,10 @@ function CartDrawer({ locale }) {
     };
   }, [open,setOpen]);
 
+  const slug=pathname?.split("/").filter(Boolean).at(-1);
+  const step=slug==="gifts"?"gifts":slug==="flowers"?"flowers":
+    ["cake","cakes-sweets"].includes(slug)?"cake":slug==="venues"?"venues":null;
+  const nextStep=step?getNextPlanningStep(step,readPlanningServices()):null;
   if (!open) return null;
   return <div className="dd-drawer-root">
     <button type="button" className="dd-drawer-backdrop" onClick={() => setOpen(false)} aria-label={t.close}/>
@@ -273,6 +282,10 @@ function CartDrawer({ locale }) {
       <div className="dd-cart-drawer-bottom">
         <div className="dd-cart-total"><strong>{t.total}</strong><strong>{money(total,locale)}</strong></div>
         <Link className="dd-cart-goto" href={pathFor("cart",locale)+(planningFlow?"?flow=1":"")} onClick={() => setOpen(false)}>{t.viewCart}</Link>
+        {planningFlow&&nextStep&&<Link className="dd-cart-flow-next"
+          href={pathFor(nextStep,locale)+"?flow=1"} onClick={()=>setOpen(false)}>
+          {locale==="ar"?"التالي ←":"Next →"}
+        </Link>}
       </div>
     </aside>
   </div>;
