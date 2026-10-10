@@ -59,6 +59,8 @@
 .dd-pp-content{min-width:0}
 .dd-pp-page>.dd-pp-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:17px}
 .dd-pp-page>.dd-pp-heading h1{margin:0;font-size:26px;color:var(--wine)}
+/* The classic topbar owns the page title; inner tools retain their buttons. */
+.dd-pp-content>.dd-pp-page>.dd-pp-heading h1{display:none}
 .dd-pp-page>.dd-pp-heading h2{margin:0;font-size:18px;color:var(--wine)}
 .dd-pp-page>.dd-pp-heading a{color:var(--wine);font-weight:700;font-size:12px;text-decoration:none}
 .dd-pp-page>.dd-pp-heading button,.dd-pp-actions button,.dd-pp-actions a,
