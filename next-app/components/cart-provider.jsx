@@ -104,6 +104,36 @@ export function CartProvider({ children, locale, catalogRows }) {
     });
   }, [commit]);
 
+  // Replace only products inserted by the previously chosen package.
+  // Manually added cart rows are kept, and venue reservations are never
+  // created/charged here: a selected venue remains a planning preference.
+  const applyPackage = useCallback((pkg) => {
+    const products=Array.isArray(pkg?.items)?pkg.items:[];
+    commit(rows=>{
+      const next=rows.filter(row=>!row.packageId);
+      const byKey=new Set(next.map(row=>row.key));
+      for(const product of products){
+        if(!["gift","cake","flower"].includes(product?.type)||product.previewOnly===true||
+          !product.id||!product.listing_id||!product.partner_id||
+          !(Number(product.price)>0))continue;
+        const key=product.type+":"+String(product.id);
+        if(byKey.has(key))continue;
+        byKey.add(key);
+        next.push({
+          key,type:product.type,id:String(product.id),listing_id:String(product.listing_id),
+          partner_id:String(product.partner_id),name:String(product.name_ar||product.name_en||""),
+          ar:String(product.name_ar||product.name_en||""),name_ar:String(product.name_ar||product.name_en||""),
+          name_en:String(product.name_en||product.name_ar||""),
+          vendor:String(product.vendor_ar||product.vendor_en||""),
+          vendor_ar:String(product.vendor_ar||""),vendor_en:String(product.vendor_en||""),
+          price:price(product.price),image:String(product.image||""),meta:String(product.meta||""),
+          previewOnly:false,packageId:String(pkg.id),quantity:1,addedAt:Date.now()
+        });
+      }
+      return next;
+    });
+  },[commit]);
+
   const change = useCallback((key, delta) => {
     commit(rows => rows.flatMap(row => {
       if (row.key !== key) return [row];
@@ -141,8 +171,8 @@ export function CartProvider({ children, locale, catalogRows }) {
   }, [items,catalogRows]);
 
   const value = useMemo(() => ({
-    items, localizedItems, isLoaded, add, change, remove, clear, count, total, open, setOpen
-  }), [items,localizedItems,isLoaded,add,change,remove,clear,count,total,open]);
+    items, localizedItems, isLoaded, add, applyPackage, change, remove, clear, count, total, open, setOpen
+  }), [items,localizedItems,isLoaded,add,applyPackage,change,remove,clear,count,total,open]);
 
   return <CartContext.Provider value={value}>
     {children}
