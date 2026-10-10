@@ -36,7 +36,7 @@ export function budgetForTotal(n){
 function available(p){
  const price=Number(p?.price);
  return p&&["gift","cake","flower","venue"].includes(p.type)&&p.id&&p.listing_id&&p.partner_id&&
-  p.previewOnly!==true&&p.is_available!==false&&Number.isFinite(price)&&price>0;
+  p.previewOnly!==true&&p.is_available!==false&&String(p.currency||"EGP").toUpperCase()==="EGP"&&Number.isFinite(price)&&price>0;
 }
 export function composeLivePackages(rows,occasionKey="birthday"){
  const groups={gift:[],cake:[],flower:[],venue:[]};
