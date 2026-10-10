@@ -1,3 +1,5 @@
+@font-face{font-family:"Noto Sans Arabic";font-style:normal;font-weight:400;font-display:swap;src:url("/approved-pages/assets/fonts/noto-sans-arabic-400.woff2") format("woff2")}
+@font-face{font-family:"Noto Sans Arabic";font-style:normal;font-weight:700;font-display:swap;src:url("/approved-pages/assets/fonts/noto-sans-arabic-700.woff2") format("woff2")}
 /* Dear Day — classic business dashboard faithfully adapted from
  * approved-pages/dear-day-partner.css (original HTML portal).
  * All selectors scoped to dd-pp-*; never style the public shop/admin.
