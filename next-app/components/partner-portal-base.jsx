@@ -73,6 +73,7 @@ export function PartnerPortalProvider({locale="ar",children}){
   finally{setBusy(false);}
  }
  const businessName=locale==="en"?partner?.name_en||partner?.name_ar:partner?.name_ar||partner?.name_en;
+ const currentSection=nav.find(([id])=>pathFor(id,locale)===pathname)?.[1]||"overview";
  return <PortalContext.Provider value={context}>
   <main className="dd-pp-main" id="main-content" dir={locale==="ar"?"rtl":"ltr"}>
    {!active?<div className="dd-pp-guard">
@@ -106,8 +107,8 @@ export function PartnerPortalProvider({locale="ar",children}){
      <div className="dd-pp-main-column">
       <header className="dd-pp-topbar">
        <div className="dd-pp-topbar-text">
-        <h1>{businessName||t.title}</h1>
-        <p>{t.summary}</p>
+        <h1>{currentSection==="overview"?businessName||t.title:t[currentSection]}</h1>
+        <p>{currentSection==="overview"?t.summary:(locale==="ar"?"إدارة اختياراتك ومتابعة تفاصيل حسابك.":"Manage your information and keep track of your activity.")}</p>
        </div>
        <div className="dd-pp-quick-actions">
         {data.partners.length>1&&<label className="dd-pp-switcher">{t.pick}
@@ -123,7 +124,7 @@ export function PartnerPortalProvider({locale="ar",children}){
         <span className="dd-pp-status">{t.active}</span>
        </div>
       </header>
-      <div className="dd-pp-content">{children}</div>
+      <div className="dd-pp-content" data-section={currentSection}>{children}</div>
      </div>
     </div>}
   </main>
