@@ -55,7 +55,7 @@ const texts={
     viewExperiences:"شاهد التجارب ←",selectedCount:(n)=>n? n+" "+(n===1?"عنصر مختار":"عناصر مختارة"):"لم تختر أي عناصر بعد",
     continue:"التالي: كمّل ترتيب مناسبتك",nextShort:"التالي",choose:"اختار خدمة واحدة على الأقل علشان نكمل",
     serviceImage:"صورة الخدمة",venueDisclaimer:"تقدر تستكشف الأماكن والتجارب في الخطوة التالية.",
-        packageItemsNote:"اختيار الباقة يحدد فئات الخدمات فقط؛ تأكيد المنتجات والأسعار في الصفحات التالية."
+        packageItemsNote:"اتحفظت اختيارات الباقة في رحلتك، ومنتجاتها اتضافت للسلة. المكان اختيار مبدئي لحين تأكيد الحجز."
   },
   en:{
     select:"Choose services",flow:["Choose services","Gifts","Chocolate & Cakes","Places & Experiences","Occasion Details","Review & Booking"],
