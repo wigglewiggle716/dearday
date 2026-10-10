@@ -8,7 +8,7 @@ import BrandedDropdown from "./branded-dropdown";
 import { ProductCard, useCatalog } from "./live-catalog";
 import { useCart, money } from "./cart-provider";
 import { pathFor } from "../lib/locales";
-import { PACKAGES, budgetLabels } from "../lib/planning-packages";
+import { composeLivePackages, selectedServiceNames, budgetLabels } from "../lib/planning-packages";
 import PlanningStepper from "./planning-stepper";
 import { getNextPlanningStep } from "../lib/planning-flow";
 
@@ -47,7 +47,7 @@ const texts={
     recHeading:"باقات مقترحة ليومك",recIntro:"اختر باقة جاهزة من نفس المنتجات الحالية، وتقدر تعدّل أي عنصر بعدين.",
     recAll:"اختر من كل الباقات المقترحة، وتقدر تعدّل أي عنصر بعدين.",
     selectPackage:"اختيار الباقة",selectedPackage:"✓ تم الاختيار",packageTotal:"إجمالي الباقة",emptyPackages:"مفيش باقات في النطاق ده حاليًا.",
-    packageTypes:{gift:"هدية",cake:"شكولاته و كيك",venue:"مكان أو تجربة"},
+    packageTypes:{gift:"هدية",cake:"شكولاته و كيك",flower:"ورد",venue:"مكان أو تجربة"},
     services:"اختر ما تحتاجه",serviceHint:"يمكنك اختيار خدمة واحدة أو أكثر",
     titles:["هدايا","شكولاته و كيك","ورد","أماكن وتجارب"],suggestions:"اقتراحات مناسبة لك",
     suggestionsDesc:"بناءً على نوع المناسبة والخدمات التي اخترتها",noProducts:"لا توجد منتجات منشورة حاليًا.",
@@ -64,7 +64,7 @@ const texts={
     recHeading:"Suggested packages for your day",recIntro:"Choose a suggested bundle and personalize every item in the next steps.",
     recAll:"Browse all suggested packages and customize them later.",
     selectPackage:"Choose package",selectedPackage:"✓ Selected",packageTotal:"Bundle total",emptyPackages:"No suggested packages for this budget yet.",
-    packageTypes:{gift:"Gift",cake:"Chocolate & Cakes",venue:"Place or experience"},
+    packageTypes:{gift:"Gift",cake:"Chocolate & Cakes",flower:"Flowers",venue:"Place or experience"},
     services:"What would you like to include?",serviceHint:"Select one or more services. You can change your choices later.",
     titles:["Gifts","Chocolate & Cakes","Flowers","Places & Experiences"],suggestions:"Suggested for you",
     suggestionsDesc:"Based on your occasion and selected services",noProducts:"No published products available right now.",
@@ -124,7 +124,7 @@ function SelectionDock({t,selectedCount,chosenServices,onNext}) {
 export default function BirthdayPlanning({locale="ar",incoming={}}){
   const router=useRouter();
   const t=texts[locale];
-  const {items:cartItems,count:cartCount}=useCart();
+  const {items:cartItems,count:cartCount,applyPackage,isLoaded:cartLoaded}=useCart();
   const {rows:catalog,loading:catalogLoading}=useCatalog();
   const [loaded,setLoaded]=useState(false);
   const [details,setDetails]=useState({occasionKey:normOccasion(incoming.occasion),area:"",date:"",budgetKey:"unsure",services:[],recommendedPackage:null});
@@ -133,7 +133,8 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
   const feedbackRef=useRef(null);
   const flow=incoming.flow==="1";
   const occasion=occasionInfo[details.occasionKey]?.[locale]||occasionInfo.birthday[locale];
-  const packageList=useMemo(()=>details.budgetKey==="unsure"?PACKAGES:PACKAGES.filter(p=>p.budget===details.budgetKey),[details.budgetKey]);
+  const livePackages=useMemo(()=>composeLivePackages(catalog,details.occasionKey),[catalog,details.occasionKey]);
+  const packageList=useMemo(()=>details.budgetKey==="unsure"?livePackages:livePackages.filter(p=>p.budget===details.budgetKey),[livePackages,details.budgetKey]);
   const selectedCount=details.services.length+cartCount;
   const preferred = useMemo(()=>{
     const candidates=[...(catalog.gifts||[]),...(catalog["cakes-sweets"]||[]),...(catalog.flowers||[])];
@@ -155,7 +156,7 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     const rawBudget=incoming.budget||merged.budgetKey||merged.budget||"unsure";
     const budgetKey=knownBudgets.includes(rawBudget)?rawBudget:"unsure";
     const services=Array.isArray(merged.services)?merged.services.filter(s=>serviceDefs.some(item=>item.name===s)): [];
-    setDetails({occasionKey,area,date,budgetKey,services,recommendedPackage:merged.recommendedPackage||null});
+    setDetails({occasionKey,area,date,budgetKey,services,recommendedPackage:null});
     setLoaded(true);
   },[incoming.dd,incoming.occasion,incoming.area,incoming.date,incoming.budget]);
 
@@ -170,6 +171,11 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     setDetails(old=>({...old,...change}));
     setFeedback("");
   }
+  useEffect(()=>{
+    if(!feedback)return;
+    const timer=window.setTimeout(()=>setFeedback(""),7000);
+    return ()=>window.clearTimeout(timer);
+  },[feedback]);
   function switchService(name){
     setDetails(prev=>{
       const before=prev.services;
@@ -179,11 +185,34 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
     setFeedback("");
   }
   function pickPackage(pkg){
-    const needed=[...new Set(pkg.items.map(x=>x.type))];
-    const serviceMap={gift:"هدايا",cake:"شكولاته و كيك",venue:"أماكن وتجارب"};
-    const services=needed.map(type=>serviceMap[type]).filter(Boolean);
-    setDetails(prev=>({...prev,services,recommendedPackage:{id:pkg.id,name:pkg.name,budget:pkg.budget,total:pkg.total,items:pkg.items},packageSelections:pkg.items, giftSelections:pkg.items.filter(x=>x.type==="gift"),cakeSelections:pkg.items.filter(x=>x.type==="cake"),venueSelections:pkg.items.filter(x=>x.type==="venue")}));
+    if(!cartLoaded||catalogLoading)return;
+    // Same published listing IDs as the category pages; venue selection is a
+    // planning preference until a real booking slot is confirmed.
+    const services=selectedServiceNames(pkg);
+    applyPackage(pkg);
+    const selected={
+      id:pkg.id,name_ar:pkg.name_ar,name_en:pkg.name_en,
+      budget:pkg.budget,total:pkg.total,
+      items:pkg.items.map(p=>({id:p.id,listing_id:p.listing_id,partner_id:p.partner_id,
+        type:p.type,name_ar:p.name_ar,name_en:p.name_en,price:p.price,image:p.image}))
+    };
+    setDetails(prev=>({...prev,services,recommendedPackage:selected,packageSelections:selected.items,
+      giftSelections:selected.items.filter(x=>x.type==="gift"),
+      cakeSelections:selected.items.filter(x=>x.type==="cake"),
+      flowerSelections:selected.items.filter(x=>x.type==="flower"),
+      venueSelections:selected.items.filter(x=>x.type==="venue")}));
+    const name=occasionInfo[details.occasionKey]?.ar.label||"عيد ميلاد";
+    writePlan({...readStoredPlan(),...details,services,recommendedPackage:selected,packageSelections:selected.items,
+      giftSelections:selected.items.filter(x=>x.type==="gift"),cakeSelections:selected.items.filter(x=>x.type==="cake"),
+      flowerSelections:selected.items.filter(x=>x.type==="flower"),
+      venueSelections:selected.items.filter(x=>x.type==="venue"),
+      occasion:name,occasionKey:details.occasionKey,budget:details.budgetKey});
     setFeedback(t.packageItemsNote);
+  }
+  function unpickPackage(){
+    applyPackage(null);
+    setDetails(prev=>({...prev,recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],flowerSelections:[],venueSelections:[]}));
+    setFeedback("");
   }
   function moveNext(){
     if(selectedCount===0){setFeedback(t.choose);return;}
@@ -234,17 +263,17 @@ export default function BirthdayPlanning({locale="ar",incoming={}}){
             <span className="dd-birthday-budget-tag">{budgetTitle(details.budgetKey,locale)}</span>
           </div>
           <div className="dd-birthday-rec-grid">
-            {packageList.length?packageList.map(pkg=>{
+            {catalogLoading?<p className="dd-birthday-products-empty">{locale==="ar"?"جاري تحميل الباقات الحقيقية…":"Loading available packages…"}</p>:packageList.length?packageList.map(pkg=>{
               const chosen=details.recommendedPackage?.id===pkg.id;
               return <article key={pkg.id} className={"dd-birthday-rec-card"+(chosen?" selected":"")}>
-                <div className="dd-birthday-rec-top"><h3>{pkg.name}</h3><span>{budgetTitle(pkg.budget,locale)}</span></div>
+                <div className="dd-birthday-rec-top"><h3>{locale==="ar"?pkg.name_ar:pkg.name_en}</h3><span>{budgetTitle(pkg.budget,locale)}</span></div>
                 <div className="dd-birthday-rec-items">
                   {pkg.items.map(item=><div key={item.type+":"+item.id} className="dd-birthday-rec-item">
-                    <span>{t.packageTypes[item.type]} · {item.name}</span><span>{money(item.price,locale)}</span>
+                    <span>{t.packageTypes[item.type]} · {locale==="ar"?item.name_ar:item.name_en}</span><span>{money(item.price,locale)}</span>
                   </div>)}
                 </div>
                 <div className="dd-birthday-rec-bottom"><div><small>{t.packageTotal}</small><strong>{money(pkg.total,locale)}</strong></div>
-                  <button type="button" className="dd-birthday-rec-btn" onClick={()=>chosen?updateDetails({recommendedPackage:null,packageSelections:[],giftSelections:[],cakeSelections:[],venueSelections:[]}):pickPackage(pkg)}
+                  <button type="button" className="dd-birthday-rec-btn" onClick={()=>chosen?unpickPackage():pickPackage(pkg)} disabled={!cartLoaded||catalogLoading}
                     aria-pressed={chosen}>{chosen?t.selectedPackage:t.selectPackage}</button>
                 </div>
               </article>;
