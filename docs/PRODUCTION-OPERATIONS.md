@@ -3,12 +3,12 @@
 ## Live system
 
 - Customer website: `https://dear-day.com` and `https://www.dear-day.com` → permanent 308 redirect to apex
-- Vercel project: `dearday-react-migration` (`prj_fnNDEBrRdFAYYhuI2wvZOLJDiZFb`)
+- Vercel project: `dearday` (`prj_fnNDEBrRdFAYYhuI2wvZOLJDiZFb`)
 - Application root directory within GitHub repository: `next-app`
 - GitHub repository: `wigglewiggle716/dearday`
-- Main code: `main` (prepared as clean canonical branch)
-- **Release gate:** Verify Vercel Settings → Git → Production Branch is set to `main` and that its first deployment is READY before considering this switch complete.
-- Historical Vercel project `dearday` has been removed after moving both custom domains.
+- Main code and Vercel production branch: `main` (deployed and verified 2026-10-10)
+- **Release verified:** A `main` production deployment on commit `065797835c8aa7ddbdb7cd8a4f4c99c0bd2e2b26` was `READY` and directly served `dear-day.com` before the project was renamed.
+- Historical HTML Vercel project (`prj_THPPUNzmy7g1wFTYcVPv1wCkf17F`) was deleted. The new React project (`prj_fnNDEBrRdFAYYhuI2wvZOLJDiZFb`) now uses the name `dearday`.
 - Backend: existing Supabase project (`hpffdmldtdtwcaoemyso`). **Do not delete, recreate, or reset it.**
 
 ## Source archives

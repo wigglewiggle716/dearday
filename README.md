@@ -3,8 +3,8 @@
 **Live domain:** https://dear-day.com  
 **Active app:** `next-app/` (Next.js / React)  
 **Backend:** existing shared Supabase project  
-**Hosting:** Vercel project `dearday-react-migration` (the live project; this name can be changed later)  
-**Primary development branch:** `main` once the Vercel Production Branch has been switched to it.
+**Hosting:** Vercel project `dearday` (project ID `prj_fnNDEBrRdFAYYhuI2wvZOLJDiZFb`)  
+**Primary development branch:** `main` (production; verified 2026-10-10)
 
 The legacy HTML website was decommissioned from Vercel on 2026-10-10. Its source and the complete pre-cleanup repository state remain archived in these read-only Git branches:
 
