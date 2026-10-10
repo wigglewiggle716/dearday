@@ -341,7 +341,7 @@ html[lang=en] .dd-flowers-custom-copy {direction:ltr}
    overflow-y:auto accidentally undone when branded filters were added. */
 .dd-flowers-filters{
   z-index:30;overflow-x:hidden;overflow-y:auto;
-  max-height:max(260px,calc(100dvh - 125px));
+  max-height:calc(100dvh - 125px);
   scrollbar-width:auto;scrollbar-color:#95626e #f3e8e5;
   scrollbar-gutter:stable;
   overscroll-behavior-y:contain;
