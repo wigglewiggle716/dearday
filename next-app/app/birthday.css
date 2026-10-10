@@ -310,3 +310,13 @@
     bottom:14px;
   }
 }
+
+
+/* One centered, nonblocking toast which dismisses after seven seconds. */
+.dd-birthday-feedback{
+ position:fixed;top:50%;left:50%;right:auto;bottom:auto;inset-inline-end:auto;
+ transform:translate(-50%,-50%);z-index:335;
+ width:max-content;max-width:min(440px,calc(100vw - 36px));
+ padding:16px 21px;text-align:center;line-height:1.8;pointer-events:none;
+ background:#6B3540;border:1px solid #8d5561;box-shadow:0 16px 50px rgba(64,25,36,.25)
+}
