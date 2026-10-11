@@ -5,9 +5,9 @@ As of 2026-10-11, 25 Resend templates are published, but publication is not a li
 ## Deployment boundary
 
 - This branch is **email-automation-staging**. Do not merge, deploy or enable without review and separate approval.
-- The SQL is kept in docs/email-automation/STAGED_nonpayment_outbox.sql, deliberately **outside** supabase/migrations to prevent accidental migration pickup.
+- Both review scripts, `docs/email-automation/STAGED_nonpayment_outbox.sql` and `docs/email-automation/STAGED_authoritative_event_producers.sql`, stay **outside** supabase/migrations to prevent accidental migration pickup. They must be applied in that order to an isolated disposable database before approval.
 - The existing private.order_email_outbox and payment received dispatcher are entirely separate, untouched, and payment emails remain deferred until Paymob approval.
-- No database DDL has been executed, no event trigger or scheduled job is installed, and no customer/partner email has been sent by this change.
+- No database DDL has been executed in production, no event trigger or scheduled job is installed there, and no customer/partner email has been sent by this change. The staged second SQL script defines gated triggers for legitimate paid/confirmed/in-progress/completed orders, cancellation requests, item decisions and confirmed item refunds.
 
 ## Staged components
 
@@ -34,6 +34,12 @@ As of 2026-10-11, 25 Resend templates are published, but publication is not a li
 
 ## Security considerations
 
-The public RPC wrappers grant execute only to service_role, with SECURITY INVOKER wrappers and private SECURITY DEFINER implementations. This release does not expose queue functions to anonymous/authenticated browser roles. Escaped template text and a strict event registry prevent arbitrary HTML substitution. Never expose service role or dispatch secret to the browser.
+The database has an independent private per-category feature gate (orders, cancellations, partners, intake), all OFF by default. Both queuing and claims check these gates. The public RPC wrappers grant execute only to service_role, with SECURITY INVOKER wrappers and private SECURITY DEFINER implementations. This release does not expose queue functions to anonymous/authenticated browser roles. Escaped template text and a strict event registry prevent arbitrary HTML substitution. Never expose service role or dispatch secret to the browser.
 
 Resend Idempotency-Key remains constant across retries within the provider's 24-hour guarantee; the database stops automatic retries after 23 hours. This guarantees one send attempt group per stored outbox job, not exactly-once inbox delivery.
+
+## Open review items
+
+- Persist a trusted locale with checkout orders before activating English order emails. Current checkout does not store locale and the producer otherwise falls back to Arabic.
+- Test the trigger SQL on a disposable Supabase/Postgres database, including partial cancellations, refund confirmations, active partner recipient resolution, and a failed provider call.
+- Queuing support/partner application acknowledgements also requires BOTH the corresponding application-level flag and DB `intake` gate, and even then dispatch remains separately OFF by default.

@@ -129,12 +129,22 @@ begin
  -- Stop retries after the provider's 24-hour idempotency window.
  update private.transactional_email_outbox q
  set status='failed',lease_token=null,lease_until=null,
-     last_error_code='RETRY_WINDOW_EXPIRED',updated_at=clock_timestamp()
- where q.status in ('sending','retry')
- and q.first_attempt_at<=clock_timestamp()-interval '23 hours';
+     last_error_code=case when q.attempt_count>=5 then 'RETRY_LIMIT_REACHED'
+                          else 'RETRY_WINDOW_EXPIRED' end,updated_at=clock_timestamp()
+ where (q.status in ('sending','retry')
+ and q.first_attempt_at<=clock_timestamp()-interval '23 hours')
+ or (q.status='sending' and q.attempt_count>=5 and q.lease_until<clock_timestamp());
  with candidates as (
    select q.id from private.transactional_email_outbox q
    where q.attempt_count<5
+    and private.transactional_email_group_is_enabled(
+      case
+        when q.event_type in ('partner_new_order','partner_cancellation') then 'partners'
+        when q.event_type in ('cancellation_requested','cancellation_update','refund_completed') then 'cancellations'
+        when q.event_type in ('support_received','partner_application') then 'intake'
+        else 'orders'
+      end
+    )
     and ((q.status in ('pending','retry') and q.next_attempt_at<=clock_timestamp())
          or (q.status='sending' and q.lease_until<clock_timestamp()))
     and (q.first_attempt_at is null or
