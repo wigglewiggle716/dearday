@@ -90,9 +90,22 @@ Deno.serve(async request=>{
     return reply(429,{ok:false,error:"rate_limited"},origin);
   const saved=await sb.from("support_tickets")
     .insert({name,email,phone,subject,message,locale,submission_fingerprint:fingerprint})
-    .select("ticket_no").single();
+    .select("id,ticket_no").single();
   if(saved.error)throw saved.error;
   const ref="DD-CS-"+String(saved.data.ticket_no).padStart(6,"0");
+  // Staged only: queue acknowledgement after the ticket is committed.
+  // This flag remains OFF. Queue errors must not discard an accepted ticket.
+  if(Deno.env.get("TRANSACTIONAL_EMAIL_QUEUE_ENABLED")==="true"){
+    try{
+      const queued=await sb.rpc("queue_transactional_email",{
+        p_event_type:"support_received",p_entity_id:saved.data.id,
+        p_idempotency_key:"support_received:"+saved.data.id+":customer",
+        p_locale:locale,p_recipient:email,
+        p_variables:{CUSTOMER_NAME:name,TICKET_NUMBER:ref}
+      });
+      if(queued.error)console.error("Support acknowledgement queue failed");
+    }catch{console.error("Support acknowledgement queue unavailable");}
+  }
   return reply(201,{ok:true,ticket_reference:ref},origin);
  }catch(err){
   const msg=err instanceof Error?err.message:String(err);

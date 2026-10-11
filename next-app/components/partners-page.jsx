@@ -206,6 +206,7 @@ export default function PartnersPage({locale="ar"}){
     setSending(true);
     try{
       const payload=new FormData(form);
+      payload.set("locale",locale==="en"?"en":"ar");
       const response=await fetch(INTAKE_URL,{
         method:"POST",body:payload,mode:"cors",cache:"no-store"
       });

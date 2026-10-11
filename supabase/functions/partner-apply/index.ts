@@ -191,6 +191,20 @@ Deno.serve(async request=>{
      submission_fingerprint:hash
    });
    if(error)throw error;
+   // Staged only: queue receipt after the application exists.
+   // This is not an approval email and cannot affect form submission success.
+   if(Deno.env.get("TRANSACTIONAL_EMAIL_QUEUE_ENABLED")==="true"){
+     try{
+       const queued=await client.rpc("queue_transactional_email",{
+         p_event_type:"partner_application",p_entity_id:id,
+         p_idempotency_key:"partner_application:"+id+":applicant",
+         p_locale:form.get("locale")==="en"?"en":"ar",
+         p_recipient:email,
+         p_variables:{CONTACT_NAME:contact_name,COMPANY_NAME:company_name}
+       });
+       if(queued.error)console.error("Partner application acknowledgement queue failed");
+     }catch{console.error("Partner application acknowledgement queue unavailable");}
+   }
    return result(201,true,{application_id:id},origin);
  }catch(err){
    if(uploaded.length)await client.storage.from(BUCKET).remove(uploaded);
