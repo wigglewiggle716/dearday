@@ -44,6 +44,29 @@ revoke all on private.transactional_email_outbox from PUBLIC,anon,authenticated;
 grant usage on schema private to service_role;
 grant select,insert,update on private.transactional_email_outbox to service_role;
 
+-- Extra opt-in barrier at database level, independent of application flags.
+-- These flags start disabled and can only be changed by a database administrator.
+create table if not exists private.transactional_email_feature_flags (
+  category text primary key check (category in ('orders','cancellations','partners','intake')),
+  enabled boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+insert into private.transactional_email_feature_flags(category,enabled)
+values ('orders',false),('cancellations',false),('partners',false),('intake',false)
+on conflict(category) do nothing;
+alter table private.transactional_email_feature_flags enable row level security;
+revoke all on private.transactional_email_feature_flags from PUBLIC,anon,authenticated,service_role;
+
+create or replace function private.transactional_email_group_is_enabled(p_category text)
+returns boolean language sql stable security definer set search_path='' as $
+  select coalesce((
+    select g.enabled from private.transactional_email_feature_flags g
+    where g.category=p_category
+  ),false);
+$;
+revoke all on function private.transactional_email_group_is_enabled(text)
+from PUBLIC,anon,authenticated;
+
 -- Call only from trusted server-side code with a service-role JWT.
 -- The idempotency key MUST identify one specific persisted event transition and
 -- one recipient (e.g. "support_received:<ticket_uuid>:<recipient_user_uuid>").
@@ -66,6 +89,17 @@ begin
  or jsonb_typeof(p_variables) is distinct from 'object'
  or octet_length(coalesce(p_variables::text,''))>12000 then
    raise exception 'INVALID_TRANSACTIONAL_EMAIL' using errcode='22023';
+ end if;
+ -- No queue is possible until the DBA explicitly enables the event group.
+ if not private.transactional_email_group_is_enabled(
+   case
+     when p_event_type in ('partner_new_order','partner_cancellation') then 'partners'
+     when p_event_type in ('cancellation_requested','cancellation_update','refund_completed') then 'cancellations'
+     when p_event_type in ('support_received','partner_application') then 'intake'
+     else 'orders'
+   end
+ ) then
+   return null;
  end if;
  insert into private.transactional_email_outbox(
    event_type,entity_id,idempotency_key,locale,recipient,variables
